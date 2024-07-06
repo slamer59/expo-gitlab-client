@@ -1,6 +1,6 @@
-
-import { View } from '@/components/Themed';
-import { RepositoryCard } from '@/components/ui/repository-card';
+import { RepositoryCard } from "@/components/ui/repository-card";
+import React from "react";
+import { View } from "react-native";
 
 export default function ModalScreen() {
   const repositories = [
@@ -17,13 +17,13 @@ export default function ModalScreen() {
     // Add more repository objects as needed
   ];
   return (
+
     <View>
-      {/* Notification Status Card */}
-      {repositories.map((repository, index) =>
+      {repositories.map((notificationStatus, index) =>
         <View key={index}>
-          <RepositoryCard {...repository} />
+          <RepositoryCard {...notificationStatus} />
         </View>
       )}
-    </View>
+    </View >
   );
 }

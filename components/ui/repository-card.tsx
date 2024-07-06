@@ -18,7 +18,6 @@ export function RepositoryCard(
     <View
       className='w-full p-4 bg-white rounded-lg shadow-md' >
       <View className='flex-row items-center gap-3'>
-
         {icon ?
           <Image
             className='w-10 h-10'
@@ -28,10 +27,8 @@ export function RepositoryCard(
           /> :
           <Ionicons name="folder-open-outline" size={24} color="green" />
         }
-
-        <Text className='text-gray-500'>{name}</Text>
+        <Text className='mt-2 text-lg font-bold'>{name}</Text>
       </View>
-      <Text className='mt-2 text-lg font-bold'>{name}</Text>
       <Text className='mt-1 text-gray-600'>{description}</Text>
     </View>
   );
