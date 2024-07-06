@@ -11,7 +11,7 @@ export function TopFilterList() {
         left: 12,
         right: 12,
     };
-    const items = {
+    const filters = [{
         label: "Fruits",
         values: [
             { value: 'apple', label: 'Apple' },
@@ -22,23 +22,36 @@ export function TopFilterList() {
         ],
         placeholder: "Select a fruit..."
 
+    },
+    {
+        label: "Meats",
+        values: [
+            { value: 'beef', label: 'Beef' },
+            { value: 'chicken', label: 'Chicken' },
+            { value: 'lamb', label: 'Lamb' },
+            { value: 'pork', label: 'Pork' },
+            { value: 'turkey', label: 'Turkey' },
+        ],
+        placeholder: "Select a meat..."
+    },
+    {
+        label: "Vegetables",
+        values: [
+            { value: 'broccoli', label: 'Broccoli' },
+            { value: 'carrot', label: 'Carrot' },
+            { value: 'corn', label: 'Corn' },
+            { value: 'cucumber', label: 'Cucumber' },
+            { value: 'potato', label: 'Potato' },
+        ],
+        placeholder: "Select a vegetable..."
     }
-    // {
-    //     label: "Meat",
-    //     values: [
-    //         { value: 'beef', label: 'Beef' },
-    //         { value: 'chicken', label: 'Chicken' },
-    //         { value: 'lamb', label: 'Lamb' },
-    //         { value: 'pork', label: 'Pork' },
-    //         { value: 'turkey', label: 'Turkey' },
-    //     ]
-    // }
-    // ]
+    ]
 
     return (
-        <View className='items-center justify-center flex-1 gap-5 p-6 bg-secondary/30'>
-
-            <Filter items={items} />
+        <View className='flex flex-row items-center justify-center flex-1 gap-5'>
+            {filters.map((filter, index) => (
+                <Filter items={filter} />
+            ))}
         </View>
     );
 }

@@ -16,8 +16,6 @@ interface FilterProps {
 
 
 export function Filter({ items }: FilterProps) {
-
-
     const insets = useSafeAreaInsets();
     const contentInsets = {
         top: insets.top,
@@ -26,11 +24,10 @@ export function Filter({ items }: FilterProps) {
         right: 12,
     };
 
-    console.log(items.placeholder);
     return (
 
         <Select defaultValue={{ value: items.values, label: items.label }}>
-            <SelectTrigger className='w-[250px]'>
+            <SelectTrigger>
                 <SelectValue
                     className='text-sm text-foreground native:text-lg'
                     placeholder={items.placeholder}
