@@ -1,6 +1,5 @@
 import { View } from '@/components/Themed';
 import { Text } from '@/components/ui/text';
-import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,8 +24,9 @@ export function RepositoryCard(
               uri: icon
             }}
           /> :
-          <Ionicons name="folder-open-outline" size={24} color="green" />
-        }
+          <Text style={{ fontSize: 20, color: 'green' }}>
+            {name.charAt(0).toUpperCase()}
+          </Text>}
         <Text className='mt-2 text-lg font-bold'>{name}</Text>
       </View>
       <Text className='mt-1 text-gray-600'>{description}</Text>

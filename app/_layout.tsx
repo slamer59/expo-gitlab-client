@@ -1,7 +1,7 @@
 import '@/global.css';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PortalHost } from '@rn-primitives/portal';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
@@ -10,7 +10,7 @@ import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 
-import { ThemeProvider } from '@react-navigation/native';
+import { Theme, ThemeProvider } from '@react-navigation/native';
 import 'react-native-reanimated';
 
 const LIGHT_THEME: Theme = {
@@ -36,6 +36,10 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
+  const queryClient = new QueryClient();
+
+
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
@@ -69,13 +73,17 @@ export default function RootLayout() {
   }
 
   return (
+
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-      <PortalHost />
+      <QueryClientProvider client={queryClient}>
+
+        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+        <PortalHost />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
