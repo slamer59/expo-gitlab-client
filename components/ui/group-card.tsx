@@ -1,5 +1,7 @@
 import { Text } from '@/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Link } from 'expo-router';
 import * as React from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,6 +11,8 @@ export function GroupCard(
   { name, description, icon, handlePress }: { name: string, description: string, icon: any, handlePress: () => any }
 ) {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
   const [repositories, setRepositories] = React.useState<any[]>([]);
   const contentInsets = {
     top: insets.top,
@@ -17,9 +21,10 @@ export function GroupCard(
     right: 12,
   };
   const onOpenChange = async (isOpen: boolean) => {
-    setRepositories(await handlePress())
+    if (isOpen) {
+      setRepositories(await handlePress())
+    }
   };
-  console.log(repositories)
   return (
     <Collapsible className='w-full max-w-sm native:max-w-md' onOpenChange={onOpenChange} >
       <CollapsibleTrigger >
@@ -31,27 +36,31 @@ export function GroupCard(
       </CollapsibleTrigger>
       <CollapsibleContent >
         {repositories.map((repo: any) => (<View className='flex-row items-start m-2'>
-          <View>
-            {icon ?
-              <Image
-                className='w-10 h-10'
-                source={{
-                  uri: icon
-                }}
-              /> :
-              <Text
-                className='w-10 h-10'
-                style={{ fontSize: 20, color: 'green' }}>
-                {repo.name.charAt(0).toUpperCase()}
-              </Text>}
-          </View>
-          <View className='flex-col items-start'>
-            <Text className='mt-2 text-lg font-bold'>{repo.name}</Text>
-            {repo.description && <Text className='mt-1 text-gray-600'>{repo.description}</Text>}
-          </View>
+          <Link href={`/workspace/repository/${repo.id}`}
+            key={repo.id}
+          >
+            <View className='flex-row items-center gap-3'>
+              {icon ?
+                <Image
+                  className='w-10 h-10'
+                  source={{
+                    uri: icon
+                  }}
+                /> :
+                <Text
+                  className='w-10 h-10'
+                  style={{ fontSize: 20, color: 'green' }}>
+                  {repo.name.charAt(0).toUpperCase()}
+                </Text>}
+            </View>
+            <View className='flex-col items-start'>
+              <Text className='mt-2 text-lg font-bold'>{repo.name}</Text>
+              {repo.description && <Text className='mt-1 text-gray-600'>{repo.description}</Text>}
+            </View>
+          </Link>
         </View>
         ))}
       </CollapsibleContent>
-    </Collapsible>
+    </Collapsible >
   );
 }

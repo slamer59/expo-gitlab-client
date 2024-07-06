@@ -74,11 +74,13 @@ export default function ModalScreen() {
               async () => {
                 const data = await fetchProjects((notificationStatus.full_path))
                 const filteredData = data.filter((repo: { archived: boolean }) => !repo.archived)
-                  .map((repo: { name: any; description: any; avatar_url: any; }) => {
+                  .map((repo: { id: any; name: any; description: any; avatar_url: any; }) => {
                     return {
+                      id: repo.id,
                       name: repo.name,
                       description: repo.description,
                       icon: repo.avatar_url,
+
                     }
                   })
 
