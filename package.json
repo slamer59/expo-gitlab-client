@@ -21,6 +21,7 @@
     "@react-navigation/native": "^6.0.2",
     "@rn-primitives/accordion": "^1.0.3",
     "@rn-primitives/avatar": "~1.0.3",
+    "@rn-primitives/collapsible": "^1.0.3",
     "@rn-primitives/portal": "~1.0.3",
     "@rn-primitives/progress": "~1.0.3",
     "@rn-primitives/select": "^1.0.3",

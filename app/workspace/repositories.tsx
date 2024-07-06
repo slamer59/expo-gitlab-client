@@ -1,4 +1,3 @@
-import { Accordion } from "@/components/ui/accordion";
 import { GroupCard } from "@/components/ui/group-card";
 import { RepositoryCard } from "@/components/ui/repository-card";
 import { Text } from "@/components/ui/text";
@@ -6,12 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { View } from "react-native";
 const baseUrl = "https://gitlab.com/api/v4"
-// const projectId = "react-storefront"
-// const userId = "thomas.pedot1"
-const groupId = "jokosun"
 
-const fetchProjects = async () => {
-  const response = await fetch(`${baseUrl}/groups/${groupId}/projects`, {
+const fetchProjects = async (groupId: string) => {
+  const encodedGroupId = encodeURIComponent(groupId);
+
+  const response = await fetch(`${baseUrl}/groups/${encodedGroupId}/projects`, {
     headers: {
       'PRIVATE-TOKEN': process.env.EXPO_PUBLIC_GITLAB_TOKEN
     }
@@ -20,22 +18,33 @@ const fetchProjects = async () => {
   return data
 };
 
-const fetchSubprojects = async () => {
-  const response = await fetch(`${baseUrl}/groups/${groupId}/subgroups`, {
+const fetchSubProjects = async (groupId: string) => {
+  const encodedGroupId = encodeURIComponent(groupId);
+  const response = await fetch(`${baseUrl}/groups/${encodedGroupId}/subgroups`, {
     headers: {
       'PRIVATE-TOKEN': process.env.EXPO_PUBLIC_GITLAB_TOKEN
     }
   })
   const data = await response.json();
   return data
+};
+
+const useProjects = (rootGroupId: string) => {
+  return useQuery({
+    queryKey: ['projects', rootGroupId],
+    queryFn: () => fetchProjects(rootGroupId),
+  });
 };
 
 export default function ModalScreen() {
 
   // Queries
-  const { data, isLoading, isError } = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
-  const { data: subdata } = useQuery({ queryKey: ['subprojects'], queryFn: fetchSubprojects })
-  console.log(subdata)
+  const rootGroupId = "jokosun"
+  const { data, isLoading, isError } = useProjects(rootGroupId)
+  const { data: subprojects } = useQuery({ queryKey: ['subprojects', rootGroupId], queryFn: () => fetchSubProjects(rootGroupId) })
+
+
+
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
@@ -52,8 +61,8 @@ export default function ModalScreen() {
         icon: repo.avatar_url,
       }
     })
-  console.log(subdata)
-  const subrepositories = subdata.filter((repo: { archived: boolean }) => !repo.archived)
+  // console.log(subdata)
+  const subrepositories = subprojects.filter((repo: { archived: boolean }) => !repo.archived)
 
   return (
     <View>
@@ -61,19 +70,25 @@ export default function ModalScreen() {
         <View key={index}>
           <View
             className='w-full p-4 bg-white rounded-lg shadow-md' >
-            <Accordion
-              type='multiple'
-              collapsible
-              defaultValue={['item-1']}
-              className='w-full max-w-sm native:max-w-md'
-            >
+            <GroupCard {...notificationStatus} handlePress={
+              async () => {
+                const data = await fetchProjects((notificationStatus.full_path))
+                const filteredData = data.filter((repo: { archived: boolean }) => !repo.archived)
+                  .map((repo: { name: any; description: any; avatar_url: any; }) => {
+                    return {
+                      name: repo.name,
+                      description: repo.description,
+                      icon: repo.avatar_url,
+                    }
+                  })
 
-              <GroupCard {...notificationStatus} />
-            </Accordion>
+                return filteredData
+              }
+            } />
           </View>
         </View>
       )}
-      {repositories.map((notificationStatus, index) =>
+      {repositories.map((notificationStatus: React.JSX.IntrinsicAttributes & { name: string; description: string; icon: any; }, index: React.Key | null | undefined) =>
         <View key={index}>
           <RepositoryCard {...notificationStatus} />
         </View>
