@@ -14,7 +14,6 @@ interface FilterProps {
     items: { label: string; values: { value: string; label: string }[]; placeholder: string };
 }
 
-
 export function Filter({ items }: FilterProps) {
     const insets = useSafeAreaInsets();
     const contentInsets = {
@@ -25,7 +24,6 @@ export function Filter({ items }: FilterProps) {
     };
 
     return (
-
         <Select defaultValue={{ value: items.values, label: items.label }}>
             <SelectTrigger>
                 <SelectValue
