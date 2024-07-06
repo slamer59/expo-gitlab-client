@@ -1,31 +1,92 @@
-import { StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
+import React from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+const ButtonList = () => {
+  const buttons = [
+    { icon: 'alert-circle-outline', text: 'Issues' },
+    { icon: 'git-merge', text: 'Merge Requests' },
+    { icon: 'chatbubbles-outline', text: 'Discussions' },
+    { icon: 'folder-outline', text: 'Projects' },
+    { icon: 'folder-open-outline', text: 'Repositories' },
+    { icon: 'people-outline', text: 'Organizations' },
+    { icon: 'star-outline', text: 'Starred' },
+  ];
 
-export default function TabOneScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <ScrollView style={styles.mainContainer}>
+      <View style={styles.container}>
+        <Text style={styles.headerText}>Workspace</Text>
+        {buttons.map((button, index) => (
+          <TouchableOpacity key={index} style={styles.button}>
+            <Ionicons name={button.icon} size={24} color="black" />
+            <Text style={styles.buttonText}>{button.text}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.container}>
+        <Text style={styles.headerText}>Favorites</Text>
+        <TouchableOpacity style={styles.button}>
+          <Ionicons name="add-circle-outline" size={24} color="black" />
+          <Text style={styles.buttonText}>New Favorite</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.container}>
+        <Text style={styles.headerText}>Shortcuts</Text>
+        <TouchableOpacity style={styles.button}>
+          <Ionicons name="add-circle-outline" size={24} color="black" />
+          <Text style={styles.buttonText}>New Shortcut</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  mainContainer: {
+
+  },
   container: {
-    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    padding: 16,
+    backgroundColor: '#f0f0f0', // Light gray background color
+    borderRadius: 8,
+    margin: 16,
+    // Add some margin to the container
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
+
+
+  },
+  button: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    padding: 10,
+    marginVertical: 5,
+    color: 'black',
   },
-  title: {
-    fontSize: 20,
+  headerText: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  buttonText: {
+    marginLeft: 10,
+    fontSize: 16,
   },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+  }
 });
+
+export default ButtonList;
