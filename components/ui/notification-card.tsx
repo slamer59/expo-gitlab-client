@@ -1,10 +1,8 @@
 import { Text } from '@/components/ui/text';
 import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
 import * as React from 'react';
-import { View } from 'react-native';
+import { View } from '@/components/Themed';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
 
 export function NotificationCard(
   { status, repository, date, title, description }: { description: string, status: 'success' | 'error'; repository: string; date: string; title: string; }

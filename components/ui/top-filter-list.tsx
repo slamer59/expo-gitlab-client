@@ -1,7 +1,7 @@
 
+import { View } from '@/components/Themed';
 import { Filter } from "@/components/ui/filter-select";
 import React from 'react';
-import { View } from "react-native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export function TopFilterList() {
     const insets = useSafeAreaInsets();

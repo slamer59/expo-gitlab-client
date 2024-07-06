@@ -1,14 +1,17 @@
 import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
+import { useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const ButtonList = () => {
+  const navigation = useNavigation();
+
   const buttons = [
     { icon: 'alert-circle-outline', text: 'Issues' },
     { icon: 'git-merge', text: 'Merge Requests' },
     { icon: 'chatbubbles-outline', text: 'Discussions' },
     { icon: 'folder-outline', text: 'Projects' },
-    { icon: 'folder-open-outline', text: 'Repositories' },
+    { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories' },
     { icon: 'people-outline', text: 'Organizations' },
     { icon: 'star-outline', text: 'Starred' },
   ];
@@ -18,7 +21,11 @@ const ButtonList = () => {
       <View style={styles.container}>
         <Text style={styles.headerText}>Workspace</Text>
         {buttons.map((button, index) => (
-          <TouchableOpacity key={index} style={styles.button}>
+          <TouchableOpacity
+            key={index}
+            style={styles.button}
+            onPress={() => navigation.navigate(button.screen || "home")}
+          >
             <Ionicons name={button.icon} size={24} color="black" />
             <Text style={styles.buttonText}>{button.text}</Text>
           </TouchableOpacity>
@@ -40,7 +47,7 @@ const ButtonList = () => {
           <Text style={styles.buttonText}>New Shortcut</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 };
 
