@@ -106,7 +106,38 @@ const Page = () => {
                     </TouchableOpacity>
                 ))}
             </View>
-        </ScrollView >
+
+            <View className="p-4 m-2 bg-gray-200 rounded-lg">
+
+                <TouchableOpacity
+                    className="flex-row items-center justify-between py-2"
+                    onPress={() => navigation.navigate(button.screen || 'home')}
+                >
+                    <View className="flex-row items-center">
+                        <Ionicons name="git-branch-outline" size={24} color="black" />
+                        <Text className="ml-2 text-base">{repository.default_branch}</Text>
+                        <Ionicons name="checkbox" size={24} color="green" />
+                    </View>
+                    <Text className="ml-2 font-bold text-right text-blue-500">CHANGE BRANCH</Text>
+
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="flex-row items-center"
+                    onPress={() => navigation.navigate(button.screen || 'home')}
+                >
+                    <Ionicons name="document-text-outline" size={24} color="black" />
+                    <Text className="ml-2 text-base">Code</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="flex-row items-center"
+                    onPress={() => navigation.navigate(button.screen || 'home')}
+
+                >
+                    <Ionicons name="git-commit-outline" size={24} color="black" />
+                    <Text className="ml-2 text-base">Commits</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 };
 
