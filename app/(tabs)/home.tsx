@@ -11,7 +11,7 @@ const ButtonList = () => {
     { icon: 'git-merge', text: 'Merge Requests' },
     { icon: 'chatbubbles-outline', text: 'Discussions' },
     { icon: 'folder-outline', text: 'Projects' },
-    { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories' },
+    { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
     { icon: 'people-outline', text: 'Organizations' },
     { icon: 'star-outline', text: 'Starred' },
   ];

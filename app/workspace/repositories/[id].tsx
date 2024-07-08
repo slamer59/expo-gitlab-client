@@ -119,11 +119,10 @@ const Page = () => {
                         <Ionicons name="checkbox" size={24} color="green" />
                     </View>
                     <Text className="ml-2 font-bold text-right text-blue-500">CHANGE BRANCH</Text>
-
                 </TouchableOpacity>
                 <TouchableOpacity
                     className="flex-row items-center"
-                    onPress={() => navigation.navigate(button.screen || 'home')}
+                    onPress={() => navigation.navigate(`workspace/repositories/files/list`)}
                 >
                     <Ionicons name="document-text-outline" size={24} color="black" />
                     <Text className="ml-2 text-base">Code</Text>
@@ -131,11 +130,30 @@ const Page = () => {
                 <TouchableOpacity
                     className="flex-row items-center"
                     onPress={() => navigation.navigate(button.screen || 'home')}
-
                 >
                     <Ionicons name="git-commit-outline" size={24} color="black" />
                     <Text className="ml-2 text-base">Commits</Text>
                 </TouchableOpacity>
+            </View>
+            <View className="p-4 m-2">
+                <View
+                    className="flex-row items-center justify-between py-2"
+                    onPress={() => navigation.navigate(button.screen || 'home')}
+                >
+                    <View className="flex-row items-center">
+                        <Ionicons name="information-circle-outline" size={24} color="black" />
+                        <Text className="ml-2 text-base">Readme.md</Text>
+                    </View>
+                    <Text className="font-bold text-right text-blue-500">EDIT</Text>
+                </View>
+                <View className="flex-row items-center">
+
+                </View>
+                <View className="flex-row items-center">
+                    <Text>TODO MARKDOWN display</Text>
+
+                </View>
+
             </View>
         </ScrollView>
     );

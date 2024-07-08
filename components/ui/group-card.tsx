@@ -36,7 +36,7 @@ export function GroupCard(
       </CollapsibleTrigger>
       <CollapsibleContent >
         {repositories.map((repo: any) => (<View className='flex-row items-start m-2'>
-          <Link href={`/workspace/repository/${repo.id}`}
+          <Link href={`/workspace/repositories/${repo.id}`}
             key={repo.id}
           >
             <View className='flex-row items-center gap-3'>
