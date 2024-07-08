@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
 import { useNavigation } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const ButtonList = () => {
   const navigation = useNavigation();
@@ -17,83 +17,39 @@ const ButtonList = () => {
   ];
 
   return (
-    <ScrollView style={styles.mainContainer}>
-      <View style={styles.container}>
-        <Text style={styles.headerText}>Workspace</Text>
+    <ScrollView className="flex-1">
+      <View className="p-4 m-4 bg-gray-200 rounded-lg">
+        <Text className="mb-2 text-lg font-bold">Workspace</Text>
         {buttons.map((button, index) => (
           <TouchableOpacity
             key={index}
-            style={styles.button}
-            onPress={() => navigation.navigate(button.screen || "home")}
+            className="flex-row items-center py-2"
+            onPress={() => navigation.navigate(button.screen || 'home')}
           >
             <Ionicons name={button.icon} size={24} color="black" />
-            <Text style={styles.buttonText}>{button.text}</Text>
+            <Text className="ml-2 text-base">{button.text}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <View style={styles.container}>
-        <Text style={styles.headerText}>Favorites</Text>
-        <TouchableOpacity style={styles.button}>
+      <View className="p-4 m-4 bg-gray-200 rounded-lg shadow">
+        <Text className="mb-2 text-lg font-bold">Favorites</Text>
+        <TouchableOpacity className="flex-row items-center py-2">
           <Ionicons name="add-circle-outline" size={24} color="black" />
-          <Text style={styles.buttonText}>New Favorite</Text>
+          <Text className="ml-2 text-base">New Favorite</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.container}>
-        <Text style={styles.headerText}>Shortcuts</Text>
-        <TouchableOpacity style={styles.button}>
+      <View className="p-4 m-4 bg-gray-200 rounded-lg">
+        <Text className="mb-2 text-lg font-bold">Shortcuts</Text>
+        <TouchableOpacity className="flex-row items-center py-2">
           <Ionicons name="add-circle-outline" size={24} color="black" />
-          <Text style={styles.buttonText}>New Shortcut</Text>
+          <Text className="ml-2 text-base">New Shortcut</Text>
         </TouchableOpacity>
       </View>
     </ScrollView >
   );
 };
 
-const styles = StyleSheet.create({
-  mainContainer: {
-
-  },
-  container: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    padding: 16,
-    backgroundColor: '#f0f0f0', // Light gray background color
-    borderRadius: 8,
-    margin: 16,
-    // Add some margin to the container
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5, // For Android shadow
-
-
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    marginVertical: 5,
-    color: 'black',
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  buttonText: {
-    marginLeft: 10,
-    fontSize: 16,
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 10,
-  }
-});
 
 export default ButtonList;
