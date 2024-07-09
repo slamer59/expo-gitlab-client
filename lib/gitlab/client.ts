@@ -1,0 +1,106 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+
+import type { paths } from "@/lib/gitlab/api";
+
+import createClient from "openapi-fetch";
+const baseUrl = 'https://gitlab.com';
+
+const client = createClient<paths>({ baseUrl: baseUrl });
+
+const headers = {
+    accept: 'application/json',
+    'private-token': process.env.EXPO_PUBLIC_GITLAB_TOKEN
+}
+
+
+export const useProjects = (keys, query) => {
+    return useQuery({
+        queryKey: keys,
+        queryFn: () => fetchProjects(query),
+    });
+};
+
+async function fetchProjects(query) {
+
+    const { data, error } = await client.GET('/api/v4/projects', {
+        params: {
+            query: query,
+        },
+        headers: headers
+    }).catch((error) => {
+        console.log(error);
+    });
+
+    return data
+};
+
+
+export const getData = <T>(
+    keys: readonly unknown[],
+    endpoint: string,
+    params?: Record<string, any>
+) => {
+    return useQuery({
+        queryKey: keys,
+        queryFn: () => fetchData<T>(endpoint, 'GET', params),
+    });
+};
+
+export const postData = <T>(
+    keys: readonly unknown[],
+    endpoint: string,
+    body?: Record<string, any>
+) => {
+    return useMutation({
+        mutationFn: () => fetchData<T>(endpoint, 'POST', undefined, body),
+    });
+};
+
+export const putData = <T>(
+    keys: readonly unknown[],
+    endpoint: string,
+    body?: Record<string, any>
+) => {
+    return useMutation({
+        mutationFn: () => fetchData<T>(endpoint, 'PUT', undefined, body),
+    });
+};
+
+export const deleteData = <T>(
+    keys: readonly unknown[],
+    endpoint: string,
+    params?: Record<string, any>
+) => {
+    return useMutation({
+        mutationFn: () => fetchData<T>(endpoint, 'DELETE', params),
+    });
+};
+
+async function fetchData<T>(
+    endpoint: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    params?: Record<string, any>,
+    body?: Record<string, any>
+): Promise<T | undefined> {
+    try {
+        let response;
+        switch (method) {
+            case 'GET':
+                response = await client.GET(endpoint, { params, headers });
+                break;
+            case 'POST':
+                response = await client.POST(endpoint, { params, headers, body });
+                break;
+            case 'PUT':
+                response = await client.PUT(endpoint, { params, headers, body });
+                break;
+            case 'DELETE':
+                response = await client.DELETE(endpoint, { params, headers });
+                break;
+        }
+        return response.data as T;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}

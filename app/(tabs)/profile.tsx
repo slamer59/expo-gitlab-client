@@ -92,12 +92,6 @@ export default function ProfileScreen() {
           <Text className="ml-auto ">410</Text>
         </View>
       </View>
-      <View className="absolute bottom-0 left-0 right-0 flex-row justify-around p-4 bg-gray-900">
-        <FontAwesome5 name="home" size={24} color="white" />
-        <FontAwesome5 name="bell" size={24} color="gray" />
-        <FontAwesome5 name="search" size={24} color="gray" />
-        <FontAwesome5 name="user" size={24} color="blue" />
-      </View>
     </View>
   );
 }
