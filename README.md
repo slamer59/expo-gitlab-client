@@ -1,0 +1,1 @@
+curl -X POST -H "content-type:application/json" -d '{"swaggerUrl":"https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml"}' https://generator.swagger.io/api/gen/clients/typescript-fetch
