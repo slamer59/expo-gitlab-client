@@ -113,7 +113,7 @@ const Repositories = () => {
                     <View className="flex-row items-center">
                         <Ionicons name="git-branch-outline" size={24} color="black" />
                         <Text className="ml-2 text-base">{repository.default_branch}</Text>
-                        <Ionicons name="checkbox" size={24} color="green" />
+                        <Ionicons name="checkbox" size={24} color="black" />
                     </View>
                     <Text className="ml-2 font-bold text-right text-blue-500">CHANGE BRANCH</Text>
                 </TouchableOpacity>

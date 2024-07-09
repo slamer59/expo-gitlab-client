@@ -1,28 +1,34 @@
 import { View } from '@/components/Themed';
 import { Text } from '@/components/ui/text';
+import { Image } from 'expo-image';
+import { Link } from 'expo-router';
 import * as React from 'react';
-import { Image } from 'react-native';
 export function RepositoryCard(
   { id, name, description, icon }: { id: string, name: string, description: string, icon: any },
 ) {
 
   return (
-    <View
-      className='w-full p-4 bg-white rounded-lg shadow-md' >
-      <View className='flex-row items-center gap-3'>
-        {icon ?
-          <Image
-            className='w-10 h-10'
-            source={{
-              uri: icon
-            }}
-          /> :
-          <Text style={{ fontSize: 20, color: 'green' }}>
-            {name.charAt(0).toUpperCase()}
-          </Text>}
-        <Text className='mt-2 text-lg font-bold'>{name}</Text>
+    <Link className='flex flex-row items-center m-2'
+      href={`/workspace/repositories/${id}`}
+      key={id}
+    >
+
+      {icon ?
+        <Image
+          className='m-2 items-center *:text-center justify-center w-10 h-10 rounded-lg'
+          source={{
+            uri: icon
+          }}
+        /> :
+        <Text className='w-10 h-10 m-2 rounded-lg' >
+          {name.charAt(0).toUpperCase()}
+        </Text>}
+
+      <View className='flex flex-col items-start '>
+        <Text className='mt-2 text-lg font-bold '>{name}</Text>
+        {description && <Text className='mt-1 text-gray-600'>{description}</Text>}
       </View>
-      <Text className='mt-1 text-gray-600'>{description}</Text>
-    </View>
+    </Link >
+
   );
 }

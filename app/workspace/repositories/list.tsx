@@ -3,7 +3,7 @@ import { RepositoryCard } from "@/components/ui/repository-card";
 import { Text } from "@/components/ui/text";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 const baseUrl = "https://gitlab.com/api/v4"
 
 const fetchProjects = async (groupId: string) => {
@@ -66,14 +66,13 @@ export default function ModalScreen() {
   const subrepositories = subprojects.filter((repo: { archived: boolean }) => !repo.archived)
 
   return (
-    <View >
-      {subrepositories.map((notificationStatus, index) =>
+    <ScrollView className="p-4 m-4 bg-white border border-gray-500 rounded-lg">
+      {subrepositories.map((subrepo, index) =>
         <View key={index}>
-          <View
-            className='w-full p-4 bg-white rounded-lg shadow-md' >
-            <GroupCard {...notificationStatus} handlePress={
+          <View className='w-full p-4' >
+            <GroupCard {...subrepo} handlePress={
               async () => {
-                const data = await fetchProjects((notificationStatus.full_path))
+                const data = await fetchProjects((subrepo.full_path))
                 const filteredData = data.filter((repo: { archived: boolean }) => !repo.archived)
                   .map((repo: { id: any; name: any; description: any; avatar_url: any; }) => {
                     return {
@@ -91,9 +90,11 @@ export default function ModalScreen() {
           </View>
         </View>
       )}
-      {repositories.map((notificationStatus: React.JSX.IntrinsicAttributes & { id: string; name: string; description: string; icon: any; }, index: React.Key | null | undefined) =>
-        <RepositoryCard key={index} {...notificationStatus} />
-      )}
-    </View >
+      <View className='w-full p-4 ' >
+        {repositories.map((repo: React.JSX.IntrinsicAttributes & { id: string; name: string; description: string; icon: any; }, index: React.Key | null | undefined) =>
+          <RepositoryCard key={index} {...repo} />
+        )}
+      </View>
+    </ScrollView>
   );
 }
