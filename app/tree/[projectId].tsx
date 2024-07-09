@@ -5,10 +5,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link, useLocalSearchParams } from "expo-router";
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-export default function FileExplorerScreen() {
-  const { path, ref, previousPath } = useLocalSearchParams();
 
-  const projectId = 35867263;
+export default function FileExplorerScreen() {
+
+  const { path, ref, projectId } = useLocalSearchParams();
 
   const params = {
     path: {
@@ -63,7 +63,11 @@ export default function FileExplorerScreen() {
               name={file.name}
               href={{
                 pathname: '/tree/[projectId]/[fileId]',
-                params: { projectId: projectId, path: encodeURIComponent(file.path), fileId: 1 },
+                params: {
+                  projectId: projectId,
+                  path: encodeURIComponent(file.path),
+                  fileId: file.id
+                },
               }} />
           }
 

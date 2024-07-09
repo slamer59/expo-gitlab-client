@@ -10,6 +10,7 @@ const baseUrl = "https://gitlab.com/api/v4"
 const Repositories = () => {
 
     const { id: projectId } = useLocalSearchParams();
+
     const params = {
         path: {
             id: projectId
