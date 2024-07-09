@@ -46,16 +46,28 @@ export default function FileExplorerScreen() {
         </Link>)
       }
       <View className="space-y-2">
-        {files?.map((file, index) => (
-          <FileItem
-            key={index}
-            type={file.type}
-            name={file.name}
-            href={{
-              pathname: '/tree/[projectId]',
-              params: { projectId: projectId, path: encodeURIComponent(file.path) },
-            }} />
-        ))}
+        {files?.map((file, index) => {
+          if (file.type === "tree") {
+            return <FileItem
+              key={index}
+              type={file.type}
+              name={file.name}
+              href={{
+                pathname: '/tree/[projectId]',
+                params: { projectId: projectId, path: encodeURIComponent(file.path) },
+              }} />
+          } else {
+            return <FileItem
+              key={index}
+              type={file.type}
+              name={file.name}
+              href={{
+                pathname: '/tree/[projectId]/[fileId]',
+                params: { projectId: projectId, path: encodeURIComponent(file.path), fileId: 1 },
+              }} />
+          }
+
+        })}
       </View>
     </ScrollView>
   );
