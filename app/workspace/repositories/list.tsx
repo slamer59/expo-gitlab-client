@@ -54,8 +54,9 @@ export default function ModalScreen() {
   }
 
   const repositories = data.filter((repo: { archived: boolean }) => !repo.archived)
-    .map((repo: { name: any; description: any; avatar_url: any; }) => {
+    .map((repo: { id: any; name: any; description: any; avatar_url: any; }) => {
       return {
+        id: repo.id,
         name: repo.name,
         description: repo.description,
         icon: repo.avatar_url,
@@ -65,7 +66,7 @@ export default function ModalScreen() {
   const subrepositories = subprojects.filter((repo: { archived: boolean }) => !repo.archived)
 
   return (
-    <View>
+    <View >
       {subrepositories.map((notificationStatus, index) =>
         <View key={index}>
           <View
@@ -90,10 +91,8 @@ export default function ModalScreen() {
           </View>
         </View>
       )}
-      {repositories.map((notificationStatus: React.JSX.IntrinsicAttributes & { name: string; description: string; icon: any; }, index: React.Key | null | undefined) =>
-        <View key={index}>
-          <RepositoryCard {...notificationStatus} />
-        </View>
+      {repositories.map((notificationStatus: React.JSX.IntrinsicAttributes & { id: string; name: string; description: string; icon: any; }, index: React.Key | null | undefined) =>
+        <RepositoryCard key={index} {...notificationStatus} />
       )}
     </View >
   );

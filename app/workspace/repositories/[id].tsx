@@ -118,7 +118,12 @@ const Repositories = () => {
                 </TouchableOpacity>
                 <Link
                     className="flex-row items-center"
-                    href="tree"
+                    href={{
+                        pathname: '/tree/[projectId]',
+                        params: {
+                            projectId: projectId,
+                        },
+                    }}
                 >
                     <Ionicons name="document-text-outline" size={24} color="black" />
                     <Text className="ml-2 text-base">Code</Text>
@@ -147,9 +152,7 @@ const Repositories = () => {
                 </View>
                 <View className="flex-row items-center">
                     <Text>TODO MARKDOWN display</Text>
-
                 </View>
-
             </View>
         </ScrollView>
     );
