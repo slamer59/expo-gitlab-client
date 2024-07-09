@@ -29,7 +29,7 @@ const params = {
 export default function TabTwoScreen() {
   const { data: groups, isLoading, isError } = getData(['projects'], "/api/v4/projects", params);
   const descriptions = groups?.map((group) => group.name).join("\n");
-
+  console.log(groups);
   return (
     <View className="items-center justify-center flex-1">
       {groups?.map((group) => {
