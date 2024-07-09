@@ -1,47 +1,43 @@
 import { Text } from "@/components/ui/text";
+import { getData } from "@/lib/gitlab/client";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from '@tanstack/react-query';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
 const baseUrl = "https://gitlab.com/api/v4"
 
-const fetchProject = async (groupId: string) => {
-    const encodedGroupId = encodeURIComponent(groupId);
-
-    const response = await fetch(`${baseUrl}/projects/${encodedGroupId}`, {
-        headers: {
-            'PRIVATE-TOKEN': process.env.EXPO_PUBLIC_GITLAB_TOKEN
-        }
-    })
-    const data = await response.json();
-    return data
-};
-
-const useProject = (projectId: string) => {
-    return useQuery({
-        queryKey: ['project', projectId],
-        queryFn: () => fetchProject(projectId),
-    });
-};
-const Page = () => {
+const Repositories = () => {
 
     const { id: projectId } = useLocalSearchParams();
-    const { data: repository, isLoading, isError } = useProject(projectId)
+    const params = {
+        path: {
+            id: projectId
+        },
+        query: {
+            statistics: false,
+            with_custom_attributes: false,
+            license: false
+        }
 
+    }
+    const { data: repository, isLoading, isError } = getData(
+        ['projects_id', params.query],
+        "/api/v4/projects/{id}",
+        params
+    );
     const navigation = useNavigation();
-
+    // KPI => _links
     const buttons = [
-        { icon: 'alert-circle-outline', text: 'Issues', kpi: 1 },
-        { icon: 'git-merge', text: 'Merge Requests', kpi: 1 },
-        { icon: 'play-outline', text: 'CI/CD', kpi: 1 },
-        // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: 1},
-        { icon: 'eye-outline', text: 'Watchers', kpi: 1 },
-        { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories', kpi: 1 },
-        { icon: "people-circle-outline", text: 'Contributors', kpi: 1 },
-        { icon: "document-text-outline", text: 'Licences', kpi: 1 },
-        { icon: 'star-outline', text: 'Starred', kpi: 1 },
+        { icon: 'alert-circle-outline', text: 'Issues', kpi: repository?.open_issues_count || "" },
+        { icon: 'git-merge', text: 'Merge Requests', kpi: "" },
+        { icon: 'play-outline', text: 'CI/CD', kpi: "" },
+        // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: ""},
+        { icon: 'eye-outline', text: 'Watchers', kpi: "" },
+        // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories', kpi: "" },
+        { icon: "people-circle-outline", text: 'Contributors', kpi: "" },
+        { icon: "document-text-outline", text: 'Licences', kpi: "" },
+        { icon: 'star-outline', text: 'Starred', kpi: repository?.star_count || "" },
     ];
 
     if (isLoading) {
@@ -77,7 +73,7 @@ const Page = () => {
                 <View className='flex-row'>
                     <View className="flex-row items-center mr-4">
                         <Ionicons name="star" size={16} color="black" />
-                        <Text className="ml-2 text-lg font-bold text-gray-400">{repository.stargazers_count || 0} stars</Text>
+                        <Text className="ml-2 text-lg font-bold text-gray-400">{repository.star_count || 0} stars</Text>
                     </View>
                     <View className="flex-row items-center mr-4">
                         <Ionicons name="git-network" size={16} color="black" />
@@ -102,7 +98,7 @@ const Page = () => {
                             <Ionicons name={button.icon} size={24} color="black" />
                             <Text className="ml-2 text-base">{button.text}</Text>
                         </View>
-                        {/* <Text className="ml-2 text-base text-right">{button.kpi}</Text> */}
+                        <Text className="ml-2 text-base text-right">{button.kpi}</Text>
                     </TouchableOpacity>
                 ))}
             </View>
@@ -120,13 +116,13 @@ const Page = () => {
                     </View>
                     <Text className="ml-2 font-bold text-right text-blue-500">CHANGE BRANCH</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                <Link
                     className="flex-row items-center"
-                    onPress={() => navigation.navigate(`workspace/repositories/files/list`)}
+                    href="tree"
                 >
                     <Ionicons name="document-text-outline" size={24} color="black" />
                     <Text className="ml-2 text-base">Code</Text>
-                </TouchableOpacity>
+                </Link>
                 <TouchableOpacity
                     className="flex-row items-center"
                     onPress={() => navigation.navigate(button.screen || 'home')}
@@ -159,4 +155,4 @@ const Page = () => {
     );
 };
 
-export default Page;
+export default Repositories;
