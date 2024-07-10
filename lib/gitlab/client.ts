@@ -2,16 +2,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import type { paths } from "@/lib/gitlab/api";
 
+import { getToken } from '@/lib/utils';
 import createClient from "openapi-fetch";
 
 const baseUrl = 'https://gitlab.com';
 
 const client = createClient<paths>({ baseUrl: baseUrl });
-
-const headers = {
-    accept: 'application/json',
-    'private-token': process.env.EXPO_PUBLIC_GITLAB_TOKEN
-}
 
 export const getData = <T>(
     keys: readonly unknown[],
@@ -62,6 +58,11 @@ export async function fetchData<T>(
 ): Promise<T | undefined> {
     try {
         let response;
+
+        const headers = {
+            accept: 'application/json',
+            'private-token': await getToken() // process.env.EXPO_PUBLIC_GITLAB_TOKEN
+        }
         switch (method) {
             case 'GET':
                 response = await client.GET(endpoint, { params, headers });
