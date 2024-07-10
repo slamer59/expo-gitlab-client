@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export async function getToken() {
-  let result = await SecureStore.getItemAsync('token');
+  let result = await SecureStore.getItemAsync('gitlab-token');
   if (result) {
     console.log('Token successfully loaded');
     return result;

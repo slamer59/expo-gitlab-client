@@ -1,49 +1,30 @@
 import { GroupCard } from "@/components/ui/group-card";
 import { RepositoryCard } from "@/components/ui/repository-card";
 import { Text } from "@/components/ui/text";
-import { useQuery } from "@tanstack/react-query";
+import { getData } from "@/lib/gitlab/client";
+import { T } from "@rn-primitives/tooltip/dist/types-opYTmxP0";
 import React from "react";
 import { ScrollView, View } from "react-native";
+
+import { fetchData } from "@/lib/gitlab/client";
 const baseUrl = "https://gitlab.com/api/v4"
-
-const fetchProjects = async (groupId: string) => {
-  const encodedGroupId = encodeURIComponent(groupId);
-
-  const response = await fetch(`${baseUrl}/groups/${encodedGroupId}/projects`, {
-    headers: {
-      'PRIVATE-TOKEN': process.env.EXPO_PUBLIC_GITLAB_TOKEN
-    }
-  })
-  const data = await response.json();
-  return data
-};
-
-const fetchSubProjects = async (groupId: string) => {
-  const encodedGroupId = encodeURIComponent(groupId);
-  const response = await fetch(`${baseUrl}/groups/${encodedGroupId}/subgroups`, {
-    headers: {
-      'PRIVATE-TOKEN': process.env.EXPO_PUBLIC_GITLAB_TOKEN
-    }
-  })
-  const data = await response.json();
-  return data
-};
-
-const useProjects = (rootGroupId: string) => {
-  return useQuery({
-    queryKey: ['projects', rootGroupId],
-    queryFn: () => fetchProjects(rootGroupId),
-  });
-};
 
 export default function ModalScreen() {
 
   // Queries
   const rootGroupId = "jokosun"
-  const { data, isLoading, isError } = useProjects(rootGroupId)
-  const { data: subprojects } = useQuery({ queryKey: ['subprojects', rootGroupId], queryFn: () => fetchSubProjects(rootGroupId) })
+  const params = { path: { id: rootGroupId } }
+  const { data, isLoading, isError } = getData(
+    ['projects', params.path],
+    "/api/v4/groups/{id}/projects",
+    params
+  );
 
-
+  const { data: subprojects } = getData(
+    ['subprojects', params.path],
+    `/api/v4/groups/{id}/subgroups`,
+    params
+  )
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -63,16 +44,17 @@ export default function ModalScreen() {
       }
     })
   // console.log(subdata)
-  const subrepositories = subprojects.filter((repo: { archived: boolean }) => !repo.archived)
+  const subrepositories = subprojects?.filter((repo: { archived: boolean }) => !repo.archived)
 
   return (
     <ScrollView className="p-4 m-4 bg-white border border-gray-500 rounded-lg">
-      {subrepositories.map((subrepo, index) =>
+      {subrepositories?.map((subrepo, index) =>
         <View key={index}>
           <View className='w-full p-4' >
             <GroupCard {...subrepo} handlePress={
               async () => {
-                const data = await fetchProjects((subrepo.full_path))
+                const paramSub = { path: { id: subrepo.full_path } }
+                const data = await fetchData<T>("/api/v4/groups/{id}/projects", 'GET', paramSub)
                 const filteredData = data.filter((repo: { archived: boolean }) => !repo.archived)
                   .map((repo: { id: any; name: any; description: any; avatar_url: any; }) => {
                     return {

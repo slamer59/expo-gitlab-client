@@ -54,7 +54,7 @@ export const deleteData = <T>(
     });
 };
 
-async function fetchData<T>(
+export async function fetchData<T>(
     endpoint: string,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     params?: Record<string, any>,

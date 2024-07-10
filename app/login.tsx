@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { getToken } from '@/lib/utils';
 import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Linking, TextInput, View } from 'react-native';
@@ -31,7 +32,7 @@ export default function LoginScreen() {
     }, []);
 
     const checkToken = async () => {
-        const savedToken = await SecureStore.getItemAsync('gitlab-token');
+        const savedToken = await getToken();
         if (savedToken) {
             console.log('Token found, navigating to home');
             navigation.navigate("(tabs)", { screen: "home" });
