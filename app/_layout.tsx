@@ -79,10 +79,13 @@ export default function RootLayout() {
 
         <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
         <Stack>
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
         <PortalHost />
+
       </QueryClientProvider>
     </ThemeProvider>
   );

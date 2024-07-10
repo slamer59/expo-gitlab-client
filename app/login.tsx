@@ -1,9 +1,9 @@
 import * as SecureStore from 'expo-secure-store';
-import { Image } from 'react-native';
 
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import React, { useState } from 'react';
+import { useNavigation } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { Alert, Linking, TextInput, View } from 'react-native';
 
 // async function save(key, value) {
@@ -22,10 +22,21 @@ async function getValueFor(key) {
     }
 }
 
-export default function App() {
+export default function LoginScreen() {
     const [serverUrl, onChangeKey] = useState('https://gitlab.com');
     const [token, onChangeValue] = useState('');
+    const navigation = useNavigation();
+    useEffect(() => {
+        checkToken();
+    }, []);
 
+    const checkToken = async () => {
+        const savedToken = await SecureStore.getItemAsync('gitlab-token');
+        if (savedToken) {
+            console.log('Token found, navigating to home');
+            navigation.navigate("(tabs)", { screen: "home" });
+        }
+    };
 
     const handleLogin = async () => {
         // Store the server URL and token securely
@@ -49,13 +60,11 @@ export default function App() {
     };
     return (
         <View className="items-center justify-center flex-1 p-2 ">
-            <Image
-                //                source={{ uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' }}
-
+            {/* <Image
                 source={require('../../assets/logo.png')}
                 style={{ width: 100, height: 100 }}
 
-            />
+            /> */}
             <Text className="mb-6 text-xl font-bold text-center text-blue-600">GitAlchemy: Your GitLab Companion</Text>
             <View className="w-full px-4 mb-4">
                 <Text className="m-1 text-sm">Server</Text>
