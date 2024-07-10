@@ -45,7 +45,16 @@ export default function LoginScreen() {
             save(serverUrl, token);
             onChangeKey('https://gitlab.com');
             onChangeValue('');
-            Alert.alert('Success', 'Server URL and token saved successfully.');
+            Alert.alert('Success', 'Server URL and token saved successfully.', [
+                {
+                    text: 'Enter',
+                    onPress: () => {
+                        navigation.navigate("(tabs)", { screen: "home" });
+                    },
+                    style: 'default',
+                },
+            ]
+            )
         } else {
             console.log(serverUrl)
             Alert.alert('Error', 'Invalid server URL.');

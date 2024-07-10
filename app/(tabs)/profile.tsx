@@ -6,6 +6,19 @@ import { Image, View } from 'react-native';
 export default function ProfileScreen() {
   return (
     <View className="flex-1 p-4">
+
+      <View className="flex-row items-center mb-4">
+        <Image
+          source={{ uri: 'https://placehold.co/100x100' }}
+          style={{ width: 64, height: 64, borderRadius: 32 }}
+          className="mr-4"
+        />
+        <View>
+          <Text className="text-2xl font-bold ">Thomas PEDOT</Text>
+          <Text className="text-gray-400">slamer59</Text>
+        </View>
+      </View>
+
       <View className="mb-4">
         <View className="flex-row items-center mb-2">
           <FontAwesome5 name="map-marker-alt" size={24} color="gray" className="mr-2" />

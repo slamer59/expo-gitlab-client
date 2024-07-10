@@ -16,3 +16,8 @@ export async function getToken() {
     return null;
   }
 }
+
+export async function resetToken() {
+  await SecureStore.deleteItemAsync('gitlab-token')
+  console.log('gitlab-token has been removed');
+};
