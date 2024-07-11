@@ -26,7 +26,7 @@ export function RepositoryCard(
 
       <View className='flex flex-col items-start '>
         <Text className='mt-2 text-lg font-bold '>{name}</Text>
-        {description && <Text className='mt-1 text-gray-600'>{description}</Text>}
+        {description && <Text className='mt-1 text-light dark:text-primaryDark'>{description}</Text>}
       </View>
     </Link >
 

@@ -54,19 +54,19 @@ const Repositories = () => {
             <View className="p-4 m-2">
                 <View className="flex-row items-center">
                     <Ionicons name="person-circle-outline" size={32} color="black" />
-                    <Text className="ml-2 text-lg font-bold text-gray-400">{repository.owner || "Default name"}</Text>
+                    <Text className="ml-2 text-lg font-bold text-light dark:text-primaryDark">{repository.owner || "Default name"}</Text>
                 </View>
                 <Text className='mb-4 text-2xl font-bold'>{repository.name}</Text>
                 <Text className="mb-4 text-base">{repository.description}</Text>
 
                 <View className="flex-row items-center">
                     <Ionicons name="lock-closed-outline" size={16} color="black" />
-                    <Text className="ml-2 text-lg font-bold text-gray-400">{repository.visibility || "Default vis"}</Text>
+                    <Text className="ml-2 text-lg font-bold text-light dark:text-primaryDark">{repository.visibility || "Default vis"}</Text>
                 </View>
                 {/* <View className="flex-row items-center mr-4">
                     <Link href={repository.web_url}>
                         <Ionicons name="link" size={16} color="black" />
-                        <Text className="ml-2 text-lg font-bold text-gray-400">{repository.web_url}</Text>
+                        <Text className="ml-2 text-lg font-bold text-light dark:text-primaryDark">{repository.web_url}</Text>
                     </Link>
 
                 </View> */}
@@ -74,11 +74,11 @@ const Repositories = () => {
                 <View className='flex-row'>
                     <View className="flex-row items-center mr-4">
                         <Ionicons name="star" size={16} color="black" />
-                        <Text className="ml-2 text-lg font-bold text-gray-400">{repository.star_count || 0} stars</Text>
+                        <Text className="ml-2 text-lg font-bold text-light dark:text-primaryDark">{repository.star_count || 0} stars</Text>
                     </View>
                     <View className="flex-row items-center mr-4">
                         <Ionicons name="git-network" size={16} color="black" />
-                        <Text className="ml-2 text-lg font-bold text-gray-400">{repository.forks_count} forks</Text>
+                        <Text className="ml-2 text-lg font-bold text-light dark:text-primaryDark">{repository.forks_count} forks</Text>
                     </View>
 
                 </View>

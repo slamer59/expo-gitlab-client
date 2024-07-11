@@ -21,7 +21,7 @@ export function GroupCard(
         <View className='flex-row items-center gap-3'>
           <Ionicons name="folder-outline" size={24} color="black" />
           <Text className='mt-2 text-lg font-bold'>{name}</Text>
-          <Text className='mt-1 text-gray-600'>{description}</Text>
+          <Text className='mt-1 text-light dark:text-primaryDark'>{description}</Text>
         </View>
       </CollapsibleTrigger>
       <CollapsibleContent className='w-full p-4' >
