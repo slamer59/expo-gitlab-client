@@ -17,13 +17,13 @@ export function NotificationCard(
           }
         </Text>
 
-        <Text className='text-gray-500'>{repository}</Text>
-        <Text className='mt-2 text-sm text-gray-500'>
+        <Text className='text-light dark:text-primaryDark'>{repository}</Text>
+        <Text className='mt-2 text-sm text-light dark:text-primaryDark'>
           {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </Text>
       </View>
       <Text className='mt-2 text-lg font-bold'>{title}</Text>
-      <Text className='mt-1 text-gray-600'>{description}</Text>
+      <Text className='mt-1 text-light dark:text-dark'>{description}</Text>
     </View>
   );
 }

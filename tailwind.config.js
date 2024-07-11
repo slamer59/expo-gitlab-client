@@ -8,6 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // https://color.adobe.com/fr/create/image
+        dark: "#080A40",
+        light: "#D9D4BA",
+        primary: "#59082E", // 240,86,199 #F056C7
+        primaryDark: "#A63333", // 80,230,217
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

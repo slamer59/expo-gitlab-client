@@ -121,7 +121,7 @@ export default function LoginScreen() {
             </View>
 
             <Text className="text-blue-500">Get Access Token</Text>
-            <Text className="mb-4 text-center text-gray-400">By signing in you accept our <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Terms of use</Text> and <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Privacy policy</Text>.</Text>
+            <Text className="mb-4 text-center text-light dark:text-primaryDark">By signing in you accept our <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Terms of use</Text> and <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Privacy policy</Text>.</Text>
             <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Trouble signing in?</Text>
 
 

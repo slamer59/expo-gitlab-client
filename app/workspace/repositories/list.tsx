@@ -12,7 +12,15 @@ const baseUrl = "https://gitlab.com/api/v4"
 export default function ModalScreen() {
 
   // Queries
-  const rootGroupId = "jokosun"
+  const rootGroupId = "thomas.pedot2"
+
+  const params1 = { path: { id: rootGroupId } }
+  const { data: projects, } = getData(
+    ['projects', params1.path],
+    "/api/v4/projects",
+    params1
+  );
+  console.log(projects)
   const params = { path: { id: rootGroupId } }
   const { data, isLoading, isError } = getData(
     ['projects', params.path],

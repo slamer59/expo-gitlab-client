@@ -2,15 +2,8 @@
 import { View } from '@/components/Themed';
 import { Filter } from "@/components/ui/filter-select";
 import React from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export function TopFilterList() {
-    const insets = useSafeAreaInsets();
-    const contentInsets = {
-        top: insets.top,
-        bottom: insets.bottom,
-        left: 12,
-        right: 12,
-    };
+
     const filters = [
         {
             label: "Inbox",
@@ -45,7 +38,7 @@ export function TopFilterList() {
     ]
 
     return (
-        <View className='flex flex-row gap-5'>
+        <View className='flex flex-row gap-5 bg-transparent '>
             {
                 filters.map((filter, index) => (
                     <Filter items={filter} />

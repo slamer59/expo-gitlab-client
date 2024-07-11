@@ -10,7 +10,7 @@ import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 
 
-import { Theme, ThemeProvider } from '@react-navigation/native';
+import { Theme } from '@react-navigation/native';
 import 'react-native-reanimated';
 
 const LIGHT_THEME: Theme = {
@@ -74,19 +74,18 @@ export default function RootLayout() {
 
   return (
 
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
 
-        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-        <Stack>
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-        <PortalHost />
+      <StatusBar className="bg-light dark:bg-primary" />
+      <Stack>
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      </Stack>
+      <PortalHost />
 
-      </QueryClientProvider>
-    </ThemeProvider>
+    </QueryClientProvider>
+
   );
 }

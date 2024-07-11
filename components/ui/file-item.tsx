@@ -23,7 +23,7 @@ const FileItem = ({ type, name, href }) => {
                         className="mr-4"
                     />
                 )}
-                <Text className={type === 'tree' ? '' : 'text-gray-400'}>{name}</Text>
+                <Text className={type === 'tree' ? '' : 'text-light dark:text-primaryDark'}>{name}</Text>
             </View>
         </Link>
     );
