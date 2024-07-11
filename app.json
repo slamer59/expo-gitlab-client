@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -20,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.thomas.pedot.expogitlabclient"
     },
     "web": {
       "bundler": "metro",
@@ -30,22 +33,18 @@
     "plugins": [
       [
         "expo-router"
-        // {
-        //   "asyncRoutes": {
-        //     "web": true,
-        //     "default": "development"
-        //   }
-        // }
       ]
-      // [
-      //   "expo-secure-store",
-      //   {
-      //     "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data.",
-      //   }
-      // ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "09fe094d-696d-4e2b-ba6f-ccbf301b1ac8"
+      }
     }
   }
 }
