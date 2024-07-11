@@ -4,7 +4,7 @@ import { TopFilterList } from '@/components/ui/top-filter-list';
 import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
 import { Link } from 'expo-router';
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 const GITHUB_AVATAR_URI =
   'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg';
 
@@ -29,7 +29,13 @@ export default function Screen() {
     }
   ];
   return (
-    <View className='flex items-center gap-5 m-4'>
+    <ScrollView className="flex-1 px-4 bg-light dark:bg-light"
+      contentContainerStyle={{
+        paddingVertical: 20,
+        alignItems: 'center',
+        gap: 20,
+      }}
+    >
       <TopFilterList />
       <Ionicons name="notifications-outline" size={24} color="black" />
       <Text className='text-2xl font-bold text-light dark:text-dark'>Customize notification</Text>
@@ -44,6 +50,6 @@ export default function Screen() {
           <NotificationCard {...notificationStatus} />
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }

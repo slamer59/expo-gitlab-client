@@ -17,7 +17,7 @@ const ButtonList = () => {
   ];
 
   return (
-    <ScrollView className="flex-1">
+    <ScrollView className="flex-1 bg-light dark:bg-light">
       <View className="p-4 m-4 bg-gray-200 rounded-lg">
         <Text className="mb-2 text-lg font-bold">Workspace</Text>
         {buttons.map((button, index) => (
