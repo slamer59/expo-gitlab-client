@@ -10,33 +10,51 @@ import {
 import React from 'react';
 
 interface FilterProps {
-    items: { label: string; values: { value: string; label: string }[]; placeholder: string };
+    options: {
+        label: string;
+        value: string;
+    }[];
+    placeholder: string;
+    selectedValue: string;
+    onValueChange: (value: string) => void;
 }
 
-export function Filter({ items }: FilterProps) {
-
+export function Filter({
+    options,
+    placeholder,
+    selectedValue,
+    onValueChange }: FilterProps) {
 
     return (
         <Select
-            className='bg-transparent'
-            defaultValue={{ value: items.values, label: items.label }}>
+            className='m-1 bg-transparent'
+            value={selectedValue}
+            onValueChange={onValueChange}
+        >
             <SelectTrigger
-                className='bg-transparent'
+                className='bg-white rounded-3xl'
             >
                 <SelectValue
-                    placeholder={items.placeholder}
+                    className='font-bold text-black'
+                    placeholder={placeholder}
                 />
             </SelectTrigger>
             <SelectContent
-
+                className='font-bold rounded-3xl'
             >
                 <SelectGroup
                 >
                     <SelectLabel
-                    >{items.label || "Items"}</SelectLabel>
-                    {items.values.map((item) => (
+                        className=''
+                    >
+                        {"Items"}
+                    </SelectLabel>
+                    {options.map((item) => (
                         <SelectItem
-                            key={item.value} label={item.label} value={item.value}>
+                            key={item.value}
+                            label={item.label}
+                            value={item.value}
+                        >
                             {item.label}
                         </SelectItem>
                     ))

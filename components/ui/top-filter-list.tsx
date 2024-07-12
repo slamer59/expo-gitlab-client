@@ -1,49 +1,52 @@
-
-import { View } from '@/components/Themed';
 import { Filter } from "@/components/ui/filter-select";
-import React from 'react';
-export function TopFilterList() {
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 
-    const filters = [
-        {
-            label: "Inbox",
-            values: [
-                { value: 'all', label: 'All' },
-                { value: 'unread', label: 'Unread' },
-                { value: 'starred', label: 'Starred' },
-                // Add more inbox options as needed
-            ],
-            placeholder: "Select an inbox..."
-        },
-        {
-            label: "Notifications",
-            values: [
-                { value: 'unread', label: 'Unread' },
-                { value: 'read', label: 'Read' },
-                { value: 'important', label: 'Important' },
-                // Add more notification options as needed
-            ],
-            placeholder: "Select a notification..."
-        },
-        {
-            label: "Repository",
-            values: [
-                { value: 'public', label: 'Public' },
-                { value: 'private', label: 'Private' },
-                { value: 'forked', label: 'Forked' },
-                // Add more repository options as needed
-            ],
-            placeholder: "Select a repository..."
-        }
-    ]
+export function TopFilterList({ filters }: {
+    filters: { label: string, options: { value: string, label: string }[], placeholder: string }[]
+}) {
+    const [selectedFilters, setSelectedFilters] = useState({});
+    // const [defaultFilters, setDefaultFilters] = useState(filters);
+
+    const clearFilters = () => {
+        setSelectedFilters({});
+    };
 
     return (
-        <View className='flex flex-row gap-5 bg-transparent '>
-            {
-                filters.map((filter, index) => (
-                    <Filter items={filter} />
-                ))
+        <>
+            <ScrollView
+                horizontal
+                className='flex flex-row bg-transparent max-h-14' >
+                <TouchableOpacity
+                    className="items-center justify-center" // m-1 bg-transparent bg-white rounded-3xl"
+                    onPress={clearFilters}>
+                    <Ionicons name="close-circle-outline" size={24} color="red" />
+                    {/* <Text
+                        className="font-bold"
+                    >Clear Filters
+                    </Text> */}
+                </TouchableOpacity>
+                {
+                    filters.map((filter, index) => (
+                        <Filter
+                            key={index}
+                            items={filter.items}
+                            label={filter.label}
+                            options={filter.options}
+                            placeholder={filter.placeholder}
+                            selectedValue={selectedFilters[filter.label]}
+                            onValueChange={(value) => setSelectedFilters({ ...selectedFilters, [filter.label]: value })}
+                        />
+                    ))
+                }
+            </ScrollView>
+
+            {selectedFilters.length > 0 && (
+                <Text>Selected Filters: {JSON.stringify(selectedFilters)}</Text>
+            )
             }
-        </View>
+
+        </>
     );
 }
