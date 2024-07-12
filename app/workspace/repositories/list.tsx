@@ -55,7 +55,7 @@ export default function ModalScreen() {
   const subrepositories = subprojects?.filter((repo: { archived: boolean }) => !repo.archived)
 
   return (
-    <ScrollView className="p-4 m-4 bg-white border border-gray-500 rounded-lg">
+    <ScrollView className="flex-1 p-4 px-4 m-4 bg-white border border-gray-500 rounded-lg">
       {subrepositories?.map((subrepo, index) =>
         <View key={index}>
           <View className='w-full p-4' >
@@ -85,6 +85,6 @@ export default function ModalScreen() {
           <RepositoryCard key={index} {...repo} />
         )}
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 }
