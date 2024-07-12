@@ -7,13 +7,13 @@ const ButtonList = () => {
   const navigation = useNavigation();
 
   const buttons = [
-    { icon: 'alert-circle-outline', text: 'Issues' },
-    { icon: 'git-merge', text: 'Merge Requests' },
-    { icon: 'chatbubbles-outline', text: 'Discussions' },
-    { icon: 'folder-outline', text: 'Projects' },
+    // { icon: 'alert-circle-outline', text: 'Issues' },
+    // { icon: 'git-merge', text: 'Merge Requests' },
+    // { icon: 'chatbubbles-outline', text: 'Discussions' },
+    // { icon: 'folder-outline', text: 'Projects' },
     { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
-    { icon: 'people-outline', text: 'Organizations' },
-    { icon: 'star-outline', text: 'Starred' },
+    // { icon: 'people-outline', text: 'Organizations' },
+    // { icon: 'star-outline', text: 'Starred' },
   ];
 
   return (
@@ -30,22 +30,6 @@ const ButtonList = () => {
             <Text className="ml-2 text-base">{button.text}</Text>
           </TouchableOpacity>
         ))}
-      </View>
-
-      <View className="p-4 m-4 bg-gray-200 rounded-lg shadow">
-        <Text className="mb-2 text-lg font-bold">Favorites</Text>
-        <TouchableOpacity className="flex-row items-center py-2">
-          <Ionicons name="add-circle-outline" size={24} color="black" />
-          <Text className="ml-2 text-base">New Favorite</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View className="p-4 m-4 bg-gray-200 rounded-lg">
-        <Text className="mb-2 text-lg font-bold">Shortcuts</Text>
-        <TouchableOpacity className="flex-row items-center py-2">
-          <Ionicons name="add-circle-outline" size={24} color="black" />
-          <Text className="ml-2 text-base">New Shortcut</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView >
   );

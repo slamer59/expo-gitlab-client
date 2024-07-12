@@ -2,9 +2,9 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 import Colors from '@/constants/Colors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import React from 'react';
-import { Pressable, useColorScheme, View } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -27,49 +27,49 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <View className='flex-row items-center'>
-              <Link href="/search" asChild>
-                <Pressable>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="search"
-                      size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  )}
-                </Pressable>
-              </Link>
-              <Link href="/add-project" asChild>
-                <Pressable>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="plus"
-                      size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  )}
-                </Pressable>
-              </Link>
-              <Link href="/options" asChild>
-                <Pressable>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="ellipsis-v"
-                      size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  )}
-                </Pressable>
-              </Link>
-            </View>
-          ),
+          // headerRight: () => (
+          //   <View className='flex-row items-center'>
+          //     <Link href="/search" asChild>
+          //       <Pressable>
+          //         {({ pressed }) => (
+          //           <FontAwesome
+          //             name="search"
+          //             size={25}
+          //             color={Colors[colorScheme ?? 'light'].text}
+          //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+          //           />
+          //         )}
+          //       </Pressable>
+          //     </Link>
+          //     <Link href="/add-project" asChild>
+          //       <Pressable>
+          //         {({ pressed }) => (
+          //           <FontAwesome
+          //             name="plus"
+          //             size={25}
+          //             color={Colors[colorScheme ?? 'light'].text}
+          //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+          //           />
+          //         )}
+          //       </Pressable>
+          //     </Link>
+          //     <Link href="/options" asChild>
+          //       <Pressable>
+          //         {({ pressed }) => (
+          //           <FontAwesome
+          //             name="ellipsis-v"
+          //             size={25}
+          //             color={Colors[colorScheme ?? 'light'].text}
+          //             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+          //           />
+          //         )}
+          //       </Pressable>
+          //     </Link>
+          //   </View>
+          // ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="notification"
         options={{
           title: 'Notification',
@@ -119,7 +119,7 @@ export default function TabLayout() {
           ),
 
         }}
-      />
+      /> */}
     </Tabs >
   );
 }
