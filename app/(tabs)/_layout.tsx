@@ -1,10 +1,8 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
-import Colors from '@/constants/Colors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { useColorScheme } from 'react-native';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -14,12 +12,10 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: useClientOnlyValue(false, true),
       }}>
       <Tabs.Screen

@@ -10,14 +10,14 @@ const ButtonList = () => {
     // { icon: 'alert-circle-outline', text: 'Issues' },
     // { icon: 'git-merge', text: 'Merge Requests' },
     // { icon: 'chatbubbles-outline', text: 'Discussions' },
-    // { icon: 'folder-outline', text: 'Projects' },
-    { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
+    { icon: 'folder-outline', text: 'Projects', screen: 'workspace/projects/list' },
+    // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
     // { icon: 'people-outline', text: 'Organizations' },
     // { icon: 'star-outline', text: 'Starred' },
   ];
 
   return (
-    <ScrollView className="flex-1 bg-light dark:bg-light">
+    <ScrollView className="flex-1 ">
       <View className="p-4 m-4 bg-gray-200 rounded-lg">
         <Text className="mb-2 text-lg font-bold">Workspace</Text>
         {buttons.map((button, index) => (

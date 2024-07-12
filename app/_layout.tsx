@@ -63,8 +63,7 @@ export default function RootLayout() {
   return (
 
     <QueryClientProvider client={queryClient}>
-
-      <StatusBar className="bg-light dark:bg-primary" />
+      <StatusBar />
       <Stack>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
