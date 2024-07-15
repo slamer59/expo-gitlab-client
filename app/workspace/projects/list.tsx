@@ -2,44 +2,51 @@ import { ProjectCard } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
 import { Link } from "expo-router";
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 
 
 
 export default function ProjectsListScreen() {
+    function updateParams(filterValues: any) {
+        // Update the params object based on the selected filter values
+        params.query = {
+            ...params.query,
+            ...filterValues,
+        };
+    }
 
     const filters = [
         {
             label: "Projects",
             options: [
-                { value: 'all', label: 'All Projects' },
+                { value: 'all', label: 'All Projects', filter: { owned: true, starred: true } },
                 // { value: 'archived', label: 'Archived' },
                 // { value: 'starred', label: 'Starred' },
-                { value: 'owned', label: 'Owned' },
+                { value: 'owned', label: 'Owned', filter: { owned: true } },
                 // { value: 'imported', label: 'Imported' },
-                { value: 'membership', label: 'Member of' },
+                { value: 'starred', label: 'Starred', filter: { starred: true } },
             ],
             placeholder: "Select a project..."
         },
-        {
-            label: "Visibility",
-            options: [
-                { value: 'private', label: 'Private' },
-                { value: 'internal', label: 'Internal' },
-                { value: 'public', label: 'Public' },
-            ],
-            placeholder: "Select a visibility..."
-        },
-        {
-            label: "Repository",
-            options: [
-                { value: 'public', label: 'Public' },
-                { value: 'private', label: 'Private' },
-                { value: 'forked', label: 'Forked' },
-            ],
-            placeholder: "Select a repository..."
-        },
+        // {
+        //     label: "Visibility",
+        //     options: [
+        //         { value: 'private', label: 'Private' },
+        //         { value: 'internal', label: 'Internal' },
+        //         { value: 'public', label: 'Public' },
+        //     ],
+        //     placeholder: "Select a visibility..."
+        // },
+        // {
+        //     label: "Repository",
+        //     options: [
+        //         { value: 'public', label: 'Public' },
+        //         { value: 'private', label: 'Private' },
+        //         { value: 'forked', label: 'Forked' },
+        //     ],
+        //     placeholder: "Select a repository..."
+        // },
         // {
         //     label: "Features",
         //     options: [
@@ -79,10 +86,10 @@ export default function ProjectsListScreen() {
             label: "Sorted By",
             options: [
                 {
-                    value: "asc", label: "Ascending"
+                    value: "asc", label: "Ascending", filter: { sort: "asc" },
                 },
                 {
-                    value: "desc", label: "Descending"
+                    value: "desc", label: "Descending", filter: { sort: "desc" },
                 }
             ],
             placeholder: "Sort by"
@@ -91,17 +98,17 @@ export default function ProjectsListScreen() {
             label:
                 "Ordered By",
             options: [
-                { value: 'id', label: 'Id' },
-                { value: 'name', label: 'Name' },
-                { value: 'path', label: 'Path' },
-                { value: 'created_at', label: 'Created At' },
-                { value: 'updated_at', label: 'Updated At' },
-                { value: 'last_activity_at', label: 'Last activity' },
-                { value: 'similarity', label: 'Similarity' },
-                { value: 'storage_size', label: 'Storage Size' },
-                { value: 'repository_size', label: 'Repository Size' },
-                { value: 'wiki_size', label: 'Wiki Size' },
-                { value: 'packages_size', label: 'Packages Size' },
+                { value: 'id', label: 'Id', filter: { order_by: 'id' } },
+                { value: 'name', label: 'Name', filter: { order_by: 'name' } },
+                { value: 'path', label: 'Path', filter: { order_by: 'path' } },
+                { value: 'created_at', label: 'Created At', filter: { order_by: 'created_at' } },
+                { value: 'updated_at', label: 'Updated At', filter: { order_by: 'updated_at' } },
+                { value: 'last_activity_at', label: 'Last activity', filter: { order_by: 'last_activity_at' } },
+                { value: 'similarity', label: 'Similarity', filter: { order_by: 'similarity' } },
+                { value: 'storage_size', label: 'Storage Size', filter: { order_by: 'storage_size' } },
+                { value: 'repository_size', label: 'Repository Size', filter: { order_by: 'repository_size' } },
+                { value: 'wiki_size', label: 'Wiki Size', filter: { order_by: 'wiki_size' } },
+                { value: 'packages_size', label: 'Packages Size', filter: { order_by: 'packages_size' } },
             ],
             placeholder: "Ordered By..."
         }
@@ -109,34 +116,67 @@ export default function ProjectsListScreen() {
     // https://gitlab.com/api/v4/projects?order_by=created_at&sort=desc&owned=false&starred=false&imported=false&membership=false&with_issues_enabled=false&with_merge_requests_enabled=false&wiki_checksum_failed=false&repository_checksum_failed=false&include_hidden=false&page=1&per_page=20&simple=false&statistics=false&with_custom_attributes=false
     const params = {
         query: {
-            order_by: 'created_at',
-            sort: 'desc',
-            owned: false,
-            starred: false,
-            imported: false,
-            membership: false,
-            with_issues_enabled: false,
-            with_merge_requests_enabled: false,
-            wiki_checksum_failed: false,
-            repository_checksum_failed: false,
-            include_hidden: false,
-            page: 1,
-            per_page: 20,
-            simple: false,
-            statistics: false,
-            with_custom_attributes: false,
+            // order_by: 'created_at',
+            // sort: 'desc',
+            // owned: false,
+            // starred: false,
+            // imported: false,
+            // membership: false,
+            // with_issues_enabled: false,
+            // with_merge_requests_enabled: false,
+            // wiki_checksum_failed: false,
+            // repository_checksum_failed: false,
+            // include_hidden: false,
+            // page: 1,
+            // per_page: 20,
+            // simple: false,
+            // statistics: false,
+            // with_custom_attributes: false,
         }
     }
+
+
+    const [selectedFilters, setSelectedFilters] = useState({});
+
+
+    const clearFilters = () => {
+        setSelectedFilters({});
+    };
+
+
+    // loop over filters and check if selectedFilters has the same key and value
+    // if it does, then add it to the params
+    for (const key in selectedFilters) {
+        if (selectedFilters.hasOwnProperty(key)) {
+            const value = selectedFilters[key];
+            // where label == projects
+            for (const filter of filters) {
+                if (filter.label === key) {
+                    for (const option of filter.options) {
+                        if (option.value === value.value) {
+                            updateParams(option.filter)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // filter values
+
     const { data: projects } = getData(
         ['projects', params.query],
         `/api/v4/projects`,
         params
     )
-
+    console.log("params", params)
     return (
         <ScrollView className="flex-1 m-2">
             <TopFilterList
                 filters={filters}
+                setSelectedFilters={setSelectedFilters}
+                selectedFilters={selectedFilters}
+                clearFilters={clearFilters}
             />
 
             {projects?.map((project, index) => (
@@ -146,6 +186,7 @@ export default function ProjectsListScreen() {
                         params: {
                             projectId: project.id,
                             path: encodeURIComponent(project.path_with_namespace)
+                            // Replace with the actual project ID
                         },
                     }}>
                     <ProjectCard

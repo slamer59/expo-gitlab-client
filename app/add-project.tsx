@@ -7,7 +7,7 @@ export default function ModalScreen() {
   return (
     <View className="items-center justify-center flex-1">
       <Text className="text-2xl font-bold">Modal</Text>
-      <View className="w-4/5 h-px my-6 bg-gray-300 dark:bg-gray-700" lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      <View className="w-4/5 h-px my-6 bg-gray-300 dark:bg-gray-700" />
       <EditScreenInfo path="app/modal.tsx" />
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}

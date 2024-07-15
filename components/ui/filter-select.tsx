@@ -49,16 +49,15 @@ export function Filter({
                     >
                         {"Items"}
                     </SelectLabel>
-                    {options.map((item) => (
+                    {Object.keys(options).map((key, index) => (
                         <SelectItem
-                            key={item.value}
-                            label={item.label}
-                            value={item.value}
+                            key={index}
+                            label={options[key].label}
+                            value={options[key].value}
                         >
-                            {item.label}
+                            {options[key].label}
                         </SelectItem>
-                    ))
-                    }
+                    ))}
                 </SelectGroup>
             </SelectContent>
         </Select >

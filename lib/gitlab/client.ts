@@ -21,7 +21,6 @@ export const getData = <T>(
 };
 
 export const postData = <T>(
-    keys: readonly unknown[],
     endpoint: string,
     body?: Record<string, any>
 ) => {
@@ -31,7 +30,6 @@ export const postData = <T>(
 };
 
 export const putData = <T>(
-    keys: readonly unknown[],
     endpoint: string,
     body?: Record<string, any>
 ) => {
@@ -41,7 +39,6 @@ export const putData = <T>(
 };
 
 export const deleteData = <T>(
-    keys: readonly unknown[],
     endpoint: string,
     params?: Record<string, any>
 ) => {
