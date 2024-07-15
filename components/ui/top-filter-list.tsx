@@ -1,17 +1,10 @@
 import { Filter } from "@/components/ui/filter-select";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 
-export function TopFilterList({ filters }: {
+export function TopFilterList({ filters, selectedFilters, setSelectedFilters, clearFilters }: {
     filters: { label: string, options: { value: string, label: string }[], placeholder: string }[]
 }) {
-    const [selectedFilters, setSelectedFilters] = useState({});
-    // const [defaultFilters, setDefaultFilters] = useState(filters);
-
-    const clearFilters = () => {
-        setSelectedFilters({});
-    };
 
     return (
         <>
