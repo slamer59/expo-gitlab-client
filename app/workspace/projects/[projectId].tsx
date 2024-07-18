@@ -9,7 +9,7 @@ const baseUrl = "https://gitlab.com/api/v4"
 
 const ProjectDetailsScreen = () => {
 
-    const { id: projectId } = useLocalSearchParams();
+    const { projectId } = useLocalSearchParams();
 
     const params = {
         path: {

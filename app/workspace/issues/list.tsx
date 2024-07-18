@@ -1,6 +1,7 @@
 import { IssueCard } from '@/components/ui/issue-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
+import { Link } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -18,121 +19,63 @@ export default function IssuesListScreen() {
         {
             label: "Issues",
             options: [
-                { value: 'all', label: 'All Issues', filter: { owned: true, starred: true } },
-                // { value: 'archived', label: 'Archived' },
-                // { value: 'starred', label: 'Starred' },
-                { value: 'owned', label: 'Owned', filter: { owned: true } },
-                // { value: 'imported', label: 'Imported' },
-                { value: 'starred', label: 'Starred', filter: { starred: true } },
+                { value: 'all', label: 'All Issues', filter: { all: 1 } },
+                { value: "opened", label: "Opened", filter: { state: "opened" } },
+                { value: "closed", label: "Closed", filter: { state: "closed" } },
             ],
-            placeholder: "Select an issue...",
-        },
-        // {
-        //     label: "Visibility",
-        //     options: [
-        //         { value: 'private', label: 'Private' },
-        //         { value: 'internal', label: 'Internal' },
-        //         { value: 'public', label: 'Public' },
-        //     ],
-        //     placeholder: "Select a visibility..."
-        // },
-        // {
-        //     label: "Repository",
-        //     options: [
-        //         { value: 'public', label: 'Public' },
-        //         { value: 'private', label: 'Private' },
-        //         { value: 'forked', label: 'Forked' },
-        //     ],
-        //     placeholder: "Select a repository..."
-        // },
-        // {
-        //     label: "Features",
-        //     options: [
-        //         { value: 'with_issues_enabled', label: 'With Issues' },
-        //         { value: 'with_merge_requests_enabled', label: 'With Merge Requests' },
-        //     ],
-        //     placeholder: "Select a feature..."
-        // },
-        // {
-        //     label: "Updated After",
-        //     options: [
-        //         { value: 'last_week', label: 'Last Week' },
-        //         { value: 'last_month', label: 'Last Month' },
-        //         { value: 'last_year', label: 'Last Year' },
-        //     ],
-        //     placeholder: "Time period."
-        // },
-        // {
-        //     label: "Programming Language",
-        //     options: [
-        //         { value: 'javascript', label: 'JavaScript' },
-        //         { value: 'python', label: 'Python' },
-        //         { value: 'java', label: 'Java' },
-        //     ],
-        //     placeholder: "Select a programming language..."
-        // },
-        // {
-        //     label: "Topic",
-        //     options: [
-        //         { value: 'machine-learning', label: 'Machine Learning' },
-        //         { value: 'web-development', label: 'Web Development' },
-        //         { value: 'mobile-development', label: 'Mobile Development' },
-        //     ],
-        //     placeholder: "Select a topic..."
-        // },
-        {
-            label: "Sorted By",
-            options: [
-                {
-                    value: "asc", label: "Ascending", filter: { sort: "asc" },
-                },
-                {
-                    value: "desc", label: "Descending", filter: { sort: "desc" },
-                }
-            ],
-            placeholder: "Sort by"
+            placeholder: "State"
         },
         {
             label:
-                "Ordered By",
+                "Scope",
             options: [
-                { value: 'id', label: 'Id', filter: { order_by: 'id' } },
-                { value: 'name', label: 'Name', filter: { order_by: 'name' } },
-                { value: 'path', label: 'Path', filter: { order_by: 'path' } },
-                { value: 'created_at', label: 'Created At', filter: { order_by: 'created_at' } },
-                { value: 'updated_at', label: 'Updated At', filter: { order_by: 'updated_at' } },
-                { value: 'last_activity_at', label: 'Last activity', filter: { order_by: 'last_activity_at' } },
-                { value: 'similarity', label: 'Similarity', filter: { order_by: 'similarity' } },
-                { value: 'storage_size', label: 'Storage Size', filter: { order_by: 'storage_size' } },
-                { value: 'repository_size', label: 'Repository Size', filter: { order_by: 'repository_size' } },
-                { value: 'wiki_size', label: 'Wiki Size', filter: { order_by: 'wiki_size' } },
-                { value: 'packages_size', label: 'Packages Size', filter: { order_by: 'packages_size' } },
+                { value: "created_by_me", label: "Created By Me", filter: { created_by_me: true } },
+                { value: "assigned_to_me", label: "Assigned To Me", filter: { assigned_to_me: true } },
+                { value: "all", label: "All", filter: { all: true } },
             ],
-            placeholder: "Ordered By..."
-        }
+            placeholder: "Scope"
+        },
+        {
+            label: "Type",
+            options: [
+                { value: "incident", label: "Incident", filter: { issue_type: "incident" } },
+                { value: "issue", label: "Issue", filter: { issue_type: "issue" } },
+                { value: "test_case", label: "Test Case", filter: { issue_type: "test_case" } },
+            ],
+            placeholder: "Type",
+        },
+        {
+            label: "Ordered By",
+            options: [
+                {
+                    value: "create_at",
+                    label: "Created At",
+                    filter: { order_by: "created_at" }
+                },
+                { value: "due_date", label: "Due Date", filter: { order_by: "due_date" } },
+                { value: "label_priority", label: "Label Priority", filter: { order_by: "label_priority" } },
+                { value: "milestone_due", label: "Milestone Due", filter: { order_by: "milestone_due" } },
+                { value: "popularity", label: "Popularity", filter: { order_by: "popularity" } },
+                { value: "priority", label: "Priority", filter: { order_by: "priority" } },
+                { value: "relative_position", label: "Relative Position", filter: { order_by: "relative_position" } },
+                { value: "title", label: "Title", filter: { order_by: "title" } },
+                { value: "updated_at", label: "Updated At", filter: { order_by: "updated_at" } },
+                { value: "weight", label: "Weight", filter: { order_by: "weight" } },
+            ],
+            placeholder: "Ordered By"
+        },
+
     ];
     const params = {
         query: {
-            // order_by: 'created_at',
-            // sort: 'desc',
-            owned: false,
-            created_by_me: true,
-            // starred: false,
-            // imported: false,
-            // membership: false,
-            // with_issues_enabled: false,
-            // with_merge_requests_enabled: false,
-            // wiki_checksum_failed: false,
-            // repository_checksum_failed: false,
-            // include_hidden: false,
-            // page: 1,
-            // per_page: 20,
-            // simple: false,
-            // statistics: false,
-            // with_custom_attributes: false,
+            // scope: "all",
+            // state: "opened",
+            // order_by: "created_at",
+            created_by_me: false,
+            // assigned_to_me: false,
+            // issue_type: "issue",
         }
     }
-
 
     const [selectedFilters, setSelectedFilters] = useState({});
 
@@ -167,8 +110,8 @@ export default function IssuesListScreen() {
         `/api/v4/issues`,
         params
     )
-    console.log(issues)
-    console.log("params", params)
+    // console.log(issues)
+    console.log("params", params.query)
     return (
         <ScrollView className="flex-1 m-2">
             <TopFilterList
@@ -177,22 +120,25 @@ export default function IssuesListScreen() {
                 selectedFilters={selectedFilters}
                 clearFilters={clearFilters}
             />
-
             {issues?.map((issue, index) => (
-                < IssueCard
+                <Link
                     key={index}
-                    issue={issue}
-                />
-            ))}
-            {/*     {/*<Link
                     href={{
-                        pathname: '/workspace/issues/[projectId]',
+                        pathname: '/workspace/projects/[projectId]/issues/[issue_iid]',
                         params: {
-                            projectId: project.id,
-                            path: encodeURIComponent(project.path_with_namespace)
+                            projectId: issue.project_id,
+                            issue_iid: issue.iid,
+
                             // Replace with the actual project ID
-                        },
-                    }}>*/}
+                        }
+                    }}
+                >
+                    <IssueCard
+                        issue={issue}
+                    />
+                </Link>
+            ))}
+
 
         </ScrollView >
     );
