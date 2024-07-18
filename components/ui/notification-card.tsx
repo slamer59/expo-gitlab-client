@@ -1,5 +1,6 @@
 import { View } from '@/components/Themed';
 import { Text } from '@/components/ui/text';
+import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
 import * as React from 'react';
 
@@ -19,7 +20,7 @@ export function NotificationCard(
 
         <Text className='text-light dark:text-primaryDark'>{repository}</Text>
         <Text className='mt-2 text-sm text-light dark:text-primaryDark'>
-          {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          {formatDate(date)}
         </Text>
       </View>
       <Text className='mt-2 text-lg font-bold'>{title}</Text>

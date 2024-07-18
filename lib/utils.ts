@@ -21,3 +21,9 @@ export async function resetToken() {
   await SecureStore.deleteItemAsync('gitlab-token')
   console.log('gitlab-token has been removed');
 };
+
+
+export function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}

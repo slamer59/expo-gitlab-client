@@ -1,6 +1,7 @@
 
 
 
+import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 
@@ -47,7 +48,7 @@ export function ProjectCard({ name, name_with_namespace, last_activity_at, star_
         <View className="flex-row items-center m-1 space-x-2">
           <Text className="justify-center m-1 text-xs text-gray-500">
             <Ionicons name="star" size={12} color="gold" /> {star_count} stars - { }
-            {new Date(last_activity_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {formatDate(last_activity_at)}
           </Text>
 
         </View>
