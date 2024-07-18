@@ -7,8 +7,8 @@ const ButtonList = () => {
   const navigation = useNavigation();
 
   const buttons = [
-    // { icon: 'alert-circle-outline', text: 'Issues' },
-    // { icon: 'git-merge', text: 'Merge Requests' },
+    { icon: 'alert-circle-outline', text: 'Issues', screen: 'workspace/issues/list' },
+    // { icon: 'git-merge', text: 'Merge Requests' screen: 'workspace/merge-requests/list' },
     // { icon: 'chatbubbles-outline', text: 'Discussions' },
     { icon: 'folder-outline', text: 'Projects', screen: 'workspace/projects/list' },
     // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
