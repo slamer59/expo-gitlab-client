@@ -2,12 +2,12 @@
 import { Text } from "@/components/ui/text";
 import { getData } from '@/lib/gitlab/client';
 import { formatDate } from "@/lib/utils";
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { Image } from "expo-image";
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
-
+import { ScrollView, View } from 'react-native';
 enum IssueScreenPopupActions {
     edit,
     reopen,
@@ -56,54 +56,104 @@ export default function ProjectIssueScreen() {
         `/api/v4/projects/{id}/issues/{issue_iid}`,
         params
     )
-    console.log(issue?.id)
+    console.log(issue)
     return (
-        <View className='flex-1 bg-white'>
-            <StatusBar style="auto" />
-            <View className='flex-row items-center justify-between px-4 py-3 border-b border-gray-300'>
-                <Text className='text-lg font-bold'>#{issue?.id}</Text>
-                <TouchableOpacity onPress={() => handlePopupSelected(IssueScreenPopupActions.edit)}>
-                    <MaterialCommunityIcons name="dots-vertical" size={24} color="black" />
-                </TouchableOpacity>
-            </View>
-            <View className='p-4'>
-                {/* <Text className='mb-2 text-xl font-bold'>{issue?.title}</Text> */}
-                {/* <Text className='mb-2 text-lg font-bold text-green-600'>
-                    {issue?.state === 'open' ? 'Open' : 'Closed'}
-                </Text> */}
-                {issue?.state === 'opened' ? (
-                    <Ionicons name="checkmark-circle" size={24} color="green" />
-                ) : issue?.state === 'closed' ? (
-                    <Ionicons name="close-circle" size={24} color="red" />
-                ) : issue?.state === 'locked' ? (
-                    <Ionicons name="lock-closed" size={24} color="orange" />
-                ) : issue?.state === 'merged' ? (
-                    <Ionicons name="git-branch" size={24} color="purple" />
-                ) : (
-                    <Ionicons name="help-circle" size={24} color="blue" />
-                )}
-                <Text className='mb-4 text-sm text-gray-600'>
-                    {issue?.author.name} opened this issue {formatDate(issue?.created_at)}, updated {formatDate(issue?.updated_at)}
-                </Text>
-                {issue?.description && <Text className='mb-4 text-base'>{issue?.description}</Text>}
-                {issue?.milestone?.description && <Text className='mb-4 text-base'>{issue?.milestone?.description}</Text>}
+        <ScrollView className='flex-1 bg-white'>
+            {issue && (
+                <>
+                    <StatusBar style="auto" />
+                    <View className='flex-row items-center justify-between px-4 py-3 border-b border-gray-300'>
+                        <Text className='text-lg font-bold'>{issue.title}</Text>
+                    </View>
+                    <View className='p-4'>
+                        <View className='flex-row'>
+                            {issue.state === 'opened' ? (
+                                <Ionicons name="checkmark-circle" size={24} color="green" />
+                            ) : issue?.state === 'closed' ? (
+                                <Ionicons name="close-circle" size={24} color="red" />
+                            ) : issue?.state === 'locked' ? (
+                                <Ionicons name="lock-closed" size={24} color="orange" />
+                            ) : issue?.state === 'merged' ? (
+                                <Ionicons name="git-branch" size={24} color="purple" />
+                            ) : (
+                                <Ionicons name="help-circle" size={24} color="blue" />
+                            )}
+                            <Text className='text-sm text-gray-600'>
+                                {issue.author.name} opened this issue {formatDate(issue.created_at)}, updated {formatDate(issue.updated_at)}
+                            </Text>
+                        </View>
+                        <Text className='text-base'>{issue.description}</Text>
+                        <Text className='p-4 mb-4 text-base bg-gray-100 border border-gray-300 rounded'>{issue.milestone.description}</Text>
 
-                {issue?.labels.length > 0 && (
-                    <View className='mb-4'>
-                        <Text className='mb-2 text-lg font-bold'>Labels</Text>
-                        <View className='flex-row flex-wrap'>
-                            {issue?.labels.map((label) => (
-                                <Text
-                                    key={label}
-                                    className='px-2 py-1 mb-2 mr-2 text-sm font-bold text-gray-700 bg-gray-200 rounded-md'
-                                >
-                                    {label}
-                                </Text>
-                            ))}
+                    </View>
+
+                    <View className="flex-1 p-4 text-gray-300 ">
+                        <View className="p-4 mb-4 space-y-4 bg-gray-100 border border-gray-300 rounded">
+                            <View>
+                                <Text className="text-lg font-semibold">Assignees</Text>
+                                <View>
+                                    {issue?.assignees.length > 0 ? (
+                                        issue?.assignees.map((assignee) => (
+                                            <View key={assignee.id} className="flex-row items-center space-x-2">
+                                                <Image
+                                                    source={{ uri: assignee.avatar_url }}
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                                <Text className="text-base">{assignee.name}</Text>
+                                            </View>
+                                        ))
+                                    ) : (
+                                        <Text>No one assigned</Text>
+                                    )}
+                                </View>
+                            </View>
+                            <View>
+                                <Text className="text-lg font-semibold">Labels</Text>
+                                <View className="flex-row space-x-2">
+                                    {issue.labels.map((label) => (
+                                        <Text
+                                            key={label}
+                                            className='px-2 py-1 mb-2 mr-2 text-sm font-bold text-gray-700 bg-gray-200 rounded-md'
+                                        >
+                                            {label}
+                                        </Text>
+                                    ))}
+                                </View>
+                            </View>
+                            {/* <View>
+                                <Text className="text-lg font-semibold">Projects</Text>
+                                <Text>None yet</Text>
+                            </View>
+                            <View>
+                                <Text className="text-lg font-semibold">Milestone</Text>
+                                <Text>No milestone</Text>
+                            </View>
+                            <View>
+                                <Text className="text-lg font-semibold">Development</Text>
+                                <Text>No branches or pull requests</Text>
+                            </View>
+                            <View>
+                                <Text className="text-lg font-semibold">Notifications</Text>
+                                <View className="flex-row items-center space-x-2">
+                                    <TouchableOpacity className="flex-row items-center px-4 py-2 space-x-2 text-gray-300 bg-gray-500 rounded">
+                                        <FontAwesome name="bell" size={16} color="white" />
+                                        <Text>Subscribe</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text className="mt-2 text-sm">You're not receiving notifications from this thread.</Text>
+                            </View> */}
+
+                            {/* <View>
+                                <Text className="text-lg font-semibold">2 participants</Text>
+                                <View className="flex-row space-x-2">
+                                    <Image source={{ uri: 'https://placehold.co/32x32' }} alt="Participant 1" className="rounded-full" />
+                                    <Image source={{ uri: 'https://placehold.co/32x32' }} alt="Participant 2" className="rounded-full" />
+                                </View>
+                            </View> */}
                         </View>
                     </View>
-                )}
-            </View>
-        </View>
+                </>
+            )}
+        </ScrollView>
     );
 }

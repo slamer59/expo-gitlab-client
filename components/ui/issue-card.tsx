@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 export function IssueCard({ issue }) {
-  console.log(issue);
+  // console.log(issue);
   return (
     <View className="flex-row items-start p-4 space-x-4">
       <View className="flex-1">
