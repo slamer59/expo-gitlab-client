@@ -1,7 +1,7 @@
 import { ProjectCard } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -172,6 +172,11 @@ export default function ProjectsListScreen() {
     console.log("params", params)
     return (
         <ScrollView className="flex-1 m-2">
+            <Stack.Screen
+                options={{
+                    title: "Projects"
+                }}
+            />
             <TopFilterList
                 filters={filters}
                 setSelectedFilters={setSelectedFilters}

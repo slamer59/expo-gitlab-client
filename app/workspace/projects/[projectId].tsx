@@ -1,7 +1,7 @@
 import { Text } from "@/components/ui/text";
 import { getData } from "@/lib/gitlab/client";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
@@ -27,8 +27,7 @@ const ProjectDetailsScreen = () => {
         "/api/v4/projects/{id}",
         params
     );
-    console.log("repository")
-    console.log(repository)
+
     const navigation = useNavigation();
     // KPI => _links
     const buttons = [
@@ -50,9 +49,14 @@ const ProjectDetailsScreen = () => {
     if (isError) {
         return <Text>Error fetching data</Text>;
     }
-
+    console.log(repository)
     return (
         <ScrollView className="flex-1">
+            <Stack.Screen
+                options={{
+                    title: repository.name_with_namespace
+                }}
+            />
             <View className="p-4 m-2">
                 <View className="flex-row items-center">
                     <Ionicons name="person-circle-outline" size={32} color="black" />
