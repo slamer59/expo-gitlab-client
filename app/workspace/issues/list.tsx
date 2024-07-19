@@ -1,10 +1,9 @@
 import { IssueCard } from '@/components/ui/issue-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
-import { Link } from "expo-router";
+import { Link, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
-
 
 export default function IssuesListScreen() {
     function updateParams(filterValues: any) {
@@ -114,6 +113,11 @@ export default function IssuesListScreen() {
     console.log("params", params.query)
     return (
         <ScrollView className="flex-1 m-2">
+            <Stack.Screen
+                options={{
+                    title: "Issues",
+                }}
+            />
             <TopFilterList
                 filters={filters}
                 setSelectedFilters={setSelectedFilters}
