@@ -2,7 +2,7 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 import IssueStatusIcon from '@/components/ui/issue-status-icon';
@@ -31,20 +31,26 @@ export default function IssueDetails() {
     )
 
 
-    const { data: notes, isLoadingNotes, isErrorNotes } = getData(
+    const { data: notes, isLoading: isLoadingNotes, isError: isErrorNotes } = getData(
         ['project_issue_notes', params.path],
         `/api/v4/projects/{id}/issues/{issue_iid}/notes`,
         params
     )
 
-    if (isLoading || isLoadingNotes) {
+    const { data: relatedMRs, isLoading: isLoadingMR, isError: isErrorMR } = getData(
+        ['project_issue_mr', params.path],
+        `/api/v4/projects/{id}/issues/{issue_iid}/related_merge_requests`,
+        params
+    )
+
+    if (isLoading || isLoadingNotes || isLoadingMR) {
         return <Text>Loading...</Text>;
     }
 
-    if (isError || isErrorNotes) {
+    if (isError || isErrorNotes || isErrorMR) {
         return <Text>Error fetching data</Text>;
     }
-    console.log(notes)
+    console.log("relatedMR", relatedMRs)
     return (<>
         <Stack.Screen
             options={{
@@ -116,15 +122,15 @@ export default function IssueDetails() {
                 <View className='flex-row items-center justify-between mb-4'>
                     <View className='flex-row items-center'>
                         <TouchableOpacity className='flex-row items-center mr-2'>
-                            <FontAwesome name="thumbs-up" size={20} color="gray" />
+                            <FontAwesome6 name="thumbs-up" size={20} color="gray" />
                             <Text className='ml-1 text-gray-500'>{issue.upvotes}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity className='flex-row items-center mr-2'>
-                            <FontAwesome name="thumbs-down" size={20} color="gray" />
+                            <FontAwesome6 name="thumbs-down" size={20} color="gray" />
                             <Text className='ml-1 text-gray-500'>{issue.downvotes}</Text>
                         </TouchableOpacity>
                         {/* <TouchableOpacity>
-                            <FontAwesome name="bookmark" size={20} color="gray" />
+                            <FontAwesome6 name="bookmark" size={20} color="gray" />
                         </TouchableOpacity> */}
                     </View>
                     {/* <Button title="Create merge request" color="#1E90FF" /> */}
@@ -132,26 +138,8 @@ export default function IssueDetails() {
                 <View className='mb-4'>
                     <Markdown>{issue.description}</Markdown>
                 </View>
-                <View className='mb-4'>
-                    <Text className='mb-2 text-lg font-bold'>Activity</Text>
-                    {notes.map((note, index) => (
-                        <View key={index} className='flex-row items-start mb-4'>
 
-                            <View className='flex-1'>
-                                <View className='flex-row items-center mb-1'>
-                                    <FontAwesome name="comment" size={20} color="gray" />
-                                    <Text className='ml-1 font-bold text-gray-500'>
-                                        {note.author.name}
-                                    </Text>
-                                    <Text className='ml-1 text-gray-500'>
 
-                                        at {formatDate(note.created_at)}</Text>
-                                </View>
-                                <Markdown>{note.body}</Markdown>
-                            </View>
-                        </View>
-                    ))}
-                </View>
                 {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
                     <Text className='mb-2 text-gray-500'>Drag your designs here or <Text className='text-blue-500'>click to upload</Text>.</Text>
                     <View className='flex-row items-center justify-between'>
@@ -167,18 +155,20 @@ export default function IssueDetails() {
                     </View>
                     <Text className='mt-2 text-gray-500'>Link issues together to show that they're related. <Text className='text-blue-500'>Learn more.</Text></Text>
                 </View> */}
-                {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
+                <View className='p-4 mb-4 border border-gray-300 border-dashed'>
                     <View className='flex-row items-center justify-between'>
-                        <Text className='text-gray-500'>Related merge requests</Text>
-                        <Text className='px-2 py-1 text-gray-700 bg-gray-200 rounded'>1</Text>
+                        <Text className='font-bold text-black'>Related merge requests</Text>
+                        <Text className='px-2 py-1 text-gray-700 bg-gray-200 rounded'>{relatedMRs.length}</Text>
                     </View>
-                    <Text className='mt-2 text-gray-500'>When this merge request is accepted, this issue will be closed automatically.</Text>
-                    <View className='flex-row items-center mt-2'>
-                        <FontAwesome name="code-branch" size={20} color="gray" className='mr-2' />
-                        <Text className='text-gray-500'>Draft: Resolve "next/head migration"</Text>
-                        <Text className='ml-auto text-gray-500'>#1290</Text>
-                    </View>
-                </View> */}
+                    {/* <Text className='mt-2 text-gray-500'>When this merge request is accepted, this issue will be closed automatically.</Text> */}
+                    {relatedMRs?.map((relatedMR, index) => (
+                        <View className='flex-row items-center mt-2'>
+                            <FontAwesome6 name="code-merge" size={20} color="gray" className='mr-2' />
+                            <Text className='text-gray-500'>{relatedMR.title}</Text>
+                            <Text className='ml-auto text-black'>{relatedMR.reference}</Text>
+                        </View>
+                    ))}
+                </View>
                 {/* <View>
                     <Text className='mb-2 text-lg font-bold'>Activity</Text>
                     <Picker className='px-2 py-1 mb-4 border border-gray-300 rounded'>
@@ -186,53 +176,74 @@ export default function IssueDetails() {
                     </Picker> 
                     <View className='mb-4'>
                         <View className='flex-row items-start mb-2'>
-                            <FontAwesome name="user-circle" size={20} color="gray" className='mr-2' />
+                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
                             <View>
                                 <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> added <Text className='px-2 py-1 text-sm font-semibold text-green-800 bg-green-200 rounded'>enhancement</Text> <Text className='px-2 py-1 text-sm font-semibold text-blue-800 bg-blue-200 rounded'>major</Text> 4 months ago</Text>
                             </View>
                         </View>
                         <View className='flex-row items-start mb-2'>
-                            <FontAwesome name="user-circle" size={20} color="gray" className='mr-2' />
+                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
                             <View>
                                 <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> created branch <Text className='text-blue-500'>176-next-head-migration</Text> to address this issue 4 months ago</Text>
                             </View>
                         </View>
                         <View className='flex-row items-start mb-2'>
-                            <FontAwesome name="user-circle" size={20} color="gray" className='mr-2' />
+                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
                             <View>
                                 <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> mentioned in merge request <Text className='text-blue-500'>#1290</Text> 4 months ago</Text>
                             </View>
                         </View>
                     </View>
                 </View> */}
+                <View className='mb-4'>
+                    <Text className='mb-2 text-lg font-bold'>Activity</Text>
+                    {notes?.map((note, index) => (
+                        <View key={index} className='flex-row items-start mb-4'>
+
+                            <View className='flex-1'>
+                                <View className='flex-row items-center mb-1'>
+                                    <FontAwesome6 name="comment" size={20} color="gray" />
+                                    <Text className='ml-1 font-bold text-gray-500'>
+                                        {note.author.name}
+                                    </Text>
+                                    <Text className='ml-1 text-gray-500'>
+
+                                        at {formatDate(note.created_at)}</Text>
+                                </View>
+                                <Markdown>{note.body}</Markdown>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+
                 {/* <View className='p-4 mb-4 border border-gray-300 rounded'>
                     <View className='flex-row items-center mb-2'>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="bold" size={20} color="gray" />
+                            <FontAwesome6 name="bold" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="italic" size={20} color="gray" />
+                            <FontAwesome6 name="italic" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="link" size={20} color="gray" />
+                            <FontAwesome6 name="link" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="quote-right" size={20} color="gray" />
+                            <FontAwesome6 name="quote-right" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="code" size={20} color="gray" />
+                            <FontAwesome6 name="code" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="list-ul" size={20} color="gray" />
+                            <FontAwesome6 name="list-ul" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="list-ol" size={20} color="gray" />
+                            <FontAwesome6 name="list-ol" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="image" size={20} color="gray" />
+                            <FontAwesome6 name="image" size={20} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity className='mr-2'>
-                            <FontAwesome name="smile" size={20} color="gray" />
+                            <FontAwesome6 name="smile" size={20} color="gray" />
                         </TouchableOpacity>
                     </View>
                     <Input
