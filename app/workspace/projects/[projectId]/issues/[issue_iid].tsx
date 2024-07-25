@@ -6,6 +6,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 import IssueStatusIcon from '@/components/ui/issue-status-icon';
+import LinksToIssueSection from '@/components/ui/link-issue-section';
 import { getData } from '@/lib/gitlab/client';
 import { formatDate } from '@/lib/utils';
 import Markdown from 'react-native-markdown-display';
@@ -43,14 +44,20 @@ export default function IssueDetails() {
         params
     )
 
-    if (isLoading || isLoadingNotes || isLoadingMR) {
+    const { data: linkedIssues, isLoading: isLoadingLinkedIssues, isError: isErrorLinkedIssues } = getData(
+        ['project_issue_linked_issues', params.path],
+        `/api/v4/projects/{id}/issues/{issue_iid}/links`,
+        params
+    )
+
+    if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedIssues) {
         return <Text>Loading...</Text>;
     }
 
-    if (isError || isErrorNotes || isErrorMR) {
+    if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
         return <Text>Error fetching data</Text>;
     }
-    console.log("relatedMR", relatedMRs)
+
     return (<>
         <Stack.Screen
             options={{
@@ -148,27 +155,35 @@ export default function IssueDetails() {
                     </View>
                     <Text className='mt-2 text-gray-500'>No child items are currently assigned. Use child items to break down this issue into smaller parts.</Text>
                 </View> */}
-                {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
-                    <View className='flex-row items-center justify-between'>
-                        <Text className='text-gray-500'>Linked items</Text>
-                        <Button title="Add" color="#BEBEBE" />
-                    </View>
-                    <Text className='mt-2 text-gray-500'>Link issues together to show that they're related. <Text className='text-blue-500'>Learn more.</Text></Text>
-                </View> */}
                 <View className='p-4 mb-4 border border-gray-300 border-dashed'>
                     <View className='flex-row items-center justify-between'>
-                        <Text className='font-bold text-black'>Related merge requests</Text>
-                        <Text className='px-2 py-1 text-gray-700 bg-gray-200 rounded'>{relatedMRs.length}</Text>
+                        <Text className='text-gray-500'>Linked items</Text>
+                        {/* <Button title="Add" color="#BEBEBE" /> */}
                     </View>
-                    {/* <Text className='mt-2 text-gray-500'>When this merge request is accepted, this issue will be closed automatically.</Text> */}
-                    {relatedMRs?.map((relatedMR, index) => (
-                        <View className='flex-row items-center mt-2'>
-                            <FontAwesome6 name="code-merge" size={20} color="gray" className='mr-2' />
-                            <Text className='text-gray-500'>{relatedMR.title}</Text>
-                            <Text className='ml-auto text-black'>{relatedMR.reference}</Text>
-                        </View>
-                    ))}
+
                 </View>
+
+                <LinksToIssueSection
+                    title="Linked Items"
+                    iconName="link"
+                    array={linkedIssues}
+                    empty={
+                        <Text className='mt-2 text-gray-500'>Link issues together to show that they're related. <Text className='text-blue-500'>Learn more.</Text></Text>
+                    }
+                />
+
+
+                <LinksToIssueSection
+                    title="Related merge requests"
+                    iconName="code-merge"
+                    array={relatedMRs}
+                    empty={
+                        <Text className='mt-2 text-gray-500'>Related merge requests will appear here.
+                            <Text className='text-blue-500'>Learn more.</Text>
+                        </Text>
+                    }
+                />
+
                 {/* <View>
                     <Text className='mb-2 text-lg font-bold'>Activity</Text>
                     <Picker className='px-2 py-1 mb-4 border border-gray-300 rounded'>
