@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build:android": "eas build --platform android",
+    "build:android-preview": "eas build --platform android --profile preview",
     "build:ios": "eas build --platform ios",
     "build:all": "eas build --platform all",
     "release": "semantic-release"
@@ -25,7 +26,9 @@
     "@react-navigation/native": "^6.0.2",
     "@rn-primitives/accordion": "^1.0.3",
     "@rn-primitives/avatar": "~1.0.3",
+    "@rn-primitives/checkbox": "^1.0.3",
     "@rn-primitives/collapsible": "^1.0.3",
+    "@rn-primitives/dropdown-menu": "^1.0.3",
     "@rn-primitives/portal": "~1.0.3",
     "@rn-primitives/progress": "~1.0.3",
     "@rn-primitives/select": "^1.0.3",
