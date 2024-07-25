@@ -8,6 +8,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import IssueStatusIcon from '@/components/ui/issue-status-icon';
 import { getData } from '@/lib/gitlab/client';
 import { formatDate } from '@/lib/utils';
+import Markdown from 'react-native-markdown-display';
 import { Text } from '~/components/ui/text';
 
 
@@ -29,19 +30,25 @@ export default function IssueDetails() {
         params
     )
 
-    if (isLoading) {
+
+    const { data: notes, isLoadingNotes, isErrorNotes } = getData(
+        ['project_issue_notes', params.path],
+        `/api/v4/projects/{id}/issues/{issue_iid}/notes`,
+        params
+    )
+
+    if (isLoading || isLoadingNotes) {
         return <Text>Loading...</Text>;
     }
 
-    if (isError) {
+    if (isError || isErrorNotes) {
         return <Text>Error fetching data</Text>;
     }
-    console.log(issue)
-
+    console.log(notes)
     return (<>
         <Stack.Screen
             options={{
-                title: `#${issue.iid}`
+                title: `${issue.references.full}`
             }}
         />
         <ScrollView className='min-h-screen p-4 bg-gray-100'>
@@ -121,6 +128,29 @@ export default function IssueDetails() {
                         </TouchableOpacity> */}
                     </View>
                     {/* <Button title="Create merge request" color="#1E90FF" /> */}
+                </View>
+                <View className='mb-4'>
+                    <Markdown>{issue.description}</Markdown>
+                </View>
+                <View className='mb-4'>
+                    <Text className='mb-2 text-lg font-bold'>Activity</Text>
+                    {notes.map((note, index) => (
+                        <View key={index} className='flex-row items-start mb-4'>
+
+                            <View className='flex-1'>
+                                <View className='flex-row items-center mb-1'>
+                                    <FontAwesome name="comment" size={20} color="gray" />
+                                    <Text className='ml-1 font-bold text-gray-500'>
+                                        {note.author.name}
+                                    </Text>
+                                    <Text className='ml-1 text-gray-500'>
+
+                                        at {formatDate(note.created_at)}</Text>
+                                </View>
+                                <Markdown>{note.body}</Markdown>
+                            </View>
+                        </View>
+                    ))}
                 </View>
                 {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
                     <Text className='mb-2 text-gray-500'>Drag your designs here or <Text className='text-blue-500'>click to upload</Text>.</Text>
