@@ -1,25 +1,14 @@
 import { formatDate } from '@/lib/utils';
-import { Ionicons } from '@expo/vector-icons';
+
 import React from 'react';
 import { Text, View } from 'react-native';
+import IssueStatusIcon from './issue-status-icon';
 
 export function IssueCard({ issue }) {
   // console.log(issue);
   return (
     <View className="flex-row items-start p-4 space-x-4">
-      <View className="flex-1">
-        {issue.state === 'opened' ? (
-          <Ionicons name="checkmark-circle" size={24} color="green" />
-        ) : issue.state === 'closed' ? (
-          <Ionicons name="close-circle" size={24} color="red" />
-        ) : issue.state === 'locked' ? (
-          <Ionicons name="lock-closed" size={24} color="orange" />
-        ) : issue.state === 'merged' ? (
-          <Ionicons name="git-branch" size={24} color="purple" />
-        ) : (
-          <Ionicons name="help-circle" size={24} color="blue" />
-        )}
-      </View>
+      {IssueStatusIcon(issue, false)}
       <View className="space-y-1 flex-2">
         <Text className="text-lg font-bold">{issue.title}</Text>
         <Text className="text-light dark:text-dark">{issue.references.full}</Text>
@@ -44,3 +33,4 @@ export function IssueCard({ issue }) {
     </View>
   );
 };
+
