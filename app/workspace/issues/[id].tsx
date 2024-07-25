@@ -5,7 +5,7 @@ import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
-const baseUrl = "https://gitlab.com/api/v4"
+
 
 const ProjectDetailsScreen = () => {
 
