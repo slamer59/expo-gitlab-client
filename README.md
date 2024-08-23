@@ -7,3 +7,12 @@ https://github.com/expo/fyi/blob/main/first-android-submission.md
 
 ### Automatic submission
 https://github.com/expo/fyi/blob/main/creating-google-service-account.md
+
+## Expo notification
+https://docs.expo.dev/push-notifications/push-notifications-setup/
+
+### Test Notification
+https://expo.dev/notifications
+
+### Firebase Functions notification
+https://github.com/firebase/functions-samples/tree/main/Python
