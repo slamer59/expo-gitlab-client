@@ -16,3 +16,5 @@ https://expo.dev/notifications
 
 ### Firebase Functions notification
 https://github.com/firebase/functions-samples/tree/main/Python
+## Notification (Firebase)
+[FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/)
