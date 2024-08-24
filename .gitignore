@@ -44,5 +44,4 @@ expo-app-429107-a245fd882077.json
 screens-examples/*
 firebase-functions/**/venv/*
 **/__pycache__/*
-firebase-functions/gitlab-events/functions/*
 google-services.json
