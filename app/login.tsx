@@ -3,6 +3,8 @@ import * as SecureStore from 'expo-secure-store';
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { getToken } from '@/lib/utils';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Linking, TextInput, View } from 'react-native';
@@ -30,11 +32,74 @@ export default function LoginScreen() {
     useEffect(() => {
         checkToken();
     }, []);
+    const mapDeviceToProjectEndpoint = "https://add-device-to-nofitication-et4qi4c73q-uc.a.run.app/"
+    const mapDeviceToProjectURL = `${mapDeviceToProjectEndpoint}/add_device_to_nofitication`
+    const getProjects = async () => {
+        const savedToken = await getToken();
+
+        if (savedToken) {
+            try {
+                const params = {
+                    membership: 'true',
+                };
+
+                const response = await fetch('https://gitlab.com/api/v4/projects' + '?' + new URLSearchParams(params), {
+                    method: 'GET',
+                    headers: {
+                        'PRIVATE-TOKEN': savedToken,
+                    },
+                })
+                    .then((response) => response.json())
+                    .then((projects) => {
+                        console.log('Gitlab API response successful');
+                        return projects;
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+
+        }
+    }
+    const expoToken = async function getToken() {
+        let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        if (status !== 'granted') {
+            alert('No notification permissions!');
+            return;
+        }
+        let token = await Notifications.getExpoPushTokenAsync();
+        console.log(token);
+    }
+    const mapDeviceToProject = async () => {
+        console.log('Mapping device to project');
+        const push_token = await expoToken();
+        const projects = await getProjects();
+        console.log(projects);
+        console.log(push_token);
+        fetch(mapDeviceToProjectURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                push_token: push_token,
+                projects: projects
+            })
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+    }
+
 
     const checkToken = async () => {
+        console.log('Checking token');
         const savedToken = await getToken();
         if (savedToken) {
             console.log('Token found, navigating to home');
+            await mapDeviceToProject();
             navigation.navigate("(tabs)", { screen: "home" });
         }
     };
