@@ -28,12 +28,13 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     data = req.get_json()
     event_type = data.get("object_kind")
 
+    logger.info("Event type: %s", event_type)
     # Handle the event based on its type
     event_message = handle_event(event_type, push_token, data)
-
-    response = send_push_message(message=event_message)
-    logger.info("Push message response: %s", response)
-    return https_fn.Response(response=response.json(), mimetype="application/json")
+    # Send the push notification to the device
+    response = send_push_message(message=event_message.model_dump(mode="json"))
+    # Return a success response
+    return https_fn.Response(response=response, mimetype="application/json")
 
 
 @https_fn.on_request()
@@ -52,7 +53,7 @@ def add_device_to_nofitication(req: https_fn.Request) -> https_fn.Response:
             return https_fn.Response(response=rep, mimetype="text/plain")
         else:
             # Return an error response if the push token is missing
-            logger.warn("Missin push token")
+            logger.warn("Missing push token")
             return https_fn.Response(
                 response="Missing push token", mimetype="text/plain", status=400
             )
