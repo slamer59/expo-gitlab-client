@@ -296,7 +296,6 @@ class ReleaseEventData(BaseModel):
 
 def push_event(data, push_token):
     logger.info("Push event trigged")
-
     message = {
         "title": f"New push to {data['project']['name']} by {data['user_name']}",
         "body": f"{data['total_commits_count']} new commits added.",
@@ -314,10 +313,11 @@ def push_event(data, push_token):
 
 
 def tag_push_event(data, push_token):
+    logger.info("Tag push event trigged")
     message = {
         "title": f"New tag push to {data['project']['name']} by {data['user_name']}",
         "body": f"Tag {data['ref']} pushed.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user_name"],
@@ -329,10 +329,11 @@ def tag_push_event(data, push_token):
 
 
 def issue_event(data, push_token):
+    logger.info("Issue event trigged")
     message = {
         "title": f"Issue {data['object_attributes']['title']} in {data['project']['name']}",
         "body": f"{data['user']['name']} {data['object_attributes']['action']} issue.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -345,10 +346,11 @@ def issue_event(data, push_token):
 
 
 def comment_event(data, push_token):
+    logger.info("Comment event trigged")
     message = {
         "title": f"New comment on {data['issue']['title']} in {data['project']['name']}",
         "body": f"{data['user']['name']} commented.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -360,10 +362,11 @@ def comment_event(data, push_token):
 
 
 def merge_request_event(data, push_token):
+    logger.info("Merge request event trigged")
     message = {
         "title": f"Merge request {data['object_attributes']['title']} in {data['project']['name']}",
         "body": f"{data['user']['name']} {data['object_attributes']['action']} merge request.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -376,10 +379,11 @@ def merge_request_event(data, push_token):
 
 
 def wiki_page_event(data, push_token):
+    logger.info("Wiki page event trigged")
     message = {
         "title": f"Wiki page {data['object_attributes']['title']} in {data['project']['name']}",
         "body": f"{data['user']['name']} {data['object_attributes']['action']} wiki page.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -392,10 +396,11 @@ def wiki_page_event(data, push_token):
 
 
 def pipeline_event(data, push_token):
+    logger.info("Pipeline event trigged")
     message = {
         "title": f"Pipeline {data['object_attributes']['status']} in {data['project']['name']}",
         "body": f"Pipeline {data['object_attributes']['status']} by {data['user']['name']}.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -407,10 +412,11 @@ def pipeline_event(data, push_token):
 
 
 def job_event(data, push_token):
+    logger.info("Job event trigged")
     message = {
         "title": f"Job {data['build_status']} in {data['project_name']}",
         "body": f"Job {data['build_status']} by {data['user']['name']}.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project_name"],
             "user_name": data["user"]["name"],
@@ -422,10 +428,11 @@ def job_event(data, push_token):
 
 
 def deployment_event(data, push_token):
+    logger.info("Deployment event trigged")
     message = {
         "title": "Deployment event",
         "body": "A deployment event occurred.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -437,10 +444,11 @@ def deployment_event(data, push_token):
 
 
 def feature_flag_event(data, push_token):
+    logger.info("Feature flag event trigged")
     message = {
         "title": "Feature flag event",
         "body": "A feature flag event occurred.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -448,13 +456,16 @@ def feature_flag_event(data, push_token):
             "action": data["object_attributes"]["action"],
         },
     }
+    event_message = EventMessage(**message)
+    return event_message
 
 
 def release_event(data, push_token):
+    logger.info("Release event trigged")
     message = {
         "title": "Release event",
         "body": "A release event occurred.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -462,13 +473,16 @@ def release_event(data, push_token):
             "action": data["object_attributes"]["action"],
         },
     }
+    event_message = EventMessage(**message)
+    return event_message
 
 
 def emoji_event(data, push_token):
+    logger.info("Emoji event trigged")
     message = {
         "title": "Emoji event",
         "body": "An emoji event occurred.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
@@ -481,10 +495,11 @@ def emoji_event(data, push_token):
 
 
 def access_token_event(data, push_token):
+    logger.info("Access token event trigged")
     message = {
         "title": "Access token event",
         "body": "An access token event occurred.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "user_name": data["user"]["name"],
             "access_token_name": data["object_attributes"]["name"],
