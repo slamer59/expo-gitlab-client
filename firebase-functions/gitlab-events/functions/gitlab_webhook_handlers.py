@@ -6,14 +6,14 @@ from tqdm import tqdm
 
 
 class EventMessage(BaseModel):
-    title: str
-    body: str
-    sound: str = "default"
-    to: str
+    title: Optional[str] = None
+    body: Optional[str] = None
+    sound: Optional[str] = "default"
+    to: Optional[str] = None
     ttl: int = 3600
     expiration: int = 3600
-    channel_id: str = "default"
-    priority: str = "high"
+    channel_id: Optional[str] = "default"
+    priority: Optional[str] = "high"
     data: dict = {}
     badge: Optional[str] = None
     category: Optional[str] = None
@@ -27,13 +27,13 @@ class EventMessageList(BaseModel):
 
 
 class Author(BaseModel):
-    name: str
+    name: Optional[str] = None
     email: Optional[str] = None
 
 
 class Commit(BaseModel):
     id: int | str
-    message: str
+    message: Optional[str] = None
     title: Optional[str] = None
     timestamp: Optional[str] = None
     url: Optional[str] = None
@@ -45,16 +45,16 @@ class Commit(BaseModel):
 
 class Project(BaseModel):
     id: int
-    name: str
-    description: str
-    web_url: str
+    name: Optional[str] = None
+    description: Optional[str] = None
+    web_url: Optional[str] = None
     avatar_url: Optional[str] = None
-    git_ssh_url: str
-    git_http_url: str
-    namespace: str
+    git_ssh_url: Optional[str] = None
+    git_http_url: Optional[str] = None
+    namespace: Optional[str] = None
     visibility_level: int
-    path_with_namespace: str
-    default_branch: str
+    path_with_namespace: Optional[str] = None
+    default_branch: Optional[str] = None
     homepage: Optional[str] = None
     url: Optional[str] = None
     ssh_url: Optional[str] = None
@@ -62,26 +62,26 @@ class Project(BaseModel):
 
 
 class Repository(BaseModel):
-    name: str
+    name: Optional[str] = None
     url: Optional[str] = None
-    description: str
-    homepage: str
+    description: Optional[str] = None
+    homepage: Optional[str] = None
     git_http_url: Optional[str] = None
     git_ssh_url: Optional[str] = None
     visibility_level: Optional[int] = None
 
 
 class PushEventData(BaseModel):
-    object_kind: str
-    before: str
-    after: str
-    ref: str
-    checkout_sha: str
+    object_kind: Optional[str] = None
+    before: Optional[str] = None
+    after: Optional[str] = None
+    ref: Optional[str] = None
+    checkout_sha: Optional[str] = None
     user_id: int
-    user_name: str
-    user_username: str
-    user_email: str
-    user_avatar: str
+    user_name: Optional[str] = None
+    user_username: Optional[str] = None
+    user_email: Optional[str] = None
+    user_avatar: Optional[str] = None
     project_id: int
     project: Project
     repository: Repository
@@ -90,14 +90,14 @@ class PushEventData(BaseModel):
 
 
 class TagEventData(BaseModel):
-    object_kind: str
-    before: str
-    after: str
-    ref: str
-    checkout_sha: str
+    object_kind: Optional[str] = None
+    before: Optional[str] = None
+    after: Optional[str] = None
+    ref: Optional[str] = None
+    checkout_sha: Optional[str] = None
     user_id: int
-    user_name: str
-    user_avatar: str
+    user_name: Optional[str] = None
+    user_avatar: Optional[str] = None
     project_id: int
     project: Project
     repository: Repository
@@ -106,26 +106,26 @@ class TagEventData(BaseModel):
 
 
 class DeploymentEventData(BaseModel):
-    object_kind: str
-    status: str
-    status_changed_at: str
+    object_kind: Optional[str] = None
+    status: Optional[str] = None
+    status_changed_at: Optional[str] = None
     deployment_id: int
     deployable_id: int
-    deployable_url: str
-    environment: str
-    environment_tier: str
-    environment_slug: str
-    environment_external_url: str
+    deployable_url: Optional[str] = None
+    environment: Optional[str] = None
+    environment_tier: Optional[str] = None
+    environment_slug: Optional[str] = None
+    environment_external_url: Optional[str] = None
     project: Project
-    short_sha: str
+    short_sha: Optional[str] = None
     user: Author
-    user_url: str
-    commit_url: str
-    commit_title: str
+    user_url: Optional[str] = None
+    commit_url: Optional[str] = None
+    commit_title: Optional[str] = None
 
 
 class IssueEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     user: Author
     project: Project
     repository: Repository
@@ -137,7 +137,7 @@ class IssueEventData(BaseModel):
 
 
 class MergeRequestEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     user: Author
     project: Project
     repository: Repository
@@ -149,27 +149,27 @@ class MergeRequestEventData(BaseModel):
 
 
 class Wiki(BaseModel):
-    web_url: str
-    git_ssh_url: str
-    git_http_url: str
-    path_with_namespace: str
-    default_branch: str
+    web_url: Optional[str] = None
+    git_ssh_url: Optional[str] = None
+    git_http_url: Optional[str] = None
+    path_with_namespace: Optional[str] = None
+    default_branch: Optional[str] = None
 
 
 class WikiPageObejctAttributes(BaseModel):
-    title: str
-    content: str
-    format: str
-    message: str
-    slug: str
-    url: str
-    action: str
-    diff_url: str
-    version_id: str
+    title: Optional[str] = None
+    content: Optional[str] = None
+    format: Optional[str] = None
+    message: Optional[str] = None
+    slug: Optional[str] = None
+    url: Optional[str] = None
+    action: Optional[str] = None
+    diff_url: Optional[str] = None
+    version_id: Optional[str] = None
 
 
 class WikiPageEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     user: Author
     project: Project
     wiki: Wiki
@@ -177,7 +177,7 @@ class WikiPageEventData(BaseModel):
 
 
 class PipelineEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     object_attributes: dict
     merge_request: Optional[dict] = None
     user: Author
@@ -188,15 +188,15 @@ class PipelineEventData(BaseModel):
 
 class User(BaseModel):
     id: int
-    name: str
-    email: str
-    avatar_url: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 
 class SourcePipelineProject(BaseModel):
     id: int
-    web_url: str
-    path_with_namespace: str
+    web_url: Optional[str] = None
+    path_with_namespace: Optional[str] = None
 
 
 class SourcePipeline(BaseModel):
@@ -207,34 +207,34 @@ class SourcePipeline(BaseModel):
 
 class Runner(BaseModel):
     active: bool
-    runner_type: str
+    runner_type: Optional[str] = None
     is_shared: bool
     id: int
-    description: str
+    description: Optional[str] = None
     tags: list[str]
 
 
 class JobEventData(BaseModel):
-    object_kind: str
-    ref: str
+    object_kind: Optional[str] = None
+    ref: Optional[str] = None
     tag: bool
-    before_sha: str
-    sha: str
+    before_sha: Optional[str] = None
+    sha: Optional[str] = None
     build_id: int
-    build_name: str
-    build_stage: str
-    build_status: str
-    build_created_at: str
+    build_name: Optional[str] = None
+    build_stage: Optional[str] = None
+    build_status: Optional[str] = None
+    build_created_at: Optional[str] = None
     build_started_at: Optional[str]
     build_finished_at: Optional[str]
     build_duration: Optional[int]
     build_queued_duration: float
     build_allow_failure: bool
-    build_failure_reason: str
+    build_failure_reason: Optional[str] = None
     retries_count: int
     pipeline_id: int
     project_id: int
-    project_name: str
+    project_name: Optional[str] = None
     user: User
     commit: Commit
     repository: Repository
@@ -245,61 +245,61 @@ class JobEventData(BaseModel):
 
 
 class GroupEventData(BaseModel):
-    created_at: str
-    updated_at: str
-    group_name: str
-    group_path: str
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    group_name: Optional[str] = None
+    group_path: Optional[str] = None
     group_id: int
-    user_username: str
-    user_name: str
-    user_email: str
+    user_username: Optional[str] = None
+    user_name: Optional[str] = None
+    user_email: Optional[str] = None
     user_id: int
-    group_access: str
+    group_access: Optional[str] = None
     group_plan: Optional[str]
-    expires_at: str
-    event_name: str
+    expires_at: Optional[str] = None
+    event_name: Optional[str] = None
 
 
 class SubgroupEventData(BaseModel):
-    created_at: str
-    updated_at: str
-    event_name: str
-    name: str
-    path: str
-    full_path: str
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    event_name: Optional[str] = None
+    name: Optional[str] = None
+    path: Optional[str] = None
+    full_path: Optional[str] = None
     group_id: int
     parent_group_id: int
-    parent_name: str
-    parent_path: str
-    parent_full_path: str
+    parent_name: Optional[str] = None
+    parent_path: Optional[str] = None
+    parent_full_path: Optional[str] = None
 
 
 class FeatureFlagAttributes(BaseModel):
     id: int
-    name: str
-    description: str
+    name: Optional[str] = None
+    description: Optional[str] = None
     active: bool
 
 
 class FeatureFlagEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     project: Project
     user: User
-    user_url: str
+    user_url: Optional[str] = None
     object_attributes: FeatureFlagAttributes
 
 
 class Link(BaseModel):
     id: int
     external: bool
-    link_type: str
-    name: str
-    url: str
+    link_type: Optional[str] = None
+    name: Optional[str] = None
+    url: Optional[str] = None
 
 
 class Source(BaseModel):
-    format: str
-    url: str
+    format: Optional[str] = None
+    url: Optional[str] = None
 
 
 class Assets(BaseModel):
@@ -310,31 +310,31 @@ class Assets(BaseModel):
 
 class ReleaseEventData(BaseModel):
     id: int
-    created_at: str
-    description: str
-    name: str
-    released_at: str
-    tag: str
+    created_at: Optional[str] = None
+    description: Optional[str] = None
+    name: Optional[str] = None
+    released_at: Optional[str] = None
+    tag: Optional[str] = None
     project: Project
-    url: str
-    action: str
+    url: Optional[str] = None
+    action: Optional[str] = None
     assets: Assets
     commit: Commit
     # Add other fields as needed
 
 
 class EmojiEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     user: User
     project: Project
-    emoji: str
-    name: str
-    url: str
-    created_at: str
+    emoji: Optional[str] = None
+    name: Optional[str] = None
+    url: Optional[str] = None
+    created_at: Optional[str] = None
 
 
 class AccessTokenEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     object_attributes: dict
     user: User
     project: Project
@@ -612,16 +612,16 @@ class MergeRequest(BaseModel):
 
 
 class CommentOjectAttributes(BaseModel):
-    note: str
+    note: Optional[str] = None
     author_id: int
-    created_at: str
-    url: str
+    created_at: Optional[str] = None
+    url: Optional[str] = None
     project_id: int
-    commit_id: str
+    commit_id: Optional[str] = None
     noteable_id: int
-    noteable_type: str
+    noteable_type: Optional[str] = None
     system: bool
-    updated_at: str
+    updated_at: Optional[str] = None
     noteable_iid: int
     author: User
     attachment: Optional[str]
@@ -631,7 +631,7 @@ class CommentOjectAttributes(BaseModel):
 
 
 class CommentEventData(BaseModel):
-    object_kind: str
+    object_kind: Optional[str] = None
     user: User
     project_id: int
     repository: Repository

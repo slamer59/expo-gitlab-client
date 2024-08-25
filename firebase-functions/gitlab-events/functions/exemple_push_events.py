@@ -73,6 +73,101 @@ payload = {
 }
 
 
+payload = {
+    "object_kind": "push",
+    "event_name": "push",
+    "before": "2edb935f6fa185faebb0ff1c1fd99b6f45d53f65",
+    "after": "8b1ea1fdecdd74f9f629d1ac219583997fbb3154",
+    "ref": "refs/heads/main",
+    "ref_protected": True,
+    "checkout_sha": "8b1ea1fdecdd74f9f629d1ac219583997fbb3154",
+    "message": None,
+    "user_id": 11041577,
+    "user_name": "Thomas PEDOT",
+    "user_username": "thomas.pedot1",
+    "user_email": "",
+    "user_avatar": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+    "project_id": 59853773,
+    "project": {
+        "id": 59853773,
+        "name": "expo-gitlab-client",
+        "description": None,
+        "web_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
+        "avatar_url": None,
+        "git_ssh_url": "git@gitlab.com:thomas.pedot1/expo-gitlab-client.git",
+        "git_http_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git",
+        "namespace": "Thomas PEDOT",
+        "visibility_level": 0,
+        "path_with_namespace": "thomas.pedot1/expo-gitlab-client",
+        "default_branch": "main",
+        "ci_config_path": "",
+        "homepage": "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
+        "url": "git@gitlab.com:thomas.pedot1/expo-gitlab-client.git",
+        "ssh_url": "git@gitlab.com:thomas.pedot1/expo-gitlab-client.git",
+        "http_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git",
+    },
+    "commits": [
+        {
+            "id": "8b1ea1fdecdd74f9f629d1ac219583997fbb3154",
+            "message": "feat: Batch messages\n",
+            "title": "feat: Batch messages",
+            "timestamp": "2024-08-25T21:31:00+02:00",
+            "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/commit/8b1ea1fdecdd74f9f629d1ac219583997fbb3154",
+            "author": {"name": "Thomas PEDOT", "email": "[REDACTED]"},
+            "added": [],
+            "modified": [
+                "firebase-functions/gitlab-events/functions/exemple_push_events.py",
+                "firebase-functions/gitlab-events/functions/main.py",
+                "firebase-functions/gitlab-events/functions/notifications.py",
+            ],
+            "removed": [],
+        },
+        {
+            "id": "96307c42fef8513bd8d89fff94ec09e1f239132b",
+            "message": "feat: multiple devices\n",
+            "title": "feat: multiple devices",
+            "timestamp": "2024-08-25T21:10:05+02:00",
+            "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/commit/96307c42fef8513bd8d89fff94ec09e1f239132b",
+            "author": {"name": "Thomas PEDOT", "email": "[REDACTED]"},
+            "added": [
+                "firebase-functions/gitlab-events/functions/exemple_create_webhook.py"
+            ],
+            "modified": [
+                "firebase-functions/gitlab-events/functions/exemple_push_events.py",
+                "firebase-functions/gitlab-events/functions/gitlab_webhook_handlers.py",
+                "firebase-functions/gitlab-events/functions/main.py",
+                "firebase-functions/gitlab-events/functions/notifications.py",
+                "firebase-functions/gitlab-events/functions/requirements.txt",
+            ],
+            "removed": [],
+        },
+        {
+            "id": "2edb935f6fa185faebb0ff1c1fd99b6f45d53f65",
+            "message": "fix: push_event tested locally\n",
+            "title": "fix: push_event tested locally",
+            "timestamp": "2024-08-25T18:12:46+02:00",
+            "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/commit/2edb935f6fa185faebb0ff1c1fd99b6f45d53f65",
+            "author": {"name": "Thomas PEDOT", "email": "[REDACTED]"},
+            "added": [],
+            "modified": [
+                "firebase-functions/gitlab-events/functions/gitlab_webhook_handlers.py"
+            ],
+            "removed": [],
+        },
+    ],
+    "total_commits_count": 3,
+    "push_options": {},
+    "repository": {
+        "name": "expo-gitlab-client",
+        "url": "git@gitlab.com:thomas.pedot1/expo-gitlab-client.git",
+        "description": None,
+        "homepage": "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
+        "git_http_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git",
+        "git_ssh_url": "git@gitlab.com:thomas.pedot1/expo-gitlab-client.git",
+        "visibility_level": 0,
+    },
+}
+
 headers = {"Content-Type": "application/json"}
 
 response = requests.post(url, data=json.dumps(payload), headers=headers)
