@@ -6,6 +6,10 @@ from tqdm import tqdm
 
 
 class EventMessage(BaseModel):
+    """
+    A class used to represent an event message.
+
+    """
     title: Optional[str] = None
     body: Optional[str] = None
     sound: Optional[str] = "default"
