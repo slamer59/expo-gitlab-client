@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
 from gitlab_webhook_handlers import handle_event
-from notifications import send_push_message
+from notifications import add_device_to_notification_group, send_push_message
 
 headers = {"PRIVATE-TOKEN": "***REMOVED***"}
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
