@@ -15,7 +15,7 @@ from requests.exceptions import ConnectionError, HTTPError
 def send_push_message(messages):
     logger.info("Sending push message")
     try:
-        response = PushClient().publish_multiple(
+        responses = PushClient().publish_multiple(
             [PushMessage(**msg) for msg in messages]
         )
 
@@ -33,7 +33,8 @@ def send_push_message(messages):
         # We got a response back, but we don't know whether it's an error yet.
         # This call raises errors so we can handle them with normal exception
         # flows.
-        response.validate_response()
+        for response in responses:
+            response.validate_response()
         logger.info("Push message sent successfully")
         return "Push message sent successfully"
 

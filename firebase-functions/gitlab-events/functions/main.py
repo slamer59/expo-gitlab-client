@@ -1,11 +1,18 @@
 import firebase_admin
+import requests
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
 from gitlab_webhook_handlers import get_project_id, handle_event
-from notifications import add_device_to_notification_group, send_push_message
+from notifications import (
+    add_device_to_notification_group,
+    list_devices_with_group_id,
+    send_push_message,
+)
 
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
 firebaseProjectId = "gitalchemy"
+private_token = "GITLAB_PAT_REMOVED"
+
 # Use a service account
 cred = credentials.Certificate(certificate)
 app = firebase_admin.initialize_app(
@@ -19,10 +26,39 @@ db = firestore.client(app)
 logger.info("Firestore client initialized")
 
 
-def get_push_tokens(project_id):
+def get_url_from_project_id(project_id):
+    # Get project info usin GitLab API
+    headers = {"PRIVATE-TOKEN": private_token, "Content-Type": "application/json"}
+    response = requests.get(
+        f"https://gitlab.com/api/v4/projects/{project_id}", headers=headers
+    )
+
+    if response.status_code == 200:
+        project_data = response.json()
+        return f"{project_data["web_url"]}.git"
+    else:
+        return None
+
+
+import base64
+
+
+def get_push_tokens(db, project_id):
     # Query the Firestore collection for the project ID
-    project_ref = db.collection("projects").document(project_id)
-    project_doc = project_ref.get()
+    notification_group_id = get_url_from_project_id(project_id)
+    # logger.info(f"Project URL: {project_url}")
+    # notification_group_id = base64.b64encode(project_url.encode()).decode()
+
+    return list_devices_with_group_id(db, notification_group_id)
+    # project_ref = db.collection("notificationsGroups").document(notification_group_id)
+    # # Get the project document from Firestore
+    # logger.info(f"Project ref: {project_ref}")
+    # project_doc = project_ref.get()
+    # logger.info(f"Project doc: {project_doc}")
+    # # Check if the project document exists
+    # if not project_doc.exists:
+    #     logger.error(f"Project document not found for ID: {notification_group_id}")
+    #     return []
 
 
 @https_fn.on_request()
@@ -31,8 +67,10 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     data = req.get_json()
     # Get list of push tokens
     project_id = get_project_id(data)
-    # push_tokens = get_push_tokens(project_id)
-    push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
+    logger.info(f"Project ID: {project_id}")
+    push_tokens = get_push_tokens(db, project_id)
+    logger.info(f"Push tokens: {push_tokens}")
+    # push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
 
     # Handle the event based on its type
     event_messages = handle_event(data, push_tokens)
