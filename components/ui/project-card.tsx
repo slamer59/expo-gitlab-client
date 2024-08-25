@@ -7,6 +7,7 @@ import { Image } from 'expo-image';
 
 import React from 'react';
 import { Text, View } from 'react-native';
+import { Skeleton } from './skeleton';
 // name={project.name}
 // last_activity_at={project.last_activity_at}
 // path={project.path}
@@ -23,8 +24,21 @@ function getRandomColor() {
   return color;
 }
 
-export function ProjectCard({ name, name_with_namespace, last_activity_at, star_count, avatar_url, owner
-}) {
+export function ProjectCardSkeleton() {
+
+  return (
+    <View className="flex-row items-center p-4 space-x-4">
+      <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
+      <View className="flex-1 space-y-2">
+        <Skeleton className="w-full h-4 mb-2" />
+        <Skeleton className="w-3/4 h-4" />
+      </View>
+    </View>
+  );
+}
+
+export function ProjectCard({ name, name_with_namespace, last_activity_at, star_count, avatar_url, owner }) {
+
   return (
     <View className="flex-row items-center p-4 space-x-4">
       <View className="flex items-center justify-center w-12 h-12 m-2 bg-pink-100 rounded">
