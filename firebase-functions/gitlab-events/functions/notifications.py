@@ -1,7 +1,5 @@
 import base64
-import os
 
-import requests
 from exponent_server_sdk import (
     DeviceNotRegisteredError,
     PushClient,
@@ -14,29 +12,15 @@ from google.cloud.firestore import ArrayUnion
 from requests.exceptions import ConnectionError, HTTPError
 
 
-def send_push_message(message):
+def send_push_message(messages):
     logger.info("Sending push message")
-    # m = {
-    #     "title": "title",
-    #     "body": "body",
-    #     "sound": "default",
-    #     "to": "ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]",
-    #     "ttl": 3600,
-    #     "expiration": 3600,
-    #     "channel_id": "default",
-    #     "priority": "high",
-    #     "data": {},
-    #     # "badge": "",
-    #     # "category": "default",
-    #     # "display_in_foreground": "",
-    #     # "subtitle": "",
-    #     # "mutable_content": "",
-    # }
     try:
-        response = PushClient().publish(PushMessage(**message))
+        response = PushClient().publish_multiple(
+            [PushMessage(**msg) for msg in messages]
+        )
 
     except PushServerError as exc:
-        logger.info(message)
+        logger.info(messages)
         logger.info(exc.errors)
         logger.info(exc.response_data)
         return "Error occurred while sending push message"
@@ -62,7 +46,7 @@ def send_push_message(message):
             "Error occurred",
             exc_info=True,
             extra={
-                "message": message,
+                "message": messages,
                 "push_response": vars(exc.push_response),
             },
         )
@@ -72,10 +56,10 @@ def send_push_message(message):
             "Error occurred",
             exc_info=True,
             extra={
-                "message": message,
+                "message": messages,
             },
         )
-        return "Error occurred while sending push message"
+        return f"Error occurred while sending push message: {exc}"
 
 
 def list_devices_with_group_id(db, group_id):

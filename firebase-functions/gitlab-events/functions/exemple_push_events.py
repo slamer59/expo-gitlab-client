@@ -3,6 +3,7 @@ import json
 import requests
 
 url = "http://127.0.0.1:5001/gitalchemy/us-central1/webhook_gitlab"
+# url = "https://webhook-gitlab-et4qi4c73q-uc.a.run.app/webhook_gitlab"
 
 payload = {
     "object_kind": "push",

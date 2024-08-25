@@ -1,10 +1,9 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
-from gitlab_webhook_handlers import handle_event
+from gitlab_webhook_handlers import get_project_id, handle_event
 from notifications import add_device_to_notification_group, send_push_message
 
-headers = {"PRIVATE-TOKEN": "GITLAB_PAT_REMOVED"}
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
 firebaseProjectId = "gitalchemy"
 # Use a service account
@@ -20,19 +19,26 @@ db = firestore.client(app)
 logger.info("Firestore client initialized")
 
 
+def get_push_tokens(project_id):
+    # Query the Firestore collection for the project ID
+    project_ref = db.collection("projects").document(project_id)
+    project_doc = project_ref.get()
+
+
 @https_fn.on_request()
 def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
 
-    push_token = "ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"
-
     data = req.get_json()
-    event_type = data.get("object_kind")
+    # Get list of push tokens
+    project_id = get_project_id(data)
+    # push_tokens = get_push_tokens(project_id)
+    push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
 
-    logger.info("Event type: %s", event_type)
     # Handle the event based on its type
-    event_message = handle_event(event_type, push_token, data)
+    event_messages = handle_event(data, push_tokens)
     # Send the push notification to the device
-    response = send_push_message(message=event_message.model_dump(mode="json"))
+    logger.info(event_messages.model_dump(mode="json")["messages"])
+    response = send_push_message(event_messages.model_dump(mode="json")["messages"])
     # Return a success response
     return https_fn.Response(response=response, mimetype="application/json")
 
