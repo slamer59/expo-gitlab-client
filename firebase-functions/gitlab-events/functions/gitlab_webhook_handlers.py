@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from firebase_functions import logger
 from pydantic import BaseModel
 
 
@@ -13,11 +14,11 @@ class EventMessage(BaseModel):
     channel_id: str = "default"
     priority: str = "high"
     data: dict = {}
-    badge: str = ""
-    category: str = ""
-    display_in_foreground: str = ""
-    subtitle: str = ""
-    mutable_content: str = ""
+    badge: Optional[str] = None
+    category: Optional[str] = None
+    display_in_foreground: Optional[bool] = None
+    subtitle: Optional[str] = None
+    mutable_content: Optional[bool] = None
 
 
 class Author(BaseModel):
@@ -294,26 +295,12 @@ class ReleaseEventData(BaseModel):
 
 
 def push_event(data, push_token):
-    # message = {
-    #     "title": "title",
-    #     "body": "body",
-    #     "sound": "default",
-    #     "to": "push_token",
-    #     "ttl": 3600,
-    #     "expiration": 3600,
-    #     "channel_id": "default",
-    #     "priority": "high",
-    #     "data": {},
-    #     "badge": "",
-    #     "category": "",
-    #     "display_in_foreground": "",
-    #     "subtitle": "",
-    #     "mutable_content": "",
-    # }
+    logger.info("Push event trigged")
+
     message = {
         "title": f"New push to {data['project']['name']} by {data['user_name']}",
         "body": f"{data['total_commits_count']} new commits added.",
-        "to": [push_token],
+        "to": push_token,
         "data": {
             "project_name": data["project"]["name"],
             "user_name": data["user_name"],
@@ -321,7 +308,8 @@ def push_event(data, push_token):
         },
     }
 
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
+    logger.info(f"Event message created: {event_message.model_dump(mode='json')}")
     return event_message
 
 
@@ -336,7 +324,7 @@ def tag_push_event(data, push_token):
             "tag": data["ref"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -352,7 +340,7 @@ def issue_event(data, push_token):
             "action": data["object_attributes"]["action"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -367,7 +355,7 @@ def comment_event(data, push_token):
             "issue_title": data["issue"]["title"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -383,7 +371,7 @@ def merge_request_event(data, push_token):
             "action": data["object_attributes"]["action"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -399,7 +387,7 @@ def wiki_page_event(data, push_token):
             "action": data["object_attributes"]["action"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -414,7 +402,7 @@ def pipeline_event(data, push_token):
             "pipeline_status": data["object_attributes"]["status"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -429,7 +417,7 @@ def job_event(data, push_token):
             "job_status": data["build_status"],
         },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -442,10 +430,9 @@ def deployment_event(data, push_token):
             "project_name": data["project"]["name"],
             "user_name": data["user"]["name"],
             "deployment_status": data["status"],
-        }
-
+        },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
@@ -459,12 +446,12 @@ def feature_flag_event(data, push_token):
             "user_name": data["user"]["name"],
             "feature_flag_name": data["object_attributes"]["name"],
             "action": data["object_attributes"]["action"],
-        }
+        },
     }
 
 
 def release_event(data, push_token):
-    message  ={
+    message = {
         "title": "Release event",
         "body": "A release event occurred.",
         "to": [push_token],
@@ -473,8 +460,7 @@ def release_event(data, push_token):
             "user_name": data["user"]["name"],
             "release_tag": data["object_attributes"]["tag"],
             "action": data["object_attributes"]["action"],
-        }
-
+        },
     }
 
 
@@ -488,10 +474,11 @@ def emoji_event(data, push_token):
             "user_name": data["user"]["name"],
             "emoji_name": data["object_attributes"]["name"],
             "action": data["object_attributes"]["action"],
-        }
+        },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
+
 
 def access_token_event(data, push_token):
     message = {
@@ -502,15 +489,14 @@ def access_token_event(data, push_token):
             "user_name": data["user"]["name"],
             "access_token_name": data["object_attributes"]["name"],
             "action": data["object_attributes"]["action"],
-        }
-
+        },
     }
-    event_message = EventMessage().from_dict(message)
+    event_message = EventMessage(**message)
     return event_message
 
 
 def handle_event(event_type, push_token, data):
-
+    logger.info(f"Handling {event_type} event")
     if event_type == "push":
         return push_event(data, push_token)
     if event_type == "tag_push":
