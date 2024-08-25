@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+
 class EventMessage(BaseModel):
     title: str
     body: str
@@ -18,21 +19,22 @@ class EventMessage(BaseModel):
     subtitle: str = ""
     mutable_content: str = ""
 
+
 class Author(BaseModel):
     name: str
-    email: str
+    email: Optional[str] = None
 
 
 class Commit(BaseModel):
-    id: str
+    id: int | str
     message: str
-    title: str
-    timestamp: str
-    url: str
-    author: Author
-    added: List[str]
-    modified: List[str]
-    removed: List[str]
+    title: Optional[str] = None
+    timestamp: Optional[str] = None
+    url: Optional[str] = None
+    # author: Author
+    added: Optional[List[str]] = []
+    modified: Optional[List[str]] = []
+    removed: Optional[List[str]] = []
 
 
 class Project(BaseModel):
@@ -40,27 +42,27 @@ class Project(BaseModel):
     name: str
     description: str
     web_url: str
-    avatar_url: Optional[str]
+    avatar_url: Optional[str] = None
     git_ssh_url: str
     git_http_url: str
     namespace: str
     visibility_level: int
     path_with_namespace: str
     default_branch: str
-    homepage: str
-    url: str
-    ssh_url: str
-    http_url: str
+    homepage: Optional[str] = None
+    url: Optional[str] = None
+    ssh_url: Optional[str] = None
+    http_url: Optional[str] = None
 
 
 class Repository(BaseModel):
     name: str
-    url: str
+    url: Optional[str] = None
     description: str
     homepage: str
-    git_http_url: str
-    git_ssh_url: str
-    visibility_level: int
+    git_http_url: Optional[str] = None
+    git_ssh_url: Optional[str] = None
+    visibility_level: Optional[int] = None
 
 
 class PushEventData(BaseModel):
@@ -95,6 +97,200 @@ class TagEventData(BaseModel):
     repository: Repository
     commits: List[Commit]
     total_commits_count: int
+
+
+class DeploymentEventData(BaseModel):
+    object_kind: str
+    status: str
+    status_changed_at: str
+    deployment_id: int
+    deployable_id: int
+    deployable_url: str
+    environment: str
+    environment_tier: str
+    environment_slug: str
+    environment_external_url: str
+    project: Project
+    short_sha: str
+    user: Author
+    user_url: str
+    commit_url: str
+    commit_title: str
+
+
+class IssueEventData(BaseModel):
+    object_kind: str
+    user: Author
+    project: Project
+    repository: Repository
+    object_attributes: dict
+    assignee: Optional[Author] = None
+    assignees: List[Author]
+    labels: List[dict]
+    changes: dict
+
+
+class MergeRequestEventData(BaseModel):
+    object_kind: str
+    user: Author
+    project: Project
+    repository: Repository
+    object_attributes: dict
+    assignee: Optional[Author] = None
+    assignees: List[Author]
+    labels: List[dict]
+    changes: dict
+
+
+# class WikiPageEventData(BaseModel):
+#     pass
+
+
+class PipelineEventData(BaseModel):
+    object_kind: str
+    object_attributes: dict
+    merge_request: Optional[dict] = None
+    user: Author
+    project: Project
+    commit: Commit
+    builds: List[dict]
+
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    avatar_url: str
+
+
+class SourcePipelineProject(BaseModel):
+    id: int
+    web_url: str
+    path_with_namespace: str
+
+
+class SourcePipeline(BaseModel):
+    project: SourcePipelineProject
+    pipeline_id: int
+    job_id: int
+
+
+class Runner(BaseModel):
+    active: bool
+    runner_type: str
+    is_shared: bool
+    id: int
+    description: str
+    tags: list[str]
+
+
+class JobEventData(BaseModel):
+    object_kind: str
+    ref: str
+    tag: bool
+    before_sha: str
+    sha: str
+    build_id: int
+    build_name: str
+    build_stage: str
+    build_status: str
+    build_created_at: str
+    build_started_at: Optional[str]
+    build_finished_at: Optional[str]
+    build_duration: Optional[int]
+    build_queued_duration: float
+    build_allow_failure: bool
+    build_failure_reason: str
+    retries_count: int
+    pipeline_id: int
+    project_id: int
+    project_name: str
+    user: User
+    commit: Commit
+    repository: Repository
+    project: Project
+    runner: Runner
+    environment: Optional[str]
+    source_pipeline: Optional[SourcePipeline]
+
+
+class GroupEventData(BaseModel):
+    created_at: str
+    updated_at: str
+    group_name: str
+    group_path: str
+    group_id: int
+    user_username: str
+    user_name: str
+    user_email: str
+    user_id: int
+    group_access: str
+    group_plan: Optional[str]
+    expires_at: str
+    event_name: str
+
+
+class SubgroupEventData(BaseModel):
+    created_at: str
+    updated_at: str
+    event_name: str
+    name: str
+    path: str
+    full_path: str
+    group_id: int
+    parent_group_id: int
+    parent_name: str
+    parent_path: str
+    parent_full_path: str
+
+
+class FeatureFlagAttributes(BaseModel):
+    id: int
+    name: str
+    description: str
+    active: bool
+
+
+class FeatureFlagEventData(BaseModel):
+    object_kind: str
+    project: Project
+    user: User
+    user_url: str
+    object_attributes: FeatureFlagAttributes
+
+
+class Link(BaseModel):
+    id: int
+    external: bool
+    link_type: str
+    name: str
+    url: str
+
+
+class Source(BaseModel):
+    format: str
+    url: str
+
+
+class Assets(BaseModel):
+    count: int
+    links: List[Link]
+    sources: List[Source]
+
+
+class ReleaseEventData(BaseModel):
+    id: int
+    created_at: str
+    description: str
+    name: str
+    released_at: str
+    tag: str
+    project: Project
+    url: str
+    action: str
+    assets: Assets
+    commit: Commit
+    # Add other fields as needed
 
 
 def push_event(data):
@@ -485,6 +681,8 @@ def main():
         },
     }
 
+    i = IssueEventData(**issue_event_data)
+
     merge_request_event_data = {
         "object_kind": "merge_request",
         "event_type": "merge_request",
@@ -682,7 +880,7 @@ def main():
             }
         ],
     }
-
+    mr = MergeRequestEventData(**merge_request_event_data)
     pipeline_event_data = {
         "object_kind": "pipeline",
         "object_attributes": {
@@ -909,295 +1107,299 @@ def main():
         ],
     }
 
-    job_event_data = {
-  "object_kind": "build",
-  "ref": "gitlab-script-trigger",
-  "tag": False,
-  "before_sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
-  "sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
-  "build_id": 1977,
-  "build_name": "test",
-  "build_stage": "test",
-  "build_status": "created",
-  "build_created_at": "2021-02-23T02:41:37.886Z",
-  "build_started_at": None,
-  "build_finished_at": None,
-  "build_duration": None,
-  "build_queued_duration": 1095.588715, // duration in seconds
-  "build_allow_failure": False,
-  "build_failure_reason": "script_failure",
-  "retries_count": 2,        // the second retry of this job
-  "pipeline_id": 2366,
-  "project_id": 380,
-  "project_name": "gitlab-org/gitlab-test",
-  "user": {
-    "id": 3,
-    "name": "User",
-    "email": "user@gitlab.com",
-    "avatar_url": "http://www.gravatar.com/avatar/e32bd13e2add097461cb96824b7a829c?s=80\u0026d=identicon"
-  },
-  "commit": {
-    "id": 2366,
-    "name": "Build pipeline",
-    "sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
-    "message": "test\n",
-    "author_name": "User",
-    "author_email": "user@gitlab.com",
-    "status": "created",
-    "duration": None,
-    "started_at": None,
-    "finished_at": None
-  },
-  "repository": {
-    "name": "gitlab_test",
-    "description": "Atque in sunt eos similique dolores voluptatem.",
-    "homepage": "http://192.168.64.1:3005/gitlab-org/gitlab-test",
-    "git_ssh_url": "git@192.168.64.1:gitlab-org/gitlab-test.git",
-    "git_http_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test.git",
-    "visibility_level": 20
-  },
-  "project":{
-     "id": 380,
-     "name": "Gitlab Test",
-     "description": "Atque in sunt eos similique dolores voluptatem.",
-     "web_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test",
-     "avatar_url": None,
-     "git_ssh_url": "git@192.168.64.1:gitlab-org/gitlab-test.git",
-     "git_http_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test.git",
-     "namespace": "Gitlab Org",
-     "visibility_level": 20,
-     "path_with_namespace": "gitlab-org/gitlab-test",
-     "default_branch": "master"
-  },
-  "runner": {
-    "active": True,
-    "runner_type": "project_type",
-    "is_shared": False,
-    "id": 380987,
-    "description": "shared-runners-manager-6.gitlab.com",
-    "tags": [
-      "linux",
-      "docker"
-    ]
-  },
-  "environment": None,
-  "source_pipeline":{
-     "project":{
-       "id": 41,
-       "web_url": "https://gitlab.example.com/gitlab-org/upstream-project",
-       "path_with_namespace": "gitlab-org/upstream-project"
-     },
-     "pipeline_id": 30,
-     "job_id": 3401
-  },
-}
-    deployment_event_data = {
-  "object_kind": "deployment",
-  "status": "success",
-  "status_changed_at":"2021-04-28 21:50:00 +0200",
-  "deployment_id": 15,
-  "deployable_id": 796,
-  "deployable_url": "http://10.126.0.2:3000/root/test-deployment-webhooks/-/jobs/796",
-  "environment": "staging",
-  "environment_tier": "staging",
-  "environment_slug": "staging",
-  "environment_external_url": "https://staging.example.com",
-  "project": {
-    "id": 30,
-    "name": "test-deployment-webhooks",
-    "description": "",
-    "web_url": "http://10.126.0.2:3000/root/test-deployment-webhooks",
-    "avatar_url": None,
-    "git_ssh_url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
-    "git_http_url": "http://10.126.0.2:3000/root/test-deployment-webhooks.git",
-    "namespace": "Administrator",
-    "visibility_level": 0,
-    "path_with_namespace": "root/test-deployment-webhooks",
-    "default_branch": "master",
-    "ci_config_path": "",
-    "homepage": "http://10.126.0.2:3000/root/test-deployment-webhooks",
-    "url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
-    "ssh_url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
-    "http_url": "http://10.126.0.2:3000/root/test-deployment-webhooks.git"
-  },
-  "short_sha": "279484c0",
-  "user": {
-    "id": 1,
-    "name": "Administrator",
-    "username": "root",
-    "avatar_url": "https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=80&d=identicon",
-    "email": "admin@example.com"
-  },
-  "user_url": "http://10.126.0.2:3000/root",
-  "commit_url": "http://10.126.0.2:3000/root/test-deployment-webhooks/-/commit/279484c09fbe69ededfced8c1bb6e6d24616b468",
-  "commit_title": "Add new file"
-}
-    group_event_data = {
-  "created_at": "2020-12-11T04:57:22Z",
-  "updated_at": "2020-12-11T04:57:22Z",
-  "group_name": "webhook-test",
-  "group_path": "webhook-test",
-  "group_id": 100,
-  "user_username": "test_user",
-  "user_name": "Test User",
-  "user_email": "testuser@webhooktest.com",
-  "user_id": 64,
-  "group_access": "Guest",
-  "group_plan": None,
-  "expires_at": "2020-12-14T00:00:00Z",
-  "event_name": "user_add_to_group"
-}
+    pl = PipelineEventData(**pipeline_event_data)
 
+    job_event_data = {
+        "object_kind": "build",
+        "ref": "gitlab-script-trigger",
+        "tag": False,
+        "before_sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
+        "sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
+        "build_id": 1977,
+        "build_name": "test",
+        "build_stage": "test",
+        "build_status": "created",
+        "build_created_at": "2021-02-23T02:41:37.886Z",
+        "build_started_at": None,
+        "build_finished_at": None,
+        "build_duration": None,
+        "build_queued_duration": 1095.588715,
+        "build_allow_failure": False,
+        "build_failure_reason": "script_failure",
+        "retries_count": 2,
+        "pipeline_id": 2366,
+        "project_id": 380,
+        "project_name": "gitlab-org/gitlab-test",
+        "user": {
+            "id": 3,
+            "name": "User",
+            "email": "user@gitlab.com",
+            "avatar_url": "http://www.gravatar.com/avatar/e32bd13e2add097461cb96824b7a829c?s=80\u0026d=identicon",
+        },
+        "commit": {
+            "id": 2366,
+            "name": "Build pipeline",
+            "sha": "2293ada6b400935a1378653304eaf6221e0fdb8f",
+            "message": "test\n",
+            "author_name": "User",
+            "author_email": "user@gitlab.com",
+            "status": "created",
+            "duration": None,
+            "started_at": None,
+            "finished_at": None,
+        },
+        "repository": {
+            "name": "gitlab_test",
+            "description": "Atque in sunt eos similique dolores voluptatem.",
+            "homepage": "http://192.168.64.1:3005/gitlab-org/gitlab-test",
+            "git_ssh_url": "git@192.168.64.1:gitlab-org/gitlab-test.git",
+            "git_http_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test.git",
+            "visibility_level": 20,
+        },
+        "project": {
+            "id": 380,
+            "name": "Gitlab Test",
+            "description": "Atque in sunt eos similique dolores voluptatem.",
+            "web_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test",
+            "avatar_url": None,
+            "git_ssh_url": "git@192.168.64.1:gitlab-org/gitlab-test.git",
+            "git_http_url": "http://192.168.64.1:3005/gitlab-org/gitlab-test.git",
+            "namespace": "Gitlab Org",
+            "visibility_level": 20,
+            "path_with_namespace": "gitlab-org/gitlab-test",
+            "default_branch": "master",
+        },
+        "runner": {
+            "active": True,
+            "runner_type": "project_type",
+            "is_shared": False,
+            "id": 380987,
+            "description": "shared-runners-manager-6.gitlab.com",
+            "tags": ["linux", "docker"],
+        },
+        "environment": None,
+        "source_pipeline": {
+            "project": {
+                "id": 41,
+                "web_url": "https://gitlab.example.com/gitlab-org/upstream-project",
+                "path_with_namespace": "gitlab-org/upstream-project",
+            },
+            "pipeline_id": 30,
+            "job_id": 3401,
+        },
+    }
+    deployment_event_data = {
+        "object_kind": "deployment",
+        "status": "success",
+        "status_changed_at": "2021-04-28 21:50:00 +0200",
+        "deployment_id": 15,
+        "deployable_id": 796,
+        "deployable_url": "http://10.126.0.2:3000/root/test-deployment-webhooks/-/jobs/796",
+        "environment": "staging",
+        "environment_tier": "staging",
+        "environment_slug": "staging",
+        "environment_external_url": "https://staging.example.com",
+        "project": {
+            "id": 30,
+            "name": "test-deployment-webhooks",
+            "description": "",
+            "web_url": "http://10.126.0.2:3000/root/test-deployment-webhooks",
+            "avatar_url": None,
+            "git_ssh_url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
+            "git_http_url": "http://10.126.0.2:3000/root/test-deployment-webhooks.git",
+            "namespace": "Administrator",
+            "visibility_level": 0,
+            "path_with_namespace": "root/test-deployment-webhooks",
+            "default_branch": "master",
+            "ci_config_path": "",
+            "homepage": "http://10.126.0.2:3000/root/test-deployment-webhooks",
+            "url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
+            "ssh_url": "ssh://vlad@10.126.0.2:2222/root/test-deployment-webhooks.git",
+            "http_url": "http://10.126.0.2:3000/root/test-deployment-webhooks.git",
+        },
+        "short_sha": "279484c0",
+        "user": {
+            "id": 1,
+            "name": "Administrator",
+            "username": "root",
+            "avatar_url": "https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=80&d=identicon",
+            "email": "admin@example.com",
+        },
+        "user_url": "http://10.126.0.2:3000/root",
+        "commit_url": "http://10.126.0.2:3000/root/test-deployment-webhooks/-/commit/279484c09fbe69ededfced8c1bb6e6d24616b468",
+        "commit_title": "Add new file",
+    }
+    depl = DeploymentEventData(**deployment_event_data)
+
+    job = JobEventData(**job_event_data)
+
+    group_event_data = {
+        "created_at": "2020-12-11T04:57:22Z",
+        "updated_at": "2020-12-11T04:57:22Z",
+        "group_name": "webhook-test",
+        "group_path": "webhook-test",
+        "group_id": 100,
+        "user_username": "test_user",
+        "user_name": "Test User",
+        "user_email": "testuser@webhooktest.com",
+        "user_id": 64,
+        "group_access": "Guest",
+        "group_plan": None,
+        "expires_at": "2020-12-14T00:00:00Z",
+        "event_name": "user_add_to_group",
+    }
+
+    group = GroupEventData(**group_event_data)
 
     subgroup_event_data = {
-
-  "created_at": "2021-01-20T09:40:12Z",
-  "updated_at": "2021-01-20T09:40:12Z",
-  "event_name": "subgroup_create",
-  "name": "subgroup1",
-  "path": "subgroup1",
-  "full_path": "group1/subgroup1",
-  "group_id": 10,
-  "parent_group_id": 7,
-  "parent_name": "group1",
-  "parent_path": "group1",
-  "parent_full_path": "group1"
-
-}
-    feature_flag_event_data = {
-  "object_kind": "feature_flag",
-  "project": {
-    "id": 1,
-    "name":"Gitlab Test",
-    "description":"Aut reprehenderit ut est.",
-    "web_url":"http://example.com/gitlabhq/gitlab-test",
-    "avatar_url":None,
-    "git_ssh_url":"git@example.com:gitlabhq/gitlab-test.git",
-    "git_http_url":"http://example.com/gitlabhq/gitlab-test.git",
-    "namespace":"GitlabHQ",
-    "visibility_level":20,
-    "path_with_namespace":"gitlabhq/gitlab-test",
-    "default_branch":"master",
-    "ci_config_path": None,
-    "homepage":"http://example.com/gitlabhq/gitlab-test",
-    "url":"http://example.com/gitlabhq/gitlab-test.git",
-    "ssh_url":"git@example.com:gitlabhq/gitlab-test.git",
-    "http_url":"http://example.com/gitlabhq/gitlab-test.git"
-  },
-  "user": {
-    "id": 1,
-    "name": "Administrator",
-    "username": "root",
-    "avatar_url": "https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=80&d=identicon",
-    "email": "admin@example.com"
-  },
-  "user_url": "http://example.com/root",
-  "object_attributes": {
-    "id": 6,
-    "name": "test-feature-flag",
-    "description": "test-feature-flag-description",
-    "active": True
-  }
-}
-    release_event_data = {
-  "id": 1,
-  "created_at": "2020-11-02 12:55:12 UTC",
-  "description": "v1.1 has been released",
-  "name": "v1.1",
-  "released_at": "2020-11-02 12:55:12 UTC",
-  "tag": "v1.1",
-  "object_kind": "release",
-  "project": {
-    "id": 2,
-    "name": "release-webhook-example",
-    "description": "",
-    "web_url": "https://example.com/gitlab-org/release-webhook-example",
-    "avatar_url": None,
-    "git_ssh_url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
-    "git_http_url": "https://example.com/gitlab-org/release-webhook-example.git",
-    "namespace": "Gitlab",
-    "visibility_level": 0,
-    "path_with_namespace": "gitlab-org/release-webhook-example",
-    "default_branch": "master",
-    "ci_config_path": None,
-    "homepage": "https://example.com/gitlab-org/release-webhook-example",
-    "url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
-    "ssh_url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
-    "http_url": "https://example.com/gitlab-org/release-webhook-example.git"
-  },
-  "url": "https://example.com/gitlab-org/release-webhook-example/-/releases/v1.1",
-  "action": "create",
-  "assets": {
-    "count": 5,
-    "links": [
-      {
-        "id": 1,
-        "external": True, // deprecated in GitLab 15.9, will be removed in GitLab 16.0.
-        "link_type": "other",
-        "name": "Changelog",
-        "url": "https://example.net/changelog"
-      }
-    ],
-    "sources": [
-      {
-        "format": "zip",
-        "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.zip"
-      },
-      {
-        "format": "tar.gz",
-        "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar.gz"
-      },
-      {
-        "format": "tar.bz2",
-        "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar.bz2"
-      },
-      {
-        "format": "tar",
-        "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar"
-      }
-    ]
-  },
-  "commit": {
-    "id": "ee0a3fb31ac16e11b9dbb596ad16d4af654d08f8",
-    "message": "Release v1.1",
-    "title": "Release v1.1",
-    "timestamp": "2020-10-31T14:58:32+11:00",
-    "url": "https://example.com/gitlab-org/release-webhook-example/-/commit/ee0a3fb31ac16e11b9dbb596ad16d4af654d08f8",
-    "author": {
-      "name": "Example User",
-      "email": "user@example.com"
+        "created_at": "2021-01-20T09:40:12Z",
+        "updated_at": "2021-01-20T09:40:12Z",
+        "event_name": "subgroup_create",
+        "name": "subgroup1",
+        "path": "subgroup1",
+        "full_path": "group1/subgroup1",
+        "group_id": 10,
+        "parent_group_id": 7,
+        "parent_name": "group1",
+        "parent_path": "group1",
+        "parent_full_path": "group1",
     }
-  }
-}
+
+    subgroup_event = SubgroupEventData(**subgroup_event_data)
+
+    feature_flag_event_data = {
+        "object_kind": "feature_flag",
+        "project": {
+            "id": 1,
+            "name": "Gitlab Test",
+            "description": "Aut reprehenderit ut est.",
+            "web_url": "http://example.com/gitlabhq/gitlab-test",
+            "avatar_url": None,
+            "git_ssh_url": "git@example.com:gitlabhq/gitlab-test.git",
+            "git_http_url": "http://example.com/gitlabhq/gitlab-test.git",
+            "namespace": "GitlabHQ",
+            "visibility_level": 20,
+            "path_with_namespace": "gitlabhq/gitlab-test",
+            "default_branch": "master",
+            "ci_config_path": None,
+            "homepage": "http://example.com/gitlabhq/gitlab-test",
+            "url": "http://example.com/gitlabhq/gitlab-test.git",
+            "ssh_url": "git@example.com:gitlabhq/gitlab-test.git",
+            "http_url": "http://example.com/gitlabhq/gitlab-test.git",
+        },
+        "user": {
+            "id": 1,
+            "name": "Administrator",
+            "username": "root",
+            "avatar_url": "https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=80&d=identicon",
+            "email": "admin@example.com",
+        },
+        "user_url": "http://example.com/root",
+        "object_attributes": {
+            "id": 6,
+            "name": "test-feature-flag",
+            "description": "test-feature-flag-description",
+            "active": True,
+        },
+    }
+    fflag = FeatureFlagEventData(**feature_flag_event_data)
+    release_event_data = {
+        "id": 1,
+        "created_at": "2020-11-02 12:55:12 UTC",
+        "description": "v1.1 has been released",
+        "name": "v1.1",
+        "released_at": "2020-11-02 12:55:12 UTC",
+        "tag": "v1.1",
+        "object_kind": "release",
+        "project": {
+            "id": 2,
+            "name": "release-webhook-example",
+            "description": "",
+            "web_url": "https://example.com/gitlab-org/release-webhook-example",
+            "avatar_url": None,
+            "git_ssh_url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
+            "git_http_url": "https://example.com/gitlab-org/release-webhook-example.git",
+            "namespace": "Gitlab",
+            "visibility_level": 0,
+            "path_with_namespace": "gitlab-org/release-webhook-example",
+            "default_branch": "master",
+            "ci_config_path": None,
+            "homepage": "https://example.com/gitlab-org/release-webhook-example",
+            "url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
+            "ssh_url": "ssh://git@example.com/gitlab-org/release-webhook-example.git",
+            "http_url": "https://example.com/gitlab-org/release-webhook-example.git",
+        },
+        "url": "https://example.com/gitlab-org/release-webhook-example/-/releases/v1.1",
+        "action": "create",
+        "assets": {
+            "count": 5,
+            "links": [
+                {
+                    "id": 1,
+                    "external": True,
+                    "link_type": "other",
+                    "name": "Changelog",
+                    "url": "https://example.net/changelog",
+                }
+            ],
+            "sources": [
+                {
+                    "format": "zip",
+                    "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.zip",
+                },
+                {
+                    "format": "tar.gz",
+                    "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar.gz",
+                },
+                {
+                    "format": "tar.bz2",
+                    "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar.bz2",
+                },
+                {
+                    "format": "tar",
+                    "url": "https://example.com/gitlab-org/release-webhook-example/-/archive/v1.1/release-webhook-example-v1.1.tar",
+                },
+            ],
+        },
+        "commit": {
+            "id": "ee0a3fb31ac16e11b9dbb596ad16d4af654d08f8",
+            "message": "Release v1.1",
+            "title": "Release v1.1",
+            "timestamp": "2020-10-31T14:58:32+11:00",
+            "url": "https://example.com/gitlab-org/release-webhook-example/-/commit/ee0a3fb31ac16e11b9dbb596ad16d4af654d08f8",
+            "author": {"name": "Example User", "email": "user@example.com"},
+        },
+    }
     project_group_access_event_data = {
-  "object_kind": "access_token",
-  "project": {
-    "id": 7,
-    "name": "Flight",
-    "description": "Eum dolore maxime atque reprehenderit voluptatem.",
-    "web_url": "https://example.com/flightjs/Flight",
-    "avatar_url": None,
-    "git_ssh_url": "ssh://git@example.com/flightjs/Flight.git",
-    "git_http_url": "https://example.com/flightjs/Flight.git",
-    "namespace": "Flightjs",
-    "visibility_level": 0,
-    "path_with_namespace": "flightjs/Flight",
-    "default_branch": "master",
-    "ci_config_path": None,
-    "homepage": "https://example.com/flightjs/Flight",
-    "url": "ssh://git@example.com/flightjs/Flight.git",
-    "ssh_url": "ssh://git@example.com/flightjs/Flight.git",
-    "http_url": "https://example.com/flightjs/Flight.git"
-  },
-  "object_attributes": {
-    "user_id": 90,
-    "created_at": "2024-01-24 16:27:40 UTC",
-    "id": 25,
-    "name": "acd",
-    "expires_at": "2024-01-26"
-  },
-  "event_name": "expiring_access_token"
-}
+        "object_kind": "access_token",
+        "project": {
+            "id": 7,
+            "name": "Flight",
+            "description": "Eum dolore maxime atque reprehenderit voluptatem.",
+            "web_url": "https://example.com/flightjs/Flight",
+            "avatar_url": None,
+            "git_ssh_url": "ssh://git@example.com/flightjs/Flight.git",
+            "git_http_url": "https://example.com/flightjs/Flight.git",
+            "namespace": "Flightjs",
+            "visibility_level": 0,
+            "path_with_namespace": "flightjs/Flight",
+            "default_branch": "master",
+            "ci_config_path": None,
+            "homepage": "https://example.com/flightjs/Flight",
+            "url": "ssh://git@example.com/flightjs/Flight.git",
+            "ssh_url": "ssh://git@example.com/flightjs/Flight.git",
+            "http_url": "https://example.com/flightjs/Flight.git",
+        },
+        "object_attributes": {
+            "user_id": 90,
+            "created_at": "2024-01-24 16:27:40 UTC",
+            "id": 25,
+            "name": "acd",
+            "expires_at": "2024-01-26",
+        },
+        "event_name": "expiring_access_token",
+    }
+    release = ReleaseEventData(**release_event_data)
 
 
 if __name__ == "__main__":
