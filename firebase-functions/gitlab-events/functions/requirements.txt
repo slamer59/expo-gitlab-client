@@ -1,3 +1,4 @@
 firebase_functions
 firebase_admin
 exponent_server_sdk
+pydantic
