@@ -1,4 +1,4 @@
-import { IssueCard } from '@/components/ui/issue-card';
+import { IssueCard, IssueCardSkeleton } from '@/components/ui/issue-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
 import { Link, Stack } from 'expo-router';
@@ -124,24 +124,30 @@ export default function IssuesListScreen() {
                 selectedFilters={selectedFilters}
                 clearFilters={clearFilters}
             />
-            {issues?.map((issue, index) => (
-                <Link
-                    key={index}
-                    href={{
-                        pathname: '/workspace/projects/[projectId]/issues/[issue_iid]',
-                        params: {
-                            projectId: issue.project_id,
-                            issue_iid: issue.iid,
+            {issues ? (
+                issues?.map((issue, index) => (
+                    <Link
+                        key={index}
+                        href={{
+                            pathname: '/workspace/projects/[projectId]/issues/[issue_iid]',
+                            params: {
+                                projectId: issue.project_id,
+                                issue_iid: issue.iid,
 
-                            // Replace with the actual project ID
-                        }
-                    }}
-                >
-                    <IssueCard
-                        issue={issue}
-                    />
-                </Link>
-            ))}
+                                // Replace with the actual project ID
+                            }
+                        }}
+                    >
+                        <IssueCard
+                            issue={issue}
+                        />
+                    </Link>
+                ))
+            ) :
+                (
+                    Array.from({ length: 5 }).map((_, index) => <IssueCardSkeleton key={index} />)
+                )
+            }
 
 
         </ScrollView >
