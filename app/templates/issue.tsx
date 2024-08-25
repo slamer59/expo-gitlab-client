@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Text, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
+
+
+
 
 export default function Issue() {
   return (

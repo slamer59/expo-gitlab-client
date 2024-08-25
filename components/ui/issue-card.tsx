@@ -3,6 +3,18 @@ import { formatDate } from '@/lib/utils';
 import React from 'react';
 import { Text, View } from 'react-native';
 import IssueStatusIcon from './issue-status-icon';
+import { Skeleton } from './skeleton';
+
+
+export function IssueCardSkeleton() {
+  return <View className="flex-row items-center p-4 space-x-4">
+    <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
+    <View className="flex-1 space-y-2">
+      <Skeleton className="w-full h-4 mb-2" />
+      <Skeleton className="w-3/4 h-4" />
+    </View>
+  </View>
+}
 
 export function IssueCard({ issue }) {
   // console.log(issue);
