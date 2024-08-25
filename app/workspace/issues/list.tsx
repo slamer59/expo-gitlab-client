@@ -139,6 +139,7 @@ export default function IssuesListScreen() {
                         }}
                     >
                         <IssueCard
+                            key={index}
                             issue={issue}
                         />
                     </Link>
