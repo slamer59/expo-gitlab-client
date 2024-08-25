@@ -18,9 +18,9 @@ payload = {
     "user_username": "jsmith",
     "user_email": "john@example.com",
     "user_avatar": "https://s.gravatar.com/avatar/d4c74594d841139328695756648b6bd6?s=8://s.gravatar.com/avatar/d4c74594d841139328695756648b6bd6?s=80",
-    "project_id": 15,
+    "project_id": 59853773,
     "project": {
-        "id": 15,
+        "id": 59853773,
         "name": "Diaspora",
         "description": "",
         "web_url": "http://example.com/mike/diaspora",
