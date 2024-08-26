@@ -1,7 +1,7 @@
-import { ProjectCard } from '@/components/ui/project-card';
+import { ProjectCard, ProjectCardSkeleton } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
-import { Link } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -172,6 +172,11 @@ export default function ProjectsListScreen() {
     console.log("params", params)
     return (
         <ScrollView className="flex-1 m-2">
+            <Stack.Screen
+                options={{
+                    title: "Projects"
+                }}
+            />
             <TopFilterList
                 filters={filters}
                 setSelectedFilters={setSelectedFilters}
@@ -179,31 +184,36 @@ export default function ProjectsListScreen() {
                 clearFilters={clearFilters}
             />
 
-            {projects?.map((project, index) => (
-                <Link
-                    href={{
-                        pathname: '/workspace/projects/[projectId]',
-                        params: {
-                            projectId: project.id,
-                            path: encodeURIComponent(project.path_with_namespace)
-                            // Replace with the actual project ID
-                        },
-                    }}>
-                    <ProjectCard
-                        key={index}
-                        name={project.name}
-                        name_with_namespace={project.name_with_namespace}
-                        last_activity_at={project.last_activity_at}
-                        // path_with_namespace={project.path_with_namespace}
-                        star_count={project.star_count}
-                        avatar_url={project.avatar_url}
-                        owner={project.owner}
-                    // description={project.description}
-                    // archived={project.archived}
-                    // creator_id= {project.creator_id}
-                    />
-                </Link>
-            ))}
+            {projects ? (
+                projects?.map((project, index) => (
+                    <Link
+                        href={{
+                            pathname: '/workspace/projects/[projectId]',
+                            params: {
+                                projectId: project.id,
+                                path: encodeURIComponent(project.path_with_namespace)
+                                // Replace with the actual project ID
+                            },
+                        }}>
+                        <ProjectCard
+                            key={index}
+                            name={project.name}
+                            name_with_namespace={project.name_with_namespace}
+                            last_activity_at={project.last_activity_at}
+                            // path_with_namespace={project.path_with_namespace}
+                            star_count={project.star_count}
+                            avatar_url={project.avatar_url}
+                            owner={project.owner}
+                        // description={project.description}
+                        // archived={project.archived}
+                        // creator_id= {project.creator_id}
+                        />
+                    </Link>
+                ))
+            ) : (
+                Array.from({ length: 5 }).map((_, index) => <ProjectCardSkeleton key={index} />)
+
+            )}
 
         </ScrollView>
     );

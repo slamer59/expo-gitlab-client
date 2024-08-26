@@ -1,0 +1,94 @@
+{
+  "_links": {
+    "award_emoji": "https://gitlab.com/api/v4/projects/59853773/issues/14/award_emoji",
+    "closed_as_duplicate_of": null,
+    "notes": "https://gitlab.com/api/v4/projects/59853773/issues/14/notes",
+    "project": "https://gitlab.com/api/v4/projects/59853773",
+    "self": "https://gitlab.com/api/v4/projects/59853773/issues/14"
+  },
+  "assignee": {
+    "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+    "id": 11041577,
+    "locked": false,
+    "name": "Thomas PEDOT",
+    "state": "active",
+    "username": "thomas.pedot1",
+    "web_url": "https://gitlab.com/thomas.pedot1"
+  },
+  "assignees": [
+    {
+      "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+      "id": 11041577,
+      "locked": false,
+      "name": "Thomas PEDOT",
+      "state": "active",
+      "username": "thomas.pedot1",
+      "web_url": "https://gitlab.com/thomas.pedot1"
+    }
+  ],
+  "author": {
+    "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+    "id": 11041577,
+    "locked": false,
+    "name": "Thomas PEDOT",
+    "state": "active",
+    "username": "thomas.pedot1",
+    "web_url": "https://gitlab.com/thomas.pedot1"
+  },
+  "blocking_issues_count": 0,
+  "closed_at": null,
+  "closed_by": null,
+  "confidential": false,
+  "created_at": "2024-07-12T14:16:23.260Z",
+  "description": "",
+  "discussion_locked": null,
+  "downvotes": 0,
+  "due_date": null,
+  "has_tasks": true,
+  "id": 149487572,
+  "iid": 14,
+  "imported": false,
+  "imported_from": "none",
+  "issue_type": "issue",
+  "labels": ["enhancement"],
+  "merge_requests_count": 1,
+  "milestone": {
+    "created_at": "2024-07-12T13:49:34.304Z",
+    "description": "Github clone pour la plupart des feature :  notification",
+    "due_date": "2024-07-31",
+    "expired": false,
+    "id": 4651253,
+    "iid": 1,
+    "project_id": 59853773,
+    "start_date": "2024-07-01",
+    "state": "active",
+    "title": "Github clone",
+    "updated_at": "2024-07-12T13:49:34.304Z",
+    "web_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/milestones/1"
+  },
+  "moved_to_id": null,
+  "project_id": 59853773,
+  "references": {
+    "full": "thomas.pedot1/expo-gitlab-client#14",
+    "relative": "#14",
+    "short": "#14"
+  },
+  "service_desk_reply_to": null,
+  "severity": "UNKNOWN",
+  "state": "opened",
+  "subscribed": true,
+  "task_completion_status": { "completed_count": 0, "count": 0 },
+  "task_status": "",
+  "time_stats": {
+    "human_time_estimate": null,
+    "human_total_time_spent": null,
+    "time_estimate": 0,
+    "total_time_spent": 0
+  },
+  "title": "Repositories",
+  "type": "ISSUE",
+  "updated_at": "2024-07-19T11:11:54.786Z",
+  "upvotes": 0,
+  "user_notes_count": 1,
+  "web_url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/issues/14"
+}

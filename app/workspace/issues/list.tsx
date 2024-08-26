@@ -1,10 +1,9 @@
-import { IssueCard } from '@/components/ui/issue-card';
+import { IssueCard, IssueCardSkeleton } from '@/components/ui/issue-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/client';
-import { Link } from "expo-router";
+import { Link, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
-
 
 export default function IssuesListScreen() {
     function updateParams(filterValues: any) {
@@ -114,30 +113,42 @@ export default function IssuesListScreen() {
     console.log("params", params.query)
     return (
         <ScrollView className="flex-1 m-2">
+            <Stack.Screen
+                options={{
+                    title: "Issues",
+                }}
+            />
             <TopFilterList
                 filters={filters}
                 setSelectedFilters={setSelectedFilters}
                 selectedFilters={selectedFilters}
                 clearFilters={clearFilters}
             />
-            {issues?.map((issue, index) => (
-                <Link
-                    key={index}
-                    href={{
-                        pathname: '/workspace/projects/[projectId]/issues/[issue_iid]',
-                        params: {
-                            projectId: issue.project_id,
-                            issue_iid: issue.iid,
+            {issues ? (
+                issues?.map((issue, index) => (
+                    <Link
+                        key={index}
+                        href={{
+                            pathname: '/workspace/projects/[projectId]/issues/[issue_iid]',
+                            params: {
+                                projectId: issue.project_id,
+                                issue_iid: issue.iid,
 
-                            // Replace with the actual project ID
-                        }
-                    }}
-                >
-                    <IssueCard
-                        issue={issue}
-                    />
-                </Link>
-            ))}
+                                // Replace with the actual project ID
+                            }
+                        }}
+                    >
+                        <IssueCard
+                            key={index}
+                            issue={issue}
+                        />
+                    </Link>
+                ))
+            ) :
+                (
+                    Array.from({ length: 5 }).map((_, index) => <IssueCardSkeleton key={index} />)
+                )
+            }
 
 
         </ScrollView >
