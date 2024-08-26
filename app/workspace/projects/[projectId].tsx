@@ -2,9 +2,14 @@ import { ButtonList, IListItems } from "@/components/buttonList";
 import { Text } from "@/components/ui/text";
 import { getData } from "@/lib/gitlab/client";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
-import React from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import {
+  Link,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
+import React from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
 const baseUrl = "https://gitlab.com/api/v4";
 
@@ -72,26 +77,9 @@ const ProjectDetailsScreen = () => {
     return <Text>Loading...</Text>;
   }
 
-    }
-    const { data: repository, isLoading, isError } = getData(
-        ['projects_id', params.query],
-        "/api/v4/projects/{id}",
-        params
-    );
-
-    const navigation = useNavigation();
-    // KPI => _links
-    const buttons = [
-        { icon: 'alert-circle-outline', text: 'Issues', kpi: repository?.open_issues_count || "" },
-        { icon: 'git-merge', text: 'Merge Requests', kpi: "" },
-        { icon: 'play-outline', text: 'CI/CD', kpi: "" },
-        // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: ""},
-        { icon: 'eye-outline', text: 'Watchers', kpi: "" },
-        // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories', kpi: "" },
-        { icon: "people-circle-outline", text: 'Contributors', kpi: "" },
-        { icon: "document-text-outline", text: 'Licences', kpi: "" },
-        { icon: 'star-outline', text: 'Starred', kpi: repository?.star_count || "" },
-    ];
+  if (isError) {
+    return <Text>Error fetching data</Text>;
+  }
 
   return (
     <ScrollView className="flex-1">
@@ -105,24 +93,21 @@ const ProjectDetailsScreen = () => {
         <Text className="mb-4 text-2xl font-bold">{repository.name}</Text>
         <Text className="mb-4 text-base">{repository.description}</Text>
 
-    if (isError) {
-        return <Text>Error fetching data</Text>;
-    }
-    console.log(repository)
-    return (
-        <ScrollView className="flex-1">
-            <Stack.Screen
-                options={{
-                    title: repository.name_with_namespace
-                }}
-            />
-            <View className="p-4 m-2">
-                <View className="flex-row items-center">
-                    <Ionicons name="person-circle-outline" size={32} color="black" />
-                    <Text className="ml-2 text-lg font-bold text-light dark:text-black">{repository?.owner?.name || "Default name"}</Text>
-                </View>
-                <Text className='mb-4 text-2xl font-bold'>{repository.name}</Text>
-                <Text className="mb-4 text-base">{repository.description}</Text>
+        <View className="flex-row items-center">
+          <Ionicons name="lock-closed-outline" size={16} color="black" />
+          <Text className="ml-2 text-lg font-bold text-light dark:text-black">
+            {repository.visibility || "Default vis"}
+          </Text>
+        </View>
+
+        <View className="flex-row items-center mr-4">
+          <Link href={repository.web_url}>
+            <Ionicons name="link" size={16} color="black" />
+            <Text className="ml-4 text-lg font-bold text-light dark:text-black">
+              {repository.web_url}
+            </Text>
+          </Link>
+        </View>
 
         <View className="flex-row">
           <View className="flex-row items-center mr-4">
