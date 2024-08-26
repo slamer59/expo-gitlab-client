@@ -1,3 +1,6 @@
+import functools
+import inspect
+import logging
 from typing import List, Optional
 
 from firebase_functions import logger
@@ -5,11 +8,23 @@ from pydantic import BaseModel
 from tqdm import tqdm
 
 
+def log_event_function(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        logger.info(f"{func.__name__}: trigged")
+        result = func(*args, **kwargs)
+        logger.info(f"{func.__name__}: {len(result.messages)} messages created.")
+        return result
+
+    return wrapper
+
+
 class EventMessage(BaseModel):
     """
     A class used to represent an event message.
 
     """
+
     title: Optional[str] = None
     body: Optional[str] = None
     sound: Optional[str] = "default"
@@ -93,6 +108,12 @@ class PushEventData(BaseModel):
     total_commits_count: int
 
 
+class Assignee(BaseModel):
+    name: Optional[str] = None
+    username: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+
 class TagEventData(BaseModel):
     object_kind: Optional[str] = None
     before: Optional[str] = None
@@ -135,7 +156,7 @@ class IssueEventData(BaseModel):
     repository: Repository
     object_attributes: dict
     assignee: Optional[Author] = None
-    assignees: List[Author]
+    assignees: Optional[List[Author]] = []
     labels: List[dict]
     changes: dict
 
@@ -147,7 +168,7 @@ class MergeRequestEventData(BaseModel):
     repository: Repository
     object_attributes: dict
     assignee: Optional[Author] = None
-    assignees: List[Author]
+    assignees: Optional[List[Author]] = []
     labels: List[dict]
     changes: dict
 
@@ -239,7 +260,7 @@ class JobEventData(BaseModel):
     pipeline_id: int
     project_id: int
     project_name: Optional[str] = None
-    user: User
+    user: Optional[User] = None
     commit: Commit
     repository: Repository
     project: Project
@@ -288,7 +309,7 @@ class FeatureFlagAttributes(BaseModel):
 class FeatureFlagEventData(BaseModel):
     object_kind: Optional[str] = None
     project: Project
-    user: User
+    user: Optional[User]
     user_url: Optional[str] = None
     object_attributes: FeatureFlagAttributes
 
@@ -329,7 +350,7 @@ class ReleaseEventData(BaseModel):
 
 class EmojiEventData(BaseModel):
     object_kind: Optional[str] = None
-    user: User
+    user: Optional[User]
     project: Project
     emoji: Optional[str] = None
     name: Optional[str] = None
@@ -340,12 +361,13 @@ class EmojiEventData(BaseModel):
 class AccessTokenEventData(BaseModel):
     object_kind: Optional[str] = None
     object_attributes: dict
-    user: User
+    user: Optional[User] = None
     project: Project
 
 
+@log_event_function
 def push_event(data, push_tokens):
-    logger.info("Push event trigged")
+
     messages = [
         {
             "title": f"New push to {data['project']['name']} by {data['user_name']}",
@@ -361,13 +383,12 @@ def push_event(data, push_tokens):
     ]
 
     event_message = EventMessageList(messages=messages)
-    logger.info(f"Event message created: {event_message.model_dump(mode='json')}")
     return event_message
 
 
+@log_event_function
 def tag_push_event(data, push_tokens):
-    logger.info("Tag push event trigged")
-    message = [
+    messages = [
         {
             "title": f"New tag push to {data['project']['name']} by {data['user_name']}",
             "body": f"Tag {data['ref']} pushed.",
@@ -381,13 +402,13 @@ def tag_push_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def issue_event(data, push_tokens):
-    logger.info("Issue event trigged")
-    message = [
+    messages = [
         {
             "title": f"Issue {data['object_attributes']['title']} in {data['project']['name']}",
             "body": f"{data['user']['name']} {data['object_attributes']['action']} issue.",
@@ -402,33 +423,32 @@ def issue_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def comment_event(data, push_tokens):
-    logger.info("Comment event trigged")
-    message = [
+    messages = [
         {
-            "title": f"New comment on {data['issue']['title']} in {data['project']['name']}",
+            "title": f"New comment in {data['project']['name']}",
             "body": f"{data['user']['name']} commented.",
             "to": push_token,
             "data": {
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
-                "issue_title": data["issue"]["title"],
             },
         }
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def merge_request_event(data, push_tokens):
-    logger.info("Merge request event trigged")
-    message = [
+    messages = [
         {
             "title": f"Merge request {data['object_attributes']['title']} in {data['project']['name']}",
             "body": f"{data['user']['name']} {data['object_attributes']['action']} merge request.",
@@ -443,13 +463,13 @@ def merge_request_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def wiki_page_event(data, push_tokens):
-    logger.info("Wiki page event trigged")
-    message = [
+    messages = [
         {
             "title": f"Wiki page {data['object_attributes']['title']} in {data['project']['name']}",
             "body": f"{data['user']['name']} {data['object_attributes']['action']} wiki page.",
@@ -464,13 +484,13 @@ def wiki_page_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def pipeline_event(data, push_tokens):
-    logger.info("Pipeline event trigged")
-    message = [
+    messages = [
         {
             "title": f"Pipeline {data['object_attributes']['status']} in {data['project']['name']}",
             "body": f"Pipeline {data['object_attributes']['status']} by {data['user']['name']}.",
@@ -484,13 +504,13 @@ def pipeline_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def job_event(data, push_tokens):
-    logger.info("Job event trigged")
-    message = [
+    messages = [
         {
             "title": f"Job {data['build_status']} in {data['project_name']}",
             "body": f"Job {data['build_status']} by {data['user']['name']}.",
@@ -504,13 +524,13 @@ def job_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def deployment_event(data, push_tokens):
-    logger.info("Deployment event trigged")
-    message = [
+    messages = [
         {
             "title": "Deployment event",
             "body": "A deployment event occurred.",
@@ -524,13 +544,13 @@ def deployment_event(data, push_tokens):
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def feature_flag_event(data, push_tokens):
-    logger.info("Feature flag event trigged")
-    message = [
+    messages = [
         {
             "title": "Feature flag event",
             "body": "A feature flag event occurred.",
@@ -539,40 +559,38 @@ def feature_flag_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "feature_flag_name": data["object_attributes"]["name"],
-                "action": data["object_attributes"]["action"],
             },
         }
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def release_event(data, push_tokens):
-    logger.info("Release event trigged")
-    message = [
+    messages = [
         {
             "title": "Release event",
             "body": "A release event occurred.",
             "to": push_token,
             "data": {
                 "project_name": data["project"]["name"],
-                "user_name": data["user"]["name"],
-                "release_tag": data["object_attributes"]["tag"],
-                "action": data["object_attributes"]["action"],
+                # "release_tag": data["object_attributes"]["tag"],
+                # "action": data["object_attributes"]["action"],
             },
         }
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def emoji_event(data, push_tokens):
-    logger.info("Emoji event trigged")
-    message = [
+    messages = [
         {
             "title": "Emoji event",
             "body": "An emoji event occurred.",
@@ -581,33 +599,30 @@ def emoji_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "emoji_name": data["object_attributes"]["name"],
-                "action": data["object_attributes"]["action"],
             },
         }
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
+@log_event_function
 def access_token_event(data, push_tokens):
-    logger.info("Access token event trigged")
-    message = [
+    messages = [
         {
             "title": "Access token event",
-            "body": "An access token event occurred.",
+            "body": f"An access token event occurred in project {data['project']['name']}.",
             "to": push_token,
             "data": {
-                "user_name": data["user"]["name"],
-                "access_token_name": data["object_attributes"]["name"],
-                "action": data["object_attributes"]["action"],
+                "project_name": data["project"]["name"],
             },
         }
         for push_token in push_tokens
     ]
 
-    event_message = EventMessage(**message)
+    event_message = EventMessageList(messages=messages)
     return event_message
 
 
@@ -622,7 +637,7 @@ class CommentOjectAttributes(BaseModel):
     url: Optional[str] = None
     project_id: int
     commit_id: Optional[str] = None
-    noteable_id: int
+    noteable_id: Optional[int] = None
     noteable_type: Optional[str] = None
     system: bool
     updated_at: Optional[str] = None
@@ -639,7 +654,7 @@ class CommentEventData(BaseModel):
     user: User
     project_id: int
     repository: Repository
-    object_attributes: CommentOjectAttributes
+    # object_attributes: Optional[CommentOjectAttributes]
     merge_request: MergeRequest
 
 
@@ -661,27 +676,27 @@ def get_project_id(data):
     if event_type == "tag_push":
         return TagEventData(**data).project_id
     if event_type == "issue":
-        return IssueEventData(**data).project_id
+        return IssueEventData(**data).project.id
     if event_type == "note":
         return CommentEventData(**data).project_id
     if event_type == "merge_request":
-        return MergeRequestEventData(**data).project_id
+        return MergeRequestEventData(**data).project.id
     if event_type == "wiki_page":
-        return WikiPageEventData(**data).project_id
+        return WikiPageEventData(**data).project.id
     if event_type == "pipeline":
-        return PipelineEventData(**data).project_id
+        return PipelineEventData(**data).project.id
     if event_type == "build":
         return JobEventData(**data).project_id
     if event_type == "deployment":
-        return DeploymentEventData(**data).project_id
+        return DeploymentEventData(**data).project.id
     if event_type == "feature_flag":
-        return FeatureFlagEventData(**data).project_id
+        return FeatureFlagEventData(**data).project.id
     if event_type == "release":
-        return ReleaseEventData(**data).project_id
+        return ReleaseEventData(**data).project.id
     if event_type == "emoji":
-        return EmojiEventData(**data).project_id
+        return EmojiEventData(**data).project.id
     if event_type == "access_token":
-        return AccessTokenEventData(**data).project_id
+        return AccessTokenEventData(**data).project.id
     return project_id
 
 

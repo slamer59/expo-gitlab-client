@@ -69,13 +69,13 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     project_id = get_project_id(data)
     logger.info(f"Project ID: {project_id}")
     push_tokens = get_push_tokens(db, project_id)
-    logger.info(f"Push tokens: {push_tokens}")
+    # logger.info(f"Push tokens: {push_tokens}")
     # push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
 
     # Handle the event based on its type
     event_messages = handle_event(data, push_tokens)
     # Send the push notification to the device
-    logger.info(event_messages.model_dump(mode="json")["messages"])
+    # logger.info(event_messages.model_dump(mode="json")["messages"])
     response = send_push_message(event_messages.model_dump(mode="json")["messages"])
     # Return a success response
     return https_fn.Response(response=response, mimetype="application/json")
@@ -91,7 +91,7 @@ def add_device_to_nofitication(req: https_fn.Request) -> https_fn.Response:
     try:
         if push_token and projects:
             logger.info("Push token present")
-            # Make the GET request to the projects endpoint with the membership parameter set to true
+            # Make the GET request to the projects endpoint with the membership parameter set to True
             rep = add_device_to_notification_group(db, projects, push_token)
             logger.info(rep)
             return https_fn.Response(response=rep, mimetype="text/plain")

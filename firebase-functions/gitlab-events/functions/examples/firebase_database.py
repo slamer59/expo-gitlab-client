@@ -42,8 +42,8 @@ url = "https://gitlab.com/api/v4/projects"
 headers = {"PRIVATE-TOKEN": "GITLAB_PAT_REMOVED"}
 push_token = "ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"
 
-# Make the GET request to the projects endpoint with the membership parameter set to true
-response = requests.get(url, headers=headers, params={"membership": "true"})
+# Make the GET request to the projects endpoint with the membership parameter set to True
+response = requests.get(url, headers=headers, params={"membership": "True"})
 
 # Parse the JSON response
 projects = response.json()
