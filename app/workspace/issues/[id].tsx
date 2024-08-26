@@ -1,15 +1,15 @@
 import { Text } from "@/components/ui/text";
 import { getData } from "@/lib/gitlab/client";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
-const baseUrl = "https://gitlab.com/api/v4"
+
 
 const ProjectDetailsScreen = () => {
 
-    const { id: projectId } = useLocalSearchParams();
+    const { id: projectId, issue_iid } = useLocalSearchParams();
 
     const params = {
         path: {
@@ -53,6 +53,11 @@ const ProjectDetailsScreen = () => {
 
     return (
         <ScrollView className="flex-1">
+            <Stack.Screen
+                options={{
+                    title: `Issue # ${issue_iid}`,
+                }}
+            />
             <View className="p-4 m-2">
                 <View className="flex-row items-center">
                     <Ionicons name="person-circle-outline" size={32} color="black" />

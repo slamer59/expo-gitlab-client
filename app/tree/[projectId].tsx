@@ -2,7 +2,7 @@ import { Text } from "@/components/Themed";
 import FileItem from "@/components/ui/file-item";
 import { getData } from "@/lib/gitlab/client";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -31,20 +31,33 @@ export default function FileExplorerScreen() {
   );
   const parentPath = path ? path.split('/').slice(0, -1).join('/') : ""
 
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error fetching data</Text>;
+  }
+  console.log(files)
   return (
     <ScrollView className="flex-1 p-4">
-      {path && (
-        <Link
-          href={{
-            pathname: '/tree/[projectId]',
-            params: { projectId: projectId, path: encodeURIComponent(parentPath) },
-          }}>
-          <View className="flex-row items-center mb-4 space-x-2">
-            <Ionicons name="arrow-back" size={24} color="black" />
-            <Text className="text-lg font-bold">{path}</Text>
-          </View>
-        </Link>)
-      }
+      <Stack.Screen
+        options={{
+          title: "Explore",
+        }}
+      />
+
+      <Link
+        href={{
+          pathname: '/tree/[projectId]',
+          params: { projectId: projectId, path: encodeURIComponent(parentPath) },
+        }}>
+        <View className="flex-row items-center mb-4 space-x-2">
+          <Ionicons name="arrow-back" size={24} color="black" />
+          <Text className="text-lg font-bold">{path}</Text>
+        </View>
+      </Link>
+
       <View className="space-y-2">
         {files?.map((file, index) => {
           if (file.type === "tree") {

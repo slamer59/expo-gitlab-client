@@ -2,7 +2,8 @@ import * as SecureStore from 'expo-secure-store';
 
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { getToken } from '@/lib/utils';
+import { checkValidity, getToken } from '@/lib/utils';
+
 import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Linking, TextInput, View } from 'react-native';
@@ -31,11 +32,19 @@ export default function LoginScreen() {
         checkToken();
     }, []);
 
+
+
     const checkToken = async () => {
+        console.log('Checking token');
         const savedToken = await getToken();
+        console.log(savedToken);
         if (savedToken) {
-            console.log('Token found, navigating to home');
-            navigation.navigate("(tabs)", { screen: "home" });
+            const isValid = await checkValidity(savedToken);
+            console.log(isValid);
+            if (isValid) {
+                console.log('Token found and valid, navigating to home');
+                navigation.navigate("(tabs)", { screen: "home" });
+            }
         }
     };
 

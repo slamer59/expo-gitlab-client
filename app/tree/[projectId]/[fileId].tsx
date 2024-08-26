@@ -1,7 +1,7 @@
 import { Text } from "@/components/ui/text";
 import { getData } from '@/lib/gitlab/client';
 import { Image } from 'expo-image';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Dimensions, ScrollView, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
@@ -57,10 +57,19 @@ export default function FileView() {
         "/api/v4/projects/{id}/repository/files/{file_path}",
         params
     );
+    if (isLoading) return <Text>Loading...</Text>;
+    if (isError) return <Text>Error fetching data</Text>;
+
+
     const { content, commit, file_path, file_name, encoding } = file || {};
     // console.log('File:', content, commit, file_path, file_name, encoding);
     return (
         <ScrollView className='flex-1 p-4 m-2 bg-white safe-area-inset-bottom'>
+            <Stack.Screen
+                options={{
+                    title: "Explore",
+                }}
+            />
             {Component(mime.lookup(file_name), content)}
             <Text>{file_name}</Text>
             <View className='flex-row h-6'></View>
