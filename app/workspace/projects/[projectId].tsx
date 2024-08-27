@@ -1,6 +1,7 @@
 import { ButtonList, IListItems } from "@/components/buttonList";
 import { Text } from "@/components/ui/text";
 import { getData } from "@/lib/gitlab/client";
+import { APIEntitiesProject } from "@/types/general";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Link,
@@ -26,14 +27,15 @@ const ProjectDetailsScreen = () => {
       license: false,
     },
   };
-  const { data, isLoading, isError } = getData(
+  const { data, isLoading, isError } = getData<APIEntitiesProject>(
     ["projects_id", params.query],
     "/api/v4/projects/{id}",
     params
   );
   console.log("repository");
   const repository: any = data;
-  console.log(repository);
+  
+  // console.log(repository);
 
   // KPI => _links
   const listItems: IListItems[] = [
@@ -49,7 +51,10 @@ const ProjectDetailsScreen = () => {
     {
       icon: "git-merge",
       text: "Merge Requests",
-      kpi: "",
+      onAction: () => {
+        router.push(`workspace/projects/${repository.id}/pull-requests/list`);
+      },
+      kpi: repository?.merge_requests_count || "",
       itemColor: "#3e64ed",
     },
     { icon: "play-outline", text: "CI/CD", kpi: "", itemColor: "#d5ea4e" },
