@@ -2,6 +2,7 @@
   "expo": {
     "name": "expo-gitlab-client",
     "slug": "expo-gitlab-client",
+    "owner": "teepee",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
