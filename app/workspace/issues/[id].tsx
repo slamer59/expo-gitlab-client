@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';

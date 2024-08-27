@@ -9,7 +9,7 @@ base_url = "https://gitlab.com"
 private_token = "***REMOVED***"
 
 # The ID of the project you want to add the webhook to
-project_id = "59853773"
+project_id = "59795263"
 
 # The URL that the webhook will POST to
 hook_url = "https://webhook-gitlab-et4qi4c73q-uc.a.run.app/webhook_gitlab"

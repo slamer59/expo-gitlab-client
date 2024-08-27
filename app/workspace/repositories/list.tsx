@@ -1,12 +1,12 @@
 import { GroupCard } from "@/components/ui/group-card";
 import { RepositoryCard } from "@/components/ui/repository-card";
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { T } from "@rn-primitives/tooltip/dist/types-opYTmxP0";
 import React from "react";
 import { ScrollView, View } from "react-native";
 
-import { fetchData } from "@/lib/gitlab/client";
+import { fetchData } from "@/lib/gitlab/hooks";
 const baseUrl = "https://gitlab.com/api/v4"
 
 export default function ModalScreen() {

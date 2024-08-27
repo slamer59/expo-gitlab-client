@@ -7,7 +7,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 
 import IssueStatusIcon from '@/components/ui/issue-status-icon';
 import LinksToIssueSection from '@/components/ui/link-issue-section';
-import { getData } from '@/lib/gitlab/client';
+import { getData } from '@/lib/gitlab/hooks';
 import { formatDate } from '@/lib/utils';
 import Markdown from 'react-native-markdown-display';
 import { Text } from '~/components/ui/text';

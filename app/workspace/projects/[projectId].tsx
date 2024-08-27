@@ -1,12 +1,11 @@
 import { ButtonList, IListItems } from "@/components/buttonList";
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Link,
   useLocalSearchParams,
-  useNavigation,
-  useRouter,
+  useRouter
 } from "expo-router";
 import React from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
@@ -132,7 +131,7 @@ const ProjectDetailsScreen = () => {
       <View className="p-4 m-2 bg-gray-200 rounded-lg">
         <TouchableOpacity
           className="flex-row items-center justify-between py-2"
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <View className="flex flex-row items-center">
             <Ionicons name="git-branch-outline" size={24} color="gray" />

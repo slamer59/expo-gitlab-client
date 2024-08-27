@@ -32,12 +32,10 @@ export default function LoginScreen() {
         checkToken();
     }, []);
 
-
-
     const checkToken = async () => {
         console.log('Checking token');
         const savedToken = await getToken();
-        console.log(savedToken);
+
         if (savedToken) {
             const isValid = await checkValidity(savedToken);
             console.log(isValid);

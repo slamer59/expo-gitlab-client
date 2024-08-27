@@ -1,9 +1,8 @@
-import { IssueCard, IssueCardSkeleton } from "@/components/ui/issue-card";
 import { TopFilterList } from "@/components/ui/top-filter-list";
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { IssuesListComponent } from "@/models/issuesList";
 import { APIEntitiesRelatedIssue } from "@/types/general";
-import { Link, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 

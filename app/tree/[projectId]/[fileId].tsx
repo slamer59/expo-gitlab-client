@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { getData } from '@/lib/gitlab/client';
+import { getData } from '@/lib/gitlab/hooks';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';

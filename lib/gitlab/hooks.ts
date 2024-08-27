@@ -14,7 +14,7 @@ export const getData = <T>(
   endpoint: string,
   params?: Record<string, any>
 ) => {
- 
+  console.log("getData", endpoint, params);
   return useQuery({
     queryKey: keys,
     queryFn: () => fetchData<T>(endpoint, "GET", params),
@@ -49,8 +49,8 @@ export async function fetchData<T>(
   body?: Record<string, any>
 ): Promise<T> {
   try {
+    console.log("fetchData", endpoint, method, params, body);
     let response;
-
     const headers = {
       accept: "application/json",
       "private-token": await getToken(), // process.env.EXPO_PUBLIC_GITLAB_TOKEN
@@ -58,6 +58,7 @@ export async function fetchData<T>(
 
     switch (method) {
       case "GET":
+        console.log("GET", endpoint, params, headers);
         response = await client.GET(endpoint, { params, headers });
         break;
       case "POST":
@@ -74,7 +75,7 @@ export async function fetchData<T>(
     // Check if response.data is defined
     if (!response.data) {
       throw new Error("Response data is undefined");
-      
+
     }
 
     return response.data as T;

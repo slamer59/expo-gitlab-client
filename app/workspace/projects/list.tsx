@@ -1,6 +1,6 @@
 import { ProjectCard, ProjectCardSkeleton } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
-import { getData } from '@/lib/gitlab/client';
+import { getData } from '@/lib/gitlab/hooks';
 import { Link, Stack } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
