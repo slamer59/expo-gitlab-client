@@ -1,6 +1,6 @@
 import { Text } from "@/components/Themed";
 import FileItem from "@/components/ui/file-item";
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from 'react';

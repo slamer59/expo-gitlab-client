@@ -10,7 +10,7 @@ export async function getToken() {
   let result = await SecureStore.getItemAsync('gitlab-token');
 
   if (result) {
-    console.log("Token successfully loaded");
+    // console.log("Token successfully loaded");
     return result;
   } else {
     console.log("No token stored");

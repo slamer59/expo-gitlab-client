@@ -1,10 +1,10 @@
-import { getData } from "@/lib/gitlab/client";
+import { getData } from "@/lib/gitlab/hooks";
 import { getToken } from "@/lib/utils";
 import { IssuesListComponent } from "@/models/issuesList";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
 import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 
 export default function IssuesList() {
   const { projectId } = useLocalSearchParams();
