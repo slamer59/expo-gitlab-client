@@ -8,6 +8,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PostHogProvider } from 'posthog-react-native';
 import * as React from "react";
 import { Platform } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -15,7 +16,7 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import "react-native-reanimated";
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -62,15 +63,19 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar />
-      <Stack>
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-      <PortalHost />
-    </QueryClientProvider>
+    <PostHogProvider apiKey="POSTHOG_API_KEY_REMOVED" options={{
+      host: "https://eu.i.posthog.com",
+    }}>
+      <QueryClientProvider client={queryClient}>
+        <StatusBar />
+        <Stack>
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+        </Stack>
+        <PortalHost />
+      </QueryClientProvider>
+    </PostHogProvider>
   );
 }
