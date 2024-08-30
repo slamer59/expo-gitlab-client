@@ -1,45 +1,47 @@
+import { GitLabNotificationSettings } from '@/components/Settings/GitlabNotificationSettings';
+import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { resetToken } from '@/lib/utils';
+import * as Application from 'expo-application';
 import { useNavigation } from 'expo-router';
-import React from 'react';
+import { default as React } from 'react';
 import { Alert, View } from 'react-native';
 
 export default function OptionScreen() {
   const navigation = useNavigation()
+  const bundleIdentifier = Application.applicationId;
+  console.log(bundleIdentifier);
   return (
-    <View className='flex-1 p-4 bg-light dark:bg-dark'>
-      <View className='flex-row items-center mb-4'>
-        <Text className='text-2xl font-bold text-light dark:text-primaryDark'>Settings</Text>
-      </View>
+    <View className='flex-1 p-4 m-2'>
+      <Text className='mb-4 text-2xl font-bold'>General settings</Text>
+      <SystemSettingsScreen />
+      <GitLabNotificationSettings />
+
+      {/* <View className='mb-6 border-t border-gray-700' /> */}
       {/* <View className='mb-6'>
-        <Text className='text-light dark:text-primaryDark'>Notifications</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Configure Notifications</Text>
+        <Text className=''>General</Text>
+        <Text className='mt-2 '>Theme</Text>
+        <Text className=''>Follow system</Text>
+        <Text className='mt-2 '>Code Options</Text>
+        <Text className='mt-2 '>Language</Text>
+        <Text className=''>Follow system</Text>
+        <Text className='mt-2 '>Accounts</Text>
       </View> */}
       {/* <View className='mb-6 border-t border-gray-700' /> */}
       {/* <View className='mb-6'>
-        <Text className='text-light dark:text-primaryDark'>General</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Theme</Text>
-        <Text className='text-light dark:text-primaryDark'>Follow system</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Code Options</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Language</Text>
-        <Text className='text-light dark:text-primaryDark'>Follow system</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Accounts</Text>
-      </View> */}
-      {/* <View className='mb-6 border-t border-gray-700' /> */}
-      {/* <View className='mb-6'>
-        <Text className='text-light dark:text-primaryDark'>Subscriptions</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Copilot</Text>
+        <Text className=''>Subscriptions</Text>
+        <Text className='mt-2 '>Copilot</Text>
       </View> */}
       {/* <View className='mb-6 border-t border-gray-700' /> */}
       <View className='mb-6'>
-        {/* <Text className='text-light dark:text-primaryDark'>More Options</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Feature Preview</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Share Feedback</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Get Help</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Terms of Service</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Privacy Policy & Analytics</Text>
-        <Text className='mt-2 text-light dark:text-primaryDark'>Open Source Libraries</Text> */}
+        {/* <Text className=''>More Options</Text>
+        <Text className='mt-2 '>Feature Preview</Text>
+        <Text className='mt-2 '>Share Feedback</Text>
+        <Text className='mt-2 '>Get Help</Text>
+        <Text className='mt-2 '>Terms of Service</Text>
+        <Text className='mt-2 '>Privacy Policy & Analytics</Text>
+        <Text className='mt-2 '>Open Source Libraries</Text> */}
         <Button
           onPress={async () => {
             Alert.alert(
@@ -60,12 +62,12 @@ export default function OptionScreen() {
               ]
             )
           }}
-          className='mt-2 bg-red-500 text-light dark:text-primaryDark'>
+          className='m-1 bg-red-500 '>
           <Text className='text-light dark:text-primary'>Sign Out</Text>
         </Button>
       </View>
-      <Text className='mt-6 text-sm text-light dark:text-primaryDark'>GitAlchemy v0.1.0</Text>
-    </View>
+      <Text className='mt-2 text-sm'>{Application.applicationName} v{Application.nativeBuildVersion}</Text>
+    </View >
   );
 }
 

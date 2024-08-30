@@ -1,8 +1,10 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
+import { useFeatureFlag } from 'posthog-react-native';
 import React from 'react';
+import { Pressable, View } from 'react-native';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -12,6 +14,9 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const notificationFeatureEnabled = useFeatureFlag('notification-screen');
+  const explorerFeatureEnabled = useFeatureFlag('explorer-screen');
+  const profilerFeatureEnabled = useFeatureFlag('profile-screen');
 
   return (
     <Tabs
@@ -65,20 +70,24 @@ export default function TabLayout() {
           // ),
         }}
       />
-      {/* <Tabs.Screen
-        name="notification"
-        options={{
-          title: 'Notification',
-          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <TabBarIcon name="compass" color={color} />,
-        }}
-      />
+      {notificationFeatureEnabled &&
+        <Tabs.Screen
+          name="notification"
+          options={{
+            title: 'Notification',
+            tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
+          }}
+        />
+      }
+      {explorerFeatureEnabled &&
+        <Tabs.Screen
+          name="explore"
+          options={{
+            title: 'Explore',
+            tabBarIcon: ({ color }) => <TabBarIcon name="compass" color={color} />,
+          }}
+        />}
+
       <Tabs.Screen
         name="profile"
         options={{
@@ -93,7 +102,7 @@ export default function TabLayout() {
                       <FontAwesome
                         name="share-alt"
                         size={25}
-                        color={Colors[colorScheme ?? 'light'].text}
+                        // color={Colors[colorScheme ?? 'light'].text}
                         style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                       />
                     )}
@@ -105,7 +114,7 @@ export default function TabLayout() {
                     <FontAwesome
                       name="ellipsis-v"
                       size={25}
-                      color={Colors[colorScheme ?? 'light'].text}
+                      // color={Colors[colorScheme ?? 'light'].text}
                       style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                     />
                   )}
@@ -115,7 +124,8 @@ export default function TabLayout() {
           ),
 
         }}
-      /> */}
+      />
+
     </Tabs >
   );
 }
