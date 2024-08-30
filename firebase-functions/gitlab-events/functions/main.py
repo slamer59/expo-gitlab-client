@@ -97,9 +97,11 @@ def add_device_to_nofitication(req: https_fn.Request) -> https_fn.Response:
             return https_fn.Response(response=rep, mimetype="text/plain")
         else:
             # Return an error response if the push token is missing
-            logger.warn("Missing push token")
+            logger.warn("Missing push token or projects is wrong")
             return https_fn.Response(
-                response="Missing push token", mimetype="text/plain", status=400
+                response="Missing push token or projects is wrong",
+                mimetype="text/plain",
+                status=400,
             )
     except Exception as e:
         # Return an error response if an exception occurs

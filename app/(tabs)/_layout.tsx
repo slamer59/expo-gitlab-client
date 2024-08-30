@@ -108,7 +108,7 @@ export default function TabLayout() {
                     )}
                 </Pressable>
               </Link >
-              <Link href="/options" asChild>
+              <Link href="a" asChild>
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
