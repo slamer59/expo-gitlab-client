@@ -12,8 +12,6 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const ButtonList = () => {
   const navigation = useNavigation();
-  const flag = useFeatureFlag('git-merge');
-  console.log('Flag value:', flag);
   const featureFlagMapping = {
     'git-merge': useFeatureFlag('git-merge'),
     'chatbubbles-outline': useFeatureFlag('chatbubbles-outline'),
