@@ -9,15 +9,14 @@ export async function mapDeviceToProject(push_token: any, projects: { http_url_t
         },
         body: JSON.stringify({
             push_token: push_token,
-            projects: projects.http_url_to_repo,
+            projects: projects.map(project => project.http_url_to_repo),
         }),
     });
 
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     console.log("Map device to project done");
-    return await response.json();
+    return "Map device to project done"
 }
 

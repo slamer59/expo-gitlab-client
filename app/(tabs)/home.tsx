@@ -43,7 +43,7 @@ const ButtonList = () => {
     return flagValue !== undefined ? flagValue : true;
   }).map((button) => (button))
 
-  console.log(visibleButtons);
+  // console.log(visibleButtons);
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
