@@ -2,14 +2,15 @@ import { formatDate } from "@/lib/utils";
 import { APIEntitiesMergeRequest } from "@/types/general";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export function PullRequestCard({
   pullRequestItem,
+  onPress,
 }: {
   pullRequestItem: APIEntitiesMergeRequest;
+  onPress?: () => void;
 }) {
-  const isMerged = pullRequestItem.detailed_merge_status;
   const checkColor = (merge_status: string = "draft_status") => {
     switch (merge_status) {
       case "draft_status":
@@ -26,14 +27,24 @@ export function PullRequestCard({
         return "#ababab";
     }
   };
-  console.log(pullRequestItem.detailed_merge_status);
+
   return (
     <View className="flex flex-row items-center gap-2 px-2">
-      <Ionicons
-        color={checkColor(pullRequestItem.detailed_merge_status)}
-        size={40}
-        name="git-pull-request-outline"
-      ></Ionicons>
+      <Link
+        href={{
+          pathname: "workspace/pull-requests/[id]",
+          params: {
+            id: pullRequestItem.iid,
+            projectId: pullRequestItem.project_id,
+          },
+        }}
+      >
+        <Ionicons
+          color={checkColor(pullRequestItem.detailed_merge_status)}
+          size={40}
+          name="git-pull-request-outline"
+        ></Ionicons>
+      </Link>
       <View className="flex-row items-start flex-1 p-4 space-x-4 cursor-pointer justify-between   flex ">
         <View className="space-y-1  ">
           <Text className="text-lg font-bold">

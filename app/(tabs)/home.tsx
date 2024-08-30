@@ -2,7 +2,7 @@ import { getToken } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
 
 import * as Notifications from "expo-notifications";
-import { useFocusEffect, useNavigation } from "expo-router";
+import { Link, useFocusEffect, useNavigation } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -120,13 +120,21 @@ const ButtonList = () => {
             <Text className="ml-2 text-base">{button.text}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity
-          key={"123"}
-          className="flex-row items-center py-2"
-          onPress={() => navigation.navigate('login')}
-        >
+        <Link href={"login"} className="flex-row items-center py-2">
           <Text className="ml-2 text-base">{"login"}</Text>
-        </TouchableOpacity>
+        </Link>
+        <Link
+          href={{
+            pathname: "workspace/pull-requests/[id]",
+            params: {
+              id: 13,
+              projectId: 59853773,
+            },
+          }}
+          className="flex-row items-center py-2"
+        >
+          <Text className="ml-2 text-base">{"workspace ite"}</Text>
+        </Link>
       </View>
     </ScrollView>
   );

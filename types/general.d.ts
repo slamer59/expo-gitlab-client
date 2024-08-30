@@ -639,3 +639,80 @@ export interface APIEntitiesRelatedIssue {
     allow_pipeline_trigger_approve_deployment?: boolean;
     prevent_merge_without_jira_issue?: string;
   }
+  export interface APIEntitiesCommit {
+    /**
+     * example:
+     * 2695effb5807a22ff3d138d593fd856244e155e7
+     */
+    id?: string;
+    /**
+     * example:
+     * 2695effb
+     */
+    short_id?: string;
+    /**
+     * example:
+     * 2017-07-26T09:08:53.000Z
+     */
+    created_at?: string; // date-time
+    parent_ids?: string[];
+    /**
+     * example:
+     * Initial commit
+     */
+    title?: string;
+    /**
+     * example:
+     * Initial commit
+     */
+    message?: string;
+    /**
+     * example:
+     * John Smith
+     */
+    author_name?: string;
+    /**
+     * example:
+     * john@example.com
+     */
+    author_email?: string;
+    /**
+     * example:
+     * 2012-05-28T11:42:42.000Z
+     */
+    authored_date?: string; // date-time
+    /**
+     * example:
+     * Jack Smith
+     */
+    committer_name?: string;
+    /**
+     * example:
+     * jack@example.com
+     */
+    committer_email?: string;
+    /**
+     * example:
+     * 2012-05-28T11:42:42.000Z
+     */
+    committed_date?: string; // date-time
+    /**
+     * example:
+     * { "Merged-By": "Jane Doe janedoe@gitlab.com" }
+     */
+    trailers?: {
+      [key: string]: any;
+    };
+    /**
+     * example:
+     * { "Signed-off-by": ["John Doe <johndoe@gitlab.com>", "Jane Doe <janedoe@gitlab.com>"] }
+     */
+    extended_trailers?: {
+      [key: string]: any;
+    };
+    /**
+     * example:
+     * https://gitlab.example.com/janedoe/gitlab-foss/-/commit/ed899a2f4b50b4370feeea94676502b42383c746
+     */
+    web_url?: string;
+  }
