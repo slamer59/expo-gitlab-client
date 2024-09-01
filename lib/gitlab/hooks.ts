@@ -48,7 +48,6 @@ export async function fetchData<T>(
   body?: Record<string, any>
 ): Promise<T> {
   try {
-    console.log("fetchData", endpoint, method, params, body);
     let response;
     const headers = {
       accept: "application/json",
@@ -57,7 +56,6 @@ export async function fetchData<T>(
 
     switch (method) {
       case "GET":
-        console.log("GET", endpoint, params, headers);
         response = await client.GET(endpoint, { params, headers });
         break;
       case "POST":
