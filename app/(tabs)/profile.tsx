@@ -48,24 +48,31 @@ const user = {
 }
 export default function ProfileScreen() {
   const userId = "11041577"
+
+
   // https://docs.gitlab.com/ee/api/users.html#single-user
   const params = {
     path: {
-      id: userId,
     },
     query: {
     },
   };
   const { data: user, isLoading, isError } = getData(
     ["user_info", params.path],
-    "/api/v4/users/{id}",
+    "/api/v4/user",
     params
   );
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+  if (isError) {
+    return <Text>Error</Text>;
+  }
   // https://docs.gitlab.com/ee/api/projects.html#list-projects-a-user-has-contributed-to
   // https://docs.gitlab.com/ee/api/projects.html#list-user-projects
   const paramsProjects = {
     path: {
-      id: userId,
+      id: user.id,
     },
     query: {
       membership: true,
@@ -78,11 +85,12 @@ export default function ProfileScreen() {
     "/api/v4/users/{id}/projects",
     paramsProjects
   );
-  console.log(projects)
+
+
   // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
   const paramsStarredProjects = {
     path: {
-      id: userId,
+      id: user.id,
     },
     query: {
       order_by: "last_activity_at",
@@ -94,12 +102,11 @@ export default function ProfileScreen() {
     "/api/v4/users/{id}/starred_projects",
     paramsStarredProjects
   );
-  console.log(starredProjects)
 
-  if (isLoading || isLoadingProjects) {
+  if (isLoadingProjects || isLoadingStarredProjects) {
     return <Text>Loading...</Text>;
   }
-  if (isError || isErrorProjects) {
+  if (isErrorProjects || isErrorStarredProjects) {
     return <Text>Error</Text>;
   }
   return (
