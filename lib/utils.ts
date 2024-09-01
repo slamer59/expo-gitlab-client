@@ -18,14 +18,14 @@ export async function getToken() {
   }
 }
 
-export async function checkValidity(token: string | null) {
+export async function checkValidity(serverUrl: string, token: string | null) {
   console.log('Checking token validity...');
   if (!token) {
     console.log('No token provided');
     return false;
   }
   try {
-    const response = await fetch('https://gitlab.com/api/v4/user', {
+    const response = await fetch(`${serverUrl}/api/v4/user`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
