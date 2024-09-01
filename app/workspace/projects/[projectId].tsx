@@ -25,13 +25,11 @@ const ProjectDetailsScreen = () => {
       license: false,
     },
   };
-  const { data, isLoading, isError } = getData(
+  const { data: repository, isLoading, isError } = getData(
     ["projects_id", params.query],
     "/api/v4/projects/{id}",
     params
   );
-  console.log("repository");
-  const repository: any = data;
   console.log(repository);
 
   // KPI => _links

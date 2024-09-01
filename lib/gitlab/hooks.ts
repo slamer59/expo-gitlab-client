@@ -14,7 +14,6 @@ export const getData = <T>(
   endpoint: string,
   params?: Record<string, any>
 ) => {
-  console.log("getData", endpoint, params);
   return useQuery({
     queryKey: keys,
     queryFn: () => fetchData<T>(endpoint, "GET", params),
