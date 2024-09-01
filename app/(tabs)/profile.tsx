@@ -1,7 +1,9 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Text } from '@/components/ui/text';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { getData } from '@/lib/gitlab/hooks';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Image, View } from 'react-native';
+import { View } from 'react-native';
 
 const stars = [
   {
@@ -45,86 +47,133 @@ const user = {
 
 }
 export default function ProfileScreen() {
+  const userId = "11041577"
+  // https://docs.gitlab.com/ee/api/users.html#single-user
+  const params = {
+    path: {
+      id: userId,
+    },
+    query: {
+    },
+  };
+  const { data: user, isLoading, isError } = getData(
+    ["user_info", params.path],
+    "/api/v4/users/{id}",
+    params
+  );
+  // https://docs.gitlab.com/ee/api/projects.html#list-projects-a-user-has-contributed-to
+  // https://docs.gitlab.com/ee/api/projects.html#list-user-projects
+  const paramsProjects = {
+    path: {
+      id: userId,
+    },
+    query: {
+      membership: true,
+      order_by: "last_activity_at",
+      sort: "desc",
+    },
+  };
+  const { data: projects, isLoading: isLoadingProjects, isError: isErrorProjects } = getData(
+    ["user_projects", params.path],
+    "/api/v4/users/{id}/projects",
+    paramsProjects
+  );
+  console.log(projects)
+  // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
+  const paramsStarredProjects = {
+    path: {
+      id: userId,
+    },
+    query: {
+      order_by: "last_activity_at",
+      sort: "desc",
+    },
+  };
+  const { data: starredProjects, isLoading: isLoadingStarredProjects, isError: isErrorStarredProjects } = getData(
+    ["user_starred_projects", params.path],
+    "/api/v4/users/{id}/starred_projects",
+    paramsStarredProjects
+  );
+  console.log(starredProjects)
+
+  if (isLoading || isLoadingProjects) {
+    return <Text>Loading...</Text>;
+  }
+  if (isError || isErrorProjects) {
+    return <Text>Error</Text>;
+  }
   return (
     <View className="flex-1 p-4 ">
       <View className="flex-row items-center mb-4">
-        <Image
-          source={{ uri: user.avatar }}
-          style={{ width: 64, height: 64, borderRadius: 32 }}
-          className="mr-4"
-        />
-        <View>
-          <Text className="text-2xl font-bold ">{user.name}</Text>
-          <Text className="text-light dark:text-dark">{user.username}</Text>
+        <Avatar alt={`${user.name}'s Avatar`}>
+          <AvatarImage
+            source={{ uri: user.avatar_url }}
+          />
+          <AvatarFallback>
+            <Text>{`${user.name.substring(0, 2).toUpperCase()}`}</Text>
+          </AvatarFallback>
+        </Avatar>
+        <View className="flex-1 ml-3">
+          <Text className="font-semibold">
+            {user.name}{' '}
+          </Text>
+          <Text className="text-sm text-gray-500">
+            @{user.username}</Text>
         </View>
       </View>
 
       <View className="flex mb-4 space-x-2 flex-2">
-        <View className="flex-row items-center m-2">
-          <FontAwesome5 name="map-marker-alt" size={24} color="gray" className="mr-2" />
+        {user.location && <View className="flex-row items-center m-2">
+          <Ionicons name="location-outline" size={24} color="gray" className="mr-2" />
           <Text className="text-light dark:text-dark">{user.location}</Text>
         </View>
-        <View className="flex-row items-center m-2">
-          <FontAwesome5 name="envelope" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">{user.email}</Text>
+        }
+        {user.public_email && <View className="flex-row items-center m-2">
+          <Ionicons name="mail-outline" size={24} color="gray" className="mr-2" />
+          <Text className="text-light dark:text-dark">{user.public_email}</Text>
         </View>
-        <View className="flex-row items-center mb-2">
-          <FontAwesome5 name="user-friends" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">{user.followerCount} followers • {user.followingCount} following</Text>
-        </View>
-        <View className="flex-row space-x-2">
-          <Image
-            source={{ uri: 'https://placehold.co/30x30' }}
-            style={{ width: 24, height: 24 }}
-          />
-          <Image
-            source={{ uri: 'https://placehold.co/30x30' }}
-            style={{ width: 24, height: 24 }}
-          />
-          <Image
-            source={{ uri: 'https://placehold.co/30x30' }}
-            style={{ width: 24, height: 24 }}
-          />
-          <Image
-            source={{ uri: 'https://placehold.co/30x30' }}
-            style={{ width: 24, height: 24 }}
-          />
-        </View>
+        }
+        {user.followers &&
+          <View className="flex-row items-center mb-2">
+            <Ionicons name="people-outline" size={24} color="gray" className="mr-2" />
+            <Text className="text-light dark:text-dark">{user.followers} followers • {user.following} following</Text>
+          </View>}
       </View>
-      <View className="mb-4">
+      {/* <View className="mb-4">
         <View className="flex-row items-center mb-2">
-          <FontAwesome5 name="thumbtack" size={24} color="gray" className="mr-2" />
+          <Ionicons name="thumbtack" size={24} color="gray" className="mr-2" />
           <Text className="text-light dark:text-dark">Pinned</Text>
         </View>
 
-        {user.projects.map(project => (
+         {user.projects.map(project => (
           <View key={project.id} className="p-4 m-2 rounded-lg ">
             <Text className="mb-2 font-extrabold text-dark dark:text-light">{project.name}</Text>
             <Text className="mb-2 text-dark dark:text-light">{project.description}</Text>
             <View className="flex-row items-center text-dark dark:text-light">
-              <FontAwesome5 name="star" size={24} color="yellow" className="mr-1" />
+              <Ionicons name="star" size={24} color="yellow" className="mr-1" />
               <Text className="mr-4 text-dark dark:text-light">{project.stars} stars</Text>
             </View>
           </View>
-        ))}
+        ))} 
 
 
-      </View>
-      <View className="mb-4">
+      </View> */}
+      <View className="p-4 m-4 bg-gray-200 rounded-lg">
+        <Text className="mb-2 text-lg font-bold">Workspace</Text>
         <View className="flex-row items-center mb-2">
-          <FontAwesome5 name="book" size={24} color="gray" className="mr-2" />
+          <Ionicons name="git-branch-outline" size={24} color="gray" className="mr-2" />
           <Text className="text-light dark:text-dark">Repositories</Text>
-          <Text className="ml-auto ">55</Text>
+          <Text className="ml-auto ">{projects.length}</Text>
         </View>
-        <View className="flex-row items-center mb-2">
-          <FontAwesome5 name="building" size={24} color="gray" className="mr-2" />
+        {/* <View className="flex-row items-center mb-2">
+          <Ionicons name="building" size={24} color="gray" className="mr-2" />
           <Text className="text-light dark:text-dark">Organizations</Text>
           <Text className="ml-auto ">0</Text>
-        </View>
+        </View> */}
         <View className="flex-row items-center">
-          <FontAwesome5 name="star" size={24} color="gray" className="mr-2" />
+          <Ionicons name="star" size={24} color="gray" className="mr-2" />
           <Text className="text-light dark:text-dark">Starred</Text>
-          <Text className="ml-auto ">410</Text>
+          <Text className="ml-auto ">{starredProjects.length}</Text>
         </View>
       </View>
     </View>
