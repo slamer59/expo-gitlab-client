@@ -13,14 +13,12 @@ export function PullRequestListComponent({
 }: {
   pullRequests: APIEntitiesMergeRequest[];
 }) {
- 
   return (
     <View className="w-full flex-1 flex justify-between">
       {pullRequests
         ? pullRequests?.map((pullRequestItem, index) => (
             <PullRequestCard
-             
-              key={index}
+              key={`${pullRequestItem.id}`}
               pullRequestItem={pullRequestItem}
             />
           ))

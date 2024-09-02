@@ -22,6 +22,11 @@ const ButtonList = () => {
       text: "Projects",
       screen: "workspace/projects/list",
     },
+    {
+      icon: "git-pull-request",
+      text: "Pull requests",
+      screen: "workspace/pull-requests/list",
+    },
     // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories/list' },
     // { icon: 'people-outline', text: 'Organizations' },
     // { icon: 'star-outline', text: 'Starred' },
@@ -120,21 +125,7 @@ const ButtonList = () => {
             <Text className="ml-2 text-base">{button.text}</Text>
           </TouchableOpacity>
         ))}
-        <Link href={"login"} className="flex-row items-center py-2">
-          <Text className="ml-2 text-base">{"login"}</Text>
-        </Link>
-        <Link
-          href={{
-            pathname: "workspace/pull-requests/[id]",
-            params: {
-              id: 13,
-              projectId: 59853773,
-            },
-          }}
-          className="flex-row items-center py-2"
-        >
-          <Text className="ml-2 text-base">{"workspace ite"}</Text>
-        </Link>
+       
       </View>
     </ScrollView>
   );

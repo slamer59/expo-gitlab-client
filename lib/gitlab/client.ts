@@ -14,7 +14,7 @@ export const getData = <T>(
   endpoint: string,
   params?: Record<string, any>
 ) => {
- 
+
   return useQuery({
     queryKey: keys,
     queryFn: () => fetchData<T>(endpoint, "GET", params),
@@ -74,7 +74,6 @@ export async function fetchData<T>(
     // Check if response.data is defined
     if (!response.data) {
       throw new Error("Response data is undefined");
-      
     }
 
     return response.data as T;
