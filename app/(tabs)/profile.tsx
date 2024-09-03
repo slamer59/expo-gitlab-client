@@ -1,114 +1,128 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Text } from '@/components/ui/text';
-import { getData } from '@/lib/gitlab/hooks';
+import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
-const stars = [
-  {
-    id: 1,
-    name: 'slamer59',
-    stars: 5,
-    description: 'Awarded for outstanding contributions to the community.',
-
-  },
-  // add more stars here
-];
-
-
-const user = {
-  name: 'Thomas PEDOT',
-  username: 'slamer59',
-  location: 'Toulouse, FRANCE',
-  email: 'thomas.pedot@gmail.com',
-  avatar: 'https://placehold.co/100x100',
-  followerCount: 1000,
-  followingCount: 500,
-  bio: 'I am a software engineer with a passion for building scalable and maintainable applications. I have experience with React Native, Node.js, and AWS.',
-  skills: ['React Native', 'Node.js', 'AWS', 'JavaScript', 'TypeScript'],
-  projects: [
-    {
-      id: 1,
-      name: 'Project 1',
-      description: 'A mobile app for tracking fitness progress.',
-      stars: 15,
-      technologies: ['React Native', 'Node.js', 'AWS'],
-    },
-    {
-      id: 2,
-      name: 'Project 2',
-      description: 'A web application for managing customer relationships.',
-      technologies: ['React', 'Node.js', 'MongoDB'],
-      stars: 10,
-    },
-  ],
-
-
-}
-export default function ProfileScreen() {
-  const userId = "11041577"
-
-
+async function getUserInfo(session: { url: string, token: string }) {
   // https://docs.gitlab.com/ee/api/users.html#single-user
-  const params = {
-    path: {
-    },
-    query: {
-    },
-  };
-  const { data: user, isLoading, isError } = getData(
-    ["user_info", params.path],
-    "/api/v4/user",
-    params
-  );
-  if (isLoading) {
+  try {
+    const response = await fetch(`${session.url}/api/v4/user`, {
+      headers: {
+        'PRIVATE-TOKEN': session.token,
+        'Content-Type': 'application/json'
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    // You can return a default value or rethrow the error based on your needs
+    return null;
+  }
+}
+
+async function getUserProjects(session: { url: string, token: string }, userId: any, params: { membership: boolean, order_by: string, sort: string }) {
+  // Construct the query string from the params object
+  const queryString = new URLSearchParams(params).toString();
+
+  try {
+    const response = await fetch(`${session.url}/api/v4/users/${userId}/projects?${queryString}`, {
+      headers: {
+        'PRIVATE-TOKEN': session.token,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const projects = await response.json();
+
+    return projects;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    // You can return a default value or rethrow the error based on your needs
+    return [];
+  }
+}
+
+
+async function getUserStarredProjects(session: { url: string, token: string }, userId: any, params: { path: { id: any; }; query: { order_by: string; sort: string; }; }) {
+  const queryString = new URLSearchParams(params.query).toString();
+  try {
+    const response = await fetch(`${session.url}/api/v4/users/${userId}/starred_projects?${queryString}`, {
+      headers: {
+        'PRIVATE-TOKEN': session.token,
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const starredProjects = await response.json();
+    return starredProjects;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    // You can return a default value or rethrow the error based on your needs
+    return [];
+  }
+}
+
+
+export default function ProfileScreen() {
+  const { session } = useSession()
+  const [user, setUser] = React.useState(null);
+  const [projects, setProjects] = React.useState([]);
+  const [starredProjects, setStarredProjects] = React.useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const user = await getUserInfo(session);
+      setUser(user);
+
+      const paramsProjects = {
+        path: {
+          id: user.id,
+        },
+        query: {
+          membership: true,
+          order_by: "last_activity_at",
+          sort: "desc",
+        },
+      };
+      const projects = await getUserProjects(session, user.id, paramsProjects)
+      setProjects(projects);
+
+      // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
+      const paramsStarredProjects = {
+        path: {
+          id: user.id,
+        },
+        query: {
+          order_by: "last_activity_at",
+          sort: "desc",
+        },
+      };
+
+      const starredProjects = await getUserStarredProjects(session, user.id, paramsStarredProjects)
+      setStarredProjects(starredProjects);
+    }
+    fetchData();
+  }, [session]);
+
+
+
+  if (!user) {
     return <Text>Loading...</Text>;
   }
-  if (isError) {
-    return <Text>Error</Text>;
-  }
-  // https://docs.gitlab.com/ee/api/projects.html#list-projects-a-user-has-contributed-to
-  // https://docs.gitlab.com/ee/api/projects.html#list-user-projects
-  const paramsProjects = {
-    path: {
-      id: user.id,
-    },
-    query: {
-      membership: true,
-      order_by: "last_activity_at",
-      sort: "desc",
-    },
-  };
-  const { data: projects, isLoading: isLoadingProjects, isError: isErrorProjects } = getData(
-    ["user_projects", params.path],
-    "/api/v4/users/{id}/projects",
-    paramsProjects
-  );
 
-
-  // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
-  const paramsStarredProjects = {
-    path: {
-      id: user.id,
-    },
-    query: {
-      order_by: "last_activity_at",
-      sort: "desc",
-    },
-  };
-  const { data: starredProjects, isLoading: isLoadingStarredProjects, isError: isErrorStarredProjects } = getData(
-    ["user_starred_projects", params.path],
-    "/api/v4/users/{id}/starred_projects",
-    paramsStarredProjects
-  );
-
-  if (isLoadingProjects || isLoadingStarredProjects) {
-    return <Text>Loading...</Text>;
-  }
-  if (isErrorProjects || isErrorStarredProjects) {
-    return <Text>Error</Text>;
-  }
   return (
     <View className="flex-1 p-4 ">
       <View className="flex-row items-center mb-4">
