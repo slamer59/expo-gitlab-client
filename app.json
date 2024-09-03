@@ -3,7 +3,7 @@
     "name": "expo-gitlab-client",
     "slug": "expo-gitlab-client",
     "owner": "teepee",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.thomas.pedot.expogitlabclient"
+      "package": "com.thomas.pedot.expogitlabclient",
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
