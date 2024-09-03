@@ -2,16 +2,22 @@ import { GitLabNotificationSettings } from '@/components/Settings/GitlabNotifica
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import { resetToken } from '@/lib/utils';
+import { useSession } from '@/lib/session/SessionProvider';
 import * as Application from 'expo-application';
-import { useNavigation } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { default as React } from 'react';
 import { Alert, View } from 'react-native';
 
 export default function OptionScreen() {
-  const navigation = useNavigation()
-  const bundleIdentifier = Application.applicationId;
-  console.log(bundleIdentifier);
+
+  const { signOut, session } = useSession()
+
+  if (!session) {
+    return <Redirect href='/login' />;
+  }
+
+  // const bundleIdentifier = Application.applicationId;
+
   return (
     <View className='flex-1 p-4 m-2'>
       <Text className='mb-4 text-2xl font-bold'>General settings</Text>
@@ -55,8 +61,7 @@ export default function OptionScreen() {
                 },
                 {
                   text: "OK", onPress: () => {
-                    resetToken()
-                    navigation.navigate("login")
+                    signOut()
                   }
                 }
               ]

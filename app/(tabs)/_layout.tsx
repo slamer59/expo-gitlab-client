@@ -1,7 +1,9 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useSession } from '@/lib/session/SessionProvider';
 
+import { Text } from "@/components/ui/text";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
+import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -14,6 +16,14 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
 
+  const { session, isLoading } = useSession();
+  // You can keep the splash screen open, or render a loading screen like we do here.
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+  if (!session) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
@@ -76,7 +86,10 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
           headerRight: () => (
             <View className='flex-row items-center'>
-              <Link href="/share" asChild>
+              <Link href="/share"
+                className='m-1'
+                asChild
+              >
                 <Pressable>
                   {
                     ({ pressed }) => (
@@ -89,7 +102,11 @@ export default function TabLayout() {
                     )}
                 </Pressable>
               </Link >
-              <Link href="a" asChild>
+              <Link
+                href="/options"
+                className='m-1'
+                asChild
+              >
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
@@ -106,8 +123,6 @@ export default function TabLayout() {
 
         }}
       />
-
-
     </Tabs >
   );
 }
