@@ -11,6 +11,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 
 const ButtonList = () => {
+
   const navigation = useNavigation();
   const featureFlagMapping = {
     'git-merge': useFeatureFlag('git-merge'),
@@ -77,14 +78,8 @@ const ButtonList = () => {
             <Text className="ml-2 text-base">{button.text}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity
-          key={"123"}
-          className="flex-row items-center py-2"
-          onPress={() => navigation.navigate('login')}
-        >
-          <Text className="ml-2 text-base">{"login"}</Text>
-        </TouchableOpacity>
       </View>
+
     </ScrollView>
   );
 };

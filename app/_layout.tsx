@@ -2,18 +2,17 @@ if (__DEV__) {
   require("../ReactotronConfig");
 }
 import "@/global.css";
+import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from 'posthog-react-native';
-import * as React from "react";
-import { Platform } from "react-native";
-import { useColorScheme } from "~/lib/useColorScheme";
-
+import React from 'react';
 import "react-native-reanimated";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
@@ -27,55 +26,57 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { session, isLoading } = useSession();
+  const [isReady, setIsReady] = React.useState(false);
   const queryClient = new QueryClient();
 
-  const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
-  const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-
   React.useEffect(() => {
-    (async () => {
-      const theme = await AsyncStorage.getItem("theme");
-      if (Platform.OS === "web") {
-        // Adds the background color to the html element to prevent white background on overscroll.
-        document.documentElement.classList.add("bg-background");
+    async function prepare() {
+      try {
+        // Perform any initialization tasks here
+        initializeTokenChecker();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setIsReady(true);
       }
-      if (!theme) {
-        AsyncStorage.setItem("theme", colorScheme);
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      const colorTheme = theme === "dark" ? "dark" : "light";
-      if (colorTheme !== colorScheme) {
-        setColorScheme(colorTheme);
+    }
 
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      setIsColorSchemeLoaded(true);
-    })().finally(() => {
-      SplashScreen.hideAsync();
-    });
+    prepare();
   }, []);
 
-  if (!isColorSchemeLoaded) {
+  React.useEffect(() => {
+    if (isReady && !isLoading) {
+      SplashScreen.hideAsync();
+    }
+  }, [isReady, isLoading]);
+
+  if (!isReady || isLoading) {
     return null;
   }
 
   return (
+    <QueryClientProvider client={queryClient}>
+      <StatusBar />
+      <Stack initialRouteName={session ? "(tabs)" : "login"}>
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+      </Stack>
+      <PortalHost />
+    </QueryClientProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <PostHogProvider apiKey="POSTHOG_API_KEY_REMOVED" options={{
       host: "https://eu.i.posthog.com",
     }}>
-      <QueryClientProvider client={queryClient}>
-        <StatusBar />
-        <Stack>
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="home" options={{ headerShown: false }} /> */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-        </Stack>
-        <PortalHost />
-      </QueryClientProvider>
+      <SessionProvider>
+        <RootLayoutNav />
+      </SessionProvider>
     </PostHogProvider>
   );
 }
