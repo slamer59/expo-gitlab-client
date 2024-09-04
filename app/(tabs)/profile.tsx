@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Text } from '@/components/ui/text';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
@@ -131,7 +132,7 @@ export default function ProfileScreen() {
             source={{ uri: user.avatar_url }}
           />
           <AvatarFallback>
-            <Text>{`${user.name.substring(0, 2).toUpperCase()}`}</Text>
+            <Ionicons name="person-circle-outline" size={32} color="black" />
           </AvatarFallback>
         </Avatar>
         <View className="flex-1 ml-3">
@@ -181,22 +182,39 @@ export default function ProfileScreen() {
       </View> */}
       <View className="p-4 m-4 bg-gray-200 rounded-lg">
         <Text className="mb-2 text-lg font-bold">Workspace</Text>
-        <View className="flex-row items-center mb-2">
-          <Ionicons name="git-branch-outline" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">Repositories</Text>
-          <Text className="ml-auto ">{projects.length}</Text>
+        <View className="flex-row items-center justify-between mb-2">
+          <Link
+            href={{
+              pathname: '/workspace/projects/list',
+              params: { owned: "true" }
+            }}>
+            <View className="flex-row items-center">
+              <Ionicons name="folder-outline" size={24} color="gray" className="mr-2" />
+              <Text className="text-light dark:text-dark">Projects</Text>
+            </View>
+          </Link>
+          <Text className="ml-2 text-base">{projects.length}</Text>
         </View>
         {/* <View className="flex-row items-center mb-2">
-          <Ionicons name="building" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">Organizations</Text>
-          <Text className="ml-auto ">0</Text>
-        </View> */}
-        <View className="flex-row items-center">
-          <Ionicons name="star" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">Starred</Text>
-          <Text className="ml-auto ">{starredProjects.length}</Text>
+            <Ionicons name="building" size={24} color="gray" className="mr-2" />
+            <Text className="text-light dark:text-dark">Organizations</Text>
+            <Text className="ml-auto ">0</Text>
+          </View> */}
+        <View className="flex-row items-center justify-between mb-2">
+          <Link
+            href={{
+              pathname: '/workspace/projects/list',
+              params: { starred: "true" }
+            }}>
+            <View className="flex-row items-center">
+              <Ionicons name="star-outline" size={24} color="gray" className="mr-2" />
+              <Text className="text-light dark:text-dark">Starred</Text>
+            </View>
+          </Link>
+          <Text className="ml-2 text-base">{starredProjects.length}</Text>
         </View>
       </View>
+
     </View>
   );
 }

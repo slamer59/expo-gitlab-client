@@ -1,13 +1,15 @@
 import { ProjectCard, ProjectCardSkeleton } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/hooks';
-import { Link, Stack } from "expo-router";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 
 
 
 export default function ProjectsListScreen() {
+    const { owned, starred } = useLocalSearchParams()
+
     function updateParams(filterValues: any) {
         // Update the params object based on the selected filter values
         params.query = {
@@ -118,8 +120,8 @@ export default function ProjectsListScreen() {
         query: {
             // order_by: 'created_at',
             // sort: 'desc',
-            owned: true,
-            // starred: false,
+            owned: owned || "true",
+            starred: starred || "false",
             // imported: false,
             // membership: false,
             // with_issues_enabled: false,
@@ -135,10 +137,14 @@ export default function ProjectsListScreen() {
         }
     }
 
-    const defaultFilters = { "Projects": { "label": "Owned", "value": "owned" } }
+    const defaultFilters = {
+        "Projects": {
+            "label": owned !== undefined ? (owned ? "Owned" : "Not Owned") : (starred !== undefined ? (starred ? "Starred" : "Not Starred") : "Owned"),
+            "value": owned !== undefined ? (owned ? "owned" : "not_owned") : (starred !== undefined ? (starred ? "starred" : "not_starred") : "owned")
+        }
+    }
+
     const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
-
-
     const clearFilters = () => {
         setSelectedFilters(defaultFilters);
     };

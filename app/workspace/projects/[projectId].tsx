@@ -9,6 +9,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 
 const ProjectDetailsScreen = () => {
   const { projectId } = useLocalSearchParams();
+
   const router = useRouter();
   const params = {
     path: {
@@ -25,7 +26,7 @@ const ProjectDetailsScreen = () => {
     isLoading,
     isError,
   } = getData(["projects_id", params.query], "/api/v4/projects/{id}", params);
-  console.log(repository);
+  // console.log(repository);
 
   // KPI => _links
   const listItems: IListItems[] = [
