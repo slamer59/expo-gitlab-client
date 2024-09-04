@@ -1,12 +1,11 @@
 import { ButtonList, IListItems } from "@/components/buttonList";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { getData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-
-const baseUrl = "https://gitlab.com/api/v4";
 
 const ProjectDetailsScreen = () => {
   const { projectId } = useLocalSearchParams();
@@ -76,9 +75,21 @@ const ProjectDetailsScreen = () => {
 
   return (
     <ScrollView className="flex-1">
+      <Stack.Screen
+        options={{
+          title: "Project Details",
+        }}
+      />
       <View className="p-4 m-2">
         <View className="flex-row items-center">
-          <Ionicons name="person-circle-outline" size={32} color="black" />
+          <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
+            <AvatarImage
+              source={{ uri: repository?.owner?.avatar_url }}
+            />
+            <AvatarFallback>
+              <Ionicons name="person-circle-outline" size={32} color="black" />
+            </AvatarFallback>
+          </Avatar>
           <Text className="ml-2 text-lg font-bold text-light dark:text-black">
             {repository?.owner?.name || "Default name"}
           </Text>
@@ -95,7 +106,7 @@ const ProjectDetailsScreen = () => {
           </Text>
         </View>
         <Link
-          className="w-full overflow-hidden flex"
+          className="flex w-full overflow-hidden"
           asChild
           href={repository.web_url}
         >
@@ -103,7 +114,7 @@ const ProjectDetailsScreen = () => {
             <Ionicons name="link" size={16} color="black" />
             <Text
               numberOfLines={1}
-              className="ml-4 text-ellipsis break-normal  text-lg font-bold text-light dark:text-black"
+              className="ml-4 text-lg font-bold break-normal text-ellipsis text-light dark:text-black"
             >
               {repository.web_url}
             </Text>
@@ -133,7 +144,7 @@ const ProjectDetailsScreen = () => {
       <View className="p-4 m-2 bg-gray-200 rounded-lg">
         <TouchableOpacity
           className="flex-row items-center justify-between py-2"
-          onPress={() => {}}
+          onPress={() => { }}
         >
           <View className="flex flex-row items-center">
             <Ionicons name="git-branch-outline" size={24} color="gray" />
