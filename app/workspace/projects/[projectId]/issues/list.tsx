@@ -7,7 +7,6 @@ import { ScrollView } from "react-native";
 
 export default function IssuesList() {
   const { projectId } = useLocalSearchParams();
-  console.log(projectId);
   const params = {
     path: {
       id: projectId,
@@ -27,9 +26,14 @@ export default function IssuesList() {
     "/api/v4/projects/{id}/issues",
     params
   );
-  console.log(issues, 9999999);
+
+  // const { data: labelColors } = getData<any>(
+  //   ["label_colors_of_project", params.query],
+  //   "/api/v4/projects/{id}/labels",
+  //   params
+  // );
   return (
-    <ScrollView className="flex-1 m-2">
+    <ScrollView className="flex-1 m-auto">
       <Stack.Screen
         options={{
           title: "Issues",
@@ -41,7 +45,10 @@ export default function IssuesList() {
         selectedFilters={selectedFilters}
         clearFilters={clearFilters}
       /> */}
-      {issues && <IssuesListComponent issues={issues} />}
+      {issues && <IssuesListComponent
+        issues={issues}
+      // labelColors={labelColors}
+      />}
     </ScrollView>
   );
 }
