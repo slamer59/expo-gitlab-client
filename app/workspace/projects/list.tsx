@@ -118,7 +118,7 @@ export default function ProjectsListScreen() {
         query: {
             // order_by: 'created_at',
             // sort: 'desc',
-            // owned: false,
+            owned: true,
             // starred: false,
             // imported: false,
             // membership: false,
@@ -135,12 +135,12 @@ export default function ProjectsListScreen() {
         }
     }
 
-
-    const [selectedFilters, setSelectedFilters] = useState({});
+    const defaultFilters = { "Projects": { "label": "Owned", "value": "owned" } }
+    const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
 
 
     const clearFilters = () => {
-        setSelectedFilters({});
+        setSelectedFilters(defaultFilters);
     };
 
 
@@ -169,7 +169,9 @@ export default function ProjectsListScreen() {
         `/api/v4/projects`,
         params
     )
-    console.log("params", params)
+    // console.log("params", params)
+    // console.log("projects", projects)
+    // console.log("selectedFilters", selectedFilters)
     return (
         <ScrollView className="flex-1 m-2">
             <Stack.Screen

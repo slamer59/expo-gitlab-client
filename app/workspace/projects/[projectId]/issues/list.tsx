@@ -1,5 +1,4 @@
 import { getData } from "@/lib/gitlab/hooks";
-import { getToken } from "@/lib/utils";
 import { IssuesListComponent } from "@/models/issuesList";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
@@ -8,7 +7,6 @@ import { ScrollView } from "react-native";
 
 export default function IssuesList() {
   const { projectId } = useLocalSearchParams();
-  const toekn = getToken();
   console.log(projectId);
   const params = {
     path: {
