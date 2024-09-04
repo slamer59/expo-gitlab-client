@@ -1,14 +1,15 @@
 import { ProjectCard, ProjectCardSkeleton } from '@/components/ui/project-card';
 import { TopFilterList } from '@/components/ui/top-filter-list';
 import { getData } from '@/lib/gitlab/hooks';
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 
 
 
 export default function ProjectsListScreen() {
     const { owned, starred } = useLocalSearchParams()
+    const router = useRouter()
 
     function updateParams(filterValues: any) {
         // Update the params object based on the selected filter values
@@ -194,32 +195,42 @@ export default function ProjectsListScreen() {
 
             {projects ? (
                 projects?.map((project, index) => (
-                    <Link
-                        href={{
-                            pathname: '/workspace/projects/[projectId]',
-                            params: {
-                                projectId: project.id,
-                                path: encodeURIComponent(project.path_with_namespace)
-                                // Replace with the actual project ID
-                            },
-                        }}>
+                    <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                            router.push({
+                                pathname: "/workspace/projects/[projectId]",
+                                params: {
+                                    projectId: project.id,
+                                    path: encodeURIComponent(project.path_with_namespace)
+                                },
+                            });
+                        }}
+                    >
                         <ProjectCard
                             key={index}
-                            name={project.name}
-                            name_with_namespace={project.name_with_namespace}
-                            last_activity_at={project.last_activity_at}
-                            // path_with_namespace={project.path_with_namespace}
-                            star_count={project.star_count}
-                            avatar_url={project.avatar_url}
-                            owner={project.owner}
+                            project={project}
+                        // name={project.name}
+                        // name_with_namespace={project.name_with_namespace}
+                        // last_activity_at={project.last_activity_at}
+                        // // path_with_namespace={project.path_with_namespace}
+                        // star_count={project.star_count}
+                        // avatar_url={project.avatar_url}
+                        // owner={project.owner}
                         // description={project.description}
                         // archived={project.archived}
                         // creator_id= {project.creator_id}
                         />
-                    </Link>
+                        <View className="my-2 border-b border-gray-300" />
+                    </TouchableOpacity>
                 ))
             ) : (
-                Array.from({ length: 5 }).map((_, index) => <ProjectCardSkeleton key={index} />)
+                Array.from({ length: 5 }).map((_, index) => (
+                    <>
+                        <ProjectCardSkeleton key={index} />
+                        <View className="my-2 border-b border-gray-300" />
+                    </>
+                ))
 
             )}
 

@@ -49,14 +49,33 @@ export async function resetToken() {
   console.log("gitlab-token has been removed");
 }
 
+// export function formatDate(dateString: string) {
+//   const date = new Date(dateString);
+//   return date.toLocaleDateString("en-US", {
+//     month: "short",
+//     day: "numeric",
+//     year: "numeric",
+//   });
+// }
+
 export function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const date = new Date(dateString).getTime();
+  const now = new Date().getTime();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+
+  if (diffDays < 1) {
+    return `${diffHours}h`;
+  } else if (diffDays < 30) {
+    return `${diffDays}d`;
+  } else if (diffDays < 365) {
+    return `${Math.floor(diffDays / 30)}mo`;
+  } else {
+    return `${Math.floor(diffDays / 365)}y`;
+  }
 }
+
 
 export function getRandomHexColor() {
   // Generate a random number between 0 and 16777215 (which is 0xFFFFFF in decimal)

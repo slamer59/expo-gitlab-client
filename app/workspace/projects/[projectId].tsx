@@ -73,7 +73,7 @@ const ProjectDetailsScreen = () => {
   if (isError) {
     return <Text>Error fetching data</Text>;
   }
-
+  // console.log(repository);
   return (
     <ScrollView className="flex-1">
       <Stack.Screen
@@ -85,18 +85,18 @@ const ProjectDetailsScreen = () => {
         <View className="flex-row items-center">
           <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
             <AvatarImage
-              source={{ uri: repository?.owner?.avatar_url }}
+              source={{ uri: repository?.owner?.avatar_url || repository?.namespace?.avatar_url || "https://example.com/default-avatar.jpg" }}
             />
             <AvatarFallback>
-              <Ionicons name="person-circle-outline" size={32} color="black" />
+              <Ionicons name="folder-outline" size={28} color="gray" />
             </AvatarFallback>
           </Avatar>
-          <Text className="ml-2 text-lg font-bold text-light dark:text-black">
-            {repository?.owner?.name || "Default name"}
+          <Text className="ml-2 text-lg font-bold text-light dark:text-slate-500">
+            {repository?.owner?.name || repository?.namespace?.name || "Default name"}
           </Text>
         </View>
         <Text className="mb-4 text-2xl font-bold">
-          {repository.path_with_namespace}
+          {repository.name_with_namespace}
         </Text>
         <Text className="mb-4 text-base">{repository.description}</Text>
 
