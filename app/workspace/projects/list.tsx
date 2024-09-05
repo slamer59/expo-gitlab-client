@@ -1,15 +1,14 @@
-import { ProjectCard, ProjectCardSkeleton } from '@/components/ui/project-card';
-import { TopFilterList } from '@/components/ui/top-filter-list';
-import { getData } from '@/lib/gitlab/hooks';
+import Loading from "@/components/Loading";
+import { ProjectCard } from "@/components/ui/project-card";
+import { TopFilterList } from "@/components/ui/top-filter-list";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
-
-
+import React, { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 
 export default function ProjectsListScreen() {
-    const { owned, starred } = useLocalSearchParams()
-    const router = useRouter()
+    const { owned, starred } = useLocalSearchParams();
+    const router = useRouter();
 
     function updateParams(filterValues: any) {
         // Update the params object based on the selected filter values
@@ -23,14 +22,22 @@ export default function ProjectsListScreen() {
         {
             label: "Projects",
             options: [
-                { value: 'all', label: 'All Projects', filter: { owned: true, starred: true } },
+                {
+                    value: "all",
+                    label: "All Projects",
+                    filter: { owned: false, starred: false },
+                },
                 // { value: 'archived', label: 'Archived' },
                 // { value: 'starred', label: 'Starred' },
-                { value: 'owned', label: 'Owned', filter: { owned: true } },
+                { value: "owned", label: "Owned", filter: { owned: true } },
                 // { value: 'imported', label: 'Imported' },
-                { value: 'starred', label: 'Starred', filter: { starred: true } },
+                {
+                    value: "starred",
+                    label: "Starred",
+                    filter: { starred: true },
+                },
             ],
-            placeholder: "Select a project..."
+            placeholder: "Select a project...",
         },
         // {
         //     label: "Visibility",
@@ -89,39 +96,74 @@ export default function ProjectsListScreen() {
             label: "Sorted By",
             options: [
                 {
-                    value: "asc", label: "Ascending", filter: { sort: "asc" },
+                    value: "asc",
+                    label: "Ascending",
+                    filter: { sort: "asc" },
                 },
                 {
-                    value: "desc", label: "Descending", filter: { sort: "desc" },
-                }
+                    value: "desc",
+                    label: "Descending",
+                    filter: { sort: "desc" },
+                },
             ],
-            placeholder: "Sort by"
+            placeholder: "Sort by",
         },
         {
-            label:
-                "Ordered By",
+            label: "Ordered By",
             options: [
-                { value: 'id', label: 'Id', filter: { order_by: 'id' } },
-                { value: 'name', label: 'Name', filter: { order_by: 'name' } },
-                { value: 'path', label: 'Path', filter: { order_by: 'path' } },
-                { value: 'created_at', label: 'Created At', filter: { order_by: 'created_at' } },
-                { value: 'updated_at', label: 'Updated At', filter: { order_by: 'updated_at' } },
-                { value: 'last_activity_at', label: 'Last activity', filter: { order_by: 'last_activity_at' } },
-                { value: 'similarity', label: 'Similarity', filter: { order_by: 'similarity' } },
-                { value: 'storage_size', label: 'Storage Size', filter: { order_by: 'storage_size' } },
-                { value: 'repository_size', label: 'Repository Size', filter: { order_by: 'repository_size' } },
-                { value: 'wiki_size', label: 'Wiki Size', filter: { order_by: 'wiki_size' } },
-                { value: 'packages_size', label: 'Packages Size', filter: { order_by: 'packages_size' } },
+                { value: "id", label: "Id", filter: { order_by: "id" } },
+                { value: "name", label: "Name", filter: { order_by: "name" } },
+                { value: "path", label: "Path", filter: { order_by: "path" } },
+                {
+                    value: "created_at",
+                    label: "Created At",
+                    filter: { order_by: "created_at" },
+                },
+                {
+                    value: "updated_at",
+                    label: "Updated At",
+                    filter: { order_by: "updated_at" },
+                },
+                {
+                    value: "last_activity_at",
+                    label: "Last activity",
+                    filter: { order_by: "last_activity_at" },
+                },
+                {
+                    value: "similarity",
+                    label: "Similarity",
+                    filter: { order_by: "similarity" },
+                },
+                {
+                    value: "storage_size",
+                    label: "Storage Size",
+                    filter: { order_by: "storage_size" },
+                },
+                {
+                    value: "repository_size",
+                    label: "Repository Size",
+                    filter: { order_by: "repository_size" },
+                },
+                {
+                    value: "wiki_size",
+                    label: "Wiki Size",
+                    filter: { order_by: "wiki_size" },
+                },
+                {
+                    value: "packages_size",
+                    label: "Packages Size",
+                    filter: { order_by: "packages_size" },
+                },
             ],
-            placeholder: "Ordered By..."
-        }
+            placeholder: "Ordered By...",
+        },
     ];
     // https://gitlab.com/api/v4/projects?order_by=created_at&sort=desc&owned=false&starred=false&imported=false&membership=false&with_issues_enabled=false&with_merge_requests_enabled=false&wiki_checksum_failed=false&repository_checksum_failed=false&include_hidden=false&page=1&per_page=20&simple=false&statistics=false&with_custom_attributes=false
     const params = {
         query: {
             // order_by: 'created_at',
             // sort: 'desc',
-            owned: owned || "true",
+            owned: owned || "false",
             starred: starred || "false",
             // imported: false,
             // membership: false,
@@ -135,21 +177,38 @@ export default function ProjectsListScreen() {
             // simple: false,
             // statistics: false,
             // with_custom_attributes: false,
-        }
-    }
+        },
+    };
 
     const defaultFilters = {
-        "Projects": {
-            "label": owned !== undefined ? (owned ? "Owned" : "Not Owned") : (starred !== undefined ? (starred ? "Starred" : "Not Starred") : "Owned"),
-            "value": owned !== undefined ? (owned ? "owned" : "not_owned") : (starred !== undefined ? (starred ? "starred" : "not_starred") : "owned")
-        }
-    }
+        Projects: {
+            label:
+                owned !== undefined
+                    ? owned
+                        ? "Owned"
+                        : "Not Owned"
+                    : starred !== undefined
+                        ? starred
+                            ? "Starred"
+                            : "Not Starred"
+                        : "Owned",
+            value:
+                owned !== undefined
+                    ? owned
+                        ? "owned"
+                        : "not_owned"
+                    : starred !== undefined
+                        ? starred
+                            ? "starred"
+                            : "not_starred"
+                        : "owned",
+        },
+    };
 
     const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
     const clearFilters = () => {
         setSelectedFilters(defaultFilters);
     };
-
 
     // loop over filters and check if selectedFilters has the same key and value
     // if it does, then add it to the params
@@ -161,7 +220,7 @@ export default function ProjectsListScreen() {
                 if (filter.label === key) {
                     for (const option of filter.options) {
                         if (option.value === value.value) {
-                            updateParams(option.filter)
+                            updateParams(option.filter);
                         }
                     }
                 }
@@ -171,19 +230,17 @@ export default function ProjectsListScreen() {
 
     // filter values
 
-    const { data: projects } = getData(
-        ['projects', params.query],
-        `/api/v4/projects`,
-        params
-    )
-    // console.log("params", params)
-    // console.log("projects", projects)
-    // console.log("selectedFilters", selectedFilters)
+    const {
+        data: projects,
+        isLoading,
+        isError,
+    } = useGetData(["projects", params.query], `/api/v4/projects`, params);
+
     return (
         <ScrollView className="flex-1 m-2">
             <Stack.Screen
                 options={{
-                    title: "Projects"
+                    title: "Projects",
                 }}
             />
             <TopFilterList
@@ -193,8 +250,10 @@ export default function ProjectsListScreen() {
                 clearFilters={clearFilters}
             />
 
-            {projects ? (
-                projects?.map((project, index) => (
+            {isLoading && <Loading />}
+
+            {projects
+                ? projects?.map((project, index) => (
                     <TouchableOpacity
                         key={index}
                         onPress={() => {
@@ -202,38 +261,18 @@ export default function ProjectsListScreen() {
                                 pathname: "/workspace/projects/[projectId]",
                                 params: {
                                     projectId: project.id,
-                                    path: encodeURIComponent(project.path_with_namespace)
+                                    path: encodeURIComponent(
+                                        project.path_with_namespace,
+                                    ),
                                 },
                             });
                         }}
                     >
-                        <ProjectCard
-                            key={index}
-                            project={project}
-                        // name={project.name}
-                        // name_with_namespace={project.name_with_namespace}
-                        // last_activity_at={project.last_activity_at}
-                        // // path_with_namespace={project.path_with_namespace}
-                        // star_count={project.star_count}
-                        // avatar_url={project.avatar_url}
-                        // owner={project.owner}
-                        // description={project.description}
-                        // archived={project.archived}
-                        // creator_id= {project.creator_id}
-                        />
+                        <ProjectCard project={project} />
                         <View className="my-2 border-b border-gray-300" />
                     </TouchableOpacity>
                 ))
-            ) : (
-                Array.from({ length: 5 }).map((_, index) => (
-                    <>
-                        <ProjectCardSkeleton key={index} />
-                        <View className="my-2 border-b border-gray-300" />
-                    </>
-                ))
-
-            )}
-
+                : null}
         </ScrollView>
     );
 }

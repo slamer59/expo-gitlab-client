@@ -1,6 +1,6 @@
 import { Text } from "@/components/Themed";
 import FileItem from "@/components/ui/file-item";
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import React from 'react';
@@ -24,7 +24,7 @@ export default function FileExplorerScreen() {
     }
   }
 
-  const { data: files, isLoading, isError } = getData(
+  const { data: files, isLoading, isError } = useGetData(
     ['project_repository_tree', params.query],
     "/api/v4/projects/{id}/repository/tree",
     params

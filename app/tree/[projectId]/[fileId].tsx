@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { getData } from '@/lib/gitlab/hooks';
+import { useGetData } from '@/lib/gitlab/hooks';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
@@ -52,7 +52,7 @@ export default function FileView() {
         }
     }
 
-    const { data: file, isLoading, isError } = getData(
+    const { data: file, isLoading, isError } = useGetData(
         ['project_repository_file_path', params.query],
         "/api/v4/projects/{id}/repository/files/{file_path}",
         params

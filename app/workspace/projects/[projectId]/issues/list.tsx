@@ -1,4 +1,4 @@
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { IssuesListComponent } from "@/models/issuesList";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
@@ -21,13 +21,13 @@ export default function IssuesList() {
     },
   };
 
-  const { data: issues } = getData<APIEntitiesRelatedIssue[]>(
+  const { data: issues } = useGetData<APIEntitiesRelatedIssue[]>(
     ["issues_of_project", params.query],
     "/api/v4/projects/{id}/issues",
     params
   );
 
-  // const { data: labelColors } = getData<any>(
+  // const { data: labelColors } = useGetData<any>(
   //   ["label_colors_of_project", params.query],
   //   "/api/v4/projects/{id}/labels",
   //   params

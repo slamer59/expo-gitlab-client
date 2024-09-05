@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React from 'react';
@@ -22,7 +22,7 @@ const ProjectDetailsScreen = () => {
         }
 
     }
-    const { data: repository, isLoading, isError } = getData(
+    const { data: repository, isLoading, isError } = useGetData(
         ['projects_id', params.query],
         "/api/v4/projects/{id}",
         params

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Text } from "@/components/ui/text";
-import { getData } from '@/lib/gitlab/hooks';
+import { useGetData } from '@/lib/gitlab/hooks';
 import { formatDistanceToNow } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
@@ -23,7 +23,7 @@ const ProjectActivityScreen = () => {
       // sort: "asc",
     },
   };
-  const { data: events, isLoading, isError } = getData(
+  const { data: events, isLoading, isError } = useGetData(
     ["project_id_events", params.query],
     "/api/v4/projects/{id}/events",
     params

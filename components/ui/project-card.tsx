@@ -28,10 +28,10 @@ export function ProjectCardSkeleton() {
 
   return (
     <View className="flex-row items-center p-4 space-x-4">
-      <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
+      <Skeleton className="w-12 h-12 m-2 space-x-4 bg-gray-300 rounded-full animate-pulse" />
       <View className="flex-1 space-y-2">
-        <Skeleton className="w-full h-4 mb-2" />
-        <Skeleton className="w-3/4 h-4" />
+        <Skeleton className="w-full h-4 mb-2 bg-gray-500 animate-pulse" />
+        <Skeleton className="w-3/4 h-4 bg-gray-300 animate-pulse" />
       </View>
     </View>
   );

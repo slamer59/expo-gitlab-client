@@ -1,7 +1,7 @@
 import { ButtonList, IListItems } from "@/components/buttonList";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
@@ -25,8 +25,14 @@ const ProjectDetailsScreen = () => {
     data: repository,
     isLoading,
     isError,
-  } = getData(["projects_id", params.query], "/api/v4/projects/{id}", params);
-  // console.log(repository);
+  } = useGetData(
+    ["projects_id", params.path.id],
+    "/api/v4/projects/{id}",
+    params,
+  );
+  if (isError) {
+    return <Text>Error: {isError.message}</Text>;
+  }
 
   // KPI => _links
   const listItems: IListItems[] = [
@@ -85,14 +91,25 @@ const ProjectDetailsScreen = () => {
         <View className="flex-row items-center">
           <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
             <AvatarImage
-              source={{ uri: repository?.owner?.avatar_url || repository?.namespace?.avatar_url || "https://example.com/default-avatar.jpg" }}
+              source={{
+                uri:
+                  repository?.owner?.avatar_url ||
+                  repository?.namespace?.avatar_url ||
+                  "https://example.com/default-avatar.jpg",
+              }}
             />
             <AvatarFallback>
-              <Ionicons name="folder-outline" size={28} color="gray" />
+              <Ionicons
+                name="folder-outline"
+                size={28}
+                color="gray"
+              />
             </AvatarFallback>
           </Avatar>
           <Text className="ml-2 text-lg font-bold text-light dark:text-slate-500">
-            {repository?.owner?.name || repository?.namespace?.name || "Default name"}
+            {repository?.owner?.name ||
+              repository?.namespace?.name ||
+              "Default name"}
           </Text>
         </View>
         <Text className="mb-4 text-2xl font-bold">
@@ -101,7 +118,11 @@ const ProjectDetailsScreen = () => {
         <Text className="mb-4 text-base">{repository.description}</Text>
 
         <View className="flex-row items-center">
-          <Ionicons name="lock-closed-outline" size={16} color="black" />
+          <Ionicons
+            name="lock-closed-outline"
+            size={16}
+            color="black"
+          />
           <Text className="ml-4 text-lg font-bold text-light dark:text-black">
             {repository.visibility || "Default vis"}
           </Text>
@@ -148,7 +169,11 @@ const ProjectDetailsScreen = () => {
           onPress={() => { }}
         >
           <View className="flex flex-row items-center">
-            <Ionicons name="git-branch-outline" size={24} color="gray" />
+            <Ionicons
+              name="git-branch-outline"
+              size={24}
+              color="gray"
+            />
             <Text className="ml-2 text-base text-gray-950 ">
               {repository.default_branch}
             </Text>
