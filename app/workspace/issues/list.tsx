@@ -1,6 +1,6 @@
+import { IssuesListComponent } from "@/components/issuesList";
 import { TopFilterList } from "@/components/ui/top-filter-list";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { IssuesListComponent } from "@/models/issuesList";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text } from "react-native";
