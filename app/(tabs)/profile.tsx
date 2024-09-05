@@ -1,18 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Text } from '@/components/ui/text';
-import { useSession } from '@/lib/session/SessionProvider';
-import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Text } from "@/components/ui/text";
+import { useSession } from "@/lib/session/SessionProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
+import React, { useEffect } from "react";
+import { View } from "react-native";
 
-async function getUserInfo(session: { url: string, token: string }) {
+async function getUserInfo(session: { url: string; token: string }) {
   // https://docs.gitlab.com/ee/api/users.html#single-user
   try {
     const response = await fetch(`${session.url}/api/v4/user`, {
       headers: {
-        'PRIVATE-TOKEN': session.token,
-        'Content-Type': 'application/json'
+        "PRIVATE-TOKEN": session.token,
+        "Content-Type": "application/json",
       },
     });
     if (!response.ok) {
@@ -21,23 +21,30 @@ async function getUserInfo(session: { url: string, token: string }) {
     const user = await response.json();
     return user;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error("There was a problem with the fetch operation:", error);
     // You can return a default value or rethrow the error based on your needs
     return null;
   }
 }
 
-async function getUserProjects(session: { url: string, token: string }, userId: any, params: { membership: boolean, order_by: string, sort: string }) {
+async function getUserProjects(
+  session: { url: string; token: string },
+  userId: any,
+  params: { membership: boolean; order_by: string; sort: string },
+) {
   // Construct the query string from the params object
   const queryString = new URLSearchParams(params).toString();
 
   try {
-    const response = await fetch(`${session.url}/api/v4/users/${userId}/projects?${queryString}`, {
-      headers: {
-        'PRIVATE-TOKEN': session.token,
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = await fetch(
+      `${session.url}/api/v4/users/${userId}/projects?${queryString}`,
+      {
+        headers: {
+          "PRIVATE-TOKEN": session.token,
+          "Content-Type": "application/json",
+        },
+      },
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -46,22 +53,28 @@ async function getUserProjects(session: { url: string, token: string }, userId: 
 
     return projects;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error("There was a problem with the fetch operation:", error);
     // You can return a default value or rethrow the error based on your needs
     return [];
   }
 }
 
-
-async function getUserStarredProjects(session: { url: string, token: string }, userId: any, params: { path: { id: any; }; query: { order_by: string; sort: string; }; }) {
+async function getUserStarredProjects(
+  session: { url: string; token: string },
+  userId: any,
+  params: { path: { id: any }; query: { order_by: string; sort: string } },
+) {
   const queryString = new URLSearchParams(params.query).toString();
   try {
-    const response = await fetch(`${session.url}/api/v4/users/${userId}/starred_projects?${queryString}`, {
-      headers: {
-        'PRIVATE-TOKEN': session.token,
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `${session.url}/api/v4/users/${userId}/starred_projects?${queryString}`,
+      {
+        headers: {
+          "PRIVATE-TOKEN": session.token,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -70,15 +83,14 @@ async function getUserStarredProjects(session: { url: string, token: string }, u
     const starredProjects = await response.json();
     return starredProjects;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error("There was a problem with the fetch operation:", error);
     // You can return a default value or rethrow the error based on your needs
     return [];
   }
 }
 
-
 export default function ProfileScreen() {
-  const { session } = useSession()
+  const { session } = useSession();
   const [user, setUser] = React.useState(null);
   const [projects, setProjects] = React.useState([]);
   const [starredProjects, setStarredProjects] = React.useState([]);
@@ -98,7 +110,7 @@ export default function ProfileScreen() {
           sort: "desc",
         },
       };
-      const projects = await getUserProjects(session, user.id, paramsProjects)
+      const projects = await getUserProjects(session, user.id, paramsProjects);
       setProjects(projects);
 
       // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
@@ -112,13 +124,15 @@ export default function ProfileScreen() {
         },
       };
 
-      const starredProjects = await getUserStarredProjects(session, user.id, paramsStarredProjects)
+      const starredProjects = await getUserStarredProjects(
+        session,
+        user.id,
+        paramsStarredProjects,
+      );
       setStarredProjects(starredProjects);
     }
     fetchData();
   }, [session]);
-
-
 
   if (!user) {
     return <Text>Loading...</Text>;
@@ -128,38 +142,55 @@ export default function ProfileScreen() {
     <View className="flex-1 p-4 ">
       <View className="flex-row items-center mb-4">
         <Avatar alt={`${user.name}'s Avatar`}>
-          <AvatarImage
-            source={{ uri: user.avatar_url }}
-          />
+          <AvatarImage source={{ uri: user.avatar_url }} />
           <AvatarFallback>
             <Ionicons name="person-circle-outline" size={32} color="black" />
           </AvatarFallback>
         </Avatar>
         <View className="flex-1 ml-3">
-          <Text className="font-semibold">
-            {user.name}{' '}
-          </Text>
-          <Text className="text-sm text-gray-500">
-            @{user.username}</Text>
+          <Text className="font-semibold">{user.name} </Text>
+          <Text className="text-sm text-gray-500">@{user.username}</Text>
         </View>
       </View>
 
       <View className="flex mb-4 space-x-2 flex-2">
-        {user.location && <View className="flex-row items-center m-2">
-          <Ionicons name="location-outline" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">{user.location}</Text>
-        </View>
-        }
-        {user.public_email && <View className="flex-row items-center m-2">
-          <Ionicons name="mail-outline" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">{user.public_email}</Text>
-        </View>
-        }
-        {user.followers &&
+        {user.location && (
+          <View className="flex-row items-center m-2">
+            <Ionicons
+              name="location-outline"
+              size={24}
+              color="gray"
+              className="mr-2"
+            />
+            <Text className="text-light dark:text-dark">{user.location}</Text>
+          </View>
+        )}
+        {user.public_email && (
+          <View className="flex-row items-center m-2">
+            <Ionicons
+              name="mail-outline"
+              size={24}
+              color="gray"
+              className="mr-2"
+            />
+            <Text className="text-light dark:text-dark">
+              {user.public_email}
+            </Text>
+          </View>
+        )}
+        {user.followers && (
           <View className="flex-row items-center mb-2">
-            <Ionicons name="people-outline" size={24} color="gray" className="mr-2" />
-            <Text className="text-light dark:text-dark">{user.followers} followers • {user.following} following</Text>
-          </View>}
+            <Ionicons
+              name="people-outline"
+              size={24}
+              color="gray"
+              className="mr-2"
+            />
+            <Text className="text-light dark:text-dark">
+              {user.followers} followers • {user.following} following
+            </Text>
+          </View>
+        )}
       </View>
       {/* <View className="mb-4">
         <View className="flex-row items-center mb-2">
@@ -185,11 +216,17 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between mb-2">
           <Link
             href={{
-              pathname: '/workspace/projects/list',
-              params: { owned: "true" }
-            }}>
+              pathname: "/workspace/projects/list",
+              params: { owned: "true" },
+            }}
+          >
             <View className="flex-row items-center">
-              <Ionicons name="folder-outline" size={24} color="gray" className="mr-2" />
+              <Ionicons
+                name="folder-outline"
+                size={24}
+                color="gray"
+                className="mr-2"
+              />
               <Text className="text-light dark:text-dark">Projects</Text>
             </View>
           </Link>
@@ -203,18 +240,23 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between mb-2">
           <Link
             href={{
-              pathname: '/workspace/projects/list',
-              params: { starred: "true" }
-            }}>
+              pathname: "/workspace/projects/list",
+              params: { starred: "true" },
+            }}
+          >
             <View className="flex-row items-center">
-              <Ionicons name="star-outline" size={24} color="gray" className="mr-2" />
+              <Ionicons
+                name="star-outline"
+                size={24}
+                color="gray"
+                className="mr-2"
+              />
               <Text className="text-light dark:text-dark">Starred</Text>
             </View>
           </Link>
           <Text className="ml-2 text-base">{starredProjects.length}</Text>
         </View>
       </View>
-
     </View>
   );
 }

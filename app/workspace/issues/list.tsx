@@ -1,11 +1,9 @@
 import { TopFilterList } from "@/components/ui/top-filter-list";
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { IssuesListComponent } from "@/models/issuesList";
-import { APIEntitiesRelatedIssue } from "@/types/general";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView } from "react-native";
-
+import { ScrollView, Text } from "react-native";
 export default function IssuesListScreen() {
   function updateParams(filterValues: any) {
     // Update the params object based on the selected filter values
@@ -145,13 +143,21 @@ export default function IssuesListScreen() {
 
   // filter values
 
-  const { data: issues } = getData<APIEntitiesRelatedIssue[]>(
-    ["issues", params.query],
-    `/api/v4/issues`,
-    params
-  );
-  // console.log(issues)
-  console.log("params", params.query);
+  const {
+    data: issues,
+    isLoading,
+    isError,
+    error,
+  } = useGetData(["issues", params?.query], `/api/v4/issues`, params);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError) {
+    return <Text>Error: {error}</Text>;
+  }
+
   return (
     <ScrollView className="flex-1 m-2">
       <Stack.Screen

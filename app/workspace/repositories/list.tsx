@@ -1,7 +1,7 @@
 import { GroupCard } from "@/components/ui/group-card";
 import { RepositoryCard } from "@/components/ui/repository-card";
 import { Text } from "@/components/ui/text";
-import { getData } from "@/lib/gitlab/hooks";
+import { useGetData } from "@/lib/gitlab/hooks";
 import { T } from "@rn-primitives/tooltip/dist/types-opYTmxP0";
 import React from "react";
 import { ScrollView, View } from "react-native";
@@ -15,20 +15,20 @@ export default function ModalScreen() {
   const rootGroupId = "thomas.pedot2"
 
   const params1 = { path: { id: rootGroupId } }
-  const { data: projects, } = getData(
+  const { data: projects, } = useGetData(
     ['projects', params1.path],
     "/api/v4/projects",
     params1
   );
   console.log(projects)
   const params = { path: { id: rootGroupId } }
-  const { data, isLoading, isError } = getData(
+  const { data, isLoading, isError } = useGetData(
     ['projects', params.path],
     "/api/v4/groups/{id}/projects",
     params
   );
 
-  const { data: subprojects } = getData(
+  const { data: subprojects } = useGetData(
     ['subprojects', params.path],
     `/api/v4/groups/{id}/subgroups`,
     params

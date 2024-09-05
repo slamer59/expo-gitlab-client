@@ -7,7 +7,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 
 import IssueStatusIcon from '@/components/ui/issue-status-icon';
 import LinksToIssueSection from '@/components/ui/link-issue-section';
-import { getData } from '@/lib/gitlab/hooks';
+import { useGetData } from '@/lib/gitlab/hooks';
 import { formatDate } from '@/lib/utils';
 import Markdown from 'react-native-markdown-display';
 import { Text } from '~/components/ui/text';
@@ -25,26 +25,26 @@ export default function IssueDetails() {
             issue_iid: issue_iid,
         },
     }
-    const { data: issue, isLoading, isError } = getData(
+    const { data: issue, isLoading, isError } = useGetData(
         ['project_issue', params.path],
         `/api/v4/projects/{id}/issues/{issue_iid}`,
         params
     )
 
 
-    const { data: notes, isLoading: isLoadingNotes, isError: isErrorNotes } = getData(
+    const { data: notes, isLoading: isLoadingNotes, isError: isErrorNotes } = useGetData(
         ['project_issue_notes', params.path],
         `/api/v4/projects/{id}/issues/{issue_iid}/notes`,
         params
     )
 
-    const { data: relatedMRs, isLoading: isLoadingMR, isError: isErrorMR } = getData(
+    const { data: relatedMRs, isLoading: isLoadingMR, isError: isErrorMR } = useGetData(
         ['project_issue_mr', params.path],
         `/api/v4/projects/{id}/issues/{issue_iid}/related_merge_requests`,
         params
     )
 
-    const { data: linkedIssues, isLoading: isLoadingLinkedIssues, isError: isErrorLinkedIssues } = getData(
+    const { data: linkedIssues, isLoading: isLoadingLinkedIssues, isError: isErrorLinkedIssues } = useGetData(
         ['project_issue_linked_issues', params.path],
         `/api/v4/projects/{id}/issues/{issue_iid}/links`,
         params
