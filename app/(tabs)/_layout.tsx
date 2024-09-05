@@ -1,7 +1,7 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/lib/session/SessionProvider';
 
-import { Text } from "@/components/ui/text";
+import Loading from '@/components/Loading';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
@@ -19,7 +19,7 @@ export default function TabLayout() {
   const { session, isLoading } = useSession();
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <Loading />
   }
   if (!session) {
     return <Redirect href="/login" />;

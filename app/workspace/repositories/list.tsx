@@ -34,9 +34,7 @@ export default function ModalScreen() {
     params
   )
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
+
 
   if (isError) {
     return <Text>Error fetching data</Text>;
