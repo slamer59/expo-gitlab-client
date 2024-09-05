@@ -1,5 +1,5 @@
+import { IssuesListComponent } from "@/components/issuesList";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { IssuesListComponent } from "@/models/issuesList";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
 import { Stack, useLocalSearchParams } from "expo-router";
