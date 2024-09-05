@@ -1,4 +1,5 @@
 import { IssuesListComponent } from "@/components/issuesList";
+import Loading from "@/components/Loading";
 import { TopFilterList } from "@/components/ui/top-filter-list";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { Stack } from "expo-router";
@@ -150,9 +151,7 @@ export default function IssuesListScreen() {
     error,
   } = useGetData(["issues", params?.query], `/api/v4/issues`, params);
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
+
 
   if (isError) {
     return <Text>Error: {error}</Text>;
@@ -171,6 +170,9 @@ export default function IssuesListScreen() {
         selectedFilters={selectedFilters}
         clearFilters={clearFilters}
       />
+      {isLoading &&
+        <Loading />
+      }
       {issues && <IssuesListComponent issues={issues} />}
     </ScrollView>
   );
