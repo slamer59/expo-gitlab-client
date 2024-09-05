@@ -1,83 +1,186 @@
 import { ButtonList, IListItems } from "@/components/buttonList";
+import { ChooseBranches } from "@/components/ChooseBranche";
 import Error from "@/components/Error";
 import Loading from "@/components/Loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
-import { useGetData } from "@/lib/gitlab/hooks";
+import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
+import { useQueries } from "@tanstack/react-query";
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-const ProjectDetailsScreen = () => {
-  const [error, setError] = useState(null);
 
-  const { projectId } = useLocalSearchParams();
-
-  const router = useRouter();
-  const params = {
-    path: {
-      id: projectId,
-    },
-    query: {
-      statistics: false,
-      with_custom_attributes: false,
-      license: false,
-    },
-  };
-  const {
-    data: repository,
-    isLoading,
-    isError,
-  } = useGetData(
-    ["projects_id", params.path.id],
-    "/api/v4/projects/{id}",
-    params,
-  );
-
-  if (isError) {
-    setError({
-      message: "Failed to fetch repository details.",
-      digest: params.path.id,
-    });
-  }
-
-  // KPI => _links
-  const listItems: IListItems[] = [
-    {
-      icon: "alert-circle-outline",
-      text: "Issues",
-      kpi: repository?.open_issues_count || "",
-      onAction: () => {
-        router.push(`workspace/projects/${repository.id}/issues/list`);
+const fetchUrl = async (url, token) => {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "PRIVATE-TOKEN": token,
       },
-      itemColor: "#3de63d",
-    },
-    {
-      icon: "git-merge",
-      text: "Merge Requests",
-      kpi: "",
-      itemColor: "#3e64ed",
-    },
-    { icon: "play-outline", text: "CI/CD", kpi: "", itemColor: "#d5ea4e" },
-    // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: ""},
-    { icon: "eye-outline", text: "Watchers", kpi: "" },
-    // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories', kpi: "" },
-    { icon: "people-circle-outline", text: "Contributors", kpi: "" },
-    { icon: "document-text-outline", text: "Licences", kpi: "" },
-    {
-      icon: "star-outline",
-      text: "Starred",
-      kpi: repository?.star_count || "",
-    },
-  ];
-  const listItemsSecond = [
-    {
-      icon: "git-branch-outline",
-      text: "Code",
-      kpi: repository?.open_issues_count || "",
-    },
-    { icon: "document-text-outline", text: "Commits", kpi: "" },
-  ];
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    throw error;
+  }
+};
+
+const ProjectDetailsScreen = () => {
+  const { session } = useSession();
+  const [error, setError] = useState(null);
+  const { projectId } = useLocalSearchParams();
+  const router = useRouter();
+
+  const urls = {
+    // "issues": `https://gitlab.com/api/v4/projects/${projectId}/issues`,
+    // "labels": `https://gitlab.com/api/v4/projects/${projectId}/labels`,
+    members: `https://gitlab.com/api/v4/projects/${projectId}/members`,
+    merge_requests: `https://gitlab.com/api/v4/projects/${projectId}/merge_requests?state=opened`,
+    repo_branches: `https://gitlab.com/api/v4/projects/${projectId}/repository/branches`,
+    self: `https://gitlab.com/api/v4/projects/${projectId}?statistics=false&with_custom_attributes=false&license=false`,
+  };
+
+  const queries = useQueries({
+    queries: Object.entries(urls).map(([key, url]) => ({
+      queryKey: [key, url],
+      queryFn: () => fetchUrl(url, session.token),
+      retry: false,
+      onError: (error) => {
+        console.error(`Error fetching ${key} from ${url}:`, error);
+      },
+    })),
+  });
+  let index = 0;
+
+  const urlData = queries.reduce((acc, query) => {
+    const key = Object.keys(urls)[index];
+    if (query.data) {
+      acc[key] = query.data;
+    }
+    index++;
+    return acc;
+  }, {});
+  const isLoading = queries.some((query) => query.isLoading);
+
+  // Repository
+  let repository = {};
+  let mergeRequest = {};
+  let repoBranches = {};
+  let members = {};
+
+  let listItems: IListItems[];
+  let listItemsSecond;
+  let repoBranchesName;
+  if (!isLoading) {
+    repository = urlData["self"];
+    // Merge Request
+    mergeRequest = urlData["merge_requests"];
+    // Repo Branches
+    repoBranches = urlData["repo_branches"];
+    repoBranchesName = repoBranches.map((branch) => branch.name);
+    // Members
+    members = urlData["members"];
+
+    // KPI => _links
+    listItems = [
+      {
+        icon: "alert-circle-outline",
+        text: "Issues",
+        kpi: repository?.open_issues_count || 0,
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/issues/list`,
+          );
+        },
+        itemColor: "#3de63d",
+      },
+      {
+        icon: "git-merge",
+        text: "Merge Requests",
+        kpi: mergeRequest.length || 0,
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/merge-requests/list`,
+          );
+        },
+        itemColor: "#3e64ed",
+      },
+      {
+        icon: "play-outline",
+        text: "CI/CD",
+        kpi: "",
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/pipelines/list`,
+          );
+        },
+        itemColor: "#d5ea4e",
+      },
+      // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: ""},
+      // { icon: "eye-outline", text: "Watchers", kpi: "" },
+      // { icon: 'folder-open-outline', text: 'Repositories', screen: 'workspace/repositories', kpi: "" },
+      {
+        icon: "people-circle-outline",
+        text: "Members",
+        kpi: members.length || 0,
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/members/list`,
+          );
+        },
+        // itemColor: "#sdq",
+      },
+      {
+        icon: "document-text-outline", text: "Licences", kpi: "",
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/licences/list`,
+          );
+        },
+        // itemColor: "#ed3e3e",
+      },
+      {
+        icon: "star-outline",
+        text: "Starred",
+        kpi: repository?.star_count || "",
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/starred/list`,
+          );
+        },
+        // itemColor: "#fff",
+      },
+    ];
+    listItemsSecond = [
+      {
+        icon: "git-branch-outline",
+        text: "Code",
+        kpi: "",
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/code/list`,
+          );
+        },
+        // itemColor: "#3de63d",
+      },
+      {
+        icon: "document-text-outline", text: "Commits", kpi: "",
+        onAction: () => {
+          router.push(
+            `workspace/projects/${repository.id}/commits/list`,
+          );
+        },
+        // itemColor: "#3e64ed",
+      },
+    ];
+  }
 
   return (
     <ScrollView className="flex-1">
@@ -91,7 +194,7 @@ const ProjectDetailsScreen = () => {
         <Loading />
       ) : (
         <>
-          <View className="p-4 m-2">
+          <View className="p-2 m-4">
             <View className="flex-row items-center">
               <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
                 <AvatarImage
@@ -116,10 +219,10 @@ const ProjectDetailsScreen = () => {
                   "Default name"}
               </Text>
             </View>
-            <Text className="mb-4 text-2xl font-bold">
+            <Text className="text-2xl font-bold">
               {repository.name_with_namespace}
             </Text>
-            <Text className="mb-4 text-base">
+            <Text className="text-base ">
               {repository.description}
             </Text>
 
@@ -150,27 +253,29 @@ const ProjectDetailsScreen = () => {
             </Link>
 
             <View className="flex-row">
-              <View className="flex-row items-center mr-4">
+              <View className="flex-row items-center mr-4 text-lg font-bold text-light dark:text-black">
                 <Ionicons name="star" size={16} color="gold" />
-                <Text className="ml-2 text-lg font-bold text-light dark:text-black">
-                  {repository.star_count || 0} stars
+                <Text className="ml-1 font-bold">
+                  {repository.star_count || 0}
                 </Text>
+                <Text> stars</Text>
               </View>
-              <View className="flex-row items-center mr-4">
+              <View className="flex-row items-center mr-4 text-lg font-bold text-light dark:text-black">
                 <Ionicons
                   name="git-network"
                   size={16}
                   color="red"
                 />
-                <Text className="ml-2 text-lg font-bold text-light dark:text-black">
-                  {repository.forks_count} forks
+                <Text className="ml-1 font-bold">
+                  {repository.forks_count}
                 </Text>
+                <Text> forks</Text>
               </View>
             </View>
             <Text>{repository.language}</Text>
           </View>
           <View className="p-4 m-2 bg-gray-200 rounded-lg">
-            <Text className="text-lg font-[600]">WorkSpace</Text>
+            <Text className="text-lg font-[600]">Workspace</Text>
             <ButtonList isSimple={false} listItems={listItems} />
           </View>
           <View className="p-4 m-2 bg-gray-200 rounded-lg">
@@ -180,24 +285,23 @@ const ProjectDetailsScreen = () => {
             >
               <View className="flex flex-row items-center">
                 <Ionicons
-                  name="git-branch-outline"
+                  name="code-slash-outline"
                   size={24}
-                  color="gray"
+                  color="black"
                 />
                 <Text className="ml-2 text-base text-gray-950 ">
                   {repository.default_branch}
                 </Text>
               </View>
-              <Text className="ml-2 font-bold text-right text-blue-500">
-                CHANGE BRANCH
-              </Text>
+              <ChooseBranches branches={repoBranchesName} />
             </TouchableOpacity>
             <ButtonList listItems={listItemsSecond} />
           </View>
         </>
-      )}
-      {isError && <Error error={error} />}
-    </ScrollView>
+      )
+      }
+      {/* {isError && <Error error={error} />} */}
+    </ScrollView >
   );
 };
 
