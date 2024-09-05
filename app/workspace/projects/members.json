@@ -1,0 +1,46 @@
+[
+  {
+    "access_level": 50,
+    "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+    "created_at": "2024-07-12T13:45:03.294Z",
+    "created_by": {
+      "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+      "id": 11041577,
+      "locked": false,
+      "name": "Thomas PEDOT",
+      "state": "active",
+      "username": "thomas.pedot1",
+      "web_url": "https://gitlab.com/thomas.pedot1"
+    },
+    "expires_at": null,
+    "id": 11041577,
+    "locked": false,
+    "membership_state": "active",
+    "name": "Thomas PEDOT",
+    "state": "active",
+    "username": "thomas.pedot1",
+    "web_url": "https://gitlab.com/thomas.pedot1"
+  },
+  {
+    "access_level": 30,
+    "avatar_url": "https://secure.gravatar.com/avatar/6971b8cc42dc1311efe7119b2cd7d737ef7a70e7d1e2e7afd61f50839fc6f80b?s=80&d=identicon",
+    "created_at": "2024-08-22T12:41:43.460Z",
+    "created_by": {
+      "avatar_url": "https://gitlab.com/uploads/-/system/user/avatar/11041577/avatar.png",
+      "id": 11041577,
+      "locked": false,
+      "name": "Thomas PEDOT",
+      "state": "active",
+      "username": "thomas.pedot1",
+      "web_url": "https://gitlab.com/thomas.pedot1"
+    },
+    "expires_at": "2024-09-29",
+    "id": 22550624,
+    "locked": false,
+    "membership_state": "active",
+    "name": "Orest Pylypiak",
+    "state": "active",
+    "username": "opylypiak",
+    "web_url": "https://gitlab.com/opylypiak"
+  }
+]
