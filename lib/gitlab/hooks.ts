@@ -24,7 +24,7 @@ export const useGetData = <T>(
 
   // Replace all occurrences of {key} in the endpoint string with the corresponding value from the params object
   const url = generateUrlFromParams(session, endpoint, params);
-
+  console.log("url", url);
   return useQuery<T>({
     queryKey: key,
     queryFn: async () => {
