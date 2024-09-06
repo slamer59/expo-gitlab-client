@@ -1,8 +1,8 @@
-import { IssuesListComponent } from "@/components/issuesList";
+import IssuesListWithFilters from "@/components/IssuesListWithFilters";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
 
 export default function IssuesList() {
@@ -21,34 +21,25 @@ export default function IssuesList() {
     },
   };
 
-  const { data: issues } = useGetData<APIEntitiesRelatedIssue[]>(
-    ["issues_of_project", params.query],
-    "/api/v4/projects/{id}/issues",
-    params
+  const {
+    data: issues,
+    isLoading,
+    isError,
+    error,
+  } = useGetData<APIEntitiesRelatedIssue[]>(
+    [`issues_of_project_${projectId}`, params.query],
+    `/api/v4/projects/${projectId}/issues`,
+    params,
   );
 
-  // const { data: labelColors } = useGetData<any>(
-  //   ["label_colors_of_project", params.query],
-  //   "/api/v4/projects/{id}/labels",
-  //   params
-  // );
   return (
     <ScrollView className="flex-1 m-auto">
-      <Stack.Screen
-        options={{
-          title: "Issues",
-        }}
+      <IssuesListWithFilters
+        data={issues}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
       />
-      {/* <TopFilterList
-        filters={filters}
-        setSelectedFilters={setSelectedFilters}
-        selectedFilters={selectedFilters}
-        clearFilters={clearFilters}
-      /> */}
-      {issues && <IssuesListComponent
-        issues={issues}
-      // labelColors={labelColors}
-      />}
     </ScrollView>
   );
 }

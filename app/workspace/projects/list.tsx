@@ -258,9 +258,9 @@ export default function ProjectsListScreen() {
                         key={index}
                         onPress={() => {
                             router.push({
-                                pathname: "/workspace/projects/[projectId]",
+                                pathname: "/workspace/projects/[project_id]",
                                 params: {
-                                    projectId: project.id,
+                                    project_id: project.id,
                                     path: encodeURIComponent(
                                         project.path_with_namespace,
                                     ),

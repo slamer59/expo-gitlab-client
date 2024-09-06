@@ -17,21 +17,21 @@ export function IssueCardSkeleton() {
   );
 }
 
-export function IssueCard({ issue }) {
+export function IssueCard({ item }) {
   // console.log(issue);
   return (
     <View className="flex-row items-start m-4">
       <View className="flex-row items-center m-2">
-        {IssueStatusIcon(issue, false)}
+        {IssueStatusIcon(item, false)}
       </View>
       <View className="space-y-1 flex-2">
         <Text className="text-light dark:text-dark">
-          {issue.references.full}
+          {item.references.full}
         </Text>
-        <Text className="text-lg font-bold">{issue.title}</Text>
-        {issue?.labels.length > 0 && (
+        <Text className="text-lg font-bold">{item.title}</Text>
+        {item?.labels.length > 0 && (
           <View className="flex-row flex-wrap">
-            {issue?.labels.map((label) => (
+            {item?.labels.map((label) => (
               <Text
                 key={label}
                 className="mr-2 text-sm font-bold text-gray-700 bg-gray-200 rounded-md"
@@ -44,7 +44,7 @@ export function IssueCard({ issue }) {
       </View>
       <View className="items-end flex-1">
         <Text className="text-xs text-light dark:text-dark">
-          {formatDate(issue.updated_at)}
+          {formatDate(item.updated_at)}
         </Text>
       </View>
     </View>
