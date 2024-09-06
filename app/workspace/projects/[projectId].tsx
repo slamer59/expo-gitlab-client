@@ -1,15 +1,20 @@
-import { ButtonList, IListItems } from "@/components/buttonList";
-import { ChooseBranches } from "@/components/ChooseBranche";
+import { useSession } from '@/lib/session/SessionProvider';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { IListItems } from "@/components/buttonList";
 import Error from "@/components/Error";
+import { useState } from 'react';
+import { Text, View } from 'react-native';
+
+import { ButtonList } from "@/components/buttonList";
+import { ChooseBranches } from "@/components/ChooseBranche";
 import Loading from "@/components/Loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Text } from "@/components/ui/text";
-import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { useQueries } from "@tanstack/react-query";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Link, Stack } from "expo-router";
+import React from "react";
+import { ScrollView, TouchableOpacity } from "react-native";
 
 const fetchUrl = async (url, token) => {
   try {
@@ -32,34 +37,50 @@ const fetchUrl = async (url, token) => {
   }
 };
 
-const ProjectDetailsScreen = () => {
+export default function ProjectDetailsScreen() {
   const { session } = useSession();
   const [selectedBranch, setSelectedBranch] = useState("");
   const { projectId } = useLocalSearchParams();
   const router = useRouter();
 
-  const urls = {
-    // "issues": `https://gitlab.com/api/v4/projects/${projectId}/issues`,
-    // "labels": `https://gitlab.com/api/v4/projects/${projectId}/labels`,
-    members: `https://gitlab.com/api/v4/projects/${projectId}/members`,
-    merge_requests: `https://gitlab.com/api/v4/projects/${projectId}/merge_requests?state=opened`,
-    repo_branches: `https://gitlab.com/api/v4/projects/${projectId}/repository/branches`,
-    self: `https://gitlab.com/api/v4/projects/${projectId}?statistics=false&with_custom_attributes=false&license=false`,
-  };
+  const selfQuery = useQuery({
+    queryKey: ['self'],
+    queryFn: () => fetchUrl(`https://gitlab.com/api/v4/projects/${projectId}`, session.token),
+    retry: false,
+    onError: (error) => {
+      console.error(`Error fetching self:`, error);
+    },
+  });
 
-  const queries = useQueries({
+  const urls = selfQuery.data?._links
+    ? selfQuery.data?._links
+    : {};
+  const otherQueries = useQueries({
     queries: Object.entries(urls).map(([key, url]) => ({
       queryKey: [key, url],
       queryFn: () => fetchUrl(url, session.token),
       retry: false,
+      enabled: !!selfQuery.data, // Enable only when selfQuery has data
       onError: (error) => {
         console.error(`Error fetching ${key} from ${url}:`, error);
       },
     })),
   });
-  let index = 0;
 
-  const urlData = queries.reduce((acc, query) => {
+  if (selfQuery.isLoading || otherQueries.some((query) => query.isLoading)) {
+    return <Loading />
+  }
+
+  if (selfQuery.error) {
+    return <Text>An error has occurred: {selfQuery.error.message}</Text>;
+  }
+
+  if (otherQueries.some((query) => query.error)) {
+    return <Text>An error has occurred while fetching data.</Text>;
+  }
+
+  let index = 0
+  const urlData = otherQueries.reduce((acc, query) => {
     const key = Object.keys(urls)[index];
     if (query.data) {
       acc[key] = query.data;
@@ -67,7 +88,7 @@ const ProjectDetailsScreen = () => {
     index++;
     return acc;
   }, {});
-  const isLoading = queries.some((query) => query.isLoading);
+  const isLoading = otherQueries.some((query) => query.isLoading);
 
   // Repository
   let repository = {};
@@ -106,7 +127,7 @@ const ProjectDetailsScreen = () => {
       {
         icon: "git-merge",
         text: "Merge Requests",
-        kpi: mergeRequest.length || 0,
+        kpi: mergeRequest ? mergeRequest.length : 0, // Check if mergeRequest is defined
         onAction: () => {
           router.push(
             `workspace/projects/${repository.id}/merge-requests/list`,
@@ -285,7 +306,11 @@ const ProjectDetailsScreen = () => {
       )}
       {/* {isError && <Error error={error} />} */}
     </ScrollView>
+    // <View>
+    //   <Text>Self data: {JSON.stringify(selfQuery.data)}</Text>
+    //   {otherQueries.map((query, index) => (
+    //     <Text key={index}>data: {JSON.stringify(query.data)}</Text>
+    //   ))}
+    // </View>
   );
-};
-
-export default ProjectDetailsScreen;
+}
