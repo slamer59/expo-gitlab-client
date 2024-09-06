@@ -85,8 +85,9 @@ const ProjectDetailsScreen = () => {
     // Repo Branches
     repoBranches = urlData["repo_branches"];
     repoBranchesName = repoBranches.map((branch) => branch.name);
-    defaultBranchName = (repoBranches.find(branch => branch.default) || {}).name || repoBranches[0]?.name;
-
+    defaultBranchName =
+      (repoBranches.find((branch) => branch.default) || {}).name ||
+      repoBranches[0]?.name;
 
     // Members
     members = urlData["members"];
@@ -98,9 +99,7 @@ const ProjectDetailsScreen = () => {
         text: "Issues",
         kpi: repository?.open_issues_count || 0,
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/issues/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/issues/list`);
         },
         itemColor: "#3de63d",
       },
@@ -120,9 +119,7 @@ const ProjectDetailsScreen = () => {
         text: "CI/CD",
         kpi: "",
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/pipelines/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/pipelines/list`);
         },
         itemColor: "#d5ea4e",
       },
@@ -134,18 +131,16 @@ const ProjectDetailsScreen = () => {
         text: "Members",
         kpi: members.length || 0,
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/members/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/members/list`);
         },
         // itemColor: "#sdq",
       },
       {
-        icon: "document-text-outline", text: "Licences", kpi: "",
+        icon: "document-text-outline",
+        text: "Licences",
+        kpi: "",
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/licences/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/licences/list`);
         },
         // itemColor: "#ed3e3e",
       },
@@ -154,9 +149,7 @@ const ProjectDetailsScreen = () => {
         text: "Starred",
         kpi: repository?.star_count || "",
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/starred/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/starred/list`);
         },
         // itemColor: "#fff",
       },
@@ -167,18 +160,16 @@ const ProjectDetailsScreen = () => {
         text: "Code",
         kpi: "",
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/code/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/code/list`);
         },
         // itemColor: "#3de63d",
       },
       {
-        icon: "document-text-outline", text: "Commits", kpi: "",
+        icon: "document-text-outline",
+        text: "Commits",
+        kpi: "",
         onAction: () => {
-          router.push(
-            `workspace/projects/${repository.id}/commits/list`,
-          );
+          router.push(`workspace/projects/${repository.id}/commits/list`);
         },
         itemColor: "#A9A9A9",
       },
@@ -212,11 +203,7 @@ const ProjectDetailsScreen = () => {
                   }}
                 />
                 <AvatarFallback>
-                  <Ionicons
-                    name="folder-outline"
-                    size={28}
-                    color="gray"
-                  />
+                  <Ionicons name="folder-outline" size={28} color="gray" />
                 </AvatarFallback>
               </Avatar>
               <Text className="ml-2 text-lg font-bold text-light dark:text-slate-500">
@@ -228,16 +215,10 @@ const ProjectDetailsScreen = () => {
             <Text className="text-2xl font-bold">
               {repository.name_with_namespace}
             </Text>
-            <Text className="text-base ">
-              {repository.description}
-            </Text>
+            <Text className="text-base ">{repository.description}</Text>
 
             <View className="flex-row items-center">
-              <Ionicons
-                name="lock-closed-outline"
-                size={16}
-                color="black"
-              />
+              <Ionicons name="lock-closed-outline" size={16} color="black" />
               <Text className="ml-4 text-lg font-bold text-light dark:text-black">
                 {repository.visibility || "Default vis"}
               </Text>
@@ -267,14 +248,8 @@ const ProjectDetailsScreen = () => {
                 <Text> stars</Text>
               </View>
               <View className="flex-row items-center mr-4 text-lg font-bold text-light dark:text-black">
-                <Ionicons
-                  name="git-network"
-                  size={16}
-                  color="red"
-                />
-                <Text className="ml-1 font-bold">
-                  {repository.forks_count}
-                </Text>
+                <Ionicons name="git-network" size={16} color="red" />
+                <Text className="ml-1 font-bold">{repository.forks_count}</Text>
                 <Text> forks</Text>
               </View>
             </View>
@@ -290,28 +265,26 @@ const ProjectDetailsScreen = () => {
               onPress={() => { }}
             >
               <View className="flex flex-row items-center">
-                <Ionicons
-                  name="code-slash-outline"
-                  size={24}
-                  color="black"
-                />
+                <Ionicons name="code-slash-outline" size={24} color="black" />
                 <Text className="ml-2 font-bold text-gray-950 ">
                   {selectedBranch?.label || defaultBranchName}
                 </Text>
               </View>
               <ChooseBranches
                 branches={repoBranchesName}
-                defaultValue={{ value: defaultBranchName, label: defaultBranchName }}
+                defaultValue={{
+                  value: defaultBranchName,
+                  label: defaultBranchName,
+                }}
                 handleValueChange={handleValueChange}
               />
             </TouchableOpacity>
             <ButtonList listItems={listItemsSecond} />
           </View>
         </>
-      )
-      }
+      )}
       {/* {isError && <Error error={error} />} */}
-    </ScrollView >
+    </ScrollView>
   );
 };
 

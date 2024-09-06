@@ -1,5 +1,4 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/ui/issue-card";
-import { Text } from "@/components/ui/text";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 import { useRouter } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
@@ -31,9 +30,6 @@ export function IssuesListComponent({
             >
               <IssueCard key={index} issue={issue} />
               <View className="my-2 border-b border-gray-300" />
-              <Text className="text-center text-gray-500">
-                {issue.iid}
-              </Text>
             </TouchableOpacity>
           </>
         ))

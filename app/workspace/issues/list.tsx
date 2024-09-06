@@ -1,10 +1,8 @@
 import { IssuesListComponent } from "@/components/issuesList";
-import Loading from "@/components/Loading";
-import { TopFilterList } from "@/components/ui/top-filter-list";
+import { ListWithFilters } from "@/components/listWithFilters";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { Stack } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView } from "react-native";
 export default function IssuesListScreen() {
   function updateParams(filterValues: any) {
     // Update the params object based on the selected filter values
@@ -150,30 +148,25 @@ export default function IssuesListScreen() {
     isError,
     error,
   } = useGetData(["issues", params?.query], `/api/v4/issues`, params);
-
-
-
-  if (isError) {
-    return <Text>Error: {error}</Text>;
-  }
-
+  // const isError1 = true
+  // const error1 = { digest: "ok" }
   return (
     <ScrollView className="flex-1 m-2">
-      <Stack.Screen
-        options={{
-          title: "Issues",
-        }}
-      />
-      <TopFilterList
+      <ListWithFilters
+        title="Issues"
         filters={filters}
         setSelectedFilters={setSelectedFilters}
         selectedFilters={selectedFilters}
         clearFilters={clearFilters}
-      />
-      {isLoading &&
-        <Loading />
-      }
-      {issues && <IssuesListComponent issues={issues} />}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+      // isError={isError1}
+      // error={error1}
+      >
+        {issues && <IssuesListComponent issues={issues} />}
+      </ListWithFilters>
+
     </ScrollView>
   );
 }
