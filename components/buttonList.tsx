@@ -1,7 +1,6 @@
-import { Text, View } from "react-native";
+import { cn } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
-import { cn, getRandomHexColor } from "@/lib/utils";
+import { Text, TouchableOpacity, View } from "react-native";
 import {
   Collapsible,
   CollapsibleContent,
@@ -27,7 +26,7 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
         return (
           <TouchableOpacity
             key={index}
-            className="flex-row items-center justify-between py-2  "
+            className="flex-row items-center justify-between py-2"
             onPress={item.onAction}
           >
             <View className={"flex-row items-center flex "}>
@@ -45,7 +44,7 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
                 />
               </View>
 
-              <Text className="ml-2 text-base ">{item.text}</Text>
+              <Text className="ml-2 text-base">{item.text}</Text>
             </View>
             <Text className="ml-2 text-base text-right">{item.kpi}</Text>
           </TouchableOpacity>
@@ -64,14 +63,14 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
         return (
           <TouchableOpacity
             key={index}
-            className="flex-row items-center justify-between py-2  "
+            className="flex-row items-center justify-between py-2 "
             onPress={item.onAction}
           >
-            <View className="flex-row items-center flex  ">
+            <View className="flex flex-row items-center ">
               <View
                 style={{ backgroundColor: item.itemColor }}
                 className={cn(
-                  "flex items-center justify-center rounded-md p-[2px] "
+                  "flex items-center justify-center p-[2px] rounded-lg"
                 )}
               >
                 <Ionicons
@@ -90,7 +89,7 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
       })}
       <Collapsible>
         <CollapsibleTrigger>
-          <View className="flex-row items-center  justify-between">
+          <View className="flex-row items-center justify-between">
             <View
               className={cn(
                 "flex items-center flex-row justify-center rounded-md p-[2px] "
@@ -108,10 +107,10 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
             return (
               <TouchableOpacity
                 key={index}
-                className="flex-row items-center justify-between py-2  "
+                className="flex-row items-center justify-between py-2 "
                 onPress={item.onAction}
               >
-                <View className="flex-row items-center  flex">
+                <View className="flex flex-row items-center">
                   <View
                     style={{ backgroundColor: item.itemColor }}
                     className={cn(

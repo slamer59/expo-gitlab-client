@@ -34,7 +34,7 @@ const fetchUrl = async (url, token) => {
 
 const ProjectDetailsScreen = () => {
   const { session } = useSession();
-  const [error, setError] = useState(null);
+  const [selectedBranch, setSelectedBranch] = useState("");
   const { projectId } = useLocalSearchParams();
   const router = useRouter();
 
@@ -85,6 +85,9 @@ const ProjectDetailsScreen = () => {
     // Repo Branches
     repoBranches = urlData["repo_branches"];
     repoBranchesName = repoBranches.map((branch) => branch.name);
+    defaultBranchName = (repoBranches.find(branch => branch.default) || {}).name || repoBranches[0]?.name;
+
+
     // Members
     members = urlData["members"];
 
@@ -177,10 +180,13 @@ const ProjectDetailsScreen = () => {
             `workspace/projects/${repository.id}/commits/list`,
           );
         },
-        // itemColor: "#3e64ed",
+        itemColor: "#A9A9A9",
       },
     ];
   }
+  const handleValueChange = (value) => {
+    setSelectedBranch(value);
+  };
 
   return (
     <ScrollView className="flex-1">
@@ -289,11 +295,15 @@ const ProjectDetailsScreen = () => {
                   size={24}
                   color="black"
                 />
-                <Text className="ml-2 text-base text-gray-950 ">
-                  {repository.default_branch}
+                <Text className="ml-2 font-bold text-gray-950 ">
+                  {selectedBranch?.label || defaultBranchName}
                 </Text>
               </View>
-              <ChooseBranches branches={repoBranchesName} />
+              <ChooseBranches
+                branches={repoBranchesName}
+                defaultValue={{ value: defaultBranchName, label: defaultBranchName }}
+                handleValueChange={handleValueChange}
+              />
             </TouchableOpacity>
             <ButtonList listItems={listItemsSecond} />
           </View>
