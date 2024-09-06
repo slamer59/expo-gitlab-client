@@ -1,70 +1,103 @@
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Text } from "@/components/ui/text";
-import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
-import { View } from "react-native";
-import { Input } from "./ui/input";
+import { Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "./ui/select";
 
 const contentInsets = { padding: "1rem" };
 
 type ChooseBranchesProps = {
     branches: string[];
+    defaultValue: { value: string; label: string };
+    handleValueChange: (value: string) => void;
 };
 
-export function ChooseBranches({ branches }: ChooseBranchesProps) {
-    const [value, setValue] = React.useState("");
+export function ChooseBranches({ branches, defaultValue, handleValueChange }: ChooseBranchesProps) {
 
-    const onChangeText = (text: string) => {
-        setValue(text);
+    const insets = useSafeAreaInsets();
+    const contentInsets = {
+        top: insets.top,
+        bottom: insets.bottom,
+        left: 12,
+        right: 12,
     };
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                    <Text className="ml-2 font-bold text-right text-blue-500">
-                        CHANGE BRANCH
-                    </Text>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-                insets={contentInsets}
-                className="w-64 native:w-72"
-            >
-                <DropdownMenuLabel>Choose Branch</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <View className="flex-row items-center">
-                    <Ionicons name="search" size={20} color="#000" />
-                    <Input
-                        className="w-full h-10 ml-2"
-                        placeholder="Branches..."
-                        value={value}
-                        onChangeText={onChangeText}
-                        aria-labelledby="inputLabel"
-                        aria-errormessage="inputError"
-                    />
-                </View>
-                <DropdownMenuSeparator />
+        <Select defaultValue={{ value: defaultValue.value, label: defaultValue.label }} onValueChange={handleValueChange}>
+            <SelectTrigger className='w-[200px]'>
+                {/* <SelectValue
+                    className='text-sm text-foreground native:text-lg'
+                    placeholder='Select a fruit'
+                /> */}
+                <Text className="ml-2 font-bold text-right">
+                    SELECT BRANCH
+                </Text>
+            </SelectTrigger>
+            <SelectContent insets={contentInsets} className='w-[250px]'>
+                <SelectGroup>
+                    <SelectLabel className="flex-row items-center">
+                        Branches name
+                        {/* <View className="flex-row items-center">
+                            <Ionicons name="search" size={20} color="#000" />
+                            <Input
+                                className="w-full h-10 ml-2"
+                                placeholder="Branches..."
+                                value={value}
+                                onChangeText={onChangeText}
+                                aria-labelledby="inputLabel"
+                                aria-errormessage="inputError"
+                            />
+                        </View> */}
+                    </SelectLabel>
+                    {/* https://github.com/mrzachnugent/react-native-reusables/blob/main/apps/showcase/app/select.tsx */}
+                    {branches?.map((branch, index) => (
+                        <SelectItem label={branch} value={index}>
+                            {branch}
+                        </SelectItem>
+                    ))
+                    }
 
-                <DropdownMenuGroup>
+                </SelectGroup>
 
-                    {branches.map((branch, index) => (
-                        <DropdownMenuItem key={index}>
-                            <Text>{branch}</Text>
-                        </DropdownMenuItem>
-                    ))}
+            </SelectContent>
+        </Select>
 
-                </DropdownMenuGroup>
+        // <DropdownMenu>
+        //     <DropdownMenuTrigger asChild>
+        //         <Button variant="outline">
+        //             <Text className="ml-2 font-bold text-right text-blue-500">
+        //                 CHANGE BRANCH
+        //             </Text>
+        //         </Button>
+        //     </DropdownMenuTrigger>
+        //     <DropdownMenuContent
+        //         insets={contentInsets}
+        //         className="w-64 native:w-72"
+        //     >
+        //         <DropdownMenuLabel>Choose Branch</DropdownMenuLabel>
+        //         <DropdownMenuSeparator />
+        //         <View className="flex-row items-center">
+        //             <Ionicons name="search" size={20} color="#000" />
+        //             <Input
+        //                 className="w-full h-10 ml-2"
+        //                 placeholder="Branches..."
+        //                 value={value}
+        //                 onChangeText={onChangeText}
+        //                 aria-labelledby="inputLabel"
+        //                 aria-errormessage="inputError"
+        //             />
+        //         </View>
+        //         <DropdownMenuSeparator />
 
-            </DropdownMenuContent>
-        </DropdownMenu >
+        //         <DropdownMenuGroup>
+
+        //             {branches.map((branch, index) => (
+        //                 <DropdownMenuItem key={index}>
+        //                     <Text>{branch}</Text>
+        //                 </DropdownMenuItem>
+        //             ))}
+
+        //         </DropdownMenuGroup>
+
+        //     </DropdownMenuContent>
+        // </DropdownMenu >
     );
 }
