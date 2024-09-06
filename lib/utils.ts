@@ -87,3 +87,18 @@ export function getRandomHexColor() {
   // Return the hex color code with a '#' prefix
   return `#${hexString}`;
 }
+
+
+// Utility functions
+export const fetchUrl = async (url, token) => {
+  try {
+    const response = await fetch(url, {
+      headers: { "PRIVATE-TOKEN": token },
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    throw error;
+  }
+};
