@@ -36,7 +36,7 @@ export default function IssuesList() {
   );
 
   return (
-    <ScrollView className="flex-1 m-auto">
+    <ScrollView className="flex-1 m-2">
       <ListWithFilters
         title="Issues"
         UIFilters={UIFilters}

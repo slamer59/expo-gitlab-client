@@ -192,7 +192,6 @@ function generateUrlFromParams(
 
   let url: URL;
   try {
-
     url = new URL(endpoint);
     console.log("full", url)
   } catch (error) {
@@ -207,9 +206,7 @@ function generateUrlFromParams(
 
       const query = `?${new URLSearchParams(params?.query)}` || ""
 
-      console.log("query", query)
-
-      url = `${url}${query}`;
+      url = `${url}${query}`
     } else {
       // If the error is not a TypeError, it means something else went wrong
       // So, we rethrow the error
