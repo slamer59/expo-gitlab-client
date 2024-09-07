@@ -29,7 +29,7 @@ export const ProjectHeader = ({ repository }) => (
             </Text>
         </View>
         <Text className="text-2xl font-bold">
-            {repository.name_with_namespace}
+            {repository.name}
         </Text>
         <Text className="text-base ">{repository.description}</Text>
         <View className="flex-row items-center">

@@ -1,0 +1,15 @@
+appId: expo-gitlab-client
+---
+- tapOn: "Projects"
+- assertVisible: "Projects"
+- takeScreenshot: ./assets/maestro/Projects
+- copyTextFrom:
+    id: "project-card"
+    index: 0
+- tapOn:
+    id: "project-card"
+    index: 0
+- assertVisible: ${maestro.copiedText}
+- takeScreenshot: ./assets/maestro/Project Details
+- back
+- back

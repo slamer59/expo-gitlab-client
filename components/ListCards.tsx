@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 type ListItem = {
@@ -25,7 +26,7 @@ export function ListComponent<T extends ListItem>({
   return (
     <>
       {items
-        ? items.map((item) => {
+        ? items.map((item, index) => {
           const params = Object.keys(paramsMap).reduce((acc, key) => {
             acc[key] = item[paramsMap[key]];
             return acc;
@@ -40,14 +41,13 @@ export function ListComponent<T extends ListItem>({
                     params: params,
                   });
                 }}
+                testID={`card-${index}`}
               >
-                <ItemComponent item={item} />
+                <ItemComponent
+                  item={item}
+                />
                 <View className="my-2 border-b border-gray-300" />
-                {/* <Text>
-                  {pathname}
-                  {JSON.stringify(params)}
-                </Text> */}
-              </TouchableOpacity>
+              </TouchableOpacity >
             </>
           );
         })
