@@ -16,3 +16,5 @@ appId: expo-gitlab-client
 - tapOn: "Odio aut et rerum."
 - assertVisible: "Changes"
 - takeScreenshot: ./assets/maestro/Merge Request Details
+- back
+- back

@@ -1,0 +1,10 @@
+appId: expo-gitlab-client
+---
+- takeScreenshot: ./assets/maestro/Home
+- runFlow: issues.yaml
+- runFlow: merge_requests.yaml
+- runFlow: projects.yaml
+# - runFlow: repositories.yaml
+# - runFlow: organizations.yaml
+# - runFlow: starred.yaml
+# - runFlow: profile.yaml

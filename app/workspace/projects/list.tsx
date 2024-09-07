@@ -270,7 +270,9 @@ export default function ProjectsListScreen() {
                             });
                         }}
                     >
-                        <ProjectCard project={project} />
+                        <ProjectCard
+                            project={project}
+                        />
                         <View className="my-2 border-b border-gray-300" />
                     </TouchableOpacity>
                 ))

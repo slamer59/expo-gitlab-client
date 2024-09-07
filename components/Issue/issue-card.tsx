@@ -28,10 +28,10 @@ export function IssueCard({ item }) {
         <Text className="text-light dark:text-dark">
           {item.references.full}
         </Text>
-        <Text className="text-lg font-bold">{item.title}</Text>
+        <Text className="text-lg font-bold" testID={`issue-card`}>{item.title}</Text>
         {item?.labels.length > 0 && (
           <View className="flex-row flex-wrap">
-            {item?.labels.map((label) => (
+            {item?.labels.map((label, index) => (
               <Text
                 key={label}
                 className="mr-2 text-sm font-bold text-gray-700 bg-gray-200 rounded-md"

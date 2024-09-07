@@ -96,7 +96,12 @@ export function ProjectCard({ project }) {
       </View>
       <View className="space-y-1 flex-2">
         <Text className="text-light dark:text-dark">{project?.namespace.name}</Text>
-        <Text className="text-lg font-bold">{project?.name}</Text>
+        <Text
+          className="text-lg font-bold"
+          testID="project-card"
+        >
+          {project?.name}
+        </Text>
         {/*{issue?.labels.length > 0 && (
           <View className='flex-row flex-wrap'>
             {issue?.labels.map((label) => (
