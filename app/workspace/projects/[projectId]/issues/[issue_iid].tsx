@@ -4,7 +4,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import IssueStatusIcon from "@/components/ui/issue-status-icon";
+import IssueStatusIcon from "@/components/Issue/issue-status-icon";
 import LinksToIssueSection from "@/components/ui/link-issue-section";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { formatDate } from "@/lib/utils";
