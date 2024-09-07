@@ -1,23 +1,18 @@
 appId: expo-gitlab-client
 ---
-# - launchApp:
-#     appId: expo-gitlab-client
-- tapOn: ", Merge Requests"
+- takeScreenshot: ./assets/maestro/Home
+- tapOn: "Merge Requests"
 - assertVisible: "Merge Requests"
-- tapOn:
-    point: 50%,25%
+- takeScreenshot: ./assets/maestro/Merge Requests
+- scrollUntilVisible:
+    element:
+      text: "Odio aut et rerum."
+    direction: DOWN # DOWN|UP|LEFT|RIGHT (optional, default: DOWN)
+    timeout: 50000 # (optional, default: 20000) ms
+    speed: 80 # 0-100 (optional, default: 40) Scroll speed. Higher values scroll faster.
+    visibilityPercentage: 100 # 0-100 (optional, default: 100) Percentage of element visible in viewport
+    centerElement: false # true|false (optional, default: false)
+- assertVisible: "Odio aut et rerum."
+- tapOn: "Odio aut et rerum."
 - assertVisible: "Changes"
-# - launchApp
-
-# - tapOn: "Create new contact"
-# - tapOn: "First name"
-# - inputRandomPersonName
-# - tapOn: "Last name"
-# - inputRandomPersonName
-# - tapOn: "Phone"
-# - inputRandomNumber:
-#     length: 10
-# - back
-# - tapOn: "Email"
-# - inputRandomEmail
-# - tapOn: "Save"
+- takeScreenshot: ./assets/maestro/Merge Request Details
