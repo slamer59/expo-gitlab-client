@@ -1,8 +1,5 @@
 import ListWithFilters from "@/components/ListWithFilters";
-import {
-  MergeRequestCard,
-  MergeRequestCardSkeleton,
-} from "@/components/MergeRequest/mr-card";
+import { MergeRequestCard, MergeRequestCardSkeleton } from "@/components/MergeRequest/mr-card";
 import React from "react";
 import { ScrollView } from "react-native";
 
@@ -114,11 +111,11 @@ export default function MergeRequestsListScreen() {
         SkeletonComponent={MergeRequestCardSkeleton}
         endpoint="/api/v4/merge_requests"
         cache_name="merge_requests"
-        pathname="/workspace/projects/[projectId]/issues/[issue_iid]"
+        pathname="/workspace/projects/[projectId]/merge-requests/[mr_iid]"
         params={params}
         paramsMap={{
           projectId: "project_id",
-          issue_iid: "iid",
+          mr_iid: "iid",
         }}
         UIFilters={UIFilters}
       />
