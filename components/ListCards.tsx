@@ -1,6 +1,5 @@
 import { useRouter } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
-import { Text } from "./ui/text";
 
 type ListItem = {
   id: string | number;
@@ -44,10 +43,10 @@ export function ListComponent<T extends ListItem>({
               >
                 <ItemComponent item={item} />
                 <View className="my-2 border-b border-gray-300" />
-                <Text>
+                {/* <Text>
                   {pathname}
                   {JSON.stringify(params)}
-                </Text>
+                </Text> */}
               </TouchableOpacity>
             </>
           );

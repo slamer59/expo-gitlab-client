@@ -92,7 +92,7 @@ export default function ListWithFilters({
     }
   }, [selectedFilters, UIFilters, params]);
   // filter values
-  console.log(paramsMap)
+  // console.log(paramsMap)
   return (
     <>
       <Stack.Screen

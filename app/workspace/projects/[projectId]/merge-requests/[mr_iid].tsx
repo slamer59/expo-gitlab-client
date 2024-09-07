@@ -7,6 +7,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
+
+import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
+
 const mrExamples = {
     "id": 155016530,
     "iid": 133,
@@ -236,10 +239,7 @@ export default function MergeRequestDetails() {
                         {mr.title}
                     </Text> */}
                     <View className="flex flex-row items-center justify-between mb-2">
-                        {/* {MergeRequestStatusIcon(mr.state, true)} */}
-                        <Text className="px-2 bg-gray-300 border-b border-gray-300 rounded-md">
-                            {mr.state}
-                        </Text>
+                        {MergeStatusIcon(mr, true)}
                         <View className="flex flex-row items-center">
                             <Text className="px-2 bg-blue-100 border-b border-gray-300 rounded-md">
                                 {mr.source_branch}
