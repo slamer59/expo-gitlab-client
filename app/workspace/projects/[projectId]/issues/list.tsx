@@ -1,4 +1,6 @@
-import IssuesListWithFilters from "@/components/ListWithFilters";
+import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
+import ListWithFilters from "@/components/ListWithFilters";
+import { GlobalIssueUIFilters } from "@/constants/UIFilters";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 
@@ -20,6 +22,7 @@ export default function IssuesList() {
       // issue_type: "issue",
     },
   };
+  const UIFilters = GlobalIssueUIFilters;
 
   const {
     data: issues,
@@ -34,11 +37,18 @@ export default function IssuesList() {
 
   return (
     <ScrollView className="flex-1 m-auto">
-      <IssuesListWithFilters
-        data={issues}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
+      <ListWithFilters
+        title="Issues"
+        UIFilters={UIFilters}
+        ItemComponent={IssueCard}
+        SkeletonComponent={IssueCardSkeleton}
+        pathname="/workspace/projects/[projectId]/issues/[issue_iid]"
+        endpoint="/api/v4/projects/{id}/issues"
+        cache_name={`project_id_${projectId}`}
+        paramsMap={{
+          "projectId": "project_id", "issue_iid": "iid"
+        }}
+        params={params}
       />
     </ScrollView>
   );

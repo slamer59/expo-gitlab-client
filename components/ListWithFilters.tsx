@@ -19,7 +19,6 @@ interface FilterOption {
 }
 
 interface ListWithFiltersProps {
-  items: any[];
   title: string;
   UIFilters: Filter[];
   ItemComponent: React.ComponentType<any>;
@@ -27,9 +26,8 @@ interface ListWithFiltersProps {
   pathname: string;
   params: any;
   paramsMap: any;
-  isLoading: boolean;
-  isError: boolean;
-  error: any;
+  endpoint: string;
+  cache_name: string;
 }
 export default function ListWithFilters({
   title,
@@ -37,23 +35,18 @@ export default function ListWithFilters({
   ItemComponent,
   SkeletonComponent,
   pathname,
-  paramsMap,
-  params,
   endpoint,
   cache_name,
+  paramsMap,
+  params,
 }: ListWithFiltersProps) {
-
 
   const {
     data: items,
     isLoading,
     isError,
     error,
-  } = useGetData(
-    [cache_name, params?.query, params?.path],
-    endpoint,
-    params,
-  );
+  } = useGetData([cache_name, params?.query, params?.path], endpoint, params);
 
   function updateParams(filterValues: any, params: any) {
     // Update the params object based on the selected filter values
