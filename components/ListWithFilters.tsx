@@ -72,23 +72,6 @@ export default function ListWithFilters({
     setSelectedFilters({});
   };
 
-  // loop over filters and check if selectedFilters has the same key and value
-  // if it does, then add it to the params
-  // for (const key in selectedFilters) {
-  //   if (selectedFilters.hasOwnProperty(key)) {
-  //     const value = selectedFilters[key];
-  //     // where label == Items
-  //     for (const filter of UIFilters) {
-  //       if (filter.label === key) {
-  //         for (const option of filter.options) {
-  //           if (option.value === value.value) {
-  //             updateParams(option.filter, params);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
   useEffect(() => {
     // loop over filters and check if selectedFilters has the same key and value
     // if it does, then add it to the params
@@ -109,7 +92,7 @@ export default function ListWithFilters({
     }
   }, [selectedFilters, UIFilters, params]);
   // filter values
-
+  console.log(paramsMap)
   return (
     <>
       <Stack.Screen

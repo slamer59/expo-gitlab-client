@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/utils";
 import React from "react";
 import { Text, View } from "react-native";
 import { Skeleton } from "../ui/skeleton";
-import MergeRequestStatusIcon from "./mr-status-icon";
+import MergeStatusIcon from "./mr-status-icon";
 
 export function MergeRequestCardSkeleton() {
   return (
@@ -18,11 +18,11 @@ export function MergeRequestCardSkeleton() {
 }
 
 export function MergeRequestCard({ item }) {
-  // console.log(MergeRequest);
+
   return (
     <View className="flex-row items-start m-4">
       <View className="flex-row items-center m-2">
-        {MergeRequestStatusIcon(item, false)}
+        {MergeStatusIcon(item, false)}
       </View>
       <View className="space-y-1 flex-2">
         <Text className="text-light dark:text-dark">

@@ -45,7 +45,8 @@ export function ListComponent<T extends ListItem>({
                 <ItemComponent item={item} />
                 <View className="my-2 border-b border-gray-300" />
                 <Text>
-
+                  {pathname}
+                  {JSON.stringify(params)}
                 </Text>
               </TouchableOpacity>
             </>
