@@ -1,8 +1,6 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalIssueUIFilters } from "@/constants/UIFilters";
-import { useGetData } from "@/lib/gitlab/hooks";
-import { APIEntitiesRelatedIssue } from "@/types/general";
 
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
@@ -24,16 +22,6 @@ export default function IssuesList() {
   };
   const UIFilters = GlobalIssueUIFilters;
 
-  const {
-    data: issues,
-    isLoading,
-    isError,
-    error,
-  } = useGetData<APIEntitiesRelatedIssue[]>(
-    [`issues_of_project_${projectId}`, params.query],
-    `/api/v4/projects/${projectId}/issues`,
-    params,
-  );
 
   return (
     <ScrollView className="flex-1 m-2">

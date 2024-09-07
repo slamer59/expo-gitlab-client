@@ -15,7 +15,8 @@
     "build:all": "eas build --platform all",
     "release": "semantic-release",
     "lint": "eslint .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "push:android": "adb install /home/thomas/Developpments/gitlab-client/expo-gitlab-client/build-1725717121595.apk"
   },
   "jest": {
     "preset": "jest-expo"
