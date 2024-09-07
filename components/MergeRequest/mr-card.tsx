@@ -18,7 +18,6 @@ export function MergeRequestCardSkeleton() {
 }
 
 export function MergeRequestCard({ item }) {
-
   return (
     <View className="flex-row items-start m-4">
       <View className="flex-row items-center m-2">

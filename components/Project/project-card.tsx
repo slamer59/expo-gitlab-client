@@ -54,7 +54,7 @@ async function downloadImage(uri) {
 
 
 export function ProjectCard({ project }) {
-  console.log(project)
+
   const [projectPath, setImagePath] = useState(null);
   useEffect(() => {
     async function fetchImage() {

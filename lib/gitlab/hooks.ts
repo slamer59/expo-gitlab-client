@@ -204,7 +204,12 @@ function generateUrlFromParams(
           url = url.replace(`{${key}}`, params.path[key]);
         }
       }
-      url = `${url}?${new URLSearchParams(params.query)}`;
+
+      const query = `?${new URLSearchParams(params?.query)}` || ""
+
+      console.log("query", query)
+
+      url = `${url}${query}`;
     } else {
       // If the error is not a TypeError, it means something else went wrong
       // So, we rethrow the error
