@@ -2,6 +2,7 @@ import { Text } from "@/components/ui/text";
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MergeRequestStatusIcon(MergeRequest: any, withText: boolean = false) {
+    console.log("MergeRequest.state" + MergeRequest.state);
     return <>
         {MergeRequest.state === 'opened' ? (
             <>
