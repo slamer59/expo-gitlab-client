@@ -8,7 +8,7 @@ import { useFeatureFlag } from "posthog-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-const ButtonList = () => {
+export default function Home() {
   const navigation = useNavigation();
   const featureFlagMapping = {
     "git-merge": useFeatureFlag("git-merge"),
@@ -77,7 +77,9 @@ const ButtonList = () => {
           <TouchableOpacity
             key={index}
             className="flex-row items-center py-2"
-            onPress={() => navigation.navigate(button.screen || "home")}
+            onPress={() =>
+              navigation.navigate(button.screen || "home")
+            }
           >
             <Ionicons name={button.icon} size={24} color="black" />
             <Text className="ml-2 text-base">{button.text}</Text>
@@ -86,6 +88,4 @@ const ButtonList = () => {
       </View>
     </ScrollView>
   );
-};
-
-export default ButtonList;
+}
