@@ -1,5 +1,6 @@
 import Loading from "@/components/Loading";
-import { ProjectCard } from "@/components/ui/project-card";
+import { ProjectCard } from "@/components/Project/project-card";
+
 import { TopFilterList } from "@/components/ui/top-filter-list";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -18,7 +19,7 @@ export default function ProjectsListScreen() {
         };
     }
 
-    const filters = [
+    const UIFilters = [
         {
             label: "Projects",
             options: [
@@ -216,7 +217,7 @@ export default function ProjectsListScreen() {
         if (selectedFilters.hasOwnProperty(key)) {
             const value = selectedFilters[key];
             // where label == projects
-            for (const filter of filters) {
+            for (const filter of UIFilters) {
                 if (filter.label === key) {
                     for (const option of filter.options) {
                         if (option.value === value.value) {
@@ -234,6 +235,7 @@ export default function ProjectsListScreen() {
         data: projects,
         isLoading,
         isError,
+        error,
     } = useGetData(["projects", params.query], `/api/v4/projects`, params);
 
     return (
@@ -244,7 +246,7 @@ export default function ProjectsListScreen() {
                 }}
             />
             <TopFilterList
-                filters={filters}
+                UIFilters={UIFilters}
                 setSelectedFilters={setSelectedFilters}
                 selectedFilters={selectedFilters}
                 clearFilters={clearFilters}

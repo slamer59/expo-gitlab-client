@@ -2,8 +2,8 @@ import { formatDate } from "@/lib/utils";
 
 import React from "react";
 import { Text, View } from "react-native";
+import { Skeleton } from "../ui/skeleton";
 import IssueStatusIcon from "./issue-status-icon";
-import { Skeleton } from "./skeleton";
 
 export function IssueCardSkeleton() {
   return (

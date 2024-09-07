@@ -2,6 +2,7 @@ import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { expoToken, getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
+import Constants from "expo-constants";
 
 import { useFocusEffect, useNavigation } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
@@ -11,11 +12,26 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 export default function Home() {
   const navigation = useNavigation();
   const featureFlagMapping = {
-    "git-merge": useFeatureFlag("git-merge"),
-    "chatbubbles-outline": useFeatureFlag("chatbubbles-outline"),
-    "folder-open-outline": useFeatureFlag("folder-open-outline"),
-    "people-outline": useFeatureFlag("people-outline"),
-    "star-outline": useFeatureFlag("star-outline"),
+    "git-merge":
+      Constants.releaseChannel === "development"
+        ? useFeatureFlag("git-merge")
+        : true,
+    "chatbubbles-outline":
+      Constants.releaseChannel === "development"
+        ? useFeatureFlag("chatbubbles-outline")
+        : true,
+    "folder-open-outline":
+      Constants.releaseChannel === "development"
+        ? useFeatureFlag("folder-open-outline")
+        : true,
+    "people-outline":
+      Constants.releaseChannel === "development"
+        ? useFeatureFlag("people-outline")
+        : true,
+    "star-outline":
+      Constants.releaseChannel === "development"
+        ? useFeatureFlag("star-outline")
+        : true,
   };
 
   const buttons = [

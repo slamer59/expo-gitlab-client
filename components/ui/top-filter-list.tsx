@@ -3,17 +3,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 
 export function TopFilterList({
-    filters,
+    UIFilters,
     selectedFilters,
     setSelectedFilters,
     clearFilters,
 }: {
-    filters: {
+    UIFilters: {
         label: string;
         options: { value: string; label: string }[];
         placeholder: string;
     }[];
+    selectedFilters: Record<string, string>;
+    setSelectedFilters: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    clearFilters: () => void;
 }) {
+
     return (
         <>
             <ScrollView
@@ -34,7 +38,7 @@ export function TopFilterList({
                     >Clear Filters
                     </Text> */}
                 </TouchableOpacity>
-                {filters.map((filter, index) => (
+                {UIFilters?.map((filter, index) => (
                     <Filter
                         key={index}
                         items={filter.items}

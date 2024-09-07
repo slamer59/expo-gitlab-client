@@ -1,4 +1,4 @@
-import IssuesListWithFilters from "@/components/IssuesListWithFilters";
+import IssuesListWithFilters from "@/components/ListWithFilters";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { APIEntitiesRelatedIssue } from "@/types/general";
 

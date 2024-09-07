@@ -6,7 +6,7 @@ import { ScrollView, Text } from "react-native";
 
 import { IListItems } from "@/components/buttonList";
 import Loading from "@/components/Loading";
-import { CodeSection } from "@/components/Project/codeSection";
+import { CodeSection } from "@/components/Project/code-section";
 import { ProjectHeader } from "@/components/Project/header";
 import { WorkspaceSection } from "@/components/Project/workspaceSection";
 import { getCodeSectionItems } from "@/hooks/getCodeSectionItems";
