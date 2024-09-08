@@ -1,6 +1,7 @@
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,6 +21,7 @@ export function ButtonList({
 }
 
 function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
+
   return (
     <View className="flex flex-col gap-2 py-2">
       {listItems.map((item, index) => {
@@ -44,7 +46,12 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
                 />
               </View>
 
-              <Text className="ml-2 text-base">{item.text}</Text>
+              <Text
+                className="ml-2 text-base"
+                testID={`${item.text}-button`}
+              >{item.text}
+
+              </Text>
             </View>
             <Text className="ml-2 text-base text-right">{item.kpi}</Text>
           </TouchableOpacity>
@@ -142,6 +149,6 @@ export interface IListItems {
   text?: string;
   link?: string;
   itemColor?: string;
-  kpi?: string;
+  kpi?: number | string;
   onAction?: () => void;
 }

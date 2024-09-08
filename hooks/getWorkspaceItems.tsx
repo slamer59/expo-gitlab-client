@@ -15,7 +15,7 @@ export function getWorkspaceItems(project: IProject, router: string[]): IListIte
             icon: "alert-circle-outline",
             text: "Issues",
             kpi: project?.repository?.open_issues_count || 0,
-            onAction: () => router.push(`workspace/projects/${project.repository.id}/issues/list`),
+            onAction: () => router.push(`workspace/projects/${project?.repository.id}/issues/list`),
             itemColor: "#3de63d",
         },
         {

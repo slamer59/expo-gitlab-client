@@ -11,5 +11,12 @@ appId: expo-gitlab-client
     index: 0
 - assertVisible: ${maestro.copiedText}
 - takeScreenshot: ./assets/maestro/Project Details
+- tapOn: "Issues"
+- assertVisible: "Issues for Project"
+- takeScreenshot: ./assets/maestro/Project Issues
+- back
+- tapOn: "Merge Requests"
+- assertVisible: "Merge Requests for Project"
+- takeScreenshot: ./assets/maestro/Project Merge Requests
 - back
 - back

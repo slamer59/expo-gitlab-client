@@ -2,12 +2,12 @@ import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
 
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
 
-export default function MergeRequestsList() {
+export default function ProjectMergeRequestsList() {
   const { projectId } = useLocalSearchParams();
-  const params = {
+  const defaultParamsProjectPR = {
     // https://docs.gitlab.com/ee/api/merge_requests.html
     path: {
       id: projectId,
@@ -34,22 +34,36 @@ export default function MergeRequestsList() {
     }
   };
   const UIFilters = GlobalMergeRequestUIFilters
-
+  const query_cache_name = `project_id_merge_requests_${projectId}`
+  const pathname = "/workspace/projects/[projectId]/merge-requests"
+  const endpoint = "/api/v4/projects/{id}/merge_requests"
+  const paramsMap = {
+    "projectId": "project_id", "mr_iid": "iid"
+  }
 
   return (
     <ScrollView className="flex-1 m-2">
+      <Stack.Screen
+        options={{
+          headerTitle: `Merge Requests for Project`,
+          // headerRight: () => (
+          //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
+          //     <Button size="sm" variant="primary">
+          //       New Issue
+          //     </Button>
+          //   </Link>
+          // ),
+        }}
+      />
       <ListWithFilters
-        title="Merge Requests"
         UIFilters={UIFilters}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}
-        pathname="/workspace/projects/[projectId]/merge-requests"
-        endpoint="/api/v4/projects/{id}/merge_requests"
-        query_cache_name={`project_id_merge_requests_${projectId}`}
-        paramsMap={{
-          "projectId": "project_id", "mr_iid": "iid"
-        }}
-        params={params}
+        pathname={pathname}
+        endpoint={endpoint}
+        query_cache_name={query_cache_name}
+        paramsMap={paramsMap}
+        defaultParams={defaultParamsProjectPR}
       />
     </ScrollView>
   );

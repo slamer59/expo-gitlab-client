@@ -18,9 +18,8 @@ import { fetchUrl } from "@/lib/utils";
 export default function ProjectDetailsScreen() {
   const { session } = useSession();
   const [selectedBranch, setSelectedBranch] = useState("");
-  const { projectId, path } = useLocalSearchParams();
+  const { projectId } = useLocalSearchParams();
   const router = useRouter();
-  console.log("projectId", projectId)
 
   const selfQuery = useQuery({
     queryKey: ["self"],
@@ -34,7 +33,6 @@ export default function ProjectDetailsScreen() {
       console.error(`Error fetching self:`, error);
     },
   });
-  console.log("selfQuery", selfQuery.data);
   let urls = selfQuery.data?._links || {};
   // filter URL  in self, merge_requests, repo_branches, members
   urls = Object.fromEntries(
