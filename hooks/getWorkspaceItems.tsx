@@ -9,7 +9,7 @@ interface IProject {
     members: any[];
 }
 
-export function getWorspaceItems(project: IProject, router: string[]): IListItems[] {
+export function getWorkspaceItems(project: IProject, router: string[]): IListItems[] {
     return [
         {
             icon: "alert-circle-outline",

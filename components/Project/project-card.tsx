@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Skeleton } from '../ui/skeleton';
 // name={project?.name}
 // last_activity_at={project?.last_activity_at}
@@ -53,14 +53,14 @@ async function downloadImage(uri) {
 }
 
 
-export function ProjectCard({ project }) {
+export function ProjectCard({ item }) {
 
   const [projectPath, setImagePath] = useState(null);
   useEffect(() => {
     async function fetchImage() {
-      if (project?.avatar_url) {
+      if (item?.avatar_url) {
         try {
-          const response = await fetch(project?.avatar_url);
+          const response = await fetch(item?.avatar_url);
           const blob = await response.blob();
           const reader = new FileReader();
 
@@ -77,30 +77,29 @@ export function ProjectCard({ project }) {
     }
 
     fetchImage();
-  }, [project?.avatar_url]);
+  }, [item?.avatar_url]);
 
 
-  // console.log(projectPath)
   return (
     <View className="flex-row items-start m-4">
       <View className='flex-row items-center m-2'>
         {/* {IssueStatusIcon(issue, false)} */}
-        <Avatar alt={`${project?.name}'s Avatar`}>
-          <AvatarImage
+        <Avatar alt={`${item?.name}'s Avatar`}>
+          {/* <AvatarImage
             source={{ uri: projectPath }}
-          />
+          /> */}
           <AvatarFallback>
             <Ionicons name="folder-outline" size={28} color="gray" />
           </AvatarFallback>
         </Avatar>
       </View>
       <View className="space-y-1 flex-2">
-        <Text className="text-light dark:text-dark">{project?.namespace.name}</Text>
+        <Text className="text-light dark:text-dark">{item?.namespace.name}</Text>
         <Text
           className="text-lg font-bold"
           testID="project-card"
         >
-          {project?.name}
+          {item?.name}
         </Text>
         {/*{issue?.labels.length > 0 && (
           <View className='flex-row flex-wrap'>
@@ -117,7 +116,7 @@ export function ProjectCard({ project }) {
       </View>
       <View className="items-end flex-1">
         <Text className="text-xs text-light dark:text-dark">
-          {formatDate(project?.last_activity_at)}
+          {formatDate(item?.last_activity_at)}
         </Text>
       </View>
     </View>

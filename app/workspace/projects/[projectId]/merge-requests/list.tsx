@@ -45,7 +45,7 @@ export default function MergeRequestsList() {
         SkeletonComponent={IssueCardSkeleton}
         pathname="/workspace/projects/[projectId]/merge-requests"
         endpoint="/api/v4/projects/{id}/merge_requests"
-        cache_name={`project_id_merge_requests_${projectId}`}
+        query_cache_name={`project_id_merge_requests_${projectId}`}
         paramsMap={{
           "projectId": "project_id", "mr_iid": "iid"
         }}

@@ -175,3 +175,144 @@ export const GlobalMergeRequestUIFilters = [
     //   placeholder: 'Keyword',
     // },
 ];
+
+export const GlobalProjectsUIFilters = [
+    {
+        label: "Projects",
+        options: [
+            {
+                value: "all",
+                label: "All Projects",
+                filter: { owned: false, starred: false },
+            },
+            // { value: 'archived', label: 'Archived' },
+            // { value: 'starred', label: 'Starred' },
+            { value: "owned", label: "Owned", filter: { owned: true } },
+            // { value: 'imported', label: 'Imported' },
+            {
+                value: "starred",
+                label: "Starred",
+                filter: { starred: true },
+            },
+        ],
+        placeholder: "Select a project...",
+    },
+    // {
+    //     label: "Visibility",
+    //     options: [
+    //         { value: 'private', label: 'Private' },
+    //         { value: 'internal', label: 'Internal' },
+    //         { value: 'public', label: 'Public' },
+    //     ],
+    //     placeholder: "Select a visibility..."
+    // },
+    // {
+    //     label: "Repository",
+    //     options: [
+    //         { value: 'public', label: 'Public' },
+    //         { value: 'private', label: 'Private' },
+    //         { value: 'forked', label: 'Forked' },
+    //     ],
+    //     placeholder: "Select a repository..."
+    // },
+    // {
+    //     label: "Features",
+    //     options: [
+    //         { value: 'with_issues_enabled', label: 'With Issues' },
+    //         { value: 'with_merge_requests_enabled', label: 'With Merge Requests' },
+    //     ],
+    //     placeholder: "Select a feature..."
+    // },
+    // {
+    //     label: "Updated After",
+    //     options: [
+    //         { value: 'last_week', label: 'Last Week' },
+    //         { value: 'last_month', label: 'Last Month' },
+    //         { value: 'last_year', label: 'Last Year' },
+    //     ],
+    //     placeholder: "Time period."
+    // },
+    // {
+    //     label: "Programming Language",
+    //     options: [
+    //         { value: 'javascript', label: 'JavaScript' },
+    //         { value: 'python', label: 'Python' },
+    //         { value: 'java', label: 'Java' },
+    //     ],
+    //     placeholder: "Select a programming language..."
+    // },
+    // {
+    //     label: "Topic",
+    //     options: [
+    //         { value: 'machine-learning', label: 'Machine Learning' },
+    //         { value: 'web-development', label: 'Web Development' },
+    //         { value: 'mobile-development', label: 'Mobile Development' },
+    //     ],
+    //     placeholder: "Select a topic..."
+    // },
+    {
+        label: "Sorted By",
+        options: [
+            {
+                value: "asc",
+                label: "Ascending",
+                filter: { sort: "asc" },
+            },
+            {
+                value: "desc",
+                label: "Descending",
+                filter: { sort: "desc" },
+            },
+        ],
+        placeholder: "Sort by",
+    },
+    {
+        label: "Ordered By",
+        options: [
+            { value: "id", label: "Id", filter: { order_by: "id" } },
+            { value: "name", label: "Name", filter: { order_by: "name" } },
+            { value: "path", label: "Path", filter: { order_by: "path" } },
+            {
+                value: "created_at",
+                label: "Created At",
+                filter: { order_by: "created_at" },
+            },
+            {
+                value: "updated_at",
+                label: "Updated At",
+                filter: { order_by: "updated_at" },
+            },
+            {
+                value: "last_activity_at",
+                label: "Last activity",
+                filter: { order_by: "last_activity_at" },
+            },
+            {
+                value: "similarity",
+                label: "Similarity",
+                filter: { order_by: "similarity" },
+            },
+            {
+                value: "storage_size",
+                label: "Storage Size",
+                filter: { order_by: "storage_size" },
+            },
+            {
+                value: "repository_size",
+                label: "Repository Size",
+                filter: { order_by: "repository_size" },
+            },
+            {
+                value: "wiki_size",
+                label: "Wiki Size",
+                filter: { order_by: "wiki_size" },
+            },
+            {
+                value: "packages_size",
+                label: "Packages Size",
+                filter: { order_by: "packages_size" },
+            },
+        ],
+        placeholder: "Ordered By...",
+    },
+];

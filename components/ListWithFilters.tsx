@@ -1,10 +1,9 @@
 import { ListComponent } from "@/components/ListCards";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { Stack } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
+import FilterForm from "./Filter/FilterForm";
 import Loading from "./Loading";
-import { TopFilterList } from "./ui/top-filter-list";
 
 interface Filter {
   label: string;
@@ -19,103 +18,83 @@ interface FilterOption {
 }
 
 interface ListWithFiltersProps {
-  title: string;
   UIFilters: Filter[];
   ItemComponent: React.ComponentType<any>;
   SkeletonComponent: React.ComponentType<any>;
   pathname: string;
-  params: any;
+  defaultParams: any;
   paramsMap: any;
   endpoint: string;
-  cache_name: string;
+  query_cache_name: string;
 }
 export default function ListWithFilters({
-  title,
   UIFilters,
   ItemComponent,
   SkeletonComponent,
   pathname,
   endpoint,
-  cache_name,
+  query_cache_name,
   paramsMap,
-  params,
+  defaultParams,
 }: ListWithFiltersProps) {
+  const [params, setParams] = useState(defaultParams)
+
+  const handleFiltersChange = useCallback((newFilters) => {
+    const newQuery = UIFilters.reduce((acc, filter) => {
+      const selectedValue = newFilters[filter.label]?.value;
+      if (!selectedValue) return acc;
+
+      const selectedOption = filter.options.find(option => option.value === selectedValue)?.filter;
+      return { ...acc, ...selectedOption };
+    }, {});
+
+    setParams(prevParams => ({
+      ...prevParams,
+      query: newQuery
+    }));
+  }, []);
 
   const {
     data: items,
     isLoading,
     isError,
     error,
-  } = useGetData([cache_name, params?.query, params?.path], endpoint, params);
-
-  function updateParams(filterValues: any, params: any) {
-    // Update the params object based on the selected filter values
-    if (params) {
-      params.query = {
-        ...params.query,
-        ...filterValues,
-      };
+  } = useGetData(
+    [query_cache_name, params.query, params.path],
+    endpoint,
+    params,
+    {
+      enabled: true,
     }
+  );
 
-    return params;
-  }
-  const [selectedFilters, setSelectedFilters] = useState({});
 
-  const clearFilters = () => {
-    setSelectedFilters({});
-  };
-
-  useEffect(() => {
-    // loop over filters and check if selectedFilters has the same key and value
-    // if it does, then add it to the params
-    for (const key in selectedFilters) {
-      if (selectedFilters.hasOwnProperty(key)) {
-        const value = selectedFilters[key];
-        // where label == Items
-        for (const filter of UIFilters) {
-          if (filter.label === key) {
-            for (const option of filter.options) {
-              if (option.value === value.value) {
-                updateParams(option.filter, params);
-              }
-            }
-          }
-        }
-      }
-    }
-  }, [selectedFilters, UIFilters, params]);
-  // filter values
-  // console.log(paramsMap)
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: title,
-        }}
+    <ScrollView className="flex-1 m-2">
+      <FilterForm
+        UIFilters={UIFilters}
+        onFiltersChange={handleFiltersChange}
       />
-      <ScrollView className="flex-1 m-2">
-        <TopFilterList
-          UIFilters={UIFilters}
-          setSelectedFilters={setSelectedFilters}
-          selectedFilters={selectedFilters}
-          clearFilters={clearFilters}
+      {isLoading && <Loading />}
+      {/* <Text>
+        {
+          JSON.stringify(params)}
+      </Text> */}
+      {!isError ? (
+        <ListComponent
+          items={items}
+          ItemComponent={ItemComponent}
+          SkeletonComponent={SkeletonComponent}
+          paramsMap={paramsMap}
+          params={defaultParams}
+          pathname={pathname}
         />
-        {isLoading && <Loading />}
-        {!isError ? (
-          <ListComponent
-            items={items}
-            ItemComponent={ItemComponent}
-            SkeletonComponent={SkeletonComponent}
-            pathname={pathname}
-            paramsMap={paramsMap}
-          />
-        ) : (
-          <Error
-            error={error}
-            reset={() => console.error("To be implemented")}
-          />
-        )}
-      </ScrollView>
-    </>
+      ) : (
+        <Error
+          error={error}
+          reset={() => console.error("To be implemented")}
+        />
+      )}
+    </ScrollView>
   );
 }
