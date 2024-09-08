@@ -32,7 +32,7 @@ export default function IssuesList() {
         SkeletonComponent={IssueCardSkeleton}
         pathname="/workspace/projects/[projectId]/issues/[issue_iid]"
         endpoint="/api/v4/projects/{id}/issues"
-        cache_name={`project_id_${projectId}`}
+        query_cache_name={`project_id_${projectId}`}
         paramsMap={{
           "projectId": "project_id", "issue_iid": "iid"
         }}

@@ -95,7 +95,7 @@ export const fetchUrl = async (url, token) => {
     const response = await fetch(url, {
       headers: { "PRIVATE-TOKEN": token },
     });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) throw new Error(`HTTP error on ${url} ! status: ${response.status}`);
     return await response.json();
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);

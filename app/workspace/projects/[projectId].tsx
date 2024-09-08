@@ -10,7 +10,7 @@ import { CodeSection } from "@/components/Project/code-section";
 import { ProjectHeader } from "@/components/Project/header";
 import { WorkspaceSection } from "@/components/Project/workspaceSection";
 import { getCodeSectionItems } from "@/hooks/getCodeSectionItems";
-import { getWorspaceItems } from "@/hooks/getWorkspaceItems";
+import { getWorkspaceItems } from "@/hooks/getWorkspaceItems";
 import { fetchUrl } from "@/lib/utils";
 
 
@@ -18,8 +18,9 @@ import { fetchUrl } from "@/lib/utils";
 export default function ProjectDetailsScreen() {
   const { session } = useSession();
   const [selectedBranch, setSelectedBranch] = useState("");
-  const { projectId } = useLocalSearchParams();
+  const { projectId, path } = useLocalSearchParams();
   const router = useRouter();
+  console.log("projectId", projectId)
 
   const selfQuery = useQuery({
     queryKey: ["self"],
@@ -33,8 +34,15 @@ export default function ProjectDetailsScreen() {
       console.error(`Error fetching self:`, error);
     },
   });
+  console.log("selfQuery", selfQuery.data);
+  let urls = selfQuery.data?._links || {};
+  // filter URL  in self, merge_requests, repo_branches, members
+  urls = Object.fromEntries(
+    Object.entries(urls).filter(([key]) =>
+      ["self", "merge_requests", "repo_branches", "members"].includes(key),
+    ),
+  );
 
-  const urls = selfQuery.data?._links || {};
   const otherQueries = useQueries({
     queries: Object.entries(urls).map(([key, url]) => ({
       queryKey: [key, url],
@@ -77,7 +85,7 @@ export default function ProjectDetailsScreen() {
     (repoBranches.find((branch) => branch.default) || {}).name ||
     repoBranches[0]?.name;
 
-  const listItems: IListItems[] = getWorspaceItems(
+  const listItems: IListItems[] = getWorkspaceItems(
     { repository, mergeRequest, members },
     router,
   );

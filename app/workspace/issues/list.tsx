@@ -1,12 +1,13 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalIssueUIFilters } from "@/constants/UIFilters";
+import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
 
 
 export default function IssuesListScreen() {
-  const params = {
+  const defaultParamsIssues = {
     query: {
       // scope: "all",
       // state: "opened",
@@ -16,30 +17,38 @@ export default function IssuesListScreen() {
       // issue_type: "issue",
     },
   };
-  // const {
-  //   data: issues,
-  //   isLoading,
-  //   isError,
-  //   error,
-  // } = useGetData(["issues", params?.query, params?.path], "/api/v4/issues", params);
 
   const UIFilters = GlobalIssueUIFilters;
-
-
+  const query_cache_name = "issues";
+  const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
+  const endpoint = "/api/v4/issues"
+  const paramsMap = {
+    "projectId": "project_id", "issue_iid": "iid"
+  }
   return (
     <ScrollView className="flex-1 m-2">
+      <Stack.Screen
+        options={{
+          headerTitle: "Issues",
+          // headerRight: () => (
+          //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
+          //     <Button size="sm" variant="primary">
+          //       New Issue
+          //     </Button>
+          //   </Link>
+          // ),
+        }}
+      />
+
       <ListWithFilters
-        title="Issues"
         UIFilters={UIFilters}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}
-        pathname="/workspace/projects/[projectId]/issues/[issue_iid]"
-        endpoint="/api/v4/issues"
-        cache_name="issues"
-        paramsMap={{
-          "projectId": "project_id", "issue_iid": "iid"
-        }}
-        params={params}
+        pathname={pathname}
+        endpoint={endpoint}
+        query_cache_name={query_cache_name}
+        paramsMap={paramsMap}
+        defaultParams={defaultParamsIssues}
       />
     </ScrollView>
   );

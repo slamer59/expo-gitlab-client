@@ -1,11 +1,13 @@
+
 import ListWithFilters from "@/components/ListWithFilters";
 import { MergeRequestCard, MergeRequestCardSkeleton } from "@/components/MergeRequest/mr-card";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
+import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
 
 export default function MergeRequestsListScreen() {
-  const params = {
+  const defaultParamsMergeRequests = {
     query: {
       // created_by_me: true,
       state: "all",
@@ -20,22 +22,30 @@ export default function MergeRequestsListScreen() {
   };
 
   const UIFilters = GlobalMergeRequestUIFilters
+  const endpoint = "/api/v4/merge_requests"
+  const query_cache_name = "merge_requests"
+  const pathname = "/workspace/projects/[projectId]/merge-requests/[mr_iid]"
 
+  const paramsMap = {
+    projectId: "project_id",
+    mr_iid: "iid",
+  }
 
   return (
     <ScrollView className="flex-1 m-2">
+      <Stack.Screen
+        options={{
+          title: "Merge Requests",
+        }}
+      />
       <ListWithFilters
-        title="Merge Requests"
         ItemComponent={MergeRequestCard}
         SkeletonComponent={MergeRequestCardSkeleton}
-        endpoint="/api/v4/merge_requests"
-        cache_name="merge_requests"
-        pathname="/workspace/projects/[projectId]/merge-requests/[mr_iid]"
-        params={params}
-        paramsMap={{
-          projectId: "project_id",
-          mr_iid: "iid",
-        }}
+        endpoint={endpoint}
+        query_cache_name={query_cache_name}
+        pathname={pathname}
+        defaultParams={defaultParamsMergeRequests}
+        paramsMap={paramsMap}
         UIFilters={UIFilters}
       />
     </ScrollView>
