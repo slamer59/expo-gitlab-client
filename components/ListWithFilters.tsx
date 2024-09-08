@@ -3,7 +3,6 @@ import { useGetData } from "@/lib/gitlab/hooks";
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import FilterForm from "./Filter/FilterForm";
-import Loading from "./Loading";
 
 interface Filter {
   label: string;
@@ -68,20 +67,20 @@ export default function ListWithFilters({
     }
   );
 
-
   return (
     <ScrollView className="flex-1 m-2">
       <FilterForm
         UIFilters={UIFilters}
         onFiltersChange={handleFiltersChange}
       />
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
       {/* <Text>
         {
           JSON.stringify(params)}
       </Text> */}
       {!isError ? (
         <ListComponent
+          isLoading={isLoading}
           items={items}
           ItemComponent={ItemComponent}
           SkeletonComponent={SkeletonComponent}
