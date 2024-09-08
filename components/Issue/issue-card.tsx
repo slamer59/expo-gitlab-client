@@ -7,7 +7,7 @@ import IssueStatusIcon from "./issue-status-icon";
 
 export function IssueCardSkeleton() {
   return (
-    <View className="flex-row items-center p-4 space-x-4">
+    <View className="flex-row items-center p-4 my-2 space-x-4 bg-white rounded-lg">
       <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
       <View className="flex-1 space-y-2">
         <Skeleton className="w-full h-4 mb-2" />
@@ -20,7 +20,7 @@ export function IssueCardSkeleton() {
 export function IssueCard({ item }) {
   // console.log(issue);
   return (
-    <View className="flex-row items-start m-4">
+    <View className="flex-row items-start p-4 my-2 bg-white rounded-lg shadow-md dark:bg-gray-800">
       <View className="flex-row items-center m-2">
         {IssueStatusIcon(item, false)}
       </View>
