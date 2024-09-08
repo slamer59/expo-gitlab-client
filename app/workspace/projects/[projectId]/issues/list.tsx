@@ -2,12 +2,12 @@ import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalIssueUIFilters } from "@/constants/UIFilters";
 
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
 
-export default function IssuesList() {
+export default function ProjectIssuesList() {
   const { projectId } = useLocalSearchParams();
-  const params = {
+  const defaultParamsProjectIssues = {
     path: {
       id: projectId,
     },
@@ -21,22 +21,37 @@ export default function IssuesList() {
     },
   };
   const UIFilters = GlobalIssueUIFilters;
+  const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
+  const endpoint = "/api/v4/projects/{id}/issues"
+  const query_cache_name = `project_id_${projectId}`
+  const paramsMap = {
+    "projectId": "project_id", "issue_iid": "iid"
+  }
 
 
   return (
     <ScrollView className="flex-1 m-2">
+      <Stack.Screen
+        options={{
+          headerTitle: "Issues for Project",
+          // headerRight: () => (
+          //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
+          //     <Button size="sm" variant="primary">
+          //       New Issue
+          //     </Button>
+          //   </Link>
+          // ),
+        }}
+      />
       <ListWithFilters
-        title="Issues"
         UIFilters={UIFilters}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}
-        pathname="/workspace/projects/[projectId]/issues/[issue_iid]"
-        endpoint="/api/v4/projects/{id}/issues"
-        query_cache_name={`project_id_${projectId}`}
-        paramsMap={{
-          "projectId": "project_id", "issue_iid": "iid"
-        }}
-        params={params}
+        pathname={pathname}
+        endpoint={endpoint}
+        query_cache_name={query_cache_name}
+        paramsMap={paramsMap}
+        defaultParams={defaultParamsProjectIssues}
       />
     </ScrollView>
   );
