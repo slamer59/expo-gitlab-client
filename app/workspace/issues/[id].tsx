@@ -138,7 +138,7 @@ export default function IssueDetailsScreen() {
                                 key={index}
                                 className="flex-row items-center justify-between py-2"
                                 onPress={() =>
-                                    navigation.navigate(button.screen || "home")
+                                    navigation.navigate(button.screen || "/")
                                 }
                             >
                                 <View className="flex-row items-center">
@@ -162,7 +162,7 @@ export default function IssueDetailsScreen() {
                         <TouchableOpacity
                             className="flex-row items-center justify-between py-2"
                             onPress={() =>
-                                navigation.navigate(button.screen || "home")
+                                navigation.navigate(button.screen || "/")
                             }
                         >
                             <View className="flex flex-row items-center">
@@ -204,7 +204,7 @@ export default function IssueDetailsScreen() {
                         <TouchableOpacity
                             className="flex-row items-center"
                             onPress={() =>
-                                navigation.navigate(button.screen || "home")
+                                navigation.navigate(button.screen || "/")
                             }
                         >
                             <Ionicons

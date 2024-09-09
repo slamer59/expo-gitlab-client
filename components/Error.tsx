@@ -40,7 +40,7 @@ export default function Error({ error }: ErrorProps) {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => navigate.navigate("home")}
+                            onPress={() => navigate.navigate("/")}
                             className="flex-row items-center px-4 py-2 m-2 bg-gray-300 rounded-full"
                         >
                             <Ionicons name="home" size={16} color="gray" />

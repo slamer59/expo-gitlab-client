@@ -27,7 +27,7 @@ export default function LoginScreen() {
 
     useEffect(() => {
         if (session) {
-            navigation.navigate("(tabs)", { screen: "home" });
+            navigation.navigate("(tabs)", { screen: "/" });
         }
     }, [session]);
 

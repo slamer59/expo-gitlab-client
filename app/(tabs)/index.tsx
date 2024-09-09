@@ -92,13 +92,13 @@ export default function Home() {
         {visibleButtons.map((button, index) => (
           <TouchableOpacity
             key={index}
-            className="flex-row items-center py-2"
+            className="flex-row items-center py-2 "
             onPress={() =>
-              navigation.navigate(button.screen || "home")
+              navigation.navigate(button.screen || "/")
             }
           >
             <Ionicons name={button.icon} size={24} color="black" />
-            <Text className="ml-2 text-base">{button.text}</Text>
+            <Text className="text-text-light dark:text-text-dark">{button.text}</Text>
           </TouchableOpacity>
         ))}
       </View>
