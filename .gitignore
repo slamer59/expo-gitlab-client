@@ -45,3 +45,4 @@ screens-examples/*
 firebase-functions/**/venv/*
 **/__pycache__/*
 google-services.json
+build-*.apk
