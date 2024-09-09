@@ -122,7 +122,7 @@ const Repositories = () => {
                             key={index}
                             className="flex-row items-center justify-between py-2"
                             onPress={() =>
-                                navigation.navigate(button.screen || "home")
+                                navigation.navigate(button.screen || "/")
                             }
                         >
                             <View className="flex-row items-center">
@@ -145,7 +145,7 @@ const Repositories = () => {
                 <View className="p-4 m-2 bg-gray-200 rounded-lg">
                     <TouchableOpacity
                         className="flex-row items-center justify-between py-2"
-                        onPress={() => navigation.navigate(button.screen || "home")}
+                        onPress={() => navigation.navigate(button.screen || "/")}
                     >
                         <View className="flex-row items-center">
                             <Ionicons
@@ -180,7 +180,7 @@ const Repositories = () => {
                     </Link>
                     <TouchableOpacity
                         className="flex-row items-center"
-                        onPress={() => navigation.navigate(button.screen || "home")}
+                        onPress={() => navigation.navigate(button.screen || "/")}
                     >
                         <Ionicons
                             name="git-commit-outline"
@@ -193,7 +193,7 @@ const Repositories = () => {
                 <View className="p-4 m-2">
                     <View
                         className="flex-row items-center justify-between py-2"
-                        onPress={() => navigation.navigate(button.screen || "home")}
+                        onPress={() => navigation.navigate(button.screen || "/")}
                     >
                         <View className="flex-row items-center">
                             <Ionicons
