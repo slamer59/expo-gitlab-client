@@ -9,10 +9,7 @@ module.exports = {
     extend: {
       colors: {
         // https://gradient.page/hex/0085CA
-        primary: {
-          DEFAULT: "#FD8112",
-          500: '#FD8112',
-        },
+        // https://color.adobe.com/fr/create/color-contrast-analyzer
         // primary: {
         //   DEFAULT: 'hsl(213, 100%, 40%)',
         //   foreground: 'hsl(213, 10%, 97%)'
@@ -21,9 +18,17 @@ module.exports = {
         //   DEFAULT: 'hsl(213, 50%, 12%)',
         //   foreground: 'hsl(213, 10%, 97%)'
         // },
-        secondary: {
+        primary: {
           DEFAULT: "#0085CA",
           500: '#0085CA',
+          700: '#005CCC',
+          900: '#0F1D2E',
+        },
+        secondary: {
+          DEFAULT: "#FD8112",
+          500: '#FD8112',
+          700: "#7F1D1D",
+          900: "#3C2915"
         },
         success: {
           DEFAULT: "#8FCF50",
@@ -49,7 +54,7 @@ module.exports = {
         background: 'hsl(213, 65%, 3.2%)',
         foreground: 'hsl(213, 10%, 97%)',
         muted: {
-          DEFAULT: 'hsl(213, 50%, 12%)',
+          DEFAULT: 'hsl(213, 10%, 54%)',
           foreground: 'hsl(213, 10%, 54%)'
         },
         popover: {
@@ -57,9 +62,10 @@ module.exports = {
           foreground: 'hsl(213, 10%, 97%)'
         },
         card: {
-          DEFAULT: 'hsl(213, 45%, 5.2%)',
+          DEFAULT: 'hsl(213, 50%, 12%)',
           foreground: 'hsl(213, 10%, 97%)'
         },
+        filters: 'hsl(213, 50%, 12%)',
         border: 'hsl(213, 50%, 12%)',
         input: 'hsl(213, 50%, 12%)',
         accent: {

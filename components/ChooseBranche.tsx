@@ -22,16 +22,16 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
     };
     return (
         <Select defaultValue={{ value: defaultValue.value, label: defaultValue.label }} onValueChange={handleValueChange}>
-            <SelectTrigger className='w-[200px]'>
+            <SelectTrigger className='w-[200px] flex-row items-center justify-center flex-1 rounded-3xl'>
                 {/* <SelectValue
                     className='text-sm text-foreground native:text-lg'
                     placeholder='Select a fruit'
                 /> */}
-                <Text className="ml-2 font-bold text-right">
+                <Text className="ml-2 font-bold text-right text-white">
                     SELECT BRANCH
                 </Text>
             </SelectTrigger>
-            <SelectContent insets={contentInsets} className='w-[250px]'>
+            <SelectContent insets={contentInsets} className='w-[250px] max-h-screen mt-1 font-bold rounded-2xl '>
                 <SelectGroup>
                     <SelectLabel className="flex-row items-center">
                         Branches name

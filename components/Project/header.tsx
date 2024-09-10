@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 
 export const ProjectHeader = ({ repository }) => (
-    <View className="p-2 m-4">
+    <View className="p-4 m-2 rounded-lg bg-card">
         <View className="flex-row items-center">
             <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
                 <AvatarImage
@@ -19,23 +19,23 @@ export const ProjectHeader = ({ repository }) => (
                     }}
                 />
                 <AvatarFallback>
-                    <Ionicons name="folder-outline" size={28} color="gray" />
+                    <Ionicons name="folder-outline" size={28} color="white" />
                 </AvatarFallback>
             </Avatar>
-            <Text className="ml-2 text-lg font-bold text-light dark:text-slate-500">
+            <Text className="ml-2 text-lg font-bold text-white">
                 {repository?.owner?.name ||
                     repository?.namespace?.name ||
                     "Default name"}
             </Text>
         </View>
-        <Text className="text-2xl font-bold">
+        <Text className="p-2 text-2xl font-bold text-white">
             {repository.name}
         </Text>
-        <Text className="text-base ">{repository.description}</Text>
+        <Text className="text-white">{repository.description}</Text>
         <View className="flex-row items-center">
-            <Ionicons name="lock-closed-outline" size={16} color="black" />
-            <Text className="ml-4 text-lg font-bold text-light dark:text-black">
-                {repository.visibility || "Default vis"}
+            <Ionicons name="lock-closed-outline" size={18} color="white" />
+            <Text className="ml-2 text-lg font-bold text-muted">
+                {(repository.visibility || "Default visibility").charAt(0).toUpperCase() + (repository.visibility || "Default visibility").slice(1)}
             </Text>
         </View>
         <Link
@@ -44,27 +44,27 @@ export const ProjectHeader = ({ repository }) => (
             href={repository.web_url}
         >
             <TouchableOpacity className="flex-row items-center mr-4">
-                <Ionicons name="link" size={16} color="black" />
+                <Ionicons name="link" size={16} color="white" />
                 <Text
                     numberOfLines={1}
-                    className="ml-4 text-lg font-bold break-normal text-ellipsis text-light dark:text-black"
+                    className="ml-3 text-lg font-bold text-white break-normal text-ellipsis"
                 >
                     {repository.web_url}
                 </Text>
             </TouchableOpacity>
         </Link>
         <View className="flex-row">
-            <View className="flex-row items-center mr-4 text-lg font-bold text-light dark:text-black">
+            <View className="flex-row items-center mr-4 text-lg font-bold text-white">
                 <Ionicons name="star" size={16} color="gold" />
-                <Text className="ml-1 font-bold">
+                <Text className="ml-3 font-bold text-white">
                     {repository.star_count || 0}
                 </Text>
-                <Text> stars</Text>
+                <Text className="text-white"> stars</Text>
             </View>
-            <View className="flex-row items-center mr-4 text-lg font-bold text-light dark:text-black">
+            <View className="flex-row items-center mr-4 text-lg font-bold text-white">
                 <Ionicons name="git-network" size={16} color="red" />
-                <Text className="ml-1 font-bold">{repository.forks_count}</Text>
-                <Text> forks</Text>
+                <Text className="ml-1 font-bold text-white">{repository.forks_count}</Text>
+                <Text className="text-white"> forks</Text>
             </View>
         </View>
         <Text>{repository.language}</Text>

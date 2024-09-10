@@ -2,6 +2,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { useSession } from '@/lib/session/SessionProvider';
 
 import Loading from '@/components/Loading';
+import { defaultOptionsHeader } from '@/lib/constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
@@ -24,17 +25,7 @@ export default function TabLayout() {
   if (!session) {
     return <Redirect href="/login" />;
   }
-  const defaultOptions = {
-    headerStyle: {
-      backgroundColor: 'black',
-      // Darker background color for better visibility
-    },
-    headerTintColor: 'white',
-    headerTitleStyle: {
-      fontSize: 30, // Increase this value to make the text bigger
-      fontWeight: 'bold' as 'bold', // Type assertion
-    },
-  }
+
 
   return (
     <Tabs
@@ -53,7 +44,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          ...defaultOptions
+          ...defaultOptionsHeader
           // headerRight: () => (
           //   <View className='flex-row items-center'>
           //     <Link href="/search" asChild>
@@ -103,7 +94,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-          ...defaultOptions,
+          ...defaultOptionsHeader,
           headerRight: () => (
             <View className='flex-row items-center'>
               <Link href="/share"

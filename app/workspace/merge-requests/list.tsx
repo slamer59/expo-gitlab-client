@@ -2,6 +2,7 @@
 import ListWithFilters from "@/components/ListWithFilters";
 import { MergeRequestCard, MergeRequestCardSkeleton } from "@/components/MergeRequest/mr-card";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -32,10 +33,11 @@ export default function MergeRequestsListScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 m-2">
+    <ScrollView className="flex-1 p-2 bg-backgroundound">
       <Stack.Screen
         options={{
           title: "Merge Requests",
+          ...defaultOptionsHeader
         }}
       />
       <ListWithFilters

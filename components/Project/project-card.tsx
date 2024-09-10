@@ -3,10 +3,9 @@
 
 import { formatDate } from '@/lib/utils';
 
-import { Ionicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Skeleton } from '../ui/skeleton';
 // name={project?.name}
 // last_activity_at={project?.last_activity_at}
@@ -27,11 +26,11 @@ function getRandomColor() {
 export function ProjectCardSkeleton() {
 
   return (
-    <View className="flex-row items-center p-4 my-2 space-x-4 bg-white rounded-lg">
-      <Skeleton className="w-12 h-12 m-2 space-x-4 bg-gray-300 rounded-full animate-pulse" />
+    <View className="flex-row items-center p-4 my-2 space-x-4 rounded-lg bg-card">
+      <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
       <View className="flex-1 space-y-2">
-        <Skeleton className="w-full h-4 mb-2 bg-gray-500 animate-pulse" />
-        <Skeleton className="w-3/4 h-4 bg-gray-300 animate-pulse" />
+        <Skeleton className="w-full h-4 mb-2" />
+        <Skeleton className="w-3/4 h-4" />
       </View>
     </View>
   );
@@ -81,76 +80,48 @@ export function ProjectCard({ item }) {
 
 
   return (
-    <View className="flex-row items-start p-4 my-2 bg-white rounded-lg shadow-md dark:bg-gray-800">
-      <View className='flex-row items-center m-2'>
+    <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
+      <View className="mr-2">
         {/* {IssueStatusIcon(issue, false)} */}
-        <Avatar alt={`${item?.name}'s Avatar`}>
-          {/* <AvatarImage
+        {/* <Avatar alt={`${item?.name}'s Avatar`}>
+           <AvatarImage
             source={{ uri: projectPath }}
-          /> */}
+          /> 
           <AvatarFallback>
             <Ionicons name="folder-outline" size={28} color="gray" />
           </AvatarFallback>
-        </Avatar>
+        </Avatar> */}
+        <Octicons name="project" size={24} color="white" />
       </View>
-      <View className="space-y-1 flex-2">
-        <Text className="text-light dark:text-dark">{item?.namespace.name}</Text>
-        <Text
-          className="text-lg font-bold"
-          testID="project-card"
-        >
-          {item?.name}
-        </Text>
-        {/*{issue?.labels.length > 0 && (
-          <View className='flex-row flex-wrap'>
-            {issue?.labels.map((label) => (
-              <Text
-                key={label}
-                className='mr-2 text-sm font-bold text-gray-700 bg-gray-200 rounded-md'
-              >
-                {label}
-              </Text>
-            ))}
-          </View>
-        )} */}
-      </View>
-      <View className="items-end flex-1">
-        <Text className="text-xs text-light dark:text-dark">
-          {formatDate(item?.last_activity_at)}
-        </Text>
+      <View className="flex-1 mt-1">
+        <View className="flex-row items-center justify-between mb-1">
+          <Text className="text-sm text-muted">{item?.namespace.name}</Text>
+          <Text className="text-sm text-muted">{formatDate(item?.last_activity_at)}</Text>
+        </View>
+        <Text className="mb-2 text-lg font-bold text-white" testID={`project-card`}>{item?.name}</Text>
+        <View className="flex-row items-center space-x-2">
+          {item?.labels?.length > 0 && (
+            <View className="flex-row flex-wrap">
+              {item?.labels.map((label, index) => (
+                <View className="px-2 py-1 bg-purple-700 rounded-full">
+                  <Text
+                    className="text-xs font-medium text-white"
+                    key={label}
+                  >{label}
+                  </Text>
+                </View>
+
+              ))}
+            </View>
+          )}
+          {/* Comments */}
+          {/* <View className="flex-row items-center">
+              {IssueStatusIcon(item, false)}
+              <Text className="ml-1 text-sm text-gray-400">2</Text>
+            </View> */}
+        </View>
       </View>
     </View>
-    // <View className="flex-row items-start m-4">
-    //   <View className='flex-row items-center m-2'>
-    //     <Avatar alt={`${project?.name}'s Avatar`}>
-    //       <AvatarImage
-    //         source={{ uri: project?.avatar_url }}
-    //       />
-    //       <AvatarFallback>
-    //         <Text className="text-lg font-medium text-gray-800">{project?.name.charAt(0).toUpperCase()}</Text>
-    //       </AvatarFallback>
-    //     </Avatar>
-    //   </View>
-    //   <View className="space-y-1 flex-2">
-    //     <Text className="text-sm font-medium text-gray-800">{project?.name_with_namespace}</Text>
-    //     <View className="flex-row items-center mt-1 space-x-2">
-    //       {project?.owner?.locked && <Ionicons name="lock-closed" size={12} color={`#${getRandomColor()}`} />}
-    //       <Text className="text-xs text-gray-500">{project?.owner?.name}</Text>
-    //     </View>
-    //     <View className="items-end flex-1">
-    //       <Text className="text-xs text-light dark:text-dark">
-    //         {formatDate(project?.last_activity_at)}
-    //       </Text>
-    //     </View>
-    //     <View className="flex-row items-center m-1 space-x-2">
-    //       <Text className="justify-center m-1 text-xs text-gray-500">
-    //         <Ionicons name="star" size={12} color="gold" /> {project?.star_count} stars - { }
-    //         {/* {formatDate(project?.last_activity_at)} */}
-    //       </Text>
-
-    //     </View>
-    //   </View>
-    // </View >
   );
 };
 

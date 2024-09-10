@@ -27,26 +27,23 @@ export function Filter({
 
     return (
         <Select
-            className='m-1 bg-transparent'
+            className='m-2'
             value={selectedValue}
             onValueChange={onValueChange}
         >
             <SelectTrigger
-                className='bg-white rounded-3xl'
+                className='flex-row items-center justify-center flex-1 bg-filters rounded-3xl'
             >
                 <SelectValue
-                    className='font-bold text-black'
+                    className='mr-1 text-sm font-bold text-white'
                     placeholder={placeholder}
                 />
             </SelectTrigger>
             <SelectContent
-                className='font-bold rounded-3xl'
+                className='max-h-screen mt-1 font-bold rounded-2xl bg-filters'
             >
-                <SelectGroup
-                >
-                    <SelectLabel
-                        className=''
-                    >
+                <SelectGroup>
+                    <SelectLabel>
                         {"Items"}
                     </SelectLabel>
                     {Object.keys(options).map((key, index) => (

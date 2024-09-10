@@ -11,6 +11,7 @@ export function getCodeSectionItems(
       kpi: "",
       onAction: () =>
         router.push(`workspace/projects/${repository.id}/code/list`),
+      itemColor: "bg-merge-requests",
     },
     {
       icon: "document-text-outline",
@@ -18,7 +19,7 @@ export function getCodeSectionItems(
       kpi: "",
       onAction: () =>
         router.push(`workspace/projects/${repository.id}/commits/list`),
-      itemColor: "#A9A9A9",
+      itemColor: "bg-commits",
     },
   ];
 }

@@ -6,6 +6,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 
 import IssueStatusIcon from "@/components/Issue/issue-status-icon";
 import LinksToIssueSection from "@/components/ui/link-issue-section";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { formatDate } from "@/lib/utils";
 import Markdown from "react-native-markdown-display";
@@ -74,9 +75,10 @@ export default function IssueDetails() {
             <Stack.Screen
                 options={{
                     title: `${issue.references.full}`,
+                    ...defaultOptionsHeader
                 }}
             />
-            <ScrollView className="min-h-screen p-4 bg-gray-100">
+            <ScrollView className="min-h-screen p-4 bg-card">
                 <View className="max-w-xl p-4 bg-white rounded-lg shadow-md ">
                     {/* # "mx-auto" */}
                     <Text className="mb-2 text-2xl font-bold">

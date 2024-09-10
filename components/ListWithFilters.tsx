@@ -70,7 +70,7 @@ export default function ListWithFilters({
   );
 
   return (
-    <ScrollView className="flex-1 m-2">
+    <ScrollView className="flex-1 mt-2">
       <FilterForm
         UIFilters={UIFilters}
         onFiltersChange={handleFiltersChange}
@@ -82,16 +82,15 @@ export default function ListWithFilters({
       </Text> */}
       {/* No items to display */}
       {items?.length === 0 && !isLoading && (
-
-        <View className="flex-row items-center p-4 m-2 space-x-4 bg-white rounded-lg">
+        <View className="flex-row items-center p-4 m-2 space-x-4 rounded-lg bg-card">
           <View className="items-center justify-center w-full m-2 ">
             <View className="p-4 m-6">
               <Ionicons name="search" size={32} color="red" />
             </View>
-            <Text className="mb-2 text-2xl font-bold text-center text-gray-800 rounded-4xl">
+            <Text className="mb-2 text-2xl font-bold text-center text-white rounded-4xl">
               No items Found
             </Text>
-            <Text className="mb-6 text-center text-gray-600">
+            <Text className="mb-6 text-center text-muted">
               There are currently no items to display.
             </Text>
           </View>

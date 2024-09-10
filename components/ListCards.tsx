@@ -27,7 +27,6 @@ export function ListComponent<T extends ListItem>({
   const router = useRouter();
   return (
     <>
-
       {isLoading && Array.from({ length: 5 }).map((_, index) => (
         <SkeletonComponent key={index} />
       ))}

@@ -25,14 +25,14 @@ export const CodeSection = ({
   handleValueChange,
   listItemsSecond,
 }: CodeSectionProps) => (
-  <View className="p-4 m-2 bg-gray-200 rounded-lg">
+  <View className="p-4 m-2 rounded-lg bg-card">
     <TouchableOpacity
       className="flex-row items-center justify-between py-2"
       onPress={() => { }}
     >
       <View className="flex flex-row items-center">
-        <Ionicons name="code-slash-outline" size={24} color="black" />
-        <Text className="ml-2 font-bold text-gray-950 ">
+        <Ionicons name="code-slash-outline" size={24} color="white" />
+        <Text className="ml-2 font-bold text-white ">
           {selectedBranch?.label || defaultBranchName}
         </Text>
       </View>
