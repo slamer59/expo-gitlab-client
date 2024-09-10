@@ -24,17 +24,36 @@ export default function TabLayout() {
   if (!session) {
     return <Redirect href="/login" />;
   }
+  const defaultOptions = {
+    headerStyle: {
+      backgroundColor: 'black',
+      // Darker background color for better visibility
+    },
+    headerTintColor: 'white',
+    headerTitleStyle: {
+      fontSize: 30, // Increase this value to make the text bigger
+      fontWeight: 'bold' as 'bold', // Type assertion
+    },
+  }
 
   return (
     <Tabs
       screenOptions={{
         headerShown: useClientOnlyValue(false, true),
-      }}>
+        tabBarStyle: {
+          backgroundColor: 'hsl(213, 45%, 5.2%)',
+          borderTopColor: 'hsl(213, 50%, 12%)',
+          // Darker border color for better visibility
+          // Adjust the height as needed
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          ...defaultOptions
           // headerRight: () => (
           //   <View className='flex-row items-center'>
           //     <Link href="/search" asChild>
@@ -84,6 +103,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          ...defaultOptions,
           headerRight: () => (
             <View className='flex-row items-center'>
               <Link href="/share"

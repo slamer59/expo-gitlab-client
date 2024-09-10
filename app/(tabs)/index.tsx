@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { expoToken, getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
@@ -39,25 +40,45 @@ export default function Home() {
       icon: "alert-circle-outline",
       text: "Issues",
       screen: "workspace/issues/list",
+      itemColor: "bg-issues"
     },
     {
       icon: "git-merge",
       text: "Merge Requests",
       screen: "workspace/merge-requests/list",
+      itemColor: "bg-merge-requests"
+
     },
-    { icon: "chatbubbles-outline", text: "Discussions" },
+    {
+      icon: "chatbubbles-outline",
+      text: "Discussions",
+      screen: "workspace/discussions/list",
+      itemColor: "bg-discussions"
+    },
     {
       icon: "folder-outline",
       text: "Projects",
       screen: "workspace/projects/list",
+      itemColor: "bg-projects"
     },
     {
       icon: "folder-open-outline",
       text: "Repositories",
       screen: "workspace/repositories/list",
+      itemColor: "bg-repositories"
     },
-    { icon: "people-outline", text: "Organizations" },
-    { icon: "star-outline", text: "Starred" },
+    {
+      icon: "people-outline",
+      text: "Organizations",
+      screen: "workspace/organizations/list",
+      itemColor: "bg-organizations"
+    },
+    {
+      icon: "star-outline",
+      text: "Starred",
+      screen: "workspace/starred/list",
+      itemColor: "bg-starred"
+    },
   ];
   // Remove icons based on feature flags
   const visibleButtons = buttons
@@ -86,22 +107,52 @@ export default function Home() {
   );
 
   return (
-    <ScrollView className="flex-1 ">
-      <View className="p-4 m-4 bg-gray-200 rounded-lg">
-        <Text className="mb-2 text-lg font-bold">Workspace</Text>
+    <ScrollView className="flex-1 bg-background">
+      <Card className="mb-2 border rounded-lg shadow-sm bg-card">
+        <CardHeader>
+          <CardTitle className="flex flex-col text-white">
+            Workspace
+          </CardTitle>
+        </CardHeader>
         {visibleButtons.map((button, index) => (
           <TouchableOpacity
             key={index}
-            className="flex-row items-center py-2 "
             onPress={() =>
               navigation.navigate(button.screen || "/")
             }
           >
-            <Ionicons name={button.icon} size={24} color="black" />
-            <Text className="text-text-light dark:text-text-dark">{button.text}</Text>
+            <CardContent className="flex-row items-center">
+              <View
+                // style={{ backgroundColor: item.itemColor }}
+                className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
+              >
+                <Ionicons name={button.icon} size={24} color="white" />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                {button.text}
+              </Text>
+            </CardContent>
+
           </TouchableOpacity>
         ))}
-      </View>
-    </ScrollView>
+      </Card>
+      {/* <Card className="mb-2 border rounded-lg shadow-sm bg-card">
+        <CardHeader>
+          <CardTitle className="flex flex-col text-white">
+            Shortcuts
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="items-center flex-1 m-2">
+          <Text className="ml-4 text-lg text-white">
+            Coming soon...
+          </Text>
+          <Button className="ml-4 text-lg text-white">
+            <Text className="text-white">
+              Coming soon...
+            </Text>
+          </Button>
+        </CardContent>
+      </Card> */}
+    </ScrollView >
   );
 }
