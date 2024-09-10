@@ -8,78 +8,92 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // https://color.adobe.com/fr/create/image
-        //https://images.ctfassets.net/8j5aqoy0ts8s/2pyzJIOTejrq1jM0QVA68l/7ea6ba1d6bb4dfee310fcb64d51eb3fa/dark-mode-light-mode.png
-        dark: {
-          DEFAULT: "#161A1D",
-          darker: "#22272B",
-          text: "#7C8B9B",
+        // https://gradient.page/hex/0085CA
+        primary: {
+          DEFAULT: "#FD8112",
+          500: '#FD8112',
         },
-        'primary': {
-          light: '#3490dc',
-          dark: '#90cdf4',
-        },
-        'secondary': {
-          light: '#ffed4a',
-          dark: '#faf089',
-        },
-        'background': {
-          light: '#ffffff',
-          dark: '#1a202c',
-        },
-        'text': {
-          light: '#2d3748',
-          dark: '#f7fafc',
-        },
-        'accent': {
-          light: '#ed64a6',
-          dark: '#fbb6ce',
-        },
-        'success': {
-          light: '#38a169',
-          dark: '#9ae6b4',
-        },
-        'warning': {
-          light: '#ecc94b',
-          dark: '#faf089',
-        },
-        'danger': {
-          light: '#e53e3e',
-          dark: '#feb2b2',
-        },
-        light: "#D9D4BA",
-        // primary: "#59082E", // 240,86,199 #F056C7
-        // primaryDark: "#A63333", // 80,230,217
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // primary: {
+        //   DEFAULT: 'hsl(213, 100%, 40%)',
+        //   foreground: 'hsl(213, 10%, 97%)'
+        // },
+        // secondary: {
+        //   DEFAULT: 'hsl(213, 50%, 12%)',
+        //   foreground: 'hsl(213, 10%, 97%)'
+        // },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#0085CA",
+          500: '#0085CA',
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+        success: {
+          DEFAULT: "#8FCF50",
+          500: '#60AF20',
         },
+        info: {
+          DEFAULT: "#0495EE",
+          500: '#0495EE',
+        },
+        warning: {
+          DEFAULT: "#FF9F05",
+          500: '#FF9F05',
+        },
+        danger: {
+          DEFAULT: "#B00020",
+          500: '#B00020',
+        },
+        basic: {
+          DEFAULT: "#B3B3B3",
+          500: '#B3B3B3',
+        },
+        gradient: '#0085CA',
+        background: 'hsl(213, 65%, 3.2%)',
+        foreground: 'hsl(213, 10%, 97%)',
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: 'hsl(213, 50%, 12%)',
+          foreground: 'hsl(213, 10%, 54%)'
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: 'hsl(213, 45%, 5.2%)',
+          foreground: 'hsl(213, 10%, 97%)'
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: 'hsl(213, 45%, 5.2%)',
+          foreground: 'hsl(213, 10%, 97%)'
         },
+        border: 'hsl(213, 50%, 12%)',
+        input: 'hsl(213, 50%, 12%)',
+        accent: {
+          DEFAULT: 'hsl(213, 50%, 12%)',
+          foreground: 'hsl(213, 10%, 97%)'
+        },
+        destructive: {
+          DEFAULT: 'hsl(0, 62.8%, 30.6%)',
+          foreground: 'hsl(213, 10%, 97%)'
+        },
+        ring: 'hsl(213, 100%, 40%)',
+        issues: "#3de63d",
+        commits: "#A9A9A9",
+        code: "#A9A9A9",
+        pullRequests: "#3e64ed",
+        "merge-requests": "#3e64ed",
+        organizations : "#FD8112",
+        members: "#3e64ed",
+        licences: "#3e64ed",
+        starred: "#d5e",
+        cicd: "#d5ea4e",
+        branches: "#d5ea4e",
+        discussions: "#9370DB",
+        actions: "#8FCF50",
+        projects: "#A9A9A9",
+        repositories: "#696969",
+        packages: "#FF9F05",
+        security: "#B00020",
+        insights: "#B3B3B3",
+        settings: "#B3B3B3",
+        admin: "#B3B3B3",
+        
       },
+
       borderWidth: {
         hairline: hairlineWidth(),
       },

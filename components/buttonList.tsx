@@ -35,7 +35,7 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
               <View
                 style={{ backgroundColor: item.itemColor }}
                 className={cn(
-                  "flex items-center justify-center rounded-md p-[2px] "
+                  "flex items-center justify-center rounded-lg p-[2px]"
                 )}
               >
                 <Ionicons

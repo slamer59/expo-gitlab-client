@@ -1,10 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 async function getUserInfo(session: { url: string; token: string }) {
   // https://docs.gitlab.com/ee/api/users.html#single-user
@@ -139,17 +140,17 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View className="flex-1 p-4 ">
+    <View className="flex-1 p-4 bg-background">
       <View className="flex-row items-center mb-4">
         <Avatar alt={`${user.name}'s Avatar`}>
           <AvatarImage source={{ uri: user.avatar_url }} />
           <AvatarFallback>
-            <Ionicons name="person-circle-outline" size={32} color="black" />
+            <Ionicons name="person-circle-outline" size={32} color="white" />
           </AvatarFallback>
         </Avatar>
         <View className="flex-1 ml-3">
           <Text className="font-semibold">{user.name} </Text>
-          <Text className="text-sm text-gray-500">@{user.username}</Text>
+          <Text className="text-sm text-white">@{user.username}</Text>
         </View>
       </View>
 
@@ -162,7 +163,7 @@ export default function ProfileScreen() {
               color="gray"
               className="mr-2"
             />
-            <Text className="text-light dark:text-dark">{user.location}</Text>
+            <Text className="text-">{user.location}</Text>
           </View>
         )}
         {user.public_email && (
@@ -173,7 +174,7 @@ export default function ProfileScreen() {
               color="gray"
               className="mr-2"
             />
-            <Text className="text-light dark:text-dark">
+            <Text className="text-white">
               {user.public_email}
             </Text>
           </View>
@@ -186,16 +187,17 @@ export default function ProfileScreen() {
               color="gray"
               className="mr-2"
             />
-            <Text className="text-light dark:text-dark">
+            <Text className="text-white">
               {user.followers} followers • {user.following} following
             </Text>
           </View>
         )}
       </View>
+
       {/* <View className="mb-4">
         <View className="flex-row items-center mb-2">
           <Ionicons name="thumbtack" size={24} color="gray" className="mr-2" />
-          <Text className="text-light dark:text-dark">Pinned</Text>
+          <Text className="text-white">Pinned</Text>
         </View>
 
          {user.projects.map(project => (
@@ -211,52 +213,66 @@ export default function ProfileScreen() {
 
 
       </View> */}
-      <View className="p-4 m-4 bg-gray-200 rounded-lg">
-        <Text className="mb-2 text-lg font-bold">Workspace</Text>
-        <View className="flex-row items-center justify-between mb-2">
-          <Link
-            href={{
-              pathname: "/workspace/projects/list",
-              params: { owned: "true" },
-            }}
-          >
-            <View className="flex-row items-center">
-              <Ionicons
-                name="folder-outline"
-                size={24}
-                color="gray"
-                className="mr-2"
-              />
-              <Text className="text-light dark:text-dark">Projects</Text>
+      <Card className="mb-2 border rounded-lg shadow-sm bg-card">
+        <CardHeader>
+          <CardTitle className="flex flex-col text-white">
+            Workspace
+          </CardTitle>
+        </CardHeader>
+        {/* <TouchableOpacity
+            key={index}
+            onPress={() =>
+              navigation.navigate(button.screen || "/")
+            }
+          > */}
+        <TouchableOpacity
+          onPress={() => router.push({
+            pathname: "/workspace/projects/list",
+            params: { owned: "true" },
+          })}
+          className="flex-row items-center justify-between bg-card"
+          activeOpacity={0.7}
+        >
+          <CardContent className="flex-row items-center flex-1">
+            <View className="flex-row items-center flex-1">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-projects">
+                <Ionicons
+                  name="folder-outline"
+                  size={24}
+                  color="white"
+                />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                Projects
+              </Text>
             </View>
-          </Link>
-          <Text className="ml-2 text-base">{projects.length}</Text>
-        </View>
-        {/* <View className="flex-row items-center mb-2">
-            <Ionicons name="building" size={24} color="gray" className="mr-2" />
-            <Text className="text-light dark:text-dark">Organizations</Text>
-            <Text className="ml-auto ">0</Text>
-          </View> */}
-        <View className="flex-row items-center justify-between mb-2">
-          <Link
-            href={{
-              pathname: "/workspace/projects/list",
-              params: { starred: "true" },
-            }}
-          >
-            <View className="flex-row items-center">
-              <Ionicons
-                name="star-outline"
-                size={24}
-                color="gray"
-                className="mr-2"
-              />
-              <Text className="text-light dark:text-dark">Starred</Text>
+            <Text className="text-base text-white">{starredProjects.length}</Text>
+          </CardContent>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push({
+            pathname: "/workspace/projects/list",
+            params: { starred: "true" },
+          })}
+          className="flex-row items-center justify-between bg-card"
+          activeOpacity={0.7}
+        >
+          <CardContent className="flex-row items-center flex-1">
+            <View className="flex-row items-center flex-1">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-starred">
+                <Ionicons
+                  name="star-outline" size={24}
+                  color="white"
+                />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                Starred
+              </Text>
             </View>
-          </Link>
-          <Text className="ml-2 text-base">{starredProjects.length}</Text>
-        </View>
-      </View>
-    </View>
+            <Text className="ml-2 text-base">{starredProjects.length}</Text>
+          </CardContent>
+        </TouchableOpacity>
+      </Card>
+    </View >
   );
 }
