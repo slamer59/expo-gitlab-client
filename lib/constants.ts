@@ -16,3 +16,16 @@ export const NAV_THEME = {
     text: 'hsl(0 0% 98%)', // foreground
   },
 };
+
+
+export const defaultOptionsHeader = {
+  headerStyle: {
+    backgroundColor: 'black',
+    // Darker background color for better visibility
+  },
+  headerTintColor: 'white',
+  headerTitleStyle: {
+    fontSize: 30, // Increase this value to make the text bigger
+    fontWeight: 'bold' as 'bold', // Type assertion
+  },
+}

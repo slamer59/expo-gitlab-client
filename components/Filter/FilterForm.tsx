@@ -53,9 +53,9 @@ export default function FilterForm({ onFiltersChange, UIFilters }: FilterFormPro
     return (
         <ScrollView
             horizontal
-            className="flex flex-row bg-transparent max-h-14"
+            className="flex flex-row mb-2 ml-4 bg-transparent max-h-16"
         >
-            <View className="flex-row items-center justify-between mt-4 mb-4">
+            <View className="flex-row items-center justify-between mt-4 mb-4 mr-2">
                 <TouchableOpacity
                     onPress={resetAllFilters}
                     className="items-center justify-center" // m-1 bg-transparent bg-white rounded-3xl"

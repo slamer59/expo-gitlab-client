@@ -1,5 +1,6 @@
 import Loading from "@/components/Loading";
 import { Text } from "@/components/ui/text";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, Stack, useLocalSearchParams, useNavigation } from "expo-router";
@@ -64,6 +65,7 @@ export default function IssueDetailsScreen() {
             <Stack.Screen
                 options={{
                     title: `Issue # ${issue_iid}`,
+                    ...defaultOptionsHeader
                 }}
             />
             {isError && <Error error={error} />}

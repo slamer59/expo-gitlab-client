@@ -11,6 +11,7 @@ import { ProjectHeader } from "@/components/Project/header";
 import { WorkspaceSection } from "@/components/Project/workspaceSection";
 import { getCodeSectionItems } from "@/hooks/getCodeSectionItems";
 import { getWorkspaceItems } from "@/hooks/getWorkspaceItems";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { fetchUrl } from "@/lib/utils";
 
 
@@ -95,8 +96,8 @@ export default function ProjectDetailsScreen() {
   };
 
   return (
-    <ScrollView className="flex-1">
-      <Stack.Screen options={{ title: "Project Details" }} />
+    <ScrollView className="flex-1 p-2 bg-background">
+      <Stack.Screen options={{ title: "Project Details", ...defaultOptionsHeader }} />
       <ProjectHeader repository={repository} />
       <WorkspaceSection listItems={listItems} />
       <CodeSection

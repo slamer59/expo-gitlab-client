@@ -2,6 +2,7 @@ import ListWithFilters from "@/components/ListWithFilters";
 import { ProjectCard, ProjectCardSkeleton } from "@/components/Project/project-card";
 
 import { GlobalProjectsUIFilters } from "@/constants/UIFilters";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -64,10 +65,11 @@ export default function ProjectsListScreen() {
     // };
 
     return (
-        <ScrollView className="flex-1 m-2">
+        <ScrollView className="flex-1 p-2 bg-background">
             <Stack.Screen
                 options={{
                     title: "Projects",
+                    ...defaultOptionsHeader
                 }}
             />
             <ListWithFilters

@@ -33,27 +33,24 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
           >
             <View className={"flex-row items-center flex "}>
               <View
-                style={{ backgroundColor: item.itemColor }}
-                className={cn(
-                  "flex items-center justify-center rounded-lg p-[2px]"
-                )}
+                className={`flex items-center justify-center rounded-lg p-[2px] ${item.itemColor || "bg-muted"}`}
               >
                 <Ionicons
                   className=""
                   name={item.icon}
                   size={24}
-                  color="black"
+                  color="white"
                 />
               </View>
 
               <Text
-                className="ml-2 text-base"
+                className="ml-2 text-white"
                 testID={`${item.text}-button`}
               >{item.text}
 
               </Text>
             </View>
-            <Text className="ml-2 text-base text-right">{item.kpi}</Text>
+            <Text className="ml-2 text-right text-white">{item.kpi}</Text>
           </TouchableOpacity>
         );
       })}
@@ -75,22 +72,19 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
           >
             <View className="flex flex-row items-center ">
               <View
-                style={{ backgroundColor: item.itemColor }}
-                className={cn(
-                  "flex items-center justify-center p-[2px] rounded-lg"
-                )}
+                className={`flex items-center justify-center rounded-lg p-[2px] ${item.itemColor || "bg-muted"}`}
               >
                 <Ionicons
                   className=""
                   name={item.icon}
                   size={24}
-                  color="black"
+                  color="white"
                 />
               </View>
 
-              <Text className="ml-2 text-base ">{item.text}</Text>
+              <Text className="ml-2 text-white ">{item.text}</Text>
             </View>
-            <Text className="ml-2 text-base text-right">{item.kpi}</Text>
+            <Text className="ml-2 text-right text-white">{item.kpi}</Text>
           </TouchableOpacity>
         );
       })}
@@ -102,9 +96,9 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
                 "flex items-center flex-row justify-center rounded-md p-[2px] "
               )}
             >
-              <Ionicons className="" name={"menu"} size={24} color="black" />
+              <Ionicons className="" name={"menu"} size={24} color="white" />
 
-              <Text className="ml-2 text-base ">{"More"}</Text>
+              <Text className="ml-2 text-white">{"More"}</Text>
             </View>
             <Ionicons name="arrow-down" />
           </View>
@@ -119,22 +113,19 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
               >
                 <View className="flex flex-row items-center">
                   <View
-                    style={{ backgroundColor: item.itemColor }}
-                    className={cn(
-                      "flex items-center justify-center rounded-md p-[2px] "
-                    )}
+                    className={`flex items-center justify-center rounded-lg p-[2px] ${item.itemColor || "bg-muted"}`}
                   >
                     <Ionicons
                       className=""
                       name={item.icon}
                       size={24}
-                      color="black"
+                      color="white"
                     />
                   </View>
 
-                  <Text className="ml-2 text-base ">{item.text}</Text>
+                  <Text className="ml-2 text-white ">{item.text}</Text>
                 </View>
-                <Text className="ml-2 text-base text-right">{item.kpi}</Text>
+                <Text className="ml-2 text-right text-white">{item.kpi}</Text>
               </TouchableOpacity>
             );
           })}

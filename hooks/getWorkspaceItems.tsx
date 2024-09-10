@@ -16,7 +16,7 @@ export function getWorkspaceItems(project: IProject, router: string[]): IListIte
             text: "Issues",
             kpi: project?.repository?.open_issues_count || 0,
             onAction: () => router.push(`workspace/projects/${project?.repository.id}/issues/list`),
-            itemColor: "#3de63d",
+            itemColor: "bg-issues",
         },
         {
             icon: "git-merge",
@@ -25,7 +25,7 @@ export function getWorkspaceItems(project: IProject, router: string[]): IListIte
             onAction: () => router.push(
                 `workspace/projects/${project?.repository.id}/merge-requests/list`
             ),
-            itemColor: "#3e64ed",
+            itemColor: "bg-merge-requests",
         },
         {
             icon: "play-outline",
@@ -34,13 +34,14 @@ export function getWorkspaceItems(project: IProject, router: string[]): IListIte
             onAction: () => router.push(
                 `workspace/projects/${project?.repository.id}/pipelines/list`
             ),
-            itemColor: "#d5ea4e",
+            itemColor: "bg-cicd",
         },
         {
             icon: "people-circle-outline",
             text: "Members",
             kpi: project?.members.length || 0,
             onAction: () => router.push(`workspace/projects/${project?.repository.id}/members/list`),
+            itemColor: "bg-members",
         },
         {
             icon: "document-text-outline",
@@ -49,12 +50,14 @@ export function getWorkspaceItems(project: IProject, router: string[]): IListIte
             onAction: () => router.push(
                 `workspace/projects/${project?.repository.id}/licences/list`
             ),
+            itemColor: "bg-licences",
         },
         {
             icon: "star-outline",
             text: "Starred",
             kpi: project?.repository?.star_count || "",
             onAction: () => router.push(`workspace/projects/${project?.repository.id}/starred/list`),
+            itemColor: "bg-starred",
         },
     ];
 }
