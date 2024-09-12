@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
@@ -136,7 +137,7 @@ export default function ProfileScreen() {
   }, [session]);
 
   if (!user) {
-    return <Text>Loading...</Text>;
+    return <Loading />;
   }
 
   return (

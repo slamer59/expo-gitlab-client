@@ -5,6 +5,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 
 import IssueStatusIcon from "@/components/Issue/issue-status-icon";
+import Loading from "@/components/Loading";
 import LinksToIssueSection from "@/components/ui/link-issue-section";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
@@ -61,9 +62,8 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}/links`,
         params,
     );
-
     if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedIssues) {
-        return <Text>Loading...</Text>;
+        return <Loading />
     }
 
     if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
