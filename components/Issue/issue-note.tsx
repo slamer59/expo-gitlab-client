@@ -1,7 +1,6 @@
 import { Text } from "@/components/ui/text";
 import { Octicons } from "@expo/vector-icons";
 
-import { useSession } from "@/lib/session/SessionProvider";
 import { Link } from "expo-router";
 import React from 'react';
 import { View } from 'react-native';
@@ -88,8 +87,9 @@ const getEventIcon = (eventType: string) => {
     ) : null;
 };
 
-const IssueNote = ({ note }) => {
+const IssueNote = ({ note, baseIssueURL }) => {
     const { project_id } = note
+
     const renderNoteWithPills = (body) => {
         const parts = body.split(/(\[`.*?`\]\(.*?\))/);
         console.log("parts", parts);
@@ -120,9 +120,8 @@ const IssueNote = ({ note }) => {
         return parts.map((part, index) => {
             if (part.match(/\#\d+/)) {
                 const issueNumber = part.slice(1);
-                console.log("wrong issue url", `https://gitlab.com/projects/${project_id}/issues/${issueNumber}`)
                 return (
-                    <Link key={index} href={`https://gitlab.com/projects/${project_id}/issues/${issueNumber}`}>
+                    <Link key={index} href={`${baseIssueURL}/${issueNumber}`}>
                         <Text className="underline text-secondary">{part}</Text>
                     </Link>
                 );
@@ -175,8 +174,8 @@ const IssueNote = ({ note }) => {
     }
 };
 
-const IssueNotes = ({ notes }) => {
-    const { session } = useSession()
+const IssueNotes = ({ notes, baseIssueURL }) => {
+
     console.log("note", notes[10])
     return (
         <>
@@ -184,18 +183,9 @@ const IssueNotes = ({ notes }) => {
             <View className="p-4 mb-4">
                 {notes.map((note) => (
                     note.system ? (
-                        <IssueNote key={note.id} note={note} />
+                        <IssueNote key={note.id} note={note} baseIssueURL={baseIssueURL} />
                     ) :
                         <IssueComment issue={note} />
-                    // <View className="mb-2 bg-background">
-                    //     <Text className="font-bold text-white">{note.author.name}</Text>
-
-                    //     <Markdown
-                    //         style={styles}
-                    //     >
-                    //         {note.body}
-                    //     </Markdown>
-                    // </View>
                 ))}
             </View>
         </>

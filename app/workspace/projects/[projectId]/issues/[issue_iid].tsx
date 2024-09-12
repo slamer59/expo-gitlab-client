@@ -11,10 +11,13 @@ import Loading from "@/components/Loading";
 import LinksToIssueSection from "@/components/ui/link-issue-section";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
+import { useSession } from "@/lib/session/SessionProvider";
 import { Text } from "~/components/ui/text";
 
 export default function IssueDetails() {
     const { projectId, issue_iid } = useLocalSearchParams();
+    const { session } = useSession()
+
     console.log(projectId, issue_iid);
 
     const params = {
@@ -72,7 +75,7 @@ export default function IssueDetails() {
         return <Text>Error fetching data</Text>;
     }
     // GET /projects/:id/issues/:issue_iid/resource_label_events
-
+    console.log("issue", issue)
     return (
         <>
             <Stack.Screen
@@ -175,76 +178,19 @@ export default function IssueDetails() {
                 </View> */}
                 {/* <IssueEventComponent notes={notes} /> */}
 
-                <IssueNotes notes={notes} />
+                <IssueNotes notes={notes} baseIssueURL={`${session.url}/-/issues/${issue.references.full.split('#')[0]}`} />
 
-                {/* {notes?.map((note, index) => (
-                        <View
-                            key={index}
-                            className="flex-row items-start mb-4"
-                        >
-                            <View className="flex-1">
-                                <View className="flex-row items-center mb-1">
-                                    <FontAwesome6
-                                        name="comment"
-                                        size={20}
-                                        color="gray"
-                                    />
-                                    <Text className="ml-1 font-bold text-white">
-                                        {note.author.name}
-                                    </Text>
-                                    <Text className="ml-1 text-white">
-                                        at {formatDate(note.created_at)}
-                                    </Text>
-                                </View>
-                                <Markdown
-                                    style={styles}
-                                >{note.body}</Markdown>
-                            </View>
-                        </View>
-                    ))} */}
-
-
-                {/* <View className='p-4 mb-4 border border-gray-300 rounded'>
-                    <View className='flex-row items-center mb-2'>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="bold" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="italic" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="link" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="quote-right" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="code" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="list-ul" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="list-ol" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="image" size={20} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity className='mr-2'>
-                            <FontAwesome6 name="smile" size={20} color="gray" />
-                        </TouchableOpacity>
-                    </View>
-                    <Input
-                        className='w-full p-2 mb-2 border border-gray-300 rounded'
-                        multiline
-                        numberOfLines={4}
-                        placeholder="Write a comment or drag your files here..."
-                    />
-                    <View className='flex-row items-center'>
-                        <Checkbox className='mr-2' />
-                        <Text className='text-gray-500'>Make this an internal note</Text>
-                    </View>
-                </View> */}
+                {/*                <Input
+                    className='w-full p-2 mb-2 border border-gray-300 rounded'
+                    multiline
+                    numberOfLines={4}
+                    placeholder="Write a comment or drag your files here..."
+                />
+                <View className='flex-row items-center'>
+                    <Checkbox className='mr-2' />
+                    <Text className='text-gray-500'>Make this an internal note</Text>
+                </View>
+            </View> */}
                 {/* <View className='flex-row items-center justify-between'>
                     <Button title="Comment" color="#BEBEBE" />
                     <Picker className='px-2 py-1 border border-gray-300 rounded'>
