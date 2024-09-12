@@ -12,9 +12,12 @@ export default function SystemSettingsScreen() {
             <Text className='mb-5 text-2xl font-bold'>System Options</Text>
             <View className='flex-row items-center justify-between'>
                 <Text>Configure Notifications for this application</Text>
-
                 <TouchableOpacity onPress={() => Linking.openSettings()}>
-                    <FontAwesome6 name="gear" size={30} color="black" />
+                    <FontAwesome6
+                        name="gear"
+                        size={30}
+                        color="black"
+                        testID="system-options" />
                 </TouchableOpacity>
             </View>
         </View>

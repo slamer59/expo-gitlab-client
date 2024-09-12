@@ -50,6 +50,7 @@ export const GitLabNotificationSettings = () => {
                     checked={notifications[key as keyof typeof notifications]}
                     onCheckedChange={() => toggleSwitch(key)}
                     nativeID={`${key}-mode`}
+                    testID={`${key}-mode`}
                 />
             </View>
         </View>

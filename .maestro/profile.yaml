@@ -1,12 +1,50 @@
 appId: expo-gitlab-client
 ---
-- assertVisible: "Profile"
-- assertVisible: "Workspace"
-- assertVisible: "Starred"
-- tapOn: "Profile"
-- copyTextFrom:
-    id: "project-count"
-    index: 0
-- tapOn: "Projects"
-- back
-- back
+# - assertVisible: "Profile"
+# - assertVisible: "Workspace"
+# - assertVisible: "Starred"
+# - takeScreenshot: ./assets/maestro/Profile
+# - tapOn: "Profile"
+# - copyTextFrom:
+#     id: "project-count"
+#     index: 0
+# - tapOn: "Projects"
+# - takeScreenshot: "./assets/maestro/ProfileProjectOwned"
+# - back
+# - copyTextFrom:
+#     id: "starred-count"
+#     index: 0
+# - tapOn: "Starred"
+# - takeScreenshot: "./assets/maestro/ProfileProjectStarred"
+# - back
+# ## Options Screen
+# - tapOn:
+#     id: "options"
+#     index: 0
+# - takeScreenshot: "./assets/maestro/ProfileOptions"
+# - tapOn:
+#     id: "system-options"
+# - takeScreenshot: "./assets/maestro/AppInfo"
+# - back
+- assertChecked:
+    id: "all-mode"
+- tapOn:
+    id: "all-mode"
+# - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchAllOff"
+# - tapOn:
+#     id: "issues-mode"
+# - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchIssuesOn"
+# - tapOn:
+#     id: "mergeRequests-mode"
+# - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchMergeRequestsOn"
+# - tapOn:
+#     id: "pipelineFailures-mode"
+# - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchPipelineFailuresOn"
+# - tapOn:
+#     id: "approvals-mode"
+# - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchApprovalsOn"
+# - tapOn: "Sign Out"
+# - assertVisible: "Logout"
+# - tapOn: "CANCEL"
+# - back
+# - back
