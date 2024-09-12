@@ -1,22 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useSession } from "@/lib/session/SessionProvider";
 import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Linking, TextInput, View } from 'react-native';
-
-// Function to validate GitLab URL and PAT
-async function validateGitLabCredentials(url: string, token: string) {
-    try {
-        const response = await fetch(`${url}/api/v4/user`, {
-            headers: { 'PRIVATE-TOKEN': token }
-        });
-        return response.ok;
-    } catch (error) {
-        console.error('Error validating credentials:', error);
-        return false;
-    }
-}
+import { Alert, Image, Linking, View } from 'react-native';
 
 export default function LoginScreen() {
     const [url, setUrl] = useState('https://gitlab.com');
@@ -57,38 +45,42 @@ export default function LoginScreen() {
     }
 
     return (
-        <View className="items-center justify-center flex-1 p-4">
+        <View className="items-center justify-center flex-1 p-4 bg-background">
             <Image
-                source={require('@/assets/logo.png')}
+                source={require('@/assets/images/logo.png')}
                 style={{ width: 100, height: 100 }}
+                className="mb-6 bg-white rounded-full"
 
             />
-            <Text className="mb-6 text-xl font-bold text-center text-primaryDark dark:text-dark">GitAlchemy: Your GitLab Companion</Text>
-
-            <TextInput
-                className="w-full px-3 py-2 mb-4 bg-gray-100 rounded"
+            <Text className="mb-6 text-xl font-bold text-center text-secondary">GitAlchemy: Your GitLab Companion</Text>
+            <Input
+                className="w-full px-3 py-2 mb-6 text-black bg-white rounded-lg native:h-14"
                 placeholder="GitLab URL"
                 value={url}
                 onChangeText={setUrl}
+                aria-labelledby='input-gitlab-label'
+                aria-errormessage='input-gitlab-error'
             />
 
-            <TextInput
-                className="w-full px-3 py-2 mb-4 bg-gray-100 rounded"
+            <Input
+                className="w-full px-3 py-2 mb-6 text-black bg-white rounded-lg native:h-14"
                 placeholder="Enter your GitLab Personal Access Token (PAT)"
                 value={token}
                 onChangeText={setToken}
                 secureTextEntry
+                aria-labelledby='input-token-label'
+                aria-errormessage='input-token-error'
             />
 
-            <Button onPress={handleLogin} className="w-full mb-4">
-                <Text>Login</Text>
+            <Button variant="secondary" size="lg" onPress={handleLogin} className="w-full mt-4 mb-4 text-xl">
+                <Text className="text-xl font-bold text-white">Login</Text>
             </Button>
 
-            <Text className="mb-4 text-blue-500" onPress={openTokenInfoPage}>
+            <Text className="mt-4 mb-4 text-lg font-bold text-primary" onPress={openTokenInfoPage}>
                 How to set up a Personal Access Token
             </Text>
-            <Text className="mb-4 text-center text-light dark:text-primaryDark">By signing in you accept our <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Terms of use</Text> and <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Privacy policy</Text>.</Text>
+            <Text className="mb-4 font-semibold text-center text-primary-700">By signing in you accept our <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Terms of use</Text> and <Text className="text-primary-700" onPress={() => Linking.openURL('#')}>Privacy policy</Text>.</Text>
 
-        </View>
+        </View >
     );
 }

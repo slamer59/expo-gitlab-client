@@ -5,24 +5,22 @@
     "owner": "teepee",
     "version": "1.0.5",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash-1.5x.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#000"
       },
       "package": "com.thomas.pedot.expogitlabclient",
       "versionCode": 4
@@ -30,15 +28,9 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo.png"
     },
-    "plugins": [
-      [
-        "expo-router"
-      ],
-      "expo-localization",
-      "expo-font"
-    ],
+    "plugins": [["expo-router"], "expo-localization", "expo-font"],
     "experiments": {
       "typedRoutes": true
     },
