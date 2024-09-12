@@ -109,7 +109,7 @@ export default function Home() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 p-4 bg-background">
       <Card className="mb-2 border rounded-lg shadow-sm bg-card">
         <CardHeader>
           <CardTitle className="flex flex-col text-white">
