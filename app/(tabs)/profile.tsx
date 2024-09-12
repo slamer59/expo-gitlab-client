@@ -1,13 +1,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
-import { useSession } from "@/lib/session/SessionProvider";
+import { GitLabSession, useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { TouchableOpacity, View } from "react-native";
 
-async function getUserInfo(session: { url: string; token: string }) {
+async function getUserInfo(session: GitLabSession) {
   // https://docs.gitlab.com/ee/api/users.html#single-user
   try {
     const response = await fetch(`${session.url}/api/v4/user`, {
@@ -29,7 +29,7 @@ async function getUserInfo(session: { url: string; token: string }) {
 }
 
 async function getUserProjects(
-  session: { url: string; token: string },
+  session: GitLabSession,
   userId: any,
   params: { membership: boolean; order_by: string; sort: string },
 ) {
@@ -61,7 +61,7 @@ async function getUserProjects(
 }
 
 async function getUserStarredProjects(
-  session: { url: string; token: string },
+  session: GitLabSession,
   userId: any,
   params: { path: { id: any }; query: { order_by: string; sort: string } },
 ) {
@@ -213,7 +213,7 @@ export default function ProfileScreen() {
 
 
       </View> */}
-      <Card className="mb-2 border rounded-lg shadow-sm bg-card">
+      <Card className="border rounded-lg shadow-sm bg-card">
         <CardHeader>
           <CardTitle className="flex flex-col text-white">
             Workspace
@@ -230,7 +230,7 @@ export default function ProfileScreen() {
             pathname: "/workspace/projects/list",
             params: { owned: "true" },
           })}
-          className="flex-row items-center justify-between bg-card"
+          className="flex-row bg-card"
           activeOpacity={0.7}
         >
           <CardContent className="flex-row items-center flex-1">
@@ -246,7 +246,7 @@ export default function ProfileScreen() {
                 Projects
               </Text>
             </View>
-            <Text className="text-base text-white">{starredProjects.length}</Text>
+            <Text className="text-base text-white" testID="project-count">{starredProjects.length}</Text>
           </CardContent>
         </TouchableOpacity>
         <TouchableOpacity
@@ -269,7 +269,7 @@ export default function ProfileScreen() {
                 Starred
               </Text>
             </View>
-            <Text className="ml-2 text-base">{starredProjects.length}</Text>
+            <Text className="ml-2 text-base" testID="starred-count">{starredProjects.length}</Text>
           </CardContent>
         </TouchableOpacity>
       </Card>

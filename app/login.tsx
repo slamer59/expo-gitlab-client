@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useSession } from "@/lib/session/SessionProvider";
 import { useNavigation } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, Linking, TextInput, View } from 'react-native';
 
@@ -36,13 +35,10 @@ export default function LoginScreen() {
             Alert.alert('Error', 'Please enter both URL and token.');
             return;
         }
-
-        const isValid = await validateGitLabCredentials(url, token);
-        if (isValid) {
-            await SecureStore.setItemAsync('gitlabUrl', url);
-            await SecureStore.setItemAsync('gitlabToken', token);
+        // Validate GitLab credentials
+        try {
             signIn(url, token);
-        } else {
+        } catch (error) {
             Alert.alert('Error', 'Invalid credentials. Please try again.');
             setToken('');
         }

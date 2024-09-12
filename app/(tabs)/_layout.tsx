@@ -98,7 +98,7 @@ export default function TabLayout() {
           headerRight: () => (
             <View className='flex-row items-center'>
               <Link href="/share"
-                className='m-1'
+                className='pl-2 pr-2 m-2'
                 asChild
               >
                 <Pressable>
@@ -107,15 +107,16 @@ export default function TabLayout() {
                       <FontAwesome
                         name="share-alt"
                         size={25}
+                        color="white"
                         // color={Colors[colorScheme ?? 'light'].text}
-                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
                       />
                     )}
                 </Pressable>
               </Link >
               <Link
                 href="/options"
-                className='m-1'
+                className='pl-2 pr-2 m-2'
                 asChild
               >
                 <Pressable>
@@ -123,8 +124,10 @@ export default function TabLayout() {
                     <FontAwesome
                       name="ellipsis-v"
                       size={25}
+                      color="white"
                       // color={Colors[colorScheme ?? 'light'].text}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                      testID="options"
                     />
                   )}
                 </Pressable>

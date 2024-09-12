@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { expoToken, getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
+import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
 import Constants from "expo-constants";
 
@@ -12,6 +13,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Home() {
   const navigation = useNavigation();
+  const { session } = useSession();
   const featureFlagMapping = {
     "git-merge":
       Constants.releaseChannel === "development"
@@ -93,9 +95,9 @@ export default function Home() {
     React.useCallback(() => {
       const fetchData = async () => {
         const push_token = await expoToken();
-        const projects = await getProjects();
+        const projects = await getProjects(session);
 
-        await updateOrCreateWebhooks(projects, undefined);
+        await updateOrCreateWebhooks(session, projects, undefined);
         console.log("Webhooks updated");
 
         await mapDeviceToProject(push_token, projects);

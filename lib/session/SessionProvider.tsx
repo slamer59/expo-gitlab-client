@@ -2,7 +2,7 @@ import { useStorageState } from "@/lib/session/useStorageState";
 import * as SecureStore from 'expo-secure-store';
 import { createContext, type PropsWithChildren, useContext, useEffect } from 'react';
 
-interface GitLabSession {
+export interface GitLabSession {
     url: string;
     token: string;
 }
