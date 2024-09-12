@@ -3,8 +3,6 @@ import { Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "./ui/select";
 
-const contentInsets = { padding: "1rem" };
-
 type ChooseBranchesProps = {
     branches: string[];
     defaultValue: { value: string; label: string };
@@ -49,7 +47,11 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                     </SelectLabel>
                     {/* https://github.com/mrzachnugent/react-native-reusables/blob/main/apps/showcase/app/select.tsx */}
                     {branches?.map((branch, index) => (
-                        <SelectItem label={branch} value={index}>
+                        <SelectItem
+                            key={index}
+                            label={branch}
+                            value={index}
+                        >
                             {branch}
                         </SelectItem>
                     ))

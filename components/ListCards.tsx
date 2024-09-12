@@ -50,6 +50,7 @@ export function ListComponent<T extends ListItem>({
                 testID={`card-${index}`}
               >
                 <ItemComponent
+                  key={item.id}
                   item={item}
                 />
               </TouchableOpacity >
