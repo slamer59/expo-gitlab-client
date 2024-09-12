@@ -178,7 +178,9 @@ export default function IssueDetails() {
                 </View> */}
                 {/* <IssueEventComponent notes={notes} /> */}
 
-                <IssueNotes notes={notes} baseIssueURL={`${session.url}/-/issues/${issue.references.full.split('#')[0]}`} />
+                <IssueNotes notes={notes}
+                //    baseIssueURL={`${session.url}/-/issues/${issue.references.full.split('#')[0]}`}
+                />
 
                 {/*                <Input
                     className='w-full p-2 mb-2 border border-gray-300 rounded'
