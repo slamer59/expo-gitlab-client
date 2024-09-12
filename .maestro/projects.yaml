@@ -17,16 +17,18 @@ appId: expo-gitlab-client
 - back
 - tapOn: "Merge Requests"
 - assertVisible: "Merge Requests for Project"
-- takeScreenshot: ./assets/maestro/Project Merge Requests
-- tapOn: Members
-- takeScreenshot: ./assets/maestro/Project Merge Requests
+- takeScreenshot: ./assets/maestro/ProjectMergeRequests
+- back
 - tapOn: More
-- takeScreenshot: ./assets/maestro/Project Merge Requests With More
+- takeScreenshot: ./assets/maestro/ProjectMergeRequestsWithMore
 - assertVisible: "Members"
 - assertVisible: "Starred"
+- tapOn: Members
+- takeScreenshot: ./assets/maestro/ProjectMergeRequestsMembers
+- back
 - tapOn: SELECT BRANCH
 - assertVisible: "Branches name"
-- takeScreenshot: ./assets/maestro/Project Merge Requests - SELECT BRANCH
+- takeScreenshot: ./assets/maestro/ProjectMergeRequestsSelectBranch
 - back
 - back
 - back
