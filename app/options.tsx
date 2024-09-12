@@ -1,12 +1,14 @@
 import { GitLabNotificationSettings } from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { defaultOptionsHeader } from '@/lib/constants';
 import { useSession } from '@/lib/session/SessionProvider';
 import * as Application from 'expo-application';
-import { Redirect } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { default as React } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 
 export default function OptionScreen() {
 
@@ -19,13 +21,20 @@ export default function OptionScreen() {
   // const bundleIdentifier = Application.applicationId;
 
   return (
-    <View className='flex-1 p-4 m-2'>
-      <Text className='mb-4 text-2xl font-bold'>General settings</Text>
-      <SystemSettingsScreen />
-      <GitLabNotificationSettings />
+    <>
+      <Stack.Screen
+        options={{
+          title: "General settings",
+          ...defaultOptionsHeader
+        }}
+      />
 
-      {/* <View className='mb-6 border-t border-gray-700' /> */}
-      {/* <View className='mb-6'>
+      <View className='flex-1 p-4 bg-background'>
+        <SystemSettingsScreen />
+        <GitLabNotificationSettings />
+
+        {/* <View className='mb-6 border-t border-gray-700' /> */}
+        {/* <View className='mb-6'>
         <Text className=''>General</Text>
         <Text className='mt-2 '>Theme</Text>
         <Text className=''>Follow system</Text>
@@ -34,45 +43,53 @@ export default function OptionScreen() {
         <Text className=''>Follow system</Text>
         <Text className='mt-2 '>Accounts</Text>
       </View> */}
-      {/* <View className='mb-6 border-t border-gray-700' /> */}
-      {/* <View className='mb-6'>
+        {/* <View className='mb-6 border-t border-gray-700' /> */}
+        {/* <View className='mb-6'>
         <Text className=''>Subscriptions</Text>
         <Text className='mt-2 '>Copilot</Text>
       </View> */}
-      {/* <View className='mb-6 border-t border-gray-700' /> */}
-      <View className='mb-6'>
-        {/* <Text className=''>More Options</Text>
+        {/* <View className='mb-6 border-t border-gray-700' /> */}
+        <View className='mb-6'>
+          {/* <Text className=''>More Options</Text>
         <Text className='mt-2 '>Feature Preview</Text>
         <Text className='mt-2 '>Share Feedback</Text>
         <Text className='mt-2 '>Get Help</Text>
         <Text className='mt-2 '>Terms of Service</Text>
         <Text className='mt-2 '>Privacy Policy & Analytics</Text>
         <Text className='mt-2 '>Open Source Libraries</Text> */}
-        <Button
-          onPress={async () => {
-            Alert.alert(
-              "Logout",
-              "Are you sure you want to logout?",
-              [
-                {
-                  text: "Cancel",
-                  onPress: () => console.log("Cancel Pressed"),
-                  style: "cancel"
-                },
-                {
-                  text: "OK", onPress: () => {
-                    signOut()
-                  }
-                }
-              ]
-            )
-          }}
-          className='m-1 bg-red-500 '>
-          <Text className='text-light dark:text-primary'>Sign Out</Text>
-        </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant='destructive'>
+                <Text className='text-2xl font-bold text-white'>Sign Out</Text>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your account and remove
+                  your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className='bg-border'>
+                  <Text>Cancel</Text>
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className='text-white bg-destructive'
+                  onPress={signOut}
+                >
+                  <Text>OK</Text>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+        </View>
+        <Text className='mt-2 text-sm'>{Application.applicationName} v{Application.nativeBuildVersion}</Text>
       </View>
-      <Text className='mt-2 text-sm'>{Application.applicationName} v{Application.nativeBuildVersion}</Text>
-    </View >
+    </>
   );
 }
 

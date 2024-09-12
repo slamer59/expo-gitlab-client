@@ -73,7 +73,7 @@ module.exports = {
           foreground: 'hsl(213, 10%, 97%)'
         },
         destructive: {
-          DEFAULT: 'hsl(0, 62.8%, 30.6%)',
+          DEFAULT: '#B00020',
           foreground: 'hsl(213, 10%, 97%)'
         },
         ring: 'hsl(213, 100%, 40%)',
