@@ -7,4 +7,4 @@ appId: expo-gitlab-client
 # - runFlow: repositories.yaml
 # - runFlow: organizations.yaml
 # - runFlow: starred.yaml
-# - runFlow: profile.yaml
+- runFlow: profile.yaml
