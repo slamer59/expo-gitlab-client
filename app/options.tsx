@@ -80,7 +80,7 @@ export default function OptionScreen() {
                   className='text-white bg-destructive'
                   onPress={signOut}
                 >
-                  <Text>OK</Text>
+                  <Text>Logout</Text>
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
