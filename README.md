@@ -18,3 +18,7 @@ https://expo.dev/notifications
 https://github.com/firebase/functions-samples/tree/main/Python
 ## Notification (Firebase)
 [FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/)
+
+## Maestro setup
+
+`maestro studio`

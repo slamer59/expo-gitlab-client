@@ -1,5 +1,5 @@
 import { webhookName, webhooksUrl } from "../firebase/constants";
-import { getToken } from "../utils";
+import { GitLabSession } from "../session/SessionProvider";
 
 type WebhookParams = {
     name?: string;
@@ -15,10 +15,9 @@ type WebhookParams = {
     [key: string]: any; // Add this index signature
 };
 
-export const baseUrl = "https://gitlab.com";
-export async function updateOrCreateWebhook(projectId: number, webhookParams: WebhookParams | undefined): Promise<any> {
+export async function updateOrCreateWebhook(session: GitLabSession, projectId: number, webhookParams: WebhookParams | undefined): Promise<any> {
     // Get the private token from secure storage
-    const savedToken = await getToken();
+    const { token: savedToken, url: baseUrl } = session;
 
     let paramsWebhook: WebhookParams = {
         name: webhookName,
@@ -120,9 +119,9 @@ export async function updateOrCreateWebhook(projectId: number, webhookParams: We
 }
 
 
-export async function updateOrCreateWebhooks(projects: { id: number; }[], webhookParams: WebhookParams | undefined): any {
+export async function updateOrCreateWebhooks(session: GitLabSession, projects: { id: number; }[], webhookParams: WebhookParams | undefined): any {
     // Update or create webhooks for each project
-    const webhookPromises = projects.map(project => updateOrCreateWebhook(project.id, webhookParams));
+    const webhookPromises = projects.map(project => updateOrCreateWebhook(session, project.id, webhookParams));
     // Wait for all webhook updates/creations to complete
     return Promise.all(webhookPromises);
 

@@ -1,9 +1,10 @@
 import * as Notifications from "expo-notifications";
-import { getToken } from "../utils";
+import { GitLabSession } from "../session/SessionProvider";
 
-const baseUrl = "https://gitlab.com";
-export async function getProjects(): Promise<any> {
-    const savedToken = await getToken();
+
+export async function getProjects(session: GitLabSession): Promise<any> {
+
+    const { token: savedToken, url: baseUrl } = session;
 
     if (savedToken) {
         try {
