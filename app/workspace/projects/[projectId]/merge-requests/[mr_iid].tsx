@@ -228,26 +228,26 @@ export default function MergeRequestDetails() {
                     // title: "Merge Request Details",
                     headerTitle: props => (
                         <View className="flex flex-col justify-center">
-                            <Text className="text-xl font-bold">{mr.title}</Text>
-                            <Text className="text-sm text-gray-500">{mr.references.full}</Text>
+                            <Text className="text-xl font-bold">{mr?.title}</Text>
+                            <Text className="text-sm text-muted">{mr?.references.full}</Text>
                         </View>)
                     ,
                     ...defaultOptionsHeader
                 }}
             />
-            <ScrollView className="min-h-screen p-4 bg-gray-100">
-                <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
+            <ScrollView className="min-h-screen p-4 bg-background">
+                <View className="max-w-xl p-4 mb-6 rounded-lg shadow-md bg-card">
                     {/* <Text className="mb-2 text-2xl font-bold">
                         {mr.title}
                     </Text> */}
                     <View className="flex flex-row items-center justify-between mb-2">
                         {MergeStatusIcon(mr, true)}
                         <View className="flex flex-row items-center">
-                            <Text className="px-2 bg-blue-100 border-b border-gray-300 rounded-md">
+                            <Text className="px-2 border rounded-md bg-card border-muted">
                                 {mr.source_branch}
                             </Text>
-                            <Ionicons name="arrow-forward" size={16} color="black" />
-                            <Text className="px-2 bg-blue-100 border-b border-gray-300 rounded-md">
+                            <Ionicons name="arrow-forward" size={16} color="gray" />
+                            <Text className="px-2 border rounded-md border-muted bg-card">
                                 {mr.target_branch}
                             </Text>
                         </View>
@@ -255,7 +255,7 @@ export default function MergeRequestDetails() {
 
 
                     {/* Header with repository information */}
-                    <View className={"flex justify-between mb-6 flex-row"}>
+                    <View className={"flex justify-between mb-6 flex-row "}>
                         <View className={"flex flex-row items-center"}>
                             <Avatar alt={`${mr?.author?.name}`}
                                 className="mr-2"
@@ -285,7 +285,7 @@ export default function MergeRequestDetails() {
                         <Text className="mb-2">{mr.description}</Text>
                     </View>
                 </View >
-                <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
+                <View className="max-w-xl p-4 mb-6 rounded-lg shadow-md bg-card">
                     <Text className="mb-2 text-lg font-semibold">
                         Changes
                     </Text>
@@ -296,9 +296,8 @@ export default function MergeRequestDetails() {
                             </Text> */}
                         < View className="flex flex-row items-center" >
                             {/* Filetitle */}
-                            <Ionicons name="document" size={16} />
-
-                            <Text className="ml-1 text-sm text-gray-400">
+                            <Ionicons name="document" size={16} color="white" />
+                            <Text className="ml-1 text-sm text-muted">
                                 18 files changed
                             </Text>
                             < View className="*:ml-1 flex flex-row items-center" >

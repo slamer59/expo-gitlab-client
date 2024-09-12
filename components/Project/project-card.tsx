@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { Octicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import { Pills } from '../Pills';
 import { Skeleton } from '../ui/skeleton';
 // name={project?.name}
 // last_activity_at={project?.last_activity_at}
@@ -103,14 +104,11 @@ export function ProjectCard({ item }) {
           {item?.labels?.length > 0 && (
             <View className="flex-row flex-wrap">
               {item?.labels.map((label, index) => (
-                <View className="px-2 py-1 bg-purple-700 rounded-full">
-                  <Text
-                    className="text-xs font-medium text-white"
-                    key={label}
-                  >{label}
-                  </Text>
-                </View>
-
+                <Pills
+                  key={index}
+                  label={label}
+                  variant="purple"
+                />
               ))}
             </View>
           )}

@@ -2,6 +2,7 @@ import { formatDate } from "@/lib/utils";
 
 import React from "react";
 import { Text, View } from "react-native";
+import { Pills } from "../Pills";
 import { Skeleton } from "../ui/skeleton";
 import IssueStatusIcon from "./issue-status-icon";
 
@@ -34,14 +35,11 @@ export function IssueCard({ item }) {
           {item?.labels.length > 0 && (
             <View className="flex-row flex-wrap">
               {item?.labels.map((label, index) => (
-                <View className="px-2 py-1 bg-purple-700 rounded-full">
-                  <Text
-                    className="text-xs font-medium text-white"
-                    key={label}
-                  >{label}
-                  </Text>
-                </View>
-
+                <Pills
+                  key={index}
+                  label={label}
+                  variant="purple"
+                />
               ))}
             </View>
           )}

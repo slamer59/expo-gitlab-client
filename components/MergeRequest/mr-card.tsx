@@ -2,6 +2,7 @@ import { formatDate } from "@/lib/utils";
 
 import React from "react";
 import { Text, View } from "react-native";
+import { Pills } from "../Pills";
 import { Skeleton } from "../ui/skeleton";
 import MergeStatusIcon from "./mr-status-icon";
 
@@ -29,19 +30,16 @@ export function MergeRequestCard({ item }) {
           <Text className="text-sm text-muted">{item.references.full}</Text>
           <Text className="text-sm text-muted">{formatDate(item.updated_at)}</Text>
         </View>
-        <Text className="mb-2 text-lg font-bold text-white" testID={`issue-card`}>{item.title}</Text>
+        <Text className="mb-2 text-lg font-bold text-white" testID={`mr-card`}>{item.title}</Text>
         <View className="flex-row items-center space-x-2">
           {item?.labels.length > 0 && (
             <View className="flex-row flex-wrap">
               {item?.labels.map((label, index) => (
-                <View className="px-2 py-1 bg-purple-700 rounded-full">
-                  <Text
-                    className="text-xs font-medium text-white"
-                    key={label}
-                  >{label}
-                  </Text>
-                </View>
-
+                <Pills
+                  label={label}
+                  key={index}
+                  variant="purple"
+                />
               ))}
             </View>
           )}
