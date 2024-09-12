@@ -42,22 +42,25 @@ export const GitLabNotificationSettings = () => {
                 onPress={() => {
                     () => toggleSwitch(key);
                 }}
+                className="text-lg text-white"
             >
                 {label}
             </Label>
             <View className='flex-row items-center gap-2'>
                 <Switch
+                    // className='bg-secondary'
                     checked={notifications[key as keyof typeof notifications]}
                     onCheckedChange={() => toggleSwitch(key)}
                     nativeID={`${key}-mode`}
                     testID={`${key}-mode`}
+
                 />
             </View>
-        </View>
+        </View >
     );
     console.log(notifications);
     return (
-        <ScrollView className="p-4 m-1 bg-gray-200 rounded-lg">
+        <ScrollView className="p-4 m-1 rounded-lg bg-card">
             <Text className="mb-5 text-2xl font-bold">GitLab Notification Settings</Text>
             {renderSwitch('all', 'All Notifications')}
             {renderSwitch('issues', 'Issues')}

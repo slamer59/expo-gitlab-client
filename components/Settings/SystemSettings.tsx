@@ -8,15 +8,18 @@ export default function SystemSettingsScreen() {
     console.log(bundleIdentifier);
 
     return (
-        <View className="p-4 m-1 bg-gray-200 rounded-lg">
+        <View className="p-4 m-1 rounded-lg bg-card">
             <Text className='mb-5 text-2xl font-bold'>System Options</Text>
             <View className='flex-row items-center justify-between'>
-                <Text>Configure Notifications for this application</Text>
-                <TouchableOpacity onPress={() => Linking.openSettings()}>
+                <Text className="text-lg">Configure Notifications for this application</Text>
+                <TouchableOpacity
+                    onPress={() => Linking.openSettings()}
+                    className='p-2 rounded-lg bg-secondary'
+                >
                     <FontAwesome6
                         name="gear"
                         size={30}
-                        color="black"
+                        color="white"
                         testID="system-options" />
                 </TouchableOpacity>
             </View>
