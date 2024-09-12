@@ -87,7 +87,7 @@ const getEventIcon = (eventType: string) => {
     ) : null;
 };
 
-const IssueNote = ({ note, baseIssueURL }) => {
+const IssueNote = ({ note }) => {
     const { project_id } = note
 
     const renderNoteWithPills = (body) => {
@@ -121,29 +121,29 @@ const IssueNote = ({ note, baseIssueURL }) => {
             if (part.match(/\#\d+/)) {
                 const issueNumber = part.slice(1);
                 return (
-                    <Link key={index} href={`${baseIssueURL}/${issueNumber}`}>
+                    <Link key={index} href={`https://error.url/${issueNumber}`}>
                         <Text className="underline text-secondary">{part}</Text>
                     </Link>
                 );
             } else if (part.match(/\[`(.+?)`\]\((.+?)\)/)) {
                 return renderNoteWithPills(text);
             }
-            // else if (part.match(/\!\d+/)) {
-            //     console.log("merge request activity")
-            //     const mrNumber = part.slice(1);
-            //     return (
-            //         <Pressable key={index} onPress={() => openLink(`http://gitlab.com/merge_requests/${mrNumber}`)}>
-            //             <Text className="underline text-primary-700">{part}</Text>
-            //         </Pressable>
-            //     );
-            // } else if (part.match(/\@\S+/)) {
-            //     console.log("people activity")
-            //     return (
-            //         <Pressable key={index} onPress={() => openLink(`http://gitlab.com/${part.slice(1)}`)}>
-            //             <Text className="text-white underline">{part}</Text>
-            //         </Pressable>
-            //     );
-            // }
+            else if (part.match(/\!\d+/)) {
+                console.log("merge request activity")
+                const mrNumber = part.slice(1);
+                return (
+                    <Link key={index} href={`https://error.url/${mrNumber}`} >
+                        <Text className="underline text-secondary">{part}</Text>
+                    </Link >
+                );
+            } else if (part.match(/\@\S+/)) {
+                console.log("people activity")
+                return (
+                    <Link key={index} href={`https://error.url/${part.slice(1)}`} >
+                        <Text className="font-semibold underline text-secondary">{part}</Text>
+                    </Link>
+                );
+            }
             return <Text key={index}>{part}</Text>;
         });
     };
@@ -174,7 +174,7 @@ const IssueNote = ({ note, baseIssueURL }) => {
     }
 };
 
-const IssueNotes = ({ notes, baseIssueURL }) => {
+const IssueNotes = ({ notes }) => {
 
     console.log("note", notes[10])
     return (
@@ -183,7 +183,7 @@ const IssueNotes = ({ notes, baseIssueURL }) => {
             <View className="p-4 mb-4">
                 {notes.map((note) => (
                     note.system ? (
-                        <IssueNote key={note.id} note={note} baseIssueURL={baseIssueURL} />
+                        <IssueNote key={note.id} note={note} />
                     ) :
                         <IssueComment issue={note} />
                 ))}
