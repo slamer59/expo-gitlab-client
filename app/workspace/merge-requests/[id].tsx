@@ -52,7 +52,7 @@ export default function MergeRequestDetailsScreen() {
     }
 
     return (
-        <ScrollView className="flex-1">
+        <ScrollView className="flex-1 bg-background">
             <Stack.Screen
                 options={{
                     title: `Issue # ${issue_iid}`,

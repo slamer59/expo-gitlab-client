@@ -33,7 +33,7 @@ export default function MergeRequestsListScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 p-2 bg-backgroundound">
+    <ScrollView className="flex-1 p-2 bg-background">
       <Stack.Screen
         options={{
           title: "Merge Requests",
