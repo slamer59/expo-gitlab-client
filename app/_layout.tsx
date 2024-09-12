@@ -61,6 +61,8 @@ function RootLayoutNav() {
     setBackgroundColor();
   }, []);
 
+
+
   // React.useEffect(() => {
   //   async function loadColorScheme() {
   //     const theme = await AsyncStorage.getItem('theme');
@@ -110,14 +112,17 @@ function RootLayoutNav() {
     return null;
   }
   return (
+
     <QueryClientProvider client={queryClient}>
       {/* <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}> */}
       <StatusBar />
+
       <Stack initialRouteName={session ? "(tabs)" : "login"}>
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
+
       <PortalHost />
       {/* </ThemeProvider> */}
     </QueryClientProvider>
@@ -127,13 +132,15 @@ function RootLayoutNav() {
 export default function RootLayout() {
 
   return (
+
     <PostHogProvider apiKey="POSTHOG_API_KEY_REMOVED" options={{
       host: "https://eu.i.posthog.com",
     }}>
       <SessionProvider>
         <RootLayoutNav />
       </SessionProvider>
-    </PostHogProvider>
+
+    </PostHogProvider >
 
   );
 }

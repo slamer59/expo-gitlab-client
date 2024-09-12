@@ -49,3 +49,22 @@ export const fetchUrl = async (url, token) => {
     throw error;
   }
 };
+
+export type IssueState = 'opened' | 'closed' | 'locked' | 'merged' | 'all';
+
+export const getIssueStateColor = (state: IssueState): string => {
+  switch (state) {
+    case "opened":
+      return "green";
+    case "closed":
+      return "red";
+    case "locked":
+      return "orange";
+    case "merged":
+      return "purple";
+    case "all":
+      return "blue";
+    default:
+      return "gray"; // Default color for unknown states
+  }
+};

@@ -63,6 +63,8 @@ module.exports = {
         },
         card: {
           DEFAULT: 'hsl(213, 50%, 12%)',
+          500: 'hsl(213, 50%, 12%)',
+          600: "#1C2B38",
           foreground: 'hsl(213, 10%, 97%)'
         },
         filters: 'hsl(213, 50%, 12%)',

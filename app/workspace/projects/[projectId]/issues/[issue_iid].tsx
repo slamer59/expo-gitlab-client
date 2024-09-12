@@ -1,16 +1,16 @@
 import React from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView } from "react-native";
 
-import { FontAwesome6 } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams } from "expo-router";
 
-import IssueStatusIcon from "@/components/Issue/issue-status-icon";
+import IssueComment from "@/components/Issue/issue-comment";
+
+import IssueHeader from "@/components/Issue/issue-header";
+import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
 import LinksToIssueSection from "@/components/ui/link-issue-section";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { formatDate } from "@/lib/utils";
-import Markdown from "react-native-markdown-display";
 import { Text } from "~/components/ui/text";
 
 export default function IssueDetails() {
@@ -32,7 +32,7 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}`,
         params,
     );
-
+    // console.log("issue_iid", issue);
     const {
         data: notes,
         isLoading: isLoadingNotes,
@@ -42,7 +42,7 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}/notes`,
         params,
     );
-
+    // console.log("issue_iid-notes", notes);
     const {
         data: relatedMRs,
         isLoading: isLoadingMR,
@@ -52,6 +52,7 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}/related_merge_requests`,
         params,
     );
+    // console.log("issue_iid-related_merge_requests", relatedMRs);
 
     const {
         data: linkedIssues,
@@ -62,6 +63,7 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}/links`,
         params,
     );
+    // console.log("issue_iid-links", linkedIssues);
     if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedIssues) {
         return <Loading />
     }
@@ -69,75 +71,22 @@ export default function IssueDetails() {
     if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
         return <Text>Error fetching data</Text>;
     }
+    // GET /projects/:id/issues/:issue_iid/resource_label_events
 
     return (
         <>
             <Stack.Screen
                 options={{
                     title: `${issue.references.full}`,
-                    ...defaultOptionsHeader
+                    ...defaultOptionsHeader,
+                    // headerTintColor: "black",
                 }}
             />
             <ScrollView className="min-h-screen p-4 bg-card">
-                <View className="max-w-xl p-4 bg-white rounded-lg shadow-md ">
-                    {/* # "mx-auto" */}
-                    <Text className="mb-2 text-2xl font-bold">
-                        {issue.title}
-                    </Text>
-                    {/* <View className='mb-4'> */}
-                    {/* <Picker className='px-2 py-1 border border-gray-300 rounded'>
-                        <Picker.Item label="Issue actions" value="issue-actions" />
-                    </Picker> */}
-
-                    {/* <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant='outline'>
-                                <Text>Edit</Text>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className='w-64 native:w-72'>
-                            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                            <DropdownMenuSubContent>
-                                <Animated.View entering={FadeIn.duration(200)}>
-                                    <DropdownMenuItem>
-                                        <Text>On</Text>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Text>Off</Text>
-                                    </DropdownMenuItem>
-                                </Animated.View>
-                            </DropdownMenuSubContent>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
-                                        <Text>Close issue</Text>
-                                    </DropdownMenuSubTrigger>
-                                </DropdownMenuSub>
-                                <DropdownMenuItem>
-                                    <Text>New Team</Text>
-                                    <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Text>GitHub</Text>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Text>Support</Text>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem disabled>
-                                <Text>API</Text>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Text>Log out</Text>
-                                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu> */}
-                    {/* </View> */}
-                    <View className="flex-row items-center mb-4">
+                <IssueHeader issue={issue} />
+                <IssueComment issue={issue} />
+                {/* </View> */}
+                {/* <View className="flex-row items-center mb-4">
                         {IssueStatusIcon(issue, true)}
                         <Text className="ml-1 text-gray-500">
                             Issue created {formatDate(issue.created_at)} by
@@ -145,40 +94,8 @@ export default function IssueDetails() {
                         <Text className="ml-1 text-blue-500">
                             {issue.author.name}
                         </Text>
-                    </View>
-                    <View className="flex-row items-center justify-between mb-4">
-                        <View className="flex-row items-center">
-                            <TouchableOpacity className="flex-row items-center mr-2">
-                                <FontAwesome6
-                                    name="thumbs-up"
-                                    size={20}
-                                    color="gray"
-                                />
-                                <Text className="ml-1 text-gray-500">
-                                    {issue.upvotes}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity className="flex-row items-center mr-2">
-                                <FontAwesome6
-                                    name="thumbs-down"
-                                    size={20}
-                                    color="gray"
-                                />
-                                <Text className="ml-1 text-gray-500">
-                                    {issue.downvotes}
-                                </Text>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity>
-                            <FontAwesome6 name="bookmark" size={20} color="gray" />
-                        </TouchableOpacity> */}
-                        </View>
-                        {/* <Button title="Create merge request" color="#1E90FF" /> */}
-                    </View>
-                    <View className="mb-4">
-                        <Markdown>{issue.description}</Markdown>
-                    </View>
-
-                    {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
+                    </View> */}
+                {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
                     <Text className='mb-2 text-gray-500'>Drag your designs here or <Text className='text-blue-500'>click to upload</Text>.</Text>
                     <View className='flex-row items-center justify-between'>
                         <Text className='text-gray-500'>Child items</Text>
@@ -186,43 +103,51 @@ export default function IssueDetails() {
                     </View>
                     <Text className='mt-2 text-gray-500'>No child items are currently assigned. Use child items to break down this issue into smaller parts.</Text>
                 </View> */}
-                    <View className="p-4 mb-4 border border-gray-300 border-dashed">
-                        <View className="flex-row items-center justify-between">
-                            <Text className="text-gray-500">Linked items</Text>
-                            {/* <Button title="Add" color="#BEBEBE" /> */}
-                        </View>
-                    </View>
 
-                    <LinksToIssueSection
-                        title="Linked Items"
-                        iconName="link"
-                        array={linkedIssues}
-                        empty={
-                            <Text className="mt-2 text-gray-500">
-                                Link issues together to show that they're
-                                related.{" "}
-                                <Text className="text-blue-500">
-                                    Learn more.
-                                </Text>
+                {/* <LinksToIssueSection
+                    title="Child Items"
+                    iconName="checklist"
+                    array={linkedIssues}
+                    empty={
+                        <Text className="mt-2 text-white">
+                            Link issues together to show that they're
+                            related.{" "}
+                            <Text className="text-blue-500">
+                                Learn more.
                             </Text>
-                        }
-                    />
-
-                    <LinksToIssueSection
-                        title="Related merge requests"
-                        iconName="code-merge"
-                        array={relatedMRs}
-                        empty={
-                            <Text className="mt-2 text-gray-500">
-                                Related merge requests will appear here.
-                                <Text className="text-blue-500">
-                                    Learn more.
-                                </Text>
+                        </Text>
+                    }
+                /> */}
+                <LinksToIssueSection
+                    title="Linked Items"
+                    iconName="link"
+                    array={linkedIssues}
+                    empty={
+                        <Text className="mt-2 text-white">
+                            Link issues together to show that they're
+                            related.{" "}
+                            <Text className="text-blue-500">
+                                Learn more.
                             </Text>
-                        }
-                    />
+                        </Text>
+                    }
+                />
 
-                    {/* <View>
+                <LinksToIssueSection
+                    title="Related merge requests"
+                    iconName="link"
+                    array={relatedMRs}
+                    empty={
+                        <Text className="mt-2 text-white">
+                            Related merge requests will appear here.
+                            <Text className="text-blue-500">
+                                Learn more.
+                            </Text>
+                        </Text>
+                    }
+                />
+
+                {/* <View>
                     <Text className='mb-2 text-lg font-bold'>Activity</Text>
                     <Picker className='px-2 py-1 mb-4 border border-gray-300 rounded'>
                         <Picker.Item label="Sort or filter" value="sort-or-filter" />
@@ -248,34 +173,38 @@ export default function IssueDetails() {
                         </View>
                     </View>
                 </View> */}
-                    <View className="mb-4">
-                        <Text className="mb-2 text-lg font-bold">Activity</Text>
-                        {notes?.map((note, index) => (
-                            <View
-                                key={index}
-                                className="flex-row items-start mb-4"
-                            >
-                                <View className="flex-1">
-                                    <View className="flex-row items-center mb-1">
-                                        <FontAwesome6
-                                            name="comment"
-                                            size={20}
-                                            color="gray"
-                                        />
-                                        <Text className="ml-1 font-bold text-gray-500">
-                                            {note.author.name}
-                                        </Text>
-                                        <Text className="ml-1 text-gray-500">
-                                            at {formatDate(note.created_at)}
-                                        </Text>
-                                    </View>
-                                    <Markdown>{note.body}</Markdown>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
+                {/* <IssueEventComponent notes={notes} /> */}
 
-                    {/* <View className='p-4 mb-4 border border-gray-300 rounded'>
+                <IssueNotes notes={notes} />
+
+                {/* {notes?.map((note, index) => (
+                        <View
+                            key={index}
+                            className="flex-row items-start mb-4"
+                        >
+                            <View className="flex-1">
+                                <View className="flex-row items-center mb-1">
+                                    <FontAwesome6
+                                        name="comment"
+                                        size={20}
+                                        color="gray"
+                                    />
+                                    <Text className="ml-1 font-bold text-white">
+                                        {note.author.name}
+                                    </Text>
+                                    <Text className="ml-1 text-white">
+                                        at {formatDate(note.created_at)}
+                                    </Text>
+                                </View>
+                                <Markdown
+                                    style={styles}
+                                >{note.body}</Markdown>
+                            </View>
+                        </View>
+                    ))} */}
+
+
+                {/* <View className='p-4 mb-4 border border-gray-300 rounded'>
                     <View className='flex-row items-center mb-2'>
                         <TouchableOpacity className='mr-2'>
                             <FontAwesome6 name="bold" size={20} color="gray" />
@@ -316,14 +245,14 @@ export default function IssueDetails() {
                         <Text className='text-gray-500'>Make this an internal note</Text>
                     </View>
                 </View> */}
-                    {/* <View className='flex-row items-center justify-between'>
+                {/* <View className='flex-row items-center justify-between'>
                     <Button title="Comment" color="#BEBEBE" />
                     <Picker className='px-2 py-1 border border-gray-300 rounded'>
                         <Picker.Item label="Close issue" value="close-issue" />
                     </Picker>
                 </View> */}
-                </View>
-            </ScrollView>
+
+            </ScrollView >
         </>
     );
 }

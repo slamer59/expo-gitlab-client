@@ -6,10 +6,10 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
 import Constants from "expo-constants";
 
-import { useFocusEffect, useNavigation } from "expo-router";
+import { Link, useFocusEffect, useNavigation } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -81,6 +81,12 @@ export default function Home() {
       screen: "workspace/starred/list",
       itemColor: "bg-starred"
     },
+    {
+      icon: "arrow-forward",
+      text: "Dev",
+      screen: "workspace/projects/59795263/issues/30",
+      itemColor: "bg-green"
+    }
   ];
   // Remove icons based on feature flags
   const visibleButtons = buttons
@@ -117,25 +123,24 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         {visibleButtons.map((button, index) => (
-          <TouchableOpacity
+          <Link
             key={index}
-            onPress={() =>
-              navigation.navigate(button.screen || "/")
-            }
+            href={button.screen || "/"}
+            asChild
           >
-            <CardContent className="flex-row items-center">
-              <View
-                // style={{ backgroundColor: item.itemColor }}
-                className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
-              >
-                <Ionicons name={button.icon} size={24} color="white" />
-              </View>
-              <Text className="ml-4 text-lg text-white">
-                {button.text}
-              </Text>
-            </CardContent>
-
-          </TouchableOpacity>
+            <Pressable>
+              <CardContent className="flex-row items-center">
+                <View
+                  className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
+                >
+                  <Ionicons name={button.icon} size={24} color="white" />
+                </View>
+                <Text className="ml-4 text-lg text-white">
+                  {button.text}
+                </Text>
+              </CardContent>
+            </Pressable>
+          </Link>
         ))}
       </Card>
       {/* <Card className="mb-2 border rounded-lg shadow-sm bg-card">
