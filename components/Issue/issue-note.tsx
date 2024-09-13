@@ -75,7 +75,7 @@ const iconMap = {
 
 
 const getEventIcon = (eventType: string) => {
-    console.log("eventType", eventType)
+    // console.log("eventType", eventType)
     const iconName = iconMap[eventType];
     return iconName ? (
         <Octicons
@@ -175,8 +175,6 @@ const IssueNote = ({ note }) => {
 };
 
 const IssueNotes = ({ notes }) => {
-
-    console.log("note", notes[10])
     return (
         <>
             <Text className="mb-2 text-4xl font-bold text-white">Activity</Text>

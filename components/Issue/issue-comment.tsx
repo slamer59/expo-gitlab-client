@@ -5,9 +5,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 
 const IssueComment = ({ issue }) => {
-
     const { author, created_at, title, description, body } = issue;
-    console.log(body)
     return (
         <View className="p-4 mb-4 rounded-lg bg-card-600">
             <View className="flex-row items-center justify-between mb-2">
