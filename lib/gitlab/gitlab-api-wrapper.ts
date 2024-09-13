@@ -158,6 +158,68 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/labels/${labelId}`, 'DELETE');
     },
   }
+
+  Milestones = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/milestones?${queryString}`);
+    },
+    show: async (projectId, milestoneId) => {
+      return this.request(`/projects/${projectId}/milestones/${milestoneId}`);
+    },
+    create: async (projectId, data) => {
+      return this.request(`/projects/${projectId}/milestones`, 'POST', data);
+    },
+    edit: async (projectId, milestoneId, data) => {
+      return this.request(`/projects/${projectId}/milestones/${milestoneId}`, 'PUT', data);
+    },
+    remove: async (projectId, milestoneId) => {
+      return this.request(`/projects/${projectId}/milestones/${milestoneId}`, 'DELETE');
+    },
+  }
+  IssueLinks = {
+    all: async (projectId, issueIid, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links?${queryString}`);
+    },
+    show: async (projectId, issueIid, linkId) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links/${linkId}`);
+    },
+    create: async (projectId, issueIid, data) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links`, 'POST', data);
+    },
+    edit: async (projectId, issueIid, linkId, data) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links/${linkId}`, 'PUT', data);
+    },
+    remove: async (projectId, issueIid, linkId) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links/${linkId}`, 'DELETE');
+    },
+  }
+
+  Pipelines = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/pipelines?${queryString}`);
+    },
+    show: async (projectId, pipelineId) => {
+      return this.request(`/projects/${projectId}/pipelines/${pipelineId}`);
+    },
+    create: async (projectId, data) => {
+      return this.request(`/projects/${projectId}/pipeline`, 'POST', data);
+    },
+    retry: async (projectId, pipelineId) => {
+      return this.request(`/projects/${projectId}/pipelines/${pipelineId}/retry`, 'POST');
+    },
+    cancel: async (projectId, pipelineId) => {
+      return this.request(`/projects/${projectId}/pipelines/${pipelineId}/cancel`, 'POST');
+    },
+    remove: async (projectId, pipelineId) => {
+      return this.request(`/projects/${projectId}/pipelines/${pipelineId}`, 'DELETE');
+    },
+
+
+  }
+
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
@@ -261,6 +323,9 @@ class GitLabClient {
   useBranches = this.createFetchHook(this.Branches.all);
   useProjectUsers = this.createFetchHook(this.Users.all);
   useProjectLabels = this.createFetchHook(this.Labels.all);
+  useProjectMilestones = this.createFetchHook(this.Milestones.all);
+  useProjectPipelines = this.createFetchHook(this.Pipelines.all);
+  useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
 
   // Operation hooks
   useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
@@ -269,9 +334,11 @@ class GitLabClient {
 
   // Update
   useUpdateProjectIssue = this.createOperationHook(this.updateProjectIssue);
+  useUpdateMergeRequest = this.createOperationHook(this.updateMergeRequest);
 
   // Delete 
   useDeleteProjectIssue = this.createOperationHook(this.deleteProjectIssue);
+  useDeleteMergeRequest = this.createOperationHook(this.deleteMergeRequest);
 
 }
 
