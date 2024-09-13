@@ -74,8 +74,7 @@ export default function IssueDetails() {
     if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
         return <Text>Error fetching data</Text>;
     }
-    // GET /projects/:id/issues/:issue_iid/resource_label_events
-    console.log("issue", issue)
+
     return (
         <>
             <Stack.Screen

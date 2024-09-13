@@ -53,7 +53,6 @@ function RootLayoutNav() {
   // Effect for color scheme
   React.useEffect(() => {
     const setBackgroundColor = async () => {
-      console.log("ok")
       if (Platform.OS === 'android') {
         await NavigationBar.setBackgroundColorAsync('#ffffff00')
       }

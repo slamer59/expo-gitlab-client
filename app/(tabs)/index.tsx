@@ -6,13 +6,13 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
 import Constants from "expo-constants";
 
-import { Link, useFocusEffect, useNavigation } from "expo-router";
+import { Link, useFocusEffect } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function Home() {
-  const navigation = useNavigation();
+
   const { session } = useSession();
   const featureFlagMapping = {
     "git-merge":
@@ -84,7 +84,7 @@ export default function Home() {
     {
       icon: "arrow-forward",
       text: "Dev",
-      screen: "workspace/projects/59795263/issues/30",
+      screen: "workspace/projects/59795263/issues/30/edit",
       itemColor: "bg-green"
     }
   ];
