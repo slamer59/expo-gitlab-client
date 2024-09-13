@@ -1,7 +1,6 @@
 import EditAssigneeIssue from '@/components/Issue/issue-edit-asignee';
 import EditLabelIssue from '@/components/Issue/issue-edit-label';
 import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
-import { SectionContent, SectionTitle } from '@/components/Section/param';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { defaultOptionsHeader } from '@/lib/constants';
@@ -40,9 +39,9 @@ export default function IssueEditComponent() {
                 <Separator className="my-4" />
                 <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
 
-                <Separator className="my-4" />
+                {/* <Separator className="my-4" />
                 <SectionTitle title="Linked items" />
-                <SectionContent content="No linked items" />
+                <SectionContent content="No linked items" /> */}
 
                 {/* <SectionTitle title="Projects" />
                 <View className="p-4 rounded-lg bg-card">
