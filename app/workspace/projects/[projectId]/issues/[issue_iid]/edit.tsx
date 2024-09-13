@@ -1,5 +1,6 @@
 import EditAssigneeIssue from '@/components/Issue/issue-edit-asignee';
 import EditLabelIssue from '@/components/Issue/issue-edit-label';
+import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
 import { SectionContent, SectionTitle } from '@/components/Section/param';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
@@ -7,6 +8,7 @@ import { defaultOptionsHeader } from '@/lib/constants';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack } from 'expo-router';
+import React from 'react';
 import { ScrollView } from 'react-native';
 
 
@@ -36,9 +38,8 @@ export default function IssueEditComponent() {
                 <Separator className="my-4" />
                 <EditLabelIssue projectId={projectId} issueIid={issueIid} />
                 <Separator className="my-4" />
+                <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
 
-                <SectionTitle title="Milestone" />
-                <SectionContent content="No milestone selected" />
                 <Separator className="my-4" />
                 <SectionTitle title="Linked items" />
                 <SectionContent content="No linked items" />
