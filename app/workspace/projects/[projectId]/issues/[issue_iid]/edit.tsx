@@ -1,9 +1,9 @@
-import EditParamIssue from '@/components/Issue/issue-edit-param';
+import EditAssigneeIssue from '@/components/Issue/issue-edit-param';
 import { Pills } from '@/components/Pills';
 import { SectionContent, SectionTitle } from '@/components/Section/param';
 import { Text } from '@/components/ui/text';
 import { defaultOptionsHeader } from '@/lib/constants';
-import GitLabClient from '@/lib/custom-gitlab-api-wrapper';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack } from 'expo-router';
 import { ScrollView, View } from 'react-native';
@@ -31,7 +31,7 @@ export default function TaskDetailsComponent() {
                 }}
             />
             <ScrollView className="flex-1 p-4 bg-background">
-                <EditParamIssue projectId={projectId} issueIid={issueIid} />
+                <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
 
 
                 <SectionTitle title="Labels" />

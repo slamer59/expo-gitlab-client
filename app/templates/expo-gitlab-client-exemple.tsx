@@ -1,4 +1,4 @@
-import GitLabClient from '@/lib/custom-gitlab-api-wrapper';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useState } from 'react';
 import { Button, FlatList, Text, TextInput, View } from 'react-native';
