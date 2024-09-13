@@ -1,15 +1,16 @@
-import EditAssigneeIssue from '@/components/Issue/issue-edit-param';
-import { Pills } from '@/components/Pills';
+import EditAssigneeIssue from '@/components/Issue/issue-edit-asignee';
+import EditLabelIssue from '@/components/Issue/issue-edit-label';
 import { SectionContent, SectionTitle } from '@/components/Section/param';
+import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { defaultOptionsHeader } from '@/lib/constants';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
 
-export default function TaskDetailsComponent() {
+export default function IssueEditComponent() {
     const { session } = useSession()
     const api = new GitLabClient({
         url: session?.url,
@@ -32,18 +33,13 @@ export default function TaskDetailsComponent() {
             />
             <ScrollView className="flex-1 p-4 bg-background">
                 <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
-
-
-                <SectionTitle title="Labels" />
-                <View className="flex-row flex-wrap mb-4">
-                    <Pills label="enhancement" variant="green" />
-                    <Pills label="kind/cooldown" variant="purple" />
-                    <Pills label="kind/good-first-issue" variant="purple" />
-                </View>
+                <Separator className="my-4" />
+                <EditLabelIssue projectId={projectId} issueIid={issueIid} />
+                <Separator className="my-4" />
 
                 <SectionTitle title="Milestone" />
                 <SectionContent content="No milestone selected" />
-
+                <Separator className="my-4" />
                 <SectionTitle title="Linked items" />
                 <SectionContent content="No linked items" />
 

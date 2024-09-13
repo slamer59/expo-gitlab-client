@@ -142,6 +142,22 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
     },
   }
+
+  Labels = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/labels?${queryString}`);
+    },
+    create: async (projectId, data) => {
+      return this.request(`/projects/${projectId}/labels`, 'POST', data);
+    },
+    edit: async (projectId, labelId, data) => {
+      return this.request(`/projects/${projectId}/labels/${labelId}`, 'PUT', data);
+    },
+    remove: async (projectId, labelId) => {
+      return this.request(`/projects/${projectId}/labels/${labelId}`, 'DELETE');
+    },
+  }
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
@@ -162,6 +178,7 @@ class GitLabClient {
     const data = { username, email, password, name, ...options };
     return this.request('/users', 'POST', data);
   }
+
 
   // Update Methods
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
@@ -243,6 +260,7 @@ class GitLabClient {
   useCommits = this.createFetchHook(this.Commits.all);
   useBranches = this.createFetchHook(this.Branches.all);
   useProjectUsers = this.createFetchHook(this.Users.all);
+  useProjectLabels = this.createFetchHook(this.Labels.all);
 
   // Operation hooks
   useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
