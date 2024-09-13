@@ -99,24 +99,6 @@ export default function EditLabelIssue({ projectId, issueIid }) {
                         <Text className="h-12 mb-4 text-muted">No Labels</Text>
                     )}
 
-                    {/* {labels && labels.length > 0 ? (
-                        labels?.map((label: any) => <>
-                            {!checkedIds.includes(`${label.name}`) ? <>
-                                <Labels labels={label} >
-                                    <Text className='text-muted'>{label.color}</Text>
-                                    <Button
-                                        variant="icon"
-                                        onPress={() => toggleSwitch(`${label.name}`)}
-                                    >
-                                        <Pills label={label.name} variant={label.color} />
-                                    </Button>
-                                </Labels>
-                            </> : <Text className='h-14 text-muted'> No more labels in project</Text>}
-
-                        </>)
-                    ) : (
-                        <Text className='mb-4 text-muted'>No Labels</Text>
-                    )} */}
                 </EditParamIssueDialog >
             </SectionTitle >
             {checkedIds && checkedIds.length > 0 ? (
