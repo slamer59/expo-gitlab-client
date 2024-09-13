@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 
 export const SectionTitle = ({ title, children }) => (
-    <View className='flex-row justify-between'>
+    <View className='flex-row justify-between mb-2'>
         <Text className="mb-2 text-lg font-semibold text-white">{title}</Text>
         {children}
     </View>

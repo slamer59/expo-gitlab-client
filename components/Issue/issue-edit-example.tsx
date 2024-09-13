@@ -11,7 +11,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Text } from '@/components/ui/text';
-import GitLabClient from '@/lib/custom-gitlab-api-wrapper';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useState } from 'react';
 import { View } from 'react-native';

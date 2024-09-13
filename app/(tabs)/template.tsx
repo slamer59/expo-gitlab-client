@@ -1,73 +1,54 @@
-import GitLabClient from '@/lib/custom-gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
-import React, { useState } from 'react';
-import { Button, FlatList, Text, TextInput, View } from 'react-native';
+import { Text } from '@/components/ui/text';
+import * as React from 'react';
+import { View } from 'react-native';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
 
 
-const GitLabIssuesList = () => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const projectId = 59795263
-    const { session } = useSession()
-    const api = new GitLabClient({
-        url: session?.url,
-        token: session?.token,
-    });
+function Example() {
+    const [checkedIds, setCheckedIds] = React.useState([]);
 
-    const { data: issues = [], loading = false, error = null } = api.useProjectIssues(projectId) ?? {};
-
-    const { execute: createIssue, data: newIssue, loading: creating, error: createError } = api.useCreateProjectIssue(projectId, title, description);
-
-    const handleCreateIssue = async () => {
-        if (title && description) {
-            try {
-                await createIssue();
-                console.log('New issue created:', newIssue);
-                console.log("creating", creating);
-                // setTitle('');
-                // setDescription('');
-            } catch (error) {
-                console.error('Error creating issue:', error);
-                // Handle the error appropriately, e.g., show an error message to the user
-            } finally {
-                // This block will run regardless of success or failure
-                console.log('Create issue attempt completed');
+    const toggleSwitch = (id) => {
+        setCheckedIds((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((checkedId) => checkedId !== id);
+            } else {
+                return [...prev, id];
             }
-        }
+        });
     };
 
-
-    if (loading) return <Text>Loading issues...</Text>;
-    if (error) return <Text>Error: {error}</Text>;
-
     return (
-        <View>
-            <Text>Project Issues</Text>
-            <TextInput
-                placeholder="Issue Title"
-                value={title}
-                onChangeText={setTitle}
-            />
-            <TextInput
-                placeholder="Issue Description"
-                value={description}
-                onChangeText={setDescription}
-                multiline
-            />
-            <Button
-                title={creating ? "Creating..." : "Create Issue"}
-                onPress={handleCreateIssue}
-                disabled={creating || !title || !description}
-            />
-            {createError && <Text>Error creating issue: {createError}</Text>}
-            {newIssue && <Text>New issue created: {newIssue.title}</Text>}
-            <FlatList
-                data={issues}
-                renderItem={({ item }) => <Text>{item.title}</Text>}
-                keyExtractor={(item) => item.id.toString()}
-            />
+        <View className="flex flex-col space-y-4">
+            <Text className='text-black'>{JSON.stringify(checkedIds)}</Text>
+            <View className="flex flex-row items-center space-x-2">
+                <Switch
+                    id="airplane-mode"
+                    checked={checkedIds.includes('airplane-mode')}
+                    onCheckedChange={() => toggleSwitch('airplane-mode')}
+                />
+                <Label htmlFor="airplane-mode">Airplane Mode</Label>
+            </View>
+
+            <View className="flex flex-row items-center space-x-2">
+                <Switch
+                    id="wifi"
+                    checked={checkedIds.includes('wifi')}
+                    onCheckedChange={() => toggleSwitch('wifi')}
+                />
+                <Label htmlFor="wifi">Wi-Fi</Label>
+            </View>
+
+            <View className="flex flex-row items-center space-x-2">
+                <Switch
+                    id="bluetooth"
+                    checked={checkedIds.includes('bluetooth')}
+                    onCheckedChange={() => toggleSwitch('bluetooth')}
+                />
+                <Label htmlFor="bluetooth">Bluetooth</Label>
+            </View>
         </View>
     );
-};
+}
 
-export default GitLabIssuesList;
+export default Example;

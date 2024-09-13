@@ -48,14 +48,12 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/issues`, 'POST', data);
     },
     edit: async (projectId, issueIid, data) => {
-      console.log(`Editing issue ${issueIid} in project ${projectId}: ${JSON.stringify(data)}`);
       return this.request(`/projects/${projectId}/issues/${issueIid}`, 'PUT', data);
     },
     remove: async (projectId, issueIid) => {
       return this.request(`/projects/${projectId}/issues/${issueIid}`, 'DELETE');
     },
     show: async (projectId, issueIid) => {
-      console.log(`Fetching issue ${issueIid} from project ${projectId}`);
       return this.request(`/projects/${projectId}/issues/${issueIid}`);
     },
   };
@@ -127,6 +125,23 @@ class GitLabClient {
     },
   };
 
+  Users = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/users?${queryString}`);
+    },
+    show: async (projectId, userId) => {
+      const user = await this.request(`/projects/${projectId}/users/${userId}`);
+      return user;
+    },
+    add: async (projectId, userId, accessLevel) => {
+      const data = { user_id: userId, access_level: accessLevel };
+      return this.request(`/projects/${projectId}/members`, 'POST', data);
+    },
+    remove: async (projectId, userId) => {
+      return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
+    },
+  }
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
@@ -142,6 +157,11 @@ class GitLabClient {
     const data = { branch, commit_message: commitMessage, actions, ...options };
     return this.Commits.create(projectId, data);
   };
+
+  createUser = async (username, email, password, name, options = {}) => {
+    const data = { username, email, password, name, ...options };
+    return this.request('/users', 'POST', data);
+  }
 
   // Update Methods
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
@@ -222,6 +242,7 @@ class GitLabClient {
   useMergeRequests = this.createFetchHook(this.MergeRequests.all);
   useCommits = this.createFetchHook(this.Commits.all);
   useBranches = this.createFetchHook(this.Branches.all);
+  useProjectUsers = this.createFetchHook(this.Users.all);
 
   // Operation hooks
   useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
