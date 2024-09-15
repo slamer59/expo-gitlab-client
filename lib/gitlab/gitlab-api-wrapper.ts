@@ -125,7 +125,7 @@ class GitLabClient {
     },
   };
 
-  Users = {
+  ProjectsUsers = {
     all: async (projectId, options = {}) => {
       const queryString = new URLSearchParams(options).toString();
       return this.request(`/projects/${projectId}/users?${queryString}`);
@@ -140,6 +140,55 @@ class GitLabClient {
     },
     remove: async (projectId, userId) => {
       return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
+    },
+  }
+
+  Users = {
+    current: async () => {
+      return this.request('/user');
+    },
+    all: async (options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/users?${queryString}`);
+    },
+    projects: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/projects`, 'GET', options);
+    },
+    contributed_projects: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/projects/contributed`, 'GET', options);
+    },
+    owned_projects: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/projects/owned`, 'GET', options);
+    },
+    starred_projects: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/starred_projects`, 'GET', options);
+    },
+    show: async (userId, options = {}) => {
+      return this.request(`/users/${userId}`, 'GET', options);
+    },
+    create: async (data, options = {}) => {
+      return this.request('/users', 'POST', data, options);
+    },
+    edit: async (userId, data, options = {}) => {
+      return this.request(`/users/${userId}`, 'PUT', data, options);
+    },
+    remove: async (userId, options = {}) => {
+      return this.request(`/users/${userId}`, 'DELETE', options);
+    },
+    status: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/status`, 'GET', options);
+    },
+    follow: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/follow`, 'POST', options);
+    },
+    unfollow: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/unfollow`, 'POST', options);
+    },
+    following: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/following`, 'GET', options);
+    },
+    followers: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/followers`, 'GET', options);
     },
   }
 
@@ -176,6 +225,7 @@ class GitLabClient {
     remove: async (projectId, milestoneId) => {
       return this.request(`/projects/${projectId}/milestones/${milestoneId}`, 'DELETE');
     },
+
   }
   IssueLinks = {
     all: async (projectId, issueIid, options = {}) => {
@@ -238,7 +288,7 @@ class GitLabClient {
 
   createUser = async (username, email, password, name, options = {}) => {
     const data = { username, email, password, name, ...options };
-    return this.request('/users', 'POST', data);
+    return this.Users.create(data);
   }
 
 
@@ -321,11 +371,23 @@ class GitLabClient {
   useMergeRequests = this.createFetchHook(this.MergeRequests.all);
   useCommits = this.createFetchHook(this.Commits.all);
   useBranches = this.createFetchHook(this.Branches.all);
-  useProjectUsers = this.createFetchHook(this.Users.all);
+  useProjectUsers = this.createFetchHook(this.ProjectsUsers.all);
   useProjectLabels = this.createFetchHook(this.Labels.all);
   useProjectMilestones = this.createFetchHook(this.Milestones.all);
   useProjectPipelines = this.createFetchHook(this.Pipelines.all);
   useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
+
+  // Users
+  getUsers = this.createFetchHook(this.Users.all);
+  getCurrentUser = this.createFetchHook(this.Users.current);
+  getUserProjects = this.createFetchHook(this.Users.projects);
+  getUserContributedProjects = this.createFetchHook(this.Users.contributed_projects)
+  getUserOwnedProjects = this.createFetchHook(this.Users.owned_projects)
+  getUserStarredProjects = this.createFetchHook(this.Users.starred_projects)
+  getUser = this.createFetchHook(this.Users.show)
+  getUserStatus = this.createFetchHook(this.Users.status)
+  getUserFollowing = this.createFetchHook(this.Users.following)
+  getUserFollowers = this.createFetchHook(this.Users.followers)
 
   // Operation hooks
   useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);

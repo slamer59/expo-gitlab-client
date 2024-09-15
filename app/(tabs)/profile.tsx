@@ -39,7 +39,8 @@ async function getUserProjects(
 
   try {
     const response = await fetch(
-      `${session.url}/api/v4/users/${userId}/projects?${queryString}`,
+      // `${session.url}/api/v4/users/${userId}/projects?${queryString}`,
+      `${session.url}/api/v4/projects?${queryString}`,
       {
         headers: {
           "PRIVATE-TOKEN": session.token,
@@ -247,7 +248,9 @@ export default function ProfileScreen() {
                 Projects
               </Text>
             </View>
-            <Text className="text-base text-white" testID="project-count">{starredProjects.length}</Text>
+            <Text className="text-base text-white" testID="project-count">
+              {projects.length >= 20 ? '20+' : projects.length}
+            </Text>
           </CardContent>
         </TouchableOpacity>
         <TouchableOpacity
@@ -270,7 +273,9 @@ export default function ProfileScreen() {
                 Starred
               </Text>
             </View>
-            <Text className="ml-2 text-base" testID="starred-count">{starredProjects.length}</Text>
+            <Text className="ml-2 text-base" testID="starred-count">
+              {starredProjects.length >= 20 ? '20+' : starredProjects.length}
+            </Text>
           </CardContent>
         </TouchableOpacity>
       </Card>
