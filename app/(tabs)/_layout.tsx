@@ -41,11 +41,11 @@ export default function TabLayout() {
 
           },
           headerStyle: {
-            backgroundColor: 'bg-white',
+            backgroundColor: 'black',
           },
-          headerTintColor: 'bg-white',
+          headerTintColor: 'white',
           headerTitleStyle: {
-            color: 'bg-white',
+            color: 'white',
           },
         }}
       >

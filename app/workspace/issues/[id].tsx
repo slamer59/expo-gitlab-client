@@ -237,3 +237,8 @@ export default function IssueDetailsScreen() {
         </ScrollView>
     );
 }
+
+IssueDetailsScreen.options = {
+    title: 'Issue Details',
+    ...defaultOptionsHeader
+};

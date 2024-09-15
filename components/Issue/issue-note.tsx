@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { Octicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Link } from "expo-router";
 import React from 'react';
@@ -47,27 +47,27 @@ const myLabelMap: LabelMap = {
 
 
 const iconMap = {
-    label: "tag",
-    comment: "comment",
-    review: "checklist",
+    label: "pricetag",
+    comment: "chatbubble",
+    review: "checkbox",
     commit: "git-commit",
-    issue: "issue-opened",
+    issue: "alert-circle",
     "pull-request": "git-pull-request",
-    release: "package",
-    discussion: "comment-discussion",
-    project: "project",
-    milestone: "milestone",
+    release: "cube",
+    discussion: "chatbubbles",
+    project: "folder",
+    milestone: "flag",
     assigned: "person",
     "review-request": "eye",
     visible: "eye",
-    confidential: "circle-slash",
-    mention: "mention",
+    confidential: "lock-closed",
+    mention: "at",
     delete: "trash",
-    pushed: "repo-push",
-    opened: "issue-opened",
-    added: "plus-circle",
-    removed: "minus-circle",
-    mentioned: "mention",
+    pushed: "push",
+    opened: "add-circle",
+    added: "add-circle",
+    removed: "remove-circle",
+    mentioned: "at",
     changed: "calendar",
     branch: "git-branch",
     marked: "bookmark"
@@ -75,10 +75,9 @@ const iconMap = {
 
 
 const getEventIcon = (eventType: string) => {
-    // console.log("eventType", eventType)
     const iconName = iconMap[eventType];
     return iconName ? (
-        <Octicons
+        <Ionicons
             name={iconName}
             size={16}
             color="#8b949e"
@@ -129,7 +128,6 @@ const IssueNote = ({ note }) => {
                 return renderNoteWithPills(text);
             }
             else if (part.match(/\!\d+/)) {
-                console.log("merge request activity")
                 const mrNumber = part.slice(1);
                 return (
                     <Link key={index} href={`https://error.url/${mrNumber}`} >
@@ -137,7 +135,6 @@ const IssueNote = ({ note }) => {
                     </Link >
                 );
             } else if (part.match(/\@\S+/)) {
-                console.log("people activity")
                 return (
                     <Link key={index} href={`https://error.url/${part.slice(1)}`} >
                         <Text className="font-semibold underline text-secondary">{part}</Text>
@@ -178,14 +175,16 @@ const IssueNotes = ({ notes }) => {
     return (
         <>
             <Text className="mb-2 text-4xl font-bold text-white">Activity</Text>
-            <View className="p-4 mb-4">
+            {notes && notes.length > 0 ? <View className="p-4 mb-4">
                 {notes.map((note) => (
                     note.system ? (
                         <IssueNote key={note.id} note={note} />
                     ) :
                         <IssueComment issue={note} />
                 ))}
-            </View>
+            </View> : <Text className="ml-2 text-white">🔍 No activity found</Text>
+            }
+
         </>
     );
 };
