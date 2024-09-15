@@ -38,8 +38,13 @@ export default function ListWithFilters({
   paramsMap,
   defaultParams,
 }: ListWithFiltersProps) {
-  const [params, setParams] = useState(defaultParams)
-
+  const [params, setParams] = useState({
+    ...defaultParams,
+    query: {
+      ...defaultParams.query,
+      // You can add any additional initial query parameters here
+    }
+  });
   const handleFiltersChange = useCallback((newFilters) => {
     const newQuery = UIFilters.reduce((acc, filter) => {
       const selectedValue = newFilters[filter.label]?.value;
@@ -51,9 +56,12 @@ export default function ListWithFilters({
 
     setParams(prevParams => ({
       ...prevParams,
-      query: newQuery
+      query: {
+        ...prevParams.query,  // Preserve existing query parameters
+        ...newQuery  // Apply new filters
+      }
     }));
-  }, []);
+  }, [UIFilters]);
 
   const {
     data: items,

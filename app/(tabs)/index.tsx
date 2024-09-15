@@ -96,6 +96,7 @@ export default function Home() {
     })
     .map((button) => button);
 
+
   // console.log(visibleButtons);
   useFocusEffect(
     React.useCallback(() => {

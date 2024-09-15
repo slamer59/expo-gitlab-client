@@ -13,6 +13,7 @@ import { PostHogProvider } from 'posthog-react-native';
 import React from 'react';
 import { Platform } from "react-native";
 import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // import { Theme } from '@react-navigation/native';
 // import { NAV_THEME } from '~/lib/constants';
@@ -129,17 +130,15 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-
   return (
-
     <PostHogProvider apiKey="POSTHOG_API_KEY_REMOVED" options={{
       host: "https://eu.i.posthog.com",
     }}>
       <SessionProvider>
-        <RootLayoutNav />
+        <SafeAreaProvider>
+          <RootLayoutNav />
+        </SafeAreaProvider>
       </SessionProvider>
-
-    </PostHogProvider >
-
+    </PostHogProvider>
   );
 }

@@ -3,11 +3,14 @@ import { ProjectCard, ProjectCardSkeleton } from "@/components/Project/project-c
 
 import { GlobalProjectsUIFilters } from "@/constants/UIFilters";
 import { defaultOptionsHeader } from "@/lib/constants";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
 
 export default function ProjectsListScreen() {
+
+    const localParams = useLocalSearchParams<Record<string, string>>();
+
     const defaultParamsProjects = {
         query: {
             // order_by: 'created_at',
@@ -26,7 +29,10 @@ export default function ProjectsListScreen() {
             // simple: false,
             // statistics: false,
             // with_custom_attributes: false,
+            ...localParams, // This will include all other passed parameters
+
         },
+
     };
     const UIFilters = GlobalProjectsUIFilters
     const query_cache_name = "projects"
@@ -64,11 +70,18 @@ export default function ProjectsListScreen() {
     //     },
     // };
 
+    const getScreenTitle = () => {
+        if (localParams.owned === "true") return "🏠 My Projects";
+        if (localParams.starred === "true") return "⭐ Starred Projects";
+        return "📁 Projects";
+    };
+
+
     return (
         <ScrollView className="flex-1 p-2 bg-background">
             <Stack.Screen
                 options={{
-                    title: "Projects",
+                    title: getScreenTitle(),
                     ...defaultOptionsHeader
                 }}
             />
