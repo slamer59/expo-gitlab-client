@@ -85,7 +85,7 @@ async function registerForPushNotificationsAsync() {
     }
 }
 
-export default function App() {
+export default function NotificationExempleScreen() {
     const [expoPushToken, setExpoPushToken] = useState("");
     const [notification, setNotification] = useState<
         Notifications.Notification | undefined
