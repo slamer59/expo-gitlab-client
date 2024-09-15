@@ -2,42 +2,52 @@ import { Octicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-enum IssueState {
+enum MergeRequestState {
   OPENED = 'opened',
-  CLOSED = 'closed'
+  CLOSED = 'closed',
+  LOCKED = 'locked',
+  MERGED = 'merged'
 }
 
-interface IssueItem {
+interface MergeRequestItem {
   title: string;
   reference: string;
   project_id: number;
   iid: number;
-  state: IssueState;
+  state: MergeRequestState;
 }
 
 interface LinksToIssueSectionProps {
   title: string;
-  array: Array<IssueItem>;
+  array: Array<MergeRequestItem>;
   empty: React.ReactNode;
 }
 
-export function LinkedIssuesSection({ title, array, empty }: LinksToIssueSectionProps) {
-  const getIconName = (state: IssueState): string => {
+export function LinksMergeRequestsSection({ title, array, empty }: LinksToIssueSectionProps) {
+  const getIconName = (state: MergeRequestState): string => {
     switch (state) {
-      case IssueState.OPENED:
-        return 'issue-opened';
-      case IssueState.CLOSED:
-        return 'issue-closed';
+      case MergeRequestState.OPENED:
+        return 'git-pull-request';
+      case MergeRequestState.CLOSED:
+        return 'git-pull-request-closed';
+      case MergeRequestState.LOCKED:
+        return 'lock';
+      case MergeRequestState.MERGED:
+        return 'git-merge';
       default:
-        return 'issue-opened';
+        return 'question';
     }
   };
 
-  const getIconColor = (state: IssueState): string => {
+  const getIconColor = (state: MergeRequestState): string => {
     switch (state) {
-      case IssueState.OPENED:
+      case MergeRequestState.OPENED:
         return 'green';
-      case IssueState.CLOSED:
+      case MergeRequestState.CLOSED:
+        return 'red';
+      case MergeRequestState.LOCKED:
+        return 'orange';
+      case MergeRequestState.MERGED:
         return 'purple';
       default:
         return 'gray';
@@ -53,7 +63,7 @@ export function LinkedIssuesSection({ title, array, empty }: LinksToIssueSection
       {array.length > 0 ? array.map((item, index) => (
         <Link
           key={index}
-          href={`/workspace/projects/${item.project_id}/issues/${item.iid}`}
+          href={`/workspace/projects/${item.project_id}/merge-requests/${item.iid}`}
           asChild
         >
           <Pressable>
@@ -70,7 +80,7 @@ export function LinkedIssuesSection({ title, array, empty }: LinksToIssueSection
                   {item.title}
                 </Text>
               </View>
-              <Text className='text-secondary'>{item.references.relative}</Text>
+              <Text className='text-secondary'>{item.reference}</Text>
             </View>
           </Pressable>
         </Link>

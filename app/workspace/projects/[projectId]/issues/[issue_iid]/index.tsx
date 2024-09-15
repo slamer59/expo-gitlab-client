@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { SafeAreaView, ScrollView } from "react-native";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 
@@ -8,16 +8,14 @@ import IssueComment from "@/components/Issue/issue-comment";
 import IssueHeader from "@/components/Issue/issue-header";
 import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
-import LinksToIssueSection from "@/components/ui/link-issue-section";
+import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
+import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { useSession } from "@/lib/session/SessionProvider";
 import { Text } from "~/components/ui/text";
 
 export default function IssueDetails() {
     const { projectId, issue_iid } = useLocalSearchParams();
-    const { session } = useSession()
-
     console.log(projectId, issue_iid);
 
     const params = {
@@ -76,7 +74,8 @@ export default function IssueDetails() {
     }
 
     return (
-        <>
+
+        <SafeAreaView className="flex-1">
             <Stack.Screen
                 options={{
                     title: `${issue.references.full}`,
@@ -120,22 +119,22 @@ export default function IssueDetails() {
                         </Text>
                     }
                 /> */}
-                <LinksToIssueSection
+                <LinkedIssuesSection
                     title="Linked Items"
                     iconName="link"
                     array={linkedIssues}
                     empty={
                         <Text className="mt-2 text-white">
                             Link issues together to show that they're
-                            related.{" "}
-                            <Text className="text-blue-500">
-                                Learn more.
+                            related.
+                            <Text className="text-blue-500 ">
+                                {" "}Learn more.
                             </Text>
                         </Text>
                     }
                 />
 
-                <LinksToIssueSection
+                <LinksMergeRequestsSection
                     title="Related merge requests"
                     iconName="link"
                     array={relatedMRs}
@@ -143,43 +142,14 @@ export default function IssueDetails() {
                         <Text className="mt-2 text-white">
                             Related merge requests will appear here.
                             <Text className="text-blue-500">
-                                Learn more.
+                                {" "}  Learn more.
                             </Text>
                         </Text>
                     }
                 />
 
-                {/* <View>
-                    <Text className='mb-2 text-lg font-bold'>Activity</Text>
-                    <Picker className='px-2 py-1 mb-4 border border-gray-300 rounded'>
-                        <Picker.Item label="Sort or filter" value="sort-or-filter" />
-                    </Picker> 
-                    <View className='mb-4'>
-                        <View className='flex-row items-start mb-2'>
-                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
-                            <View>
-                                <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> added <Text className='px-2 py-1 text-sm font-semibold text-green-800 bg-green-200 rounded'>enhancement</Text> <Text className='px-2 py-1 text-sm font-semibold text-blue-800 bg-blue-200 rounded'>major</Text> 4 months ago</Text>
-                            </View>
-                        </View>
-                        <View className='flex-row items-start mb-2'>
-                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
-                            <View>
-                                <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> created branch <Text className='text-blue-500'>176-next-head-migration</Text> to address this issue 4 months ago</Text>
-                            </View>
-                        </View>
-                        <View className='flex-row items-start mb-2'>
-                            <FontAwesome6 name="user-circle" size={20} color="gray" className='mr-2' />
-                            <View>
-                                <Text className='text-gray-500'><Text className='text-blue-500'>Thomas Pedot</Text> mentioned in merge request <Text className='text-blue-500'>#1290</Text> 4 months ago</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View> */}
-                {/* <IssueEventComponent notes={notes} /> */}
 
-                <IssueNotes notes={notes}
-                //    baseIssueURL={`${session.url}/-/issues/${issue.references.full.split('#')[0]}`}
-                />
+                <IssueNotes notes={notes} />
 
                 {/*                <Input
                     className='w-full p-2 mb-2 border border-gray-300 rounded'
@@ -200,6 +170,8 @@ export default function IssueDetails() {
                 </View> */}
 
             </ScrollView >
-        </>
+
+
+        </SafeAreaView>
     );
 }
