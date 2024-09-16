@@ -9,7 +9,6 @@ import React from "react";
 import { ScrollView, View } from "react-native";
 
 import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
-import { defaultOptionsHeader } from "@/lib/constants";
 
 const mrExamples = {
     "id": 155016530,
@@ -232,14 +231,13 @@ export default function MergeRequestDetails() {
                             <Text className="text-sm text-muted">{mr?.references.full}</Text>
                         </View>)
                     ,
-                    ...defaultOptionsHeader
+                    // ...defaultOptionsHeader
                 }}
             />
             <ScrollView className="min-h-screen p-4 bg-background">
+
+
                 <View className="max-w-xl p-4 mb-6 rounded-lg shadow-md bg-card">
-                    {/* <Text className="mb-2 text-2xl font-bold">
-                        {mr.title}
-                    </Text> */}
                     <View className="flex flex-row items-center justify-between mb-2">
                         {MergeStatusIcon(mr, true)}
                         <View className="flex flex-row items-center">
@@ -253,13 +251,9 @@ export default function MergeRequestDetails() {
                         </View>
                     </View>
 
-
-                    {/* Header with repository information */}
-                    <View className={"flex justify-between mb-6 flex-row "}>
-                        <View className={"flex flex-row items-center"}>
-                            <Avatar alt={`${mr?.author?.name}`}
-                                className="mr-2"
-                            >
+                    <View className="flex flex-row justify-between mb-6">
+                        <View className="flex flex-row items-center">
+                            <Avatar alt={`${mr?.author?.name}`} className="mr-2">
                                 <AvatarImage source={{ uri: mr?.author.avatar_url }} />
                                 <AvatarFallback>
                                     <Text>{mr?.author?.name.charAt(0)}</Text>
@@ -269,60 +263,44 @@ export default function MergeRequestDetails() {
                                 {mr?.author?.username}
                             </Text>
                             <Text className="mr-2 text-sm text-gray-400">
-                                {/* opened MR #{mr?.iid}*/}
                                 - {formatDate(mr?.created_at)}
-                                {/* # {mr.project_id} */}
                             </Text>
                         </View>
-                        {/* <Button
-                            variant={"outline"}
-                            size={"sm"}
-                        >
-                            <Text className={"mr-2"}>Watch</Text>
-                        </Button> */}
                     </View>
                     <View className="mb-6">
                         <Text className="mb-2">{mr.description}</Text>
                     </View>
-                </View >
+                </View>
+
                 <View className="max-w-xl p-4 mb-6 rounded-lg shadow-md bg-card">
                     <Text className="mb-2 text-lg font-semibold">
                         Changes
                     </Text>
                     <View className="flex flex-row items-center justify-between mb-2">
-                        {/* <Text className="text-sm text-gray-400">
-
-                                {mr?.changes_count} changes
-                            </Text> */}
-                        < View className="flex flex-row items-center" >
-                            {/* Filetitle */}
+                        <View className="flex flex-row items-center">
                             <Ionicons name="document" size={16} color="white" />
                             <Text className="ml-1 text-sm text-muted">
                                 18 files changed
                             </Text>
-                            < View className="*:ml-1 flex flex-row items-center" >
+                            <View className="*:ml-1 flex flex-row items-center">
                                 <Text className="ml-1 text-sm text-green-400">
                                     18
                                 </Text>
                                 <Text className="ml-1 text-sm text-red-400">
                                     -2
                                 </Text>
-
                             </View>
                         </View>
                         <View className="flex flex-row items-center">
                             {mr?.diverged_commits_count &&
                                 <>
-                                    < Ionicons name="git-commit" size={16} />
+                                    <Ionicons name="git-commit" size={16} />
                                     <Text className="mr-2 text-sm text-gray-400">
                                         {mr?.diverged_commits_count} commits
                                     </Text>
                                 </>
                             }
                         </View>
-                        {/* Changes cards */}
-
-
                     </View>
                 </View>
                 {/* <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
@@ -452,6 +430,7 @@ export default function MergeRequestDetails() {
 
 
             </ScrollView >
+
         </>
     );
 }

@@ -1,5 +1,4 @@
 import { Text } from "@/components/ui/text";
-import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from '@/lib/gitlab/hooks';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -69,7 +68,7 @@ export default function FileView() {
             <Stack.Screen
                 options={{
                     title: "Explore",
-                    ...defaultOptionsHeader
+                    // ...defaultOptionsHeader
                 }}
             />
             {Component(mime.lookup(file_name), content)}

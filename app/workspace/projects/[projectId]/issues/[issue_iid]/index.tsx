@@ -10,7 +10,6 @@ import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
-import { defaultOptionsHeader } from "@/lib/constants";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { Text } from "~/components/ui/text";
 
@@ -79,7 +78,7 @@ export default function IssueDetails() {
             <Stack.Screen
                 options={{
                     title: `${issue.references.full}`,
-                    ...defaultOptionsHeader,
+                    // ...defaultOptionsHeader,
                     // headerTintColor: "black",
                 }}
             />

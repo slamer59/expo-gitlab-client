@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/icon-1024x1024.png",
         "backgroundColor": "#fff"
       },
       "package": "com.thomas.pedot.expogitlabclient",

@@ -3,7 +3,6 @@ import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import { defaultOptionsHeader } from '@/lib/constants';
 import { useSession } from '@/lib/session/SessionProvider';
 import * as Application from 'expo-application';
 import { Redirect, Stack } from 'expo-router';
@@ -25,7 +24,7 @@ export default function OptionScreen() {
       <Stack.Screen
         options={{
           title: "General settings",
-          ...defaultOptionsHeader
+          // ...defaultOptionsHeader
         }}
       />
 

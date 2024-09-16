@@ -1,7 +1,6 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
-import { defaultOptionsHeader } from "@/lib/constants";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
@@ -47,7 +46,7 @@ export default function ProjectMergeRequestsList() {
       <Stack.Screen
         options={{
           headerTitle: `Merge Requests for Project`,
-          ...defaultOptionsHeader
+          // ...defaultOptionsHeader
           // headerRight: () => (
           //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
           //     <Button size="sm" variant="primary">
