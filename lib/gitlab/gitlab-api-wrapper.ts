@@ -31,9 +31,19 @@ class GitLabClient {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      return await response.json();
+      if (response.status === 204) {
+        // For 204 No Content responses, return a success object
+        return { success: true, message: 'Operation completed successfully' };
+      }
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        return await response.json();
+      } else {
+        // For other non-JSON responses
+        return await response.text();
+      }
     } catch (error) {
+
       console.error('API request failed:', error);
       throw error;
     }
@@ -303,6 +313,7 @@ class GitLabClient {
 
   // Delete Methods
   deleteProjectIssue = async (projectId, issueIid) => {
+    console.log('Deleting issue:', projectId, issueIid);
     return this.Issues.remove(projectId, issueIid);
   };
   deleteMergeRequest = async (projectId, mergeRequestIid) => {

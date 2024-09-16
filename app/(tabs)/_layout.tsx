@@ -2,6 +2,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 import Loading from '@/components/Loading';
 import { useSession } from '@/lib/session/SessionProvider';
+import { Ionicons, Octicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
@@ -11,7 +12,7 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <Octicons size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -102,19 +103,19 @@ export default function TabLayout() {
           name="profile"
           options={{
             title: 'Profile',
-            tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+            tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
             // ...defaultOptionsHeader,
             headerRight: () => (
               <View className='flex-row items-center'>
-                <Link href="/share"
+                <Link href="share/profile"
                   className='pl-2 pr-2 m-2'
                   asChild
                 >
                   <Pressable>
                     {
                       ({ pressed }) => (
-                        <FontAwesome
-                          name="share-alt"
+                        <Ionicons
+                          name="share-social"
                           size={25}
                           color="white"
                           // color={Colors[colorScheme ?? 'light'].text}
@@ -124,14 +125,14 @@ export default function TabLayout() {
                   </Pressable>
                 </Link >
                 <Link
-                  href="/options"
+                  href="options/profile"
                   className='pl-2 pr-2 m-2'
                   asChild
                 >
                   <Pressable>
                     {({ pressed }) => (
-                      <FontAwesome
-                        name="ellipsis-v"
+                      <Ionicons
+                        name="ellipsis-vertical"
                         size={25}
                         color="white"
                         // color={Colors[colorScheme ?? 'light'].text}

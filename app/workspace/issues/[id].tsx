@@ -65,6 +65,7 @@ export default function IssueDetailsScreen() {
                 options={{
                     title: `Issue # ${issue_iid}`,
                     // ...defaultOptionsHeader
+
                 }}
             />
             {isError && <Error error={error} />}
