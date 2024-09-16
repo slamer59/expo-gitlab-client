@@ -1,7 +1,6 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 import Loading from '@/components/Loading';
-import { defaultOptionsHeader } from '@/lib/constants';
 import { useSession } from '@/lib/session/SessionProvider';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router';
@@ -54,7 +53,7 @@ export default function TabLayout() {
           options={{
             title: 'Home',
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-            ...defaultOptionsHeader
+            // ...defaultOptionsHeader
             // headerRight: () => (
             //   <View className='flex-row items-center'>
             //     <Link href="/search" asChild>
@@ -104,7 +103,7 @@ export default function TabLayout() {
           options={{
             title: 'Profile',
             tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-            ...defaultOptionsHeader,
+            // ...defaultOptionsHeader,
             headerRight: () => (
               <View className='flex-row items-center'>
                 <Link href="/share"

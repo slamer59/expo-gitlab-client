@@ -2,6 +2,7 @@ if (__DEV__) {
   require("../ReactotronConfig");
 }
 import "@/global.css";
+import { defaultOptionsHeader } from "@/lib/constants";
 import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 import { PortalHost } from "@rn-primitives/portal";
@@ -117,7 +118,13 @@ function RootLayoutNav() {
       {/* <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}> */}
       <StatusBar />
 
-      <Stack initialRouteName={session ? "(tabs)" : "login"}>
+      <Stack
+        screenOptions={{
+          title: "", // To show nothing will loading
+          ...defaultOptionsHeader
+        }}
+        initialRouteName={session ? "(tabs)" : "login"}
+      >
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />

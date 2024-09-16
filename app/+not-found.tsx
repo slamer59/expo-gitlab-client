@@ -1,5 +1,4 @@
 import { Text, View } from '@/components/Themed';
-import { defaultOptionsHeader } from '@/lib/constants';
 import { Link, Stack, usePathname } from 'expo-router';
 
 export default function NotFoundScreen() {
@@ -7,8 +6,11 @@ export default function NotFoundScreen() {
   console.log(`This screen doesn't exist. Attempted path: ${pathname}`);
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!', ...defaultOptionsHeader }} />
-      <View className="items-center justify-center flex-1 px-5">
+      <Stack.Screen options={{
+        title: 'Oops!',
+        // ...defaultOptionsHeader 
+      }} />
+      < View className="items-center justify-center flex-1 px-5">
         <Text className="text-lg font-bold">This screen doesn't exist.</Text>
 
         {__DEV__ && (

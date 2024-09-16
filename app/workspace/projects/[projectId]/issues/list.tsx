@@ -1,7 +1,6 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalIssueUIFilters } from "@/constants/UIFilters";
-import { defaultOptionsHeader } from "@/lib/constants";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
@@ -35,7 +34,7 @@ export default function ProjectIssuesList() {
       <Stack.Screen
         options={{
           headerTitle: "Issues for Project",
-          ...defaultOptionsHeader
+          // ...defaultOptionsHeader
           // headerRight: () => (
           //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
           //     <Button size="sm" variant="primary">

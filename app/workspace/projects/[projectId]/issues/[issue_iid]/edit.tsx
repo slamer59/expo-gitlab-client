@@ -3,7 +3,6 @@ import EditLabelIssue from '@/components/Issue/issue-edit-label';
 import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
-import { defaultOptionsHeader } from '@/lib/constants';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack } from 'expo-router';
@@ -29,7 +28,7 @@ export default function IssueEditComponent() {
             <Stack.Screen
                 options={{
                     title: `Edit issues ###`,
-                    ...defaultOptionsHeader,
+                    // ...defaultOptionsHeader,
                 }}
             />
             <ScrollView className="flex-1 p-4 bg-background">

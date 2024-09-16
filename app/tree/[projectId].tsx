@@ -47,7 +47,7 @@ export default function FileExplorerScreen() {
       <Stack.Screen
         options={{
           title: "Explore",
-          ...defaultOptionsHeader
+          // ...defaultOptionsHeader
         }}
       />
       {isError && <Error error={error} />}
