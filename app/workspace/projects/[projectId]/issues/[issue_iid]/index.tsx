@@ -1,22 +1,106 @@
 import React from "react";
-import { SafeAreaView, ScrollView } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, View } from "react-native";
 
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import IssueComment from "@/components/Issue/issue-comment";
 
 import IssueHeader from "@/components/Issue/issue-header";
 import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useGetData } from "@/lib/gitlab/hooks";
+import { useSession } from "@/lib/session/SessionProvider";
+import { Ionicons, Octicons } from "@expo/vector-icons";
 import { Text } from "~/components/ui/text";
+
+
+function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state }) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Pressable>
+                    {({ pressed }) => (
+                        <Ionicons
+                            name="ellipsis-vertical"
+                            size={25}
+                            color="white"
+                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                            testID="options"
+                        />
+                    )}
+                </Pressable>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-lg'>
+                <DropdownMenuItem onPress={() => {/* Handle edit issue */ }}>
+                    <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold">Edit Issue</Text>
+                </DropdownMenuItem>
+                {state == "closed" ? <DropdownMenuItem onPress={() => openIssue()}>
+                    <Octicons name="issue-opened" size={20} color="white" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold text-white">Reopen Issue</Text>
+                </DropdownMenuItem>
+                    :
+                    <DropdownMenuItem onPress={() => closeIssue()}>
+                        <Octicons name="issue-closed" size={20} color="white" style={{ marginRight: 10 }} />
+                        <Text className="font-semibold text-white">Close Issue</Text>
+                    </DropdownMenuItem>
+                }
+                <DropdownMenuItem onPress={() => deleteIssue()}>
+                    <Ionicons name="trash" size={20} color="red" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold text-danger">Delete Issue</Text>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+}
 
 export default function IssueDetails() {
     const { projectId, issue_iid } = useLocalSearchParams();
     console.log(projectId, issue_iid);
+    const { session } = useSession()
+    const router = useRouter();
 
+    const api = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+    // Delete issue
+    const deleteIssue = async () => {
+        try {
+            router.push(`/workspace/projects/${projectId}/issues/list`);
+            await api.deleteProjectIssue(projectId, issue_iid);
+            // Issue deleted successfully, you can navigate back or perform other actions
+
+            console.log('Issue deleted successfully');
+        } catch (error) {
+            // Handle error
+            console.error('Error deleting issue:', error);
+        }
+    };
+    const closeIssue = async () => {
+        try {
+            await api.updateProjectIssue(projectId, issue_iid, { state_event: 'close' });
+            // Issue closed successfully, you can navigate back or perform other actions
+            console.log('Issue closed successfully');
+        } catch (error) {
+            // Handle error
+            console.error('Error closing issue:', error);
+        }
+    };
+    const openIssue = async () => {
+        try {
+            await api.updateProjectIssue(projectId, issue_iid, { state_event: 'reopen' });
+            // Issue closed successfully, you can navigate back or perform other actions
+            console.log('Issue closed successfully');
+        } catch (error) {
+            // Handle error
+            console.error('Error closing issue:', error);
+        }
+    };
     const params = {
         path: {
             id: projectId,
@@ -77,9 +161,48 @@ export default function IssueDetails() {
         <SafeAreaView className="flex-1">
             <Stack.Screen
                 options={{
-                    title: `${issue.references.full}`,
+                    title: issue.references.full.length > 14
+                        ? `...${issue.references.full.slice(-14)}`
+                        : issue.references.full,
                     // ...defaultOptionsHeader,
                     // headerTintColor: "black",
+                    headerRight: () => (
+                        <View className='flex-row items-center'>
+                            <Link href="share/issue" className='pl-2 pr-2 m-2'>
+                                <Pressable>
+                                    {
+                                        ({ pressed }) => (
+                                            <Ionicons
+                                                name="share-social"
+                                                size={25}
+                                                color="white"
+                                                // color={Colors[colorScheme ?? 'light'].text}
+                                                className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                                            />
+                                        )}
+                                </Pressable>
+                            </Link >
+                            {/* <Link
+                                href="options/issue"
+                                className='pl-2 pr-2 m-2'
+                                asChild
+                            >
+                                <Pressable>
+                                    {({ pressed }) => (
+                                        <Ionicons
+                                            name="ellipsis-vertical"
+                                            size={25}
+                                            color="white"
+                                            // color={Colors[colorScheme ?? 'light'].text}
+                                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                                            testID="options"
+                                        />
+                                    )}
+                                </Pressable>
+                            </Link> */}
+                            <IssueOptionsMenu openIssue={openIssue} closeIssue={closeIssue} deleteIssue={deleteIssue} state={issue.state} />
+                        </View >
+                    )
                 }}
             />
             <ScrollView className="min-h-screen p-4 bg-card">
@@ -126,9 +249,6 @@ export default function IssueDetails() {
                         <Text className="mt-2 text-white">
                             Link issues together to show that they're
                             related.
-                            <Text className="text-blue-500 ">
-                                {" "}Learn more.
-                            </Text>
                         </Text>
                     }
                 />
@@ -140,9 +260,6 @@ export default function IssueDetails() {
                     empty={
                         <Text className="mt-2 text-white">
                             Related merge requests will appear here.
-                            <Text className="text-blue-500">
-                                {" "}  Learn more.
-                            </Text>
                         </Text>
                     }
                 />
