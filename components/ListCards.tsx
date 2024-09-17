@@ -32,33 +32,27 @@ export function ListComponent<T extends ListItem>({
       ))}
 
       {items && !isLoading && (
-        items.map((item, index) => {
+        items.map((item) => {
           const params = Object.keys(paramsMap).reduce((acc, key) => {
             acc[key] = item[paramsMap[key]];
             return acc;
           }, {});
           return (
-            <>
-              <TouchableOpacity
-                key={item.id}
-                onPress={() => {
-                  router.push({
-                    pathname: pathname,
-                    params: params,
-                  });
-                }}
-                testID={`card-${index}`}
-              >
-                <ItemComponent
-                  key={item.id}
-                  item={item}
-                />
-              </TouchableOpacity >
-            </>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => {
+                router.push({
+                  pathname: pathname,
+                  params: params,
+                });
+              }}
+              testID={`card-${item.id}`}
+            >
+              <ItemComponent item={item} />
+            </TouchableOpacity>
           );
         })
       )}
-
     </>
   );
 }
