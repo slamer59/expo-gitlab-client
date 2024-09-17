@@ -9,6 +9,7 @@ import React from "react";
 import { ScrollView, View } from "react-native";
 
 import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
+import { headerRightMergeRequest } from "./headerRight";
 
 const mrExamples = {
     "id": 155016530,
@@ -231,6 +232,8 @@ export default function MergeRequestDetails() {
                             <Text className="text-sm text-muted">{mr?.references.full}</Text>
                         </View>)
                     ,
+                    headerRight: headerRightMergeRequest()
+
                     // ...defaultOptionsHeader
                 }}
             />

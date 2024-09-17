@@ -1,62 +1,22 @@
 import React from "react";
-import { Pressable, SafeAreaView, ScrollView, View } from "react-native";
+import { SafeAreaView, ScrollView } from "react-native";
 
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import IssueComment from "@/components/Issue/issue-comment";
 
 import IssueHeader from "@/components/Issue/issue-header";
 import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { useSession } from "@/lib/session/SessionProvider";
-import { Ionicons, Octicons } from "@expo/vector-icons";
 import { Text } from "~/components/ui/text";
+import { headerRightProjectIssue } from "./headerRight";
 
 
-function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state }) {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Pressable>
-                    {({ pressed }) => (
-                        <Ionicons
-                            name="ellipsis-vertical"
-                            size={25}
-                            color="white"
-                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                            testID="options"
-                        />
-                    )}
-                </Pressable>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-lg'>
-                <DropdownMenuItem onPress={() => {/* Handle edit issue */ }}>
-                    <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold">Edit Issue</Text>
-                </DropdownMenuItem>
-                {state == "closed" ? <DropdownMenuItem onPress={() => openIssue()}>
-                    <Octicons name="issue-opened" size={20} color="white" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-white">Reopen Issue</Text>
-                </DropdownMenuItem>
-                    :
-                    <DropdownMenuItem onPress={() => closeIssue()}>
-                        <Octicons name="issue-closed" size={20} color="white" style={{ marginRight: 10 }} />
-                        <Text className="font-semibold text-white">Close Issue</Text>
-                    </DropdownMenuItem>
-                }
-                <DropdownMenuItem onPress={() => deleteIssue()}>
-                    <Ionicons name="trash" size={20} color="red" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-danger">Delete Issue</Text>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
-}
 
 export default function IssueDetails() {
     const { projectId, issue_iid } = useLocalSearchParams();
@@ -166,81 +126,12 @@ export default function IssueDetails() {
                         : issue.references.full,
                     // ...defaultOptionsHeader,
                     // headerTintColor: "black",
-                    headerRight: () => (
-                        <View className='flex-row items-center'>
-                            <Link href="share/issue" className='pl-2 pr-2 m-2'>
-                                <Pressable>
-                                    {
-                                        ({ pressed }) => (
-                                            <Ionicons
-                                                name="share-social"
-                                                size={25}
-                                                color="white"
-                                                // color={Colors[colorScheme ?? 'light'].text}
-                                                className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                                            />
-                                        )}
-                                </Pressable>
-                            </Link >
-                            {/* <Link
-                                href="options/issue"
-                                className='pl-2 pr-2 m-2'
-                                asChild
-                            >
-                                <Pressable>
-                                    {({ pressed }) => (
-                                        <Ionicons
-                                            name="ellipsis-vertical"
-                                            size={25}
-                                            color="white"
-                                            // color={Colors[colorScheme ?? 'light'].text}
-                                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                                            testID="options"
-                                        />
-                                    )}
-                                </Pressable>
-                            </Link> */}
-                            <IssueOptionsMenu openIssue={openIssue} closeIssue={closeIssue} deleteIssue={deleteIssue} state={issue.state} />
-                        </View >
-                    )
+                    headerRight: headerRightProjectIssue(openIssue, closeIssue, deleteIssue, issue)
                 }}
             />
             <ScrollView className="min-h-screen p-4 bg-card">
                 <IssueHeader issue={issue} />
                 <IssueComment issue={issue} />
-                {/* </View> */}
-                {/* <View className="flex-row items-center mb-4">
-                        {IssueStatusIcon(issue, true)}
-                        <Text className="ml-1 text-gray-500">
-                            Issue created {formatDate(issue.created_at)} by
-                        </Text>
-                        <Text className="ml-1 text-blue-500">
-                            {issue.author.name}
-                        </Text>
-                    </View> */}
-                {/* <View className='p-4 mb-4 border border-gray-300 border-dashed'>
-                    <Text className='mb-2 text-gray-500'>Drag your designs here or <Text className='text-blue-500'>click to upload</Text>.</Text>
-                    <View className='flex-row items-center justify-between'>
-                        <Text className='text-gray-500'>Child items</Text>
-                        <Button title="Add" color="#BEBEBE" />
-                    </View>
-                    <Text className='mt-2 text-gray-500'>No child items are currently assigned. Use child items to break down this issue into smaller parts.</Text>
-                </View> */}
-
-                {/* <LinksToIssueSection
-                    title="Child Items"
-                    iconName="checklist"
-                    array={linkedIssues}
-                    empty={
-                        <Text className="mt-2 text-white">
-                            Link issues together to show that they're
-                            related.{" "}
-                            <Text className="text-blue-500">
-                                Learn more.
-                            </Text>
-                        </Text>
-                    }
-                /> */}
                 <LinkedIssuesSection
                     title="Linked Items"
                     iconName="link"
@@ -263,7 +154,6 @@ export default function IssueDetails() {
                         </Text>
                     }
                 />
-
 
                 <IssueNotes notes={notes} />
 
