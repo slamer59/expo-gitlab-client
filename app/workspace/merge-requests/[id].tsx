@@ -22,13 +22,12 @@ export default function MergeRequestDetailsScreen() {
         }
 
     }
-    const { data: repository, isLoading, isError } = useGetData(
+    const { data: repository, isLoading, isError, error } = useGetData(
         ['projects_id', params.query],
         "/api/v4/projects/{id}",
         params
     );
-    console.log("repository")
-    console.log(repository)
+
     const navigation = useNavigation();
     // KPI => _links
     const buttons = [

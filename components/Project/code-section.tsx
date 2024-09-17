@@ -32,7 +32,7 @@ export const CodeSection = ({
     >
       <View className="flex flex-row items-center">
         <Ionicons name="code-slash-outline" size={24} color="white" />
-        <Text className="ml-2 font-bold text-white truncate max-w-[150px]">
+        <Text className="ml-2 font-bold text-white truncate max-w-[120px]">
           {selectedBranch?.label || defaultBranchName}
         </Text>
       </View>

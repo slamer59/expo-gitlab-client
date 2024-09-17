@@ -1,10 +1,10 @@
 import { useNavigation } from "expo-router";
-import { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, Animated, View } from "react-native";
+import { useLayoutEffect } from "react";
+import { ActivityIndicator, View } from "react-native";
 
 const Loading = () => {
-    const [loadingText, setLoadingText] = useState("Igniting the rockets");
-    const spinValue = new Animated.Value(0);
+    // const [loadingText, setLoadingText] = useState("Igniting the rockets");
+    // const spinValue = new Animated.Value(0);
     const navigation = useNavigation();
     useLayoutEffect(() => {
         navigation.setOptions({
