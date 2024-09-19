@@ -18,17 +18,16 @@ export default function IssueEditComponent() {
     });
     const { projectId, issue_iid: issueIid } = useLocalSearchParams();
 
-    const { data: issue, loading, error, refetch } = api.useProjectIssue(projectId, issueIid) ?? {};
+    const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
 
     const updateIssue = useCallback(async (updatedData) => {
         try {
             await api.updateProjectIssue(projectId, issueIid, updatedData);
-            refetch(); // Refresh the issue data after update
         } catch (error) {
             console.error('Error updating issue:', error);
             // Handle error (e.g., show an error message to the user)
         }
-    }, [api, projectId, issueIid, refetch]);
+    }, [api, projectId, issueIid]);
 
     if (loading) return <Text>Loading...</Text>;
     if (error) return <Text>Error: {error.message}</Text>;

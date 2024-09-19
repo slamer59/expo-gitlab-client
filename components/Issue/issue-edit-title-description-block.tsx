@@ -1,6 +1,6 @@
 import { Label } from "@rn-primitives/select";
 import React, { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -9,9 +9,13 @@ import { Text } from "../ui/text";
 import { Textarea } from "../ui/textarea";
 
 export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, issue_iid }) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [issueType, setIssueType] = useState('issue');
+    const [formData, setFormData] = useState({
+        title: issue.title || '',
+        description: issue?.description || '',
+        issueType: issue?.issue_type || 'issue'
+    });
+
+    const [isLoading, setIsLoading] = useState(false);
     const insets = useSafeAreaInsets();
     const contentInsets = {
         top: insets.top,
@@ -22,26 +26,40 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
 
     useEffect(() => {
         if (issue) {
-            setTitle(issue.title || '');
-            setDescription(issue.description || '');
-            setIssueType(issue.issue_type || 'issue');
+            setFormData({
+                title: issue.title || '',
+                description: issue.description || '',
+                issueType: issue.issue_type || 'issue'
+            });
         }
     }, [issue]);
 
     const handleCancel = useCallback(() => {
-        setTitle(issue.title || '');
-        setDescription(issue.description || '');
-        setIssueType(issue.issue_type || 'issue');
+        setFormData({
+            title: issue.title || '',
+            description: issue.description || '',
+            issueType: issue.issue_type || 'issue'
+        });
     }, [issue]);
 
-    const handleSave = useCallback(() => {
+    const handleSave = useCallback(async () => {
+        console.log("Save button clicked");
+        Keyboard.dismiss();
+
+        setIsLoading(true);
         const updatedData = {
-            title,
-            description,
-            issue_type: issueType,
+            title: formData.title,
+            description: formData.description,
+            issue_type: formData.issueType,
         };
-        updateIssue(updatedData);
-    }, [title, description, issueType, updateIssue]);
+        try {
+            await updateIssue(updatedData);
+        } catch (error) {
+            console.error("Error updating issue:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [formData.title, formData.description, formData.issueType, updateIssue]);
 
     return (
         <>
@@ -50,8 +68,8 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
                 <Input
                     placeholder="Issue Title"
                     className="text-white"
-                    value={title}
-                    onChangeText={setTitle}
+                    value={formData.title}
+                    onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
                     aria-labelledby="title"
                     aria-errormessage='titleInputError'
                     testID="input-title"
@@ -59,8 +77,11 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
             </View>
             <View className="mb-4">
                 <Select
-                    value={issueType}
-                    onValueChange={setIssueType}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, issueType: value?.value }))}
+                    defaultValue={{
+                        label: formData.issueType ? formData.issueType.charAt(0).toUpperCase() + formData.issueType.slice(1) : "Issue",
+                        value: formData.issueType || "issue"
+                    }}
                     aria-labelledby="issue-type"
                     aria-errormessage='issueTypeInputError'
                     testID="select-issue-type"
@@ -86,10 +107,11 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
             <View className="mb-2">
                 <Textarea
                     placeholder="Issue Description"
-                    value={description}
-                    onChangeText={setDescription}
-                    multiline
-                    numberOfLines={4}
+                    value={formData.description}
+                    onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
+
+                // multiline
+                // numberOfLines={4}
                 />
             </View>
             <View className="flex flex-row justify-start mt-4 mb-2 space-x-2">
@@ -97,13 +119,15 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
                     variant="destructive"
                     onPress={handleSave}
                     className='m-2'
+                    disabled={isLoading}
                 >
-                    <Text>Save changes</Text>
+                    <Text>{isLoading ? "⏳  Loading   " : "Save changes"}</Text>
                 </Button>
                 <Button
                     variant="outline"
                     onPress={handleCancel}
                     className='m-2'
+                    disabled={isLoading}
                 >
                     <Text>Cancel</Text>
                 </Button>

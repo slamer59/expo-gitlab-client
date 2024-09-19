@@ -100,7 +100,7 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
                     {users && users.length > 0 ? (
                         users?.map((user: any) => <>
                             {!checkedIds.includes(`${user.id}`) ? <>
-                                <Assignee assignee={user} >
+                                <Assignee key={user.id} assignee={user}>
                                     <Button
                                         variant="icon"
                                         onPress={() => toggleSwitch(`${user.id}`)}
