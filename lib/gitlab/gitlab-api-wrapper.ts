@@ -58,6 +58,7 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/issues`, 'POST', data);
     },
     edit: async (projectId, issueIid, data) => {
+      console.log('Editing issue:', projectId, issueIid, data);
       return this.request(`/projects/${projectId}/issues/${issueIid}`, 'PUT', data);
     },
     remove: async (projectId, issueIid) => {

@@ -121,9 +121,10 @@ export default function IssueDetails() {
         <SafeAreaView className="flex-1">
             <Stack.Screen
                 options={{
-                    title: issue.references.full.length > 14
-                        ? `...${issue.references.full.slice(-14)}`
-                        : issue.references.full,
+                    title: "",
+                    //issue.references.full.length > 14
+                    //     ? `...${issue.references.full.slice(-14)}`
+                    //     : issue.references.full,
                     // ...defaultOptionsHeader,
                     // headerTintColor: "black",
                     headerRight: headerRightProjectIssue(openIssue, closeIssue, deleteIssue, issue)
@@ -131,7 +132,7 @@ export default function IssueDetails() {
             />
             <ScrollView className="min-h-screen p-4 bg-card">
                 <IssueHeader issue={issue} />
-                <IssueComment issue={issue} />
+                <IssueComment issue={issue} projectId={projectId} />
                 <LinkedIssuesSection
                     title="Linked Items"
                     iconName="link"

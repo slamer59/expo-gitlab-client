@@ -1,11 +1,30 @@
 import { styles } from '@/lib/markdown-styles';
 import { Ionicons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 
-const IssueComment = ({ issue }) => {
-    const { author, created_at, title, description, body } = issue;
+const IssueComment = ({ issue, projectId }) => {
+    const { author, created_at, title, description, body, iid, web_url } = issue;
+    const router = useRouter();
+
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(web_url);
+    };
+
+    const handleEdit = () => {
+        router.push(`/workspace/projects/${projectId}/issues/${iid}/edit`);
+    };
+
+    const handleComment = () => {
+        // Navigate to comment section or open comment modal
+        // This depends on your app's structure
+        // For example:
+        // router.push(`/workspace/projects/${projectId}/issues/${iid}/comments`);
+    };
+
     return (
         <View className="p-4 mb-4 rounded-lg bg-card-600">
             <View className="flex-row items-center justify-between mb-2">
@@ -33,18 +52,17 @@ const IssueComment = ({ issue }) => {
                 {description || body || "No description provided."}
             </Markdown>
             <View className="flex-row justify-end">
-                <TouchableOpacity onPress={() => { }} className="mr-4">
+                <TouchableOpacity onPress={copyToClipboard} className="mr-4">
                     <Ionicons name="share-outline" size={20} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} className="mr-4">
+                <TouchableOpacity onPress={handleEdit} className="mr-4">
                     <Ionicons name="create-outline" size={20} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }}>
+                <TouchableOpacity onPress={handleComment}>
                     <Ionicons name="chatbubble-outline" size={20} color="white" />
                 </TouchableOpacity>
-
             </View>
-        </View >
+        </View>
     );
 };
 
