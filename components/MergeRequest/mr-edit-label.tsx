@@ -2,22 +2,24 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
+import { Pressable } from 'react-native';
+
 import React, { useEffect } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Pills } from '../Pills';
 import { SectionTitle } from '../Section/param';
-import { EditParamIssueDialog } from './issue-edit-param';
+import { EditParamMergeRequestDialog } from './mr-edit-param';
 
-export default function EditLabelIssue({ projectId, issueIid }) {
+export default function EditLabelMergeRequest({ projectId, mrIid }) {
     const { session } = useSession()
     const api = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
 
-    const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
-    const { execute: updateIssue, loading: updating, error: updateError } = api.useUpdateProjectIssue(projectId, issueIid);
-    const { data: labels, loading: labelsLoading, error: labelsError } = api.useProjectLabels(projectId);
+    const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
+    const { execute: updateMergeRequest, loading: updating, error: updateError } = api.useUpdateProjectMergeRequest(projectId, mrIid);
+    const { data: labels, loading: labelsLoading, error: labelsError } = api.useProjectLabels(projectId, { per_page: 100 });
 
     if (error || labelsError || updateError) return <Text>Error: {error?.message || labelsError?.message || updateError?.message}</Text>;
 
@@ -33,21 +35,21 @@ export default function EditLabelIssue({ projectId, issueIid }) {
     };
 
     const handleSave = async () => {
-        await updateIssue({
+        await updateMergeRequest({
             labels: checkedIds,
         });
     };
-
     useEffect(() => {
-        if (issue) {
-            setCheckedIds(issue.labels)
+        if (mr) {
+            setCheckedIds(mr.labels)
         }
-    }, [loading, issue]);
-
+    }, [loading, mr]);
+    console.log("checkedIds", labels?.length)
+    console.log("checkedIds", checkedIds)
     return (
         <ScrollView>
             <SectionTitle title="Labels">
-                <EditParamIssueDialog title="Labels" handleSave={handleSave} loading={updating} error={updateError}>
+                <EditParamMergeRequestDialog title="Labels" handleSave={handleSave} loading={updating} error={updateError}>
                     <Text className='text-xl font-semibold text-white'>Assigned labels</Text>
                     {checkedIds && checkedIds.length > 0 ? (
                         <View className="flex-row flex-wrap mb-4">
@@ -81,7 +83,6 @@ export default function EditLabelIssue({ projectId, issueIid }) {
                                         key={label.name}
                                         onPress={() => toggleSwitch(`${label.name}`)}
                                         className='mx-2 my-2'
-
                                     >
                                         <Pills label={label.name} variant={label.color} />
                                     </Pressable>
@@ -91,8 +92,9 @@ export default function EditLabelIssue({ projectId, issueIid }) {
                     ) : (
                         <Text className="h-12 mb-4 text-muted">No Labels</Text>
                     )}
-                </EditParamIssueDialog>
-            </SectionTitle>
+
+                </EditParamMergeRequestDialog >
+            </SectionTitle >
             {checkedIds && checkedIds.length > 0 ? (
                 <View className="flex-row flex-wrap mb-4">
                     {labels?.map((label: Label) => (

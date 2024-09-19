@@ -5,7 +5,7 @@ import { Link } from "expo-router";
 import React from 'react';
 import { View } from 'react-native';
 import { Pills } from "../Pills";
-import IssueComment from "./issue-comment";
+import MergeRequestComment from "./mr-comment";
 
 
 type LabelMap = { [key: string]: string };
@@ -51,7 +51,7 @@ const iconMap = {
     comment: "chatbubble",
     review: "checkbox",
     commit: "git-commit",
-    issue: "alert-circle",
+    mr: "alert-circle",
     "pull-request": "git-pull-request",
     release: "cube",
     discussion: "chatbubbles",
@@ -86,10 +86,12 @@ const getEventIcon = (eventType: string) => {
     ) : null;
 };
 
-const IssueNote = ({ note }) => {
+const MergeRequestNote = ({ note }) => {
+    const { project_id } = note
 
     const renderNoteWithPills = (body) => {
         const parts = body.split(/(\[`.*?`\]\(.*?\))/);
+        console.log("parts", parts);
         return (
             <Text>
                 {parts.map((part, index) => {
@@ -116,9 +118,9 @@ const IssueNote = ({ note }) => {
 
         return parts.map((part, index) => {
             if (part.match(/\#\d+/)) {
-                const issueNumber = part.slice(1);
+                const mrNumber = part.slice(1);
                 return (
-                    <Link key={index} href={`https://error.url/${issueNumber}`}>
+                    <Link key={index} href={`https://error.url/${mrNumber}`}>
                         <Text className="underline text-secondary">{part}</Text>
                     </Link>
                 );
@@ -145,7 +147,7 @@ const IssueNote = ({ note }) => {
     const label = note?.type !== "DiscussionNote" ? determineLabel(note.body, myLabelMap) : "discussion"
 
     if (note.system) {
-        return <Text className="mb-4">{getEventIcon(label) || <Text className="font-bold">{note?.author?.name}</Text>}  {renderLinkifiedText(note.body)}</Text>;
+        return <Text className="mb-4">{getEventIcon(label)}  {renderLinkifiedText(note.body)}</Text>;
     }
     // else if (note.type === 'DiscussionNote') {
     //     return (
@@ -169,19 +171,17 @@ const IssueNote = ({ note }) => {
     }
 };
 
-const IssueNotes = ({ notes }) => {
-
+const MergeRequestNotes = ({ notes }) => {
     return (
         <>
             <Text className="mb-2 text-4xl font-bold text-white">Activity</Text>
             {notes && notes.length > 0 ? <View className="p-4 mb-4">
                 {notes.map((note) => (
                     note.system ? (
-                        <IssueNote key={note.id} note={note} />
+                        <MergeRequestNote key={note.id} note={note} />
                     ) :
-                        <IssueComment key={note.id} issue={note} />
-                ))
-                }
+                        <MergeRequestComment mr={note} />
+                ))}
             </View> : <Text className="ml-2 text-white">🔍 No activity found</Text>
             }
 
@@ -189,4 +189,4 @@ const IssueNotes = ({ notes }) => {
     );
 };
 
-export default IssueNotes;
+export default MergeRequestNotes;
