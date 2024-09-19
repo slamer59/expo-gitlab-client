@@ -19,7 +19,7 @@ export function IssueCardSkeleton() {
 }
 
 export function IssueCard({ item }) {
-  console.log("IssueCard", item);
+
   return (
     <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
       <View className="mr-2">

@@ -39,7 +39,7 @@ export default function IssueEditComponent() {
                     title: `Edit Issue #${issueIid}`,
                 }}
             />
-            <ScrollView className="flex-1 p-4 bg-background">
+            <ScrollView className="flex-1 p-4 bg-card">
                 <EditTitleDescriptionIssueBlock updateIssue={updateIssue} issue={issue} projectId={projectId} issue_iid={issueIid} />
                 <Separator className="my-4" />
                 <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />

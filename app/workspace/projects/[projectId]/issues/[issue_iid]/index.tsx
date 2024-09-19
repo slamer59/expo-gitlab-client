@@ -20,7 +20,6 @@ import { headerRightProjectIssue } from "./headerRight";
 
 export default function IssueDetails() {
     const { projectId, issue_iid } = useLocalSearchParams();
-    console.log(projectId, issue_iid);
     const { session } = useSession()
     const router = useRouter();
 
@@ -117,7 +116,6 @@ export default function IssueDetails() {
     }
 
     return (
-
         <SafeAreaView className="flex-1">
             <Stack.Screen
                 options={{

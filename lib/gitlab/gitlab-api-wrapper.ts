@@ -307,8 +307,7 @@ class GitLabClient {
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
     return this.Issues.edit(projectId, issueIid, { ...data, ...options });
   };
-  updateMergeRequest = async (projectId, mergeRequestIid, title, description, options = {}) => {
-    const data = { title, description, ...options };
+  updateMergeRequest = async (projectId, mergeRequestIid, data, options = {}) => {
     return this.MergeRequests.edit(projectId, mergeRequestIid, data);
   };
 

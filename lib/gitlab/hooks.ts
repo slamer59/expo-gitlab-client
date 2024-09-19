@@ -24,7 +24,6 @@ export const useGetData = <T>(
 
   // Replace all occurrences of {key} in the endpoint string with the corresponding value from the params object
   const url = generateUrlFromParams(session, endpoint, params);
-  console.log("url", url);
   return useQuery<T>({
     queryKey: key,
     queryFn: async () => {
@@ -193,7 +192,6 @@ function generateUrlFromParams(
   let url: URL;
   try {
     url = new URL(endpoint);
-    console.log("full", url)
   } catch (error) {
     if (error instanceof TypeError) {
 
@@ -203,9 +201,7 @@ function generateUrlFromParams(
           url = url.replace(`{${key}}`, params.path[key]);
         }
       }
-
       const query = `?${new URLSearchParams(params?.query)}` || ""
-
       url = `${url}${query}`
     } else {
       // If the error is not a TypeError, it means something else went wrong
