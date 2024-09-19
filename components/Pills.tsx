@@ -5,6 +5,7 @@ import { View } from "react-native";
 export interface PillProps {
     label: string;
     variant?: string;
+    className?: string;
 }
 
 // Function to determine if a color is light or dark
@@ -26,7 +27,7 @@ function getTextColor(backgroundColor: string): string {
     return isColorLight(backgroundColor) ? 'black' : 'white';
 }
 
-export function Pills({ label, variant }: PillProps) {
+export function Pills({ label, variant, className }: PillProps) {
     let backgroundColor;
     let textColor;
 
@@ -46,7 +47,7 @@ export function Pills({ label, variant }: PillProps) {
     }
 
     return (
-        <View style={{ backgroundColor }} className={`px-2 mr-2 rounded-full self-start items-`}>
+        <View style={{ backgroundColor }} className={`px-2 mr-2 rounded-full self-start ${className}`}>
             <Text
                 style={{ color: textColor }}
                 className="text-xs font-medium"

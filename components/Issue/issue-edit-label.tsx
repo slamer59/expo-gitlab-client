@@ -105,7 +105,7 @@ export default function EditLabelIssue({ projectId, issueIid }) {
                 <View className="flex-row flex-wrap mb-4">
                     {labels?.map((label: Label) => (
                         checkedIds.includes(label.name.toString()) && (
-                            <Pills key={label.name} label={label.name} variant={label.color} />
+                            <Pills key={label.name} label={label.name} variant={label.color} className="mb-2 mr-2" />
                         )
                     ))}
                 </View>
