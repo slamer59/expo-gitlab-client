@@ -1,0 +1,58 @@
+import EditAssigneeMergeRequest from '@/components/MergeRequest/mr-edit-asignee';
+import EditLabelMergeRequest from '@/components/MergeRequest/mr-edit-label';
+import EditMilestoneMergeRequest from '@/components/MergeRequest/mr-edit-miletone';
+import EditReviewerMergeRequest from '@/components/MergeRequest/mr-edit-reviewer';
+import { EditTitleDescriptionMergeRequestBlock } from '@/components/MergeRequest/mr-edit-title-description-block';
+import { Separator } from '@/components/ui/separator';
+import { Text } from '@/components/ui/text';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useCallback } from 'react';
+import { ScrollView } from 'react-native';
+
+export default function MergeRequestEditComponent() {
+    const { session } = useSession()
+    const api = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+    const { projectId, mr_iid: mrIid } = useLocalSearchParams();
+
+    const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
+
+    const updateMergeRequest = useCallback(async (updatedData) => {
+        try {
+            await api.updateProjectMergeRequest(projectId, mrIid, updatedData);
+        } catch (error) {
+            console.error('Error updating mr:', error);
+            // Handle error (e.g., show an error message to the user)
+        }
+    }, [api, projectId, mrIid]);
+
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
+
+    return (
+        <>
+            <Stack.Screen
+                options={{
+                    title: `Edit MergeRequest #${mrIid}`,
+                }}
+            />
+            <ScrollView className="flex-1 p-4 bg-card"
+                contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+            >
+                <EditTitleDescriptionMergeRequestBlock updateMergeRequest={updateMergeRequest} mr={mr} projectId={projectId} mr_iid={mrIid} />
+                <Separator className="my-2" />
+                <EditAssigneeMergeRequest projectId={projectId} mrIid={mrIid} />
+                <Separator className="my-2" />
+                <EditReviewerMergeRequest projectId={projectId} mrIid={mrIid} />
+                <Separator className="my-2" />
+                <EditLabelMergeRequest projectId={projectId} mrIid={mrIid} />
+                <Separator className="my-2" />
+                <EditMilestoneMergeRequest projectId={projectId} mrIid={mrIid} />
+            </ScrollView>
+        </>
+    );
+};

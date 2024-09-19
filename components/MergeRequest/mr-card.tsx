@@ -45,7 +45,7 @@ export function MergeRequestCard({ item }) {
           )}
           {/* Comments */}
           {/* <View className="flex-row items-center">
-              {IssueStatusIcon(item, false)}
+              {MergeRequestStatusIcon(item, false)}
               <Text className="ml-1 text-sm text-gray-400">2</Text>
             </View> */}
         </View>

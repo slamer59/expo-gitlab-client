@@ -83,8 +83,20 @@ export default function Home() {
     },
     {
       icon: "arrow-forward",
-      text: "Dev",
+      text: "DevIssueEdit",
       screen: "workspace/projects/59795263/issues/29/edit",
+      itemColor: "bg-green"
+    },
+    {
+      icon: "arrow-forward",
+      text: "DevMergeRequest",
+      screen: "workspace/projects/59795263/merge-requests/1", ///edit",
+      itemColor: "bg-green"
+    },
+    {
+      icon: "arrow-forward",
+      text: "DevMergeRequestEdit",
+      screen: "workspace/projects/59795263/merge-requests/1/edit", ///edit",
       itemColor: "bg-green"
     }
   ];

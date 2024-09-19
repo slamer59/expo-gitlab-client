@@ -105,6 +105,9 @@ class GitLabClient {
     approve: async (projectId, mergeRequestIid) => {
       return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}/approve`, 'POST');
     },
+    remove: async (projectId, mergeRequestIid) => {
+      return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}`, 'DELETE');
+    },
   };
 
   Commits = {
@@ -307,16 +310,17 @@ class GitLabClient {
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
     return this.Issues.edit(projectId, issueIid, { ...data, ...options });
   };
-  updateMergeRequest = async (projectId, mergeRequestIid, data, options = {}) => {
+  updateProjectMergeRequest = async (projectId, mergeRequestIid, data, options = {}) => {
     return this.MergeRequests.edit(projectId, mergeRequestIid, data);
   };
+
 
   // Delete Methods
   deleteProjectIssue = async (projectId, issueIid) => {
     console.log('Deleting issue:', projectId, issueIid);
     return this.Issues.remove(projectId, issueIid);
   };
-  deleteMergeRequest = async (projectId, mergeRequestIid) => {
+  deleteProjectMergeRequest = async (projectId, mergeRequestIid) => {
     return this.MergeRequests.remove(projectId, mergeRequestIid);
   };
 
@@ -387,6 +391,7 @@ class GitLabClient {
   useProjectMilestones = this.createFetchHook(this.Milestones.all);
   useProjectPipelines = this.createFetchHook(this.Pipelines.all);
   useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
+  useProjectMergeRequest = this.createFetchHook(this.MergeRequests.show);
 
   // Users
   getUsers = this.createFetchHook(this.Users.all);
@@ -407,11 +412,11 @@ class GitLabClient {
 
   // Update
   useUpdateProjectIssue = this.createOperationHook(this.updateProjectIssue);
-  useUpdateMergeRequest = this.createOperationHook(this.updateMergeRequest);
+  useUpdateProjectMergeRequest = this.createOperationHook(this.updateProjectMergeRequest);
 
   // Delete 
   useDeleteProjectIssue = this.createOperationHook(this.deleteProjectIssue);
-  useDeleteMergeRequest = this.createOperationHook(this.deleteMergeRequest);
+  useDeleteMergeRequest = this.createOperationHook(this.deleteProjectMergeRequest);
 
 }
 

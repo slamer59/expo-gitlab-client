@@ -2,7 +2,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Text } from "@/components/ui/text";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import * as Clipboard from 'expo-clipboard';
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { Pressable, View } from "react-native";
 
 interface MergeRequestOptionsMenuProps {
@@ -30,15 +30,13 @@ function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, 
                 </Pressable>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-lg'>
-                <Link href="edit/merge-request" asChild>
-                    <DropdownMenuItem>
-                        <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
-                        <Text className="font-semibold">Edit</Text>
-                    </DropdownMenuItem>
-                </Link>
+                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/merge-requests/${mrIid}/edit`)}>
+                    <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold">Edit</Text>
+                </DropdownMenuItem>
                 <DropdownMenuItem onPress={() => {/* Implement change base branch functionality */ }}>
                     <Octicons name="git-branch" size={20} color="white" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-">Change Base Branch</Text>
+                    <Text className="font-semibold text-white">Change Base Branch</Text>
                 </DropdownMenuItem>
                 {state === 'closed' ? <DropdownMenuItem onPress={() => openMr()}>
                     <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
