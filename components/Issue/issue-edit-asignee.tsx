@@ -100,6 +100,7 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
                     {users && users.length > 0 ? (
                         users?.map((user: any) => <>
                             {!checkedIds.includes(`${user.id}`) ? <>
+
                                 <Assignee key={user.id} assignee={user}>
                                     <Button
                                         variant="icon"
@@ -108,6 +109,7 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
                                         <Ionicons name="add-circle" size={24} color="white" />
                                     </Button>
                                 </Assignee>
+
                             </> : <Text className='h-14 text-muted'> No more users in project</Text>}
 
                         </>)
