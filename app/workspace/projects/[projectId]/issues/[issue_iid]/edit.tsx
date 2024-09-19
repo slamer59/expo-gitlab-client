@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
 
@@ -16,8 +16,8 @@ export default function IssueEditComponent() {
         url: session?.url,
         token: session?.token,
     });
-    const projectId = 59795263
-    const issueIid = 30;
+    const { projectId, issue_iid: issueIid } = useLocalSearchParams();
+
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
 
     if (loading) return <Text>Loading...</Text>;
@@ -33,7 +33,7 @@ export default function IssueEditComponent() {
             />
             <ScrollView className="flex-1 p-4 bg-background">
                 <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
-                <Separator className="my-4" />
+                <Separator clasame="my-4" />
                 <EditLabelIssue projectId={projectId} issueIid={issueIid} />
                 <Separator className="my-4" />
                 <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
@@ -58,4 +58,5 @@ export default function IssueEditComponent() {
         </>
     );
 };
+
 
