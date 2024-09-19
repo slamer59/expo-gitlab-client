@@ -64,7 +64,7 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
     return (
         <>
             <View className="mb-4">
-                <Label nativeID='title' className="mb-2 font-bold text-white">Title</Label>
+                <Label nativeID='title' className="mb-2 text-xl font-semibold text-white">Title</Label>
                 <Input
                     placeholder="Issue Title"
                     className="text-white"
@@ -105,6 +105,8 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, 
                 </Select>
             </View>
             <View className="mb-2">
+                <Label nativeID='description' className="mb-2 text-xl font-semibold text-white">Description</Label>
+
                 <Textarea
                     placeholder="Issue Description"
                     value={formData.description}
