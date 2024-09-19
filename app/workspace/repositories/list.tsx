@@ -20,7 +20,6 @@ export default function ModalScreen() {
     "/api/v4/projects",
     params1
   );
-  console.log(projects)
   const params = { path: { id: rootGroupId } }
   const { data, isLoading, isError } = useGetData(
     ['projects', params.path],

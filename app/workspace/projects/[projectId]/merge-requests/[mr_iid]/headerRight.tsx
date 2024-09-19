@@ -1,10 +1,19 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Text } from "@/components/ui/text";
 import { Ionicons, Octicons } from "@expo/vector-icons";
+import * as Clipboard from 'expo-clipboard';
 import { Link } from "expo-router";
 import { Pressable, View } from "react-native";
 
-function MergeRequestOptionsMenu() {
+interface MergeRequestOptionsMenuProps {
+    openMr: () => Promise<void>;
+    closeMr: () => Promise<void>;
+    deleteMr: () => Promise<void>;
+    state: string;
+    projectId: number;
+    mrIid: number;
+}
+function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, mrIid }: MergeRequestOptionsMenuProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -29,21 +38,46 @@ function MergeRequestOptionsMenu() {
                 </Link>
                 <DropdownMenuItem onPress={() => {/* Implement change base branch functionality */ }}>
                     <Octicons name="git-branch" size={20} color="white" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold">Change Base Branch</Text>
+                    <Text className="font-semibold text-">Change Base Branch</Text>
                 </DropdownMenuItem>
-                <DropdownMenuItem onPress={() => {/* Implement close merge request functionality */ }}>
-                    <Ionicons name="close-circle-outline" size={20} color="red" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-danger">Close Merge Request</Text>
+                {state === 'closed' ? <DropdownMenuItem onPress={() => openMr()}>
+                    <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold text-success">Reopen Merge Request</Text>
                 </DropdownMenuItem>
+                    :
+                    <DropdownMenuItem onPress={() => closeMr()}>
+                        <Ionicons name="close-circle-outline" size={20} color="red" style={{ marginRight: 10 }} />
+                        <Text className="font-semibold text-danger">Close Merge Request</Text>
+                    </DropdownMenuItem>
+                }
             </DropdownMenuContent>
         </DropdownMenu>
     );
 }
 
-export function headerRightMergeRequest() {
+interface TQueryFnData {
+    state: string;
+    project_id: number;
+    iid: number;
+    web_url: string;
+}
+
+export function headerRightProjectMr(
+    reopenMr: () => Promise<void>,
+    closeMr: () => Promise<void>,
+    deleteMr: () => Promise<void>,
+    mr: TQueryFnData
+) {
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(mr.web_url);
+    };
+
     return () => (
         <View className='flex-row items-center'>
-            <Pressable onPress={() => {/* Implement share functionality */ }} className='pl-2 pr-2 m-2'>
+            <Pressable
+                onPress={copyToClipboard}
+                className='pl-2 pr-2 m-2'
+            >
                 {({ pressed }) => (
                     <Ionicons
                         name="share-social-outline"
@@ -53,7 +87,14 @@ export function headerRightMergeRequest() {
                     />
                 )}
             </Pressable>
-            <MergeRequestOptionsMenu />
+            <MergeRequestOptionsMenu
+                openMr={reopenMr}
+                closeMr={closeMr}
+                deleteMr={deleteMr}
+                state={mr.state}
+                projectId={mr.project_id}
+                mrIid={mr.iid}
+            />
         </View>
     );
 }

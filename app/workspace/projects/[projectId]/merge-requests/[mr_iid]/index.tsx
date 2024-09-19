@@ -2,12 +2,15 @@ import Loading from "@/components/Loading";
 import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useGetData } from "@/lib/gitlab/hooks";
+import { useSession } from "@/lib/session/SessionProvider";
 import { formatDate } from "@/lib/utils";
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { headerRightProjectMr } from "./headerRight";
 
 
 const mrExamples = {
@@ -247,6 +250,46 @@ const ChangesSection = ({ mr }) => (
 
 export default function MergeRequestDetails() {
     const { projectId, mr_iid } = useLocalSearchParams();
+    const { session } = useSession()
+    const router = useRouter();
+
+    const api = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+    // Delete Merge Request
+    const deleteMergeRequest = async () => {
+        try {
+            router.push(`/workspace/projects/${projectId}/merge-requests/list`);
+            await api.deleteMergeRequest(projectId, mr_iid);
+        } catch (error) {
+            console.error("Error deleting merge request:", error);
+        }
+    };
+
+    // Close Merge Request
+    const closeMergeRequest = async () => {
+        try {
+            await api.updateMergeRequest(projectId, mr_iid, {
+                state_event: "close",
+            });
+            // router.push(`/projects/${projectId}`);
+        } catch (error) {
+            console.error("Error closing merge request:", error);
+        }
+    }
+
+    // Reopening Merge Request
+    const reopenMergeRequest = async () => {
+        try {
+            await api.updateMergeRequest(projectId, mr_iid, {
+                state_event: "reopen",
+            });
+            // router.push(`/projects/${projectId}`);
+        } catch (error) {
+            console.error("Error reopening merge request:", error);
+        }
+    }
 
     const params = {
         path: {
@@ -274,16 +317,7 @@ export default function MergeRequestDetails() {
                             <Text className="text-sm text-gray-400">{mr?.references?.full}</Text>
                         </View>
                     ),
-                    headerRight: () => (
-                        <View className="flex-row">
-                            <TouchableOpacity className="mr-4">
-                                <Ionicons name="share-outline" size={24} color="white" />
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Ionicons name="ellipsis-vertical" size={24} color="white" />
-                            </TouchableOpacity>
-                        </View>
-                    ),
+                    headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr),
                 }}
             />
             <ScrollView className="flex-1 bg-background">
