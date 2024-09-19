@@ -7,7 +7,8 @@ appId: expo-gitlab-client
     id: "issue-card"
     index: 0
 - tapOn:
-    id: card-0
+    id: "issue-card"
+    index: 0
 - assertVisible: ${maestro.copiedText}
 - takeScreenshot: ./assets/maestro/Issue Details
 - back

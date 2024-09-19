@@ -9,12 +9,14 @@ appId: expo-gitlab-client
     id: "project-count"
     index: 0
 - tapOn: "Projects"
+- assertVisible: "🏠 My Projects"
 - takeScreenshot: "./assets/maestro/ProfileProjectOwned"
 - back
 - copyTextFrom:
     id: "starred-count"
     index: 0
 - tapOn: "Starred"
+- assertVisible: "⭐ Starred Projects"
 - takeScreenshot: "./assets/maestro/ProfileProjectStarred"
 - back
 ## Options Screen

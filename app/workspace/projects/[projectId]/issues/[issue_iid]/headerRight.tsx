@@ -1,11 +1,13 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Text } from "@/components/ui/text";
 import { Ionicons, Octicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
-
+import * as Clipboard from 'expo-clipboard';
+import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 
-function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state }) {
+function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state, projectId, issueIid }) {
+    const router = useRouter();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -22,7 +24,7 @@ function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state }) {
                 </Pressable>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-lg'>
-                <DropdownMenuItem onPress={() => {/* Handle edit issue */ }}>
+                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/issues/${issueIid}/edit`)}>
                     <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold">Edit Issue</Text>
                 </DropdownMenuItem>
@@ -45,42 +47,32 @@ function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state }) {
     );
 }
 
-
 export function headerRightProjectIssue(openIssue: () => Promise<void>, closeIssue: () => Promise<void>, deleteIssue: () => Promise<void>, issue: TQueryFnData) {
+
+    const copyToClipboard = async () => {
+        await Clipboard.setStringAsync(issue.web_url);
+    };
     return () => (
         <View className='flex-row items-center'>
-            <Link href="share/issue" className='pl-2 pr-2 m-2'>
-                <Pressable>
-                    {({ pressed }) => (
-                        <Ionicons
-                            name="share-social-outline"
-                            size={25}
-                            color="white"
-                            // color={Colors[colorScheme ?? 'light'].text}
-                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`} />
-                    )}
-                </Pressable>
-            </Link>
-            {/* <Link
-                href="options/issue"
-                className='pl-2 pr-2 m-2'
-                asChild
-            >
-                <Pressable>
-                    {({ pressed }) => (
-                        <Ionicons
-                            name="ellipsis-vertical"
-                            size={25}
-                            color="white"
-                            // color={Colors[colorScheme ?? 'light'].text}
-                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                            testID="options"
-                        />
-                    )}
-                </Pressable>
-            </Link> */}
-            <IssueOptionsMenu openIssue={openIssue} closeIssue={closeIssue} deleteIssue={deleteIssue} state={issue.state} />
+            <Pressable
+                onPress={copyToClipboard} className='pl-2 pr-2 m-2'>
+                {({ pressed }) => (
+                    <Ionicons
+                        name="share-social-outline"
+                        size={25}
+                        color="white"
+                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`} />
+                )}
+            </Pressable>
+
+            <IssueOptionsMenu
+                openIssue={openIssue}
+                closeIssue={closeIssue}
+                deleteIssue={deleteIssue}
+                state={issue.state}
+                projectId={issue.project_id}
+                issueIid={issue.iid}
+            />
         </View>
     );
 }
-

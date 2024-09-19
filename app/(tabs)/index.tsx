@@ -81,12 +81,12 @@ export default function Home() {
       screen: "workspace/starred/list",
       itemColor: "bg-starred"
     },
-    {
-      icon: "arrow-forward",
-      text: "Dev",
-      screen: "workspace/projects/59795263/issues/30/edit",
-      itemColor: "bg-green"
-    }
+    // {
+    //   icon: "arrow-forward",
+    //   text: "Dev",
+    //   screen: "workspace/projects/59795263/issues/30/edit",
+    //   itemColor: "bg-green"
+    // }
   ];
   // Remove icons based on feature flags
   const visibleButtons = buttons

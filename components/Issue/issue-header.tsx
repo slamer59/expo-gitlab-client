@@ -1,5 +1,5 @@
 import { getIssueStateColor, IssueState } from '@/lib/utils';
-import { Octicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { PillProps, Pills } from '../Pills';
@@ -21,8 +21,8 @@ const IssueHeader = ({ issue }) => {
             />
             <View className="flex-row items-center mt-2">
                 <TouchableOpacity className="flex-row items-center mr-2">
-                    <Octicons
-                        name="thumbsup"
+                    <Ionicons
+                        name="thumbs-up-sharp"
                         size={20}
                         color="gray"
                     />
@@ -31,8 +31,8 @@ const IssueHeader = ({ issue }) => {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity className="flex-row items-center mr-2">
-                    <Octicons
-                        name="thumbsdown"
+                    <Ionicons
+                        name="thumbs-down-sharp"
                         size={20}
                         color="gray"
                     />

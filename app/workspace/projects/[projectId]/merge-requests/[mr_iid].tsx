@@ -1,15 +1,14 @@
 import Loading from "@/components/Loading";
+import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { formatDate } from "@/lib/utils";
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams } from "expo-router";
-import React from "react";
-import { ScrollView, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 
-import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
-import { headerRightMergeRequest } from "./headerRight";
 
 const mrExamples = {
     "id": 155016530,
@@ -154,6 +153,98 @@ const mrExamples = {
     },
 }
 
+const CommitItem = ({ message }) => (
+    <View className="flex-row items-center py-2 border-b border-gray-700">
+        <Ionicons name="git-commit-outline" size={16} color="gray" />
+        <Text className="ml-2 text-sm text-white">{message}</Text>
+    </View>
+);
+
+const StatusItem = ({ icon, text, color, expandable, children }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    return (
+        <View className="mb-2">
+            <TouchableOpacity
+                className="flex-row items-center justify-between py-2"
+                onPress={() => expandable && setIsExpanded(!isExpanded)}
+            >
+                <View className="flex-row items-center">
+                    <Ionicons name={icon} size={20} color={color} />
+                    <Text className="ml-2 text-white">{text}</Text>
+                </View>
+                {expandable && (
+                    <Ionicons
+                        name={isExpanded ? "chevron-up" : "chevron-down"}
+                        size={20}
+                        color="gray"
+                    />
+                )}
+            </TouchableOpacity>
+            {isExpanded && children}
+        </View>
+    );
+};
+
+const StatusSection = ({ mr }) => (
+    <View className="p-3 mb-4 bg-gray-800 rounded-lg">
+        <Text className="mb-2 text-lg font-semibold text-white">Status</Text>
+
+        <StatusItem
+            icon="ellipse-outline"
+            text="Reviews"
+            color="gray"
+            expandable={true}
+        />
+
+        <StatusItem
+            icon="checkmark-circle"
+            text="Checks"
+            color="green"
+            expandable={true}
+        />
+
+        <StatusItem
+            icon="close-circle"
+            text="Unable to merge"
+            color="red"
+            expandable={false}
+        >
+            <Text className="mt-1 ml-6 text-sm text-gray-400">
+                A review is required.
+            </Text>
+        </StatusItem>
+    </View>
+);
+const ConversationItem = ({ title }) => (
+    <View className="flex-row items-center py-2 border-b border-gray-700">
+        <Ionicons name="chatbubble-outline" size={16} color="gray" />
+        <Text className="ml-2 text-sm text-white">{title}</Text>
+    </View>
+);
+
+
+const ChangesSection = ({ mr }) => (
+    <View className="p-3 mb-4 bg-gray-800 rounded-lg">
+        <Text className="mb-2 text-lg font-semibold text-white">Changes</Text>
+        <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center">
+                <Ionicons name="document-text-outline" size={16} color="white" />
+                <Text className="ml-2 text-white">
+                    {mr.changes_count || 2} files changed
+                </Text>
+            </View>
+            <View className="flex-row">
+                <Text className="mr-2 text-green-500">+{mr.additions || 18}</Text>
+                <Text className="text-red-500">-{mr.deletions || 2}</Text>
+            </View>
+        </View>
+        <Text className="mt-1 text-sm text-gray-400">
+            You reviewed these changes 1y ago.
+        </Text>
+    </View>
+);
+
 export default function MergeRequestDetails() {
     const { projectId, mr_iid } = useLocalSearchParams();
 
@@ -163,82 +254,39 @@ export default function MergeRequestDetails() {
             mr_iid: mr_iid,
         },
     };
-    const {
-        data: mr,
-        isLoading,
-        isError,
-        error,
-    } = useGetData(
-        ["project_issue", params.path],
+
+    const { data: mr, isLoading, isError, error } = useGetData(
+        ["project_merge_request", params.path],
         `/api/v4/projects/{id}/merge_requests/{mr_iid}`,
         params,
     );
-    console.log(mr);
-    // const {
-    //     data: notes,
-    //     isLoading: isLoadingNotes,
-    //     isError: isErrorNotes,
-    // } = useGetData(
-    //     ["project_issue_notes", params.path],
-    //     `/api/v4/projects/{id}/issues/{mr_iid}/notes`,
-    //     params,
-    // );
 
-    // const {
-    //     data: relatedMRs,
-    //     isLoading: isLoadingMR,
-    //     isError: isErrorMR,
-    // } = useGetData(
-    //     ["project_issue_mr", params.path],
-    //     `/api/v4/projects/{id}/issues/{mr_iid}/related_merge_requests`,
-    //     params,
-    // );
-
-    // const {
-    //     data: linkedMergeRequests,
-    //     isLoading: isLoadingLinkedMergeRequests,
-    //     isError: isErrorLinkedMergeRequests,
-    // } = useGetData(
-    //     ["project_issue_linked_issues", params.path],
-    //     `/api/v4/projects/{id}/issues/{mr_iid}/links`,
-    //     params,
-    // );
-
-    // if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedMergeRequests) {
-    //     return <Text>Loading...</Text>;
-    // }
-
-    // if (isError || isErrorNotes || isErrorMR || isErrorLinkedMergeRequests) {
-    //     return <Text>Error fetching data</Text>;
-    // }
-
-    if (isLoading) {
-        return <Loading />
-    }
-    if (isError) {
-        return <Error error={error} />
-    }
-
+    if (isLoading) return <Loading />;
+    if (isError) return <Text className="text-white">Error: {error.message}</Text>;
 
     return (
         <>
-            {/* https://docs.gitlab.com/ee/api/merge_requests.html */}
             <Stack.Screen
                 options={{
-                    // title: "Merge Request Details",
-                    headerTitle: props => (
-                        <View className="flex flex-col justify-center">
-                            <Text className="text-xl font-bold">{mr?.title}</Text>
-                            <Text className="text-sm text-muted">{mr?.references.full}</Text>
-                        </View>)
-                    ,
-                    headerRight: headerRightMergeRequest()
-
-                    // ...defaultOptionsHeader
+                    headerTitle: () => (
+                        <View className="flex-col justify-center">
+                            <Text className="text-lg font-bold text-white">{mr?.title}</Text>
+                            <Text className="text-sm text-gray-400">{mr?.references?.full}</Text>
+                        </View>
+                    ),
+                    headerRight: () => (
+                        <View className="flex-row">
+                            <TouchableOpacity className="mr-4">
+                                <Ionicons name="share-outline" size={24} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Ionicons name="ellipsis-vertical" size={24} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                    ),
                 }}
             />
-            <ScrollView className="min-h-screen p-4 bg-background">
-
+            <ScrollView className="flex-1 bg-background">
 
                 <View className="max-w-xl p-4 mb-6 rounded-lg shadow-md bg-card">
                     <View className="flex flex-row items-center justify-between mb-2">
@@ -306,134 +354,67 @@ export default function MergeRequestDetails() {
                         </View>
                     </View>
                 </View>
-                {/* <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
-                    <Text className="mb-2 text-lg font-semibold">
-                        Status
-                    </Text>
+                <View className="p-4">
+                    <View className="flex-row items-center justify-between mb-4">
+                        <View className="flex-row items-center">
+                            <Text className="mr-2 font-semibold text-green-500">Open</Text>
+                            <Text className="text-gray-400">main → main</Text>
+                        </View>
+                        {MergeStatusIcon(mr, true)}
+                    </View>
+
+                    <View className="mb-4">
+                        <Text className="mb-2 text-white">{mr?.description || "No description provided."}</Text>
+                        <View className="flex-row items-center">
+                            <Avatar className="w-6 h-6 mr-2">
+                                <AvatarImage source={{ uri: mr?.author?.avatar_url }} />
+                                <AvatarFallback>{mr?.author?.name?.[0]}</AvatarFallback>
+                            </Avatar>
+                            <Text className="text-gray-400">
+                                {mr?.author?.name} opened {formatDate(mr?.created_at)}
+                            </Text>
+                        </View>
+                    </View>
+                    <ChangesSection mr={mr} />
+
+                    {/* <View className="mb-4">
+                        <Text className="mb-2 font-semibold text-white">Changes</Text>
+                        <View className="p-3 bg-gray-800 rounded-md">
+                            <Text className="text-white">2 files changed</Text>
+                            <Text className="text-green-500">+18</Text>
+                            <Text className="text-red-500">-2</Text>
+                        </View>
+                    </View> */}
+
+                    <View className="mb-4">
+                        <Text className="mb-2 font-semibold text-white">Commits</Text>
+                        <View className="p-3 bg-gray-800 rounded-md">
+                            <CommitItem message="Manual job rules" />
+                            <CommitItem message="Update README.md" />
+                            <CommitItem message="Initial commit" />
+                        </View>
+                    </View>
+                    <StatusSection mr={mr} />
+
+                    {/* <View className="mb-4">
+                        <Text className="mb-2 font-semibold text-white">Status</Text>
+                        <View className="p-3 bg-gray-800 rounded-md">
+                            <StatusItem icon="checkmark-circle" text="Reviews" color="green" />
+                            <StatusItem icon="checkmark-circle" text="Checks" color="green" />
+                            <StatusItem icon="close-circle" text="Unable to merge" color="red" />
+                        </View>
+                    </View> */}
+
+                    <View className="mb-4">
+                        <Text className="mb-2 font-semibold text-white">Conversation</Text>
+                        <View className="p-3 bg-gray-800 rounded-md">
+                            <ConversationItem title="Allow APIRouter to be made from create_service" />
+                            <ConversationItem title="Update README.md" />
+                            <ConversationItem title="Merge pull request #1 from slamer59" />
+                        </View>
+                    </View>
                 </View>
-
-                <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
-                    <Text className="mb-2 text-lg font-semibold">
-                        Conversation
-                    </Text>
-                </View>
-                <View className="max-w-xl p-4 mb-6 bg-white rounded-lg shadow-md">
-                    <Text className="mb-2 text-lg font-semibold">
-                        Notifications
-                    </Text>
-                </View> */}
-
-
-
-
-
-                {/* Pull request title and description */}
-                {/* Status badge */}
-                {/* <View className={'mb-6'}>
-                        <Badge value="Open" status="success" textStyle={'text-lg px-3 py-1'} />
-                    </View> */}
-
-                {/* Branch and commit information */}
-                {/* <View className={'flex items-center space-x-4 mb-6'}>
-                        <View className={'flex items-center'}>
-                            <Ionicons name="source-branch" size={20} className={'mr-2'} />
-                            <Text>octocat:patch-1</Text>
-                        </View>
-                        <View className={'flex items-center'}>
-                            <Ionicons name="source-commit" size={20} className={'mr-2'} />
-                            <Text>2 commits</Text>
-                        </View>
-                        <View className={'flex items-center'}>
-                            <Ionicons name="file-document-outline" size={20} className={'mr-2'} />
-                            <Text>2 changed files</Text>
-                        </View>
-                    </View> */}
-
-                {/* Separator */}
-                {/* <View className={'my-6 border-t border-gray-300'} /> */}
-
-                {/* File changes summary */}
-                {/* <View className={'mb-6'}>
-                        <Text className={'text-xl font-semibold mb-2'}>Files changed</Text>
-                        <View className={'bg-muted p-4 rounded-md'}>
-                            <Text>README.md (+15 -2)</Text>
-                            <Text>CONTRIBUTING.md (+10 -0)</Text>
-                        </View>
-                    </View> */}
-
-                {/* Reviewers section */}
-                {/* <View className={'mb-6'}>
-                        <Text className={'text-xl font-semibold mb-2'}>Reviewers</Text>
-                        <View className={'flex items-center space-x-2'}>
-                            <Avatar source={{ uri: 'https://github.com/shadcn.png' }} />
-                            <Avatar source={{ uri: 'https://github.com/vercel.png' }} />
-                            <Button mode="outline" icon="account-multiple">
-                                <Text className={'mr-2'}>Add</Text>
-
-                            </Button>
-                        </View>
-                    </View> */}
-
-                {/* Labels section */}
-                {/* <View className={'mb-6'}>
-                        <Text className={'text-xl font-semibold mb-2'}>Labels</Text>
-                        <View className={'flex items-center space-x-2'}>
-                            <Badge value="documentation" status="secondary" />
-                            <Badge value="enhancement" status="secondary" />
-                            <Button mode="outline" icon="tag">
-                                <Text className={'mr-2'}>Add</Text>
-                            </Button>
-                        </View>
-                    </View> */}
-
-                {/* Separator */}
-                {/* <View className={'my-6 border-t border-gray-300'} /> */}
-
-                {/* Merge and Close buttons */}
-                {/* <View className={'flex justify-between mb-6'}>
-                        <Button mode="contained" className={'bg-green-600'}>
-                            <Text className={'mr-2'}>Merge pull request</Text>
-
-                        </Button>
-                        <Button mode="contained" className={'bg-red-600'}>
-                            <Text className={'mr-2'}>Close pull request</Text>
-                        </Button>
-                    </View> */}
-
-                {/* Comment section */}
-                {/* <View className={'mb-6'}>
-                        <Text className={'text-xl font-semibold mb-2'}>
-                            Leave a comment</Text>
-                        <TextInput placeholder="Type your comment here." />
-                        <Button mode="contained" className={'mt-2'}>
-                            <Text className={'mr-2'}>Comment</Text>
-                        </Button>
-                    </View> */}
-
-                {/* Timeline of events */}
-                {/* <View>
-                        <Text className={'text-xl font-semibold mb-2'}>Timeline</Text>
-                        <View className={'space-y-4'}>
-                            <View className={'flex items-start'}>
-                                <Ionicons name="clock-outline" size={20} className={'mr-2 mt-1'} />
-                                <View>
-                                    <Text className={'font-semibold'}>octocat opened this pull request 2 hours ago</Text>
-                                    <Text className={'text-muted-foreground'}>1 commit with 25 additions and 2 deletions</Text>
-                                </View>
-                            </View>
-                            <View className={'flex items-start'}>
-                                <Ionicons name="message-text-outline" size={20} className={'mr-2 mt-1'} />
-                                <View>
-                                    <Text className={'font-semibold'}>shadcn commented 1 hour ago</Text>
-                                    <Text>Looks good to me! Ready for review.</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </View> */}
-
-
-            </ScrollView >
-
+            </ScrollView>
         </>
     );
 }
