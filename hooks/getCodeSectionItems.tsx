@@ -6,7 +6,7 @@ export function getCodeSectionItems(
 ): IListItems[] {
   return [
     {
-      icon: "git-branch-outline",
+      icon: "code-slash-outline",
       text: "Code",
       kpi: "",
       onAction: () =>

@@ -118,7 +118,7 @@ const convertMarkdownToHtml = async (markdown) => {
     }
 };
 
-const IssueNote = ({ note }) => {
+export const IssueNote = ({ note }) => {
     const [htmlContent, setHtmlContent] = useState('');
     const { width } = useWindowDimensions();
 

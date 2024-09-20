@@ -100,7 +100,7 @@ function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
 
               <Text className="ml-2 text-white">{"More"}</Text>
             </View>
-            <Ionicons name="arrow-down" />
+            <Ionicons name="arrow-down" color="white" />
           </View>
         </CollapsibleTrigger>
         <CollapsibleContent>

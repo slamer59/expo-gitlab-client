@@ -30,7 +30,7 @@ export function ProjectHeader({ repository, isLoading }) {
         return <ProjectHeaderSkeleton />;
     }
 
-    return <View className="p-4 m-2 rounded-lg bg-card">
+    return <View className="m-4">
         <View className="flex-row items-center">
             <Avatar alt={`${repository?.owner?.name}'s Avatar`}>
                 <AvatarImage
@@ -45,7 +45,7 @@ export function ProjectHeader({ repository, isLoading }) {
                     <Ionicons name="folder-outline" size={28} color="white" />
                 </AvatarFallback>
             </Avatar>
-            <Text className="ml-2 text-lg font-bold text-white">
+            <Text className="ml-2 font-bold text-md text-muted">
                 {repository?.owner?.name ||
                     repository?.namespace?.name ||
                     "Default name"}
@@ -54,7 +54,7 @@ export function ProjectHeader({ repository, isLoading }) {
         <Text className="p-2 text-2xl font-bold text-white">
             {repository.name}
         </Text>
-        <Text className="text-white">{repository.description}</Text>
+
         <View className="flex-row items-center">
             <Ionicons name="lock-closed-outline" size={18} color="white" />
             <Text className="ml-2 text-lg font-bold text-muted">
@@ -91,5 +91,6 @@ export function ProjectHeader({ repository, isLoading }) {
             </View>
         </View>
         <Text>{repository.language}</Text>
+        <Text className="text-white">{repository.description}</Text>
     </View>
 }
