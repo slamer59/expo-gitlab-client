@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Text } from "@/components/ui/text";
+import { copyToClipboard, shareView } from "@/lib/utils";
 import { Ionicons, Octicons } from "@expo/vector-icons";
-import * as Clipboard from 'expo-clipboard';
 import { router } from "expo-router";
 import { Pressable, View } from "react-native";
 
@@ -13,7 +13,7 @@ interface MergeRequestOptionsMenuProps {
     projectId: number;
     mrIid: number;
 }
-function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, mrIid }: MergeRequestOptionsMenuProps) {
+function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, mrIid, mrUrl }: MergeRequestOptionsMenuProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -38,6 +38,10 @@ function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, 
                     <Octicons name="git-branch" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold text-white">Change Base Branch</Text>
                 </DropdownMenuItem> */}
+                <DropdownMenuItem onPress={async () => await copyToClipboard(mrUrl)}>
+                    <Ionicons name="copy" size={20} color="white" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold">Copy Url</Text>
+                </DropdownMenuItem>
                 {state === 'closed' ? <DropdownMenuItem onPress={() => openMr()}>
                     <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
                     <Text className="font-semibold text-success">Reopen Merge Request</Text>
@@ -66,14 +70,14 @@ export function headerRightProjectMr(
     deleteMr: () => Promise<void>,
     mr: TQueryFnData
 ) {
-    const copyToClipboard = async () => {
-        await Clipboard.setStringAsync(mr.web_url);
-    };
+
 
     return () => (
         <View className='flex-row items-center'>
             <Pressable
-                onPress={copyToClipboard}
+                onPress={async () => {
+                    await shareView(mr.web_url);
+                }}
                 className='pl-2 pr-2 m-2'
             >
                 {({ pressed }) => (
@@ -81,8 +85,7 @@ export function headerRightProjectMr(
                         name="share-social-outline"
                         size={25}
                         color="white"
-                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                    />
+                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`} />
                 )}
             </Pressable>
             <MergeRequestOptionsMenu
@@ -92,6 +95,7 @@ export function headerRightProjectMr(
                 state={mr.state}
                 projectId={mr.project_id}
                 mrIid={mr.iid}
+                mrUrl={mr.web_url}
             />
         </View>
     );

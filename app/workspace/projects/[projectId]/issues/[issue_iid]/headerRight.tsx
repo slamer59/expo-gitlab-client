@@ -1,11 +1,13 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Text } from "@/components/ui/text";
+import { copyToClipboard, shareView } from "@/lib/utils";
 import { Ionicons, Octicons } from "@expo/vector-icons";
-import * as Clipboard from 'expo-clipboard';
+
 import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 
-function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state, projectId, issueIid }) {
+
+function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state, projectId, issueIid, issueUrl }) {
     const router = useRouter();
 
     return (
@@ -28,6 +30,10 @@ function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state, projectId
                     <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold">Edit Issue</Text>
                 </DropdownMenuItem>
+                <DropdownMenuItem onPress={async () => await copyToClipboard(issueUrl)}>
+                    <Ionicons name="copy" size={20} color="white" style={{ marginRight: 10 }} />
+                    <Text className="font-semibold">Copy Url</Text>
+                </DropdownMenuItem>
                 {state == "closed" ? <DropdownMenuItem onPress={() => openIssue()}>
                     <Octicons name="issue-opened" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold text-white">Reopen Issue</Text>
@@ -49,13 +55,15 @@ function IssueOptionsMenu({ openIssue, closeIssue, deleteIssue, state, projectId
 
 export function headerRightProjectIssue(openIssue: () => Promise<void>, closeIssue: () => Promise<void>, deleteIssue: () => Promise<void>, issue: TQueryFnData) {
 
-    const copyToClipboard = async () => {
-        await Clipboard.setStringAsync(issue.web_url);
-    };
+
     return () => (
         <View className='flex-row items-center'>
             <Pressable
-                onPress={copyToClipboard} className='pl-2 pr-2 m-2'>
+                onPress={async () => {
+                    await shareView(issue.web_url);
+                }}
+                className='pl-2 pr-2 m-2'
+            >
                 {({ pressed }) => (
                     <Ionicons
                         name="share-social-outline"
@@ -72,6 +80,7 @@ export function headerRightProjectIssue(openIssue: () => Promise<void>, closeIss
                 state={issue.state}
                 projectId={issue.project_id}
                 issueIid={issue.iid}
+                issueUrl={issue.web_url}
             />
         </View>
     );
