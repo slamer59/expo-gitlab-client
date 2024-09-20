@@ -17,41 +17,37 @@ function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Pressable>
+                <Pressable testID="mr-options-menu">
                     {({ pressed }) => (
                         <Ionicons
                             name="ellipsis-vertical"
                             size={25}
                             color="white"
                             className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                            testID="options"
                         />
                     )}
                 </Pressable>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-lg'>
-                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/merge-request/${mrIid}/edit`)}>
+                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/merge-requests/${mrIid}/edit`)} testID="mr-edit-option">
                     <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold">Edit</Text>
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem onPress={() => {console.log("Change branch") }}>
-                    <Octicons name="git-branch" size={20} color="white" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-white">Change Base Branch</Text>
-                </DropdownMenuItem> */}
-                <DropdownMenuItem onPress={async () => await copyToClipboard(mrUrl)}>
+                <DropdownMenuItem onPress={async () => await copyToClipboard(mrUrl)} testID="mr-copy-url-option">
                     <Ionicons name="copy" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold">Copy Url</Text>
                 </DropdownMenuItem>
-                {state === 'closed' ? <DropdownMenuItem onPress={() => openMr()}>
-                    <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
-                    <Text className="font-semibold text-success">Reopen Merge Request</Text>
-                </DropdownMenuItem>
-                    :
-                    <DropdownMenuItem onPress={() => closeMr()}>
+                {state === 'closed' ? (
+                    <DropdownMenuItem onPress={() => openMr()} testID="mr-reopen-option">
+                        <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
+                        <Text className="font-semibold text-success">Reopen Merge Request</Text>
+                    </DropdownMenuItem>
+                ) : (
+                    <DropdownMenuItem onPress={() => closeMr()} testID="mr-close-option">
                         <Ionicons name="close-circle-outline" size={20} color="red" style={{ marginRight: 10 }} />
                         <Text className="font-semibold text-danger">Close Merge Request</Text>
                     </DropdownMenuItem>
-                }
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );
@@ -70,8 +66,6 @@ export function headerRightProjectMr(
     deleteMr: () => Promise<void>,
     mr: TQueryFnData
 ) {
-
-
     return () => (
         <View className='flex-row items-center'>
             <Pressable
@@ -79,13 +73,15 @@ export function headerRightProjectMr(
                     await shareView(mr.web_url);
                 }}
                 className='pl-2 pr-2 m-2'
+                testID="mr-share-button"
             >
                 {({ pressed }) => (
                     <Ionicons
                         name="share-social-outline"
                         size={25}
                         color="white"
-                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`} />
+                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                    />
                 )}
             </Pressable>
             <MergeRequestOptionsMenu

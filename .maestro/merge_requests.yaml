@@ -16,5 +16,50 @@ appId: expo-gitlab-client
 - tapOn: "Odio aut et rerum."
 - assertVisible: "Changes"
 - takeScreenshot: ./assets/maestro/Merge Request Details
+
+# Test share button
+- tapOn:
+    id: "mr-share-button"
+- assertVisible: "Sharing text" # This might vary depending on the device's share dialog
+- back
+
+# Test options menu
+- tapOn:
+    id: "mr-options-menu"
+- assertVisible: "Edit"
+- assertVisible: "Copy Url"
+
+# Test edit option
+# - copyTextFrom:
+#     id: "issue-card"
+#     index: 0
+- tapOn:
+    id: "mr-edit-option"
+- takeScreenshot: ./assets/maestro/Merge Request Edit
+# - assertVisible: "Edit Merge Request #27" # Assuming this is the title of the edit page
+- back
+
+# Test copy URL option
+- tapOn:
+    id: "mr-options-menu"
+- tapOn:
+    id: "mr-copy-url-option"
+# - assertVisible: "URL copied to clipboard" # Assuming you show a toast or alert when URL is copied
+# - back
+
+# Test close/reopen option (this will depend on the current state of the MR)
+- tapOn:
+    id: "mr-options-menu"
+# - tapOn:
+#     id: "mr-close-option"
+- assertVisible: "Closed" # Assuming you show a confirmation message
+
+# If the MR is now closed, test reopening
+- tapOn:
+    id: "mr-options-menu"
+- tapOn:
+    id: "mr-reopen-option"
+- assertVisible: "Merge request reopened" # Assuming you show a confirmation message
+
 - back
 - back
