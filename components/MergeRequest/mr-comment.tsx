@@ -15,7 +15,7 @@ const MergeRequestComment = ({ mr, projectId }) => {
     };
 
     const handleEdit = () => {
-        router.push(`/workspace/projects/${projectId}/mrs/${iid}/edit`);
+        router.push(`/workspace/projects/${projectId}/merge-requests/${iid}/edit`);
     };
 
     const handleComment = () => {

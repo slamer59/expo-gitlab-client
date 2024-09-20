@@ -520,13 +520,6 @@ export default function MergeRequestDetails() {
                 <Stack.Screen
                     options={{
                         title: "",
-
-                        // headerTitle: () => (
-                        //     <View className="flex-col justify-center">
-                        //         <Text className="text-lg font-bold text-white">{mr?.title}</Text>
-                        //         <Text className="text-sm text-gray-400">{mr?.references?.full}</Text>
-                        //     </View>
-                        // ),
                         headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr.mr),
                     }}
                 />
