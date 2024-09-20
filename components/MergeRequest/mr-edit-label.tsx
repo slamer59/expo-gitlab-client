@@ -44,8 +44,7 @@ export default function EditLabelMergeRequest({ projectId, mrIid }) {
             setCheckedIds(mr.labels)
         }
     }, [loading, mr]);
-    console.log("checkedIds", labels?.length)
-    console.log("checkedIds", checkedIds)
+
     return (
         <ScrollView>
             <SectionTitle title="Labels">

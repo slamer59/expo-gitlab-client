@@ -2,6 +2,7 @@ import EditAssigneeMergeRequest from '@/components/MergeRequest/mr-edit-asignee'
 import EditLabelMergeRequest from '@/components/MergeRequest/mr-edit-label';
 import EditMilestoneMergeRequest from '@/components/MergeRequest/mr-edit-miletone';
 import EditReviewerMergeRequest from '@/components/MergeRequest/mr-edit-reviewer';
+import EditTargetBranchMergeRequest from '@/components/MergeRequest/mr-edit-target-branch';
 import { EditTitleDescriptionMergeRequestBlock } from '@/components/MergeRequest/mr-edit-title-description-block';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
@@ -44,6 +45,8 @@ export default function MergeRequestEditComponent() {
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
                 <EditTitleDescriptionMergeRequestBlock updateMergeRequest={updateMergeRequest} mr={mr} projectId={projectId} mr_iid={mrIid} />
+                <Separator className="my-2" />
+                <EditTargetBranchMergeRequest projectId={projectId} mrIid={mrIid} />
                 <Separator className="my-2" />
                 <EditAssigneeMergeRequest projectId={projectId} mrIid={mrIid} />
                 <Separator className="my-2" />
