@@ -42,6 +42,7 @@ const myLabelMap: LabelMap = {
     "unlocked": "unlocked",
     "locked": "locked",
     "requested": "review-request",
+    "merge": "merged",
 };
 
 
@@ -74,6 +75,7 @@ const iconMap = {
     unlocked: "lock-open",
     locked: "lock-closed",
     requested: "eye",
+    merged: "git-merge",
 };
 
 
@@ -161,82 +163,6 @@ const IssueNote = ({ note }) => {
         </View>
     );
 };
-
-
-
-// const IssueNote = ({ note }) => {
-//     const renderPill = (branchName, url, key) => (
-//         <React.Fragment key={key}>
-//             <Pills label={branchName} />
-//             <Text className="font-semibold text-primary"> {url}</Text>
-//         </React.Fragment>
-//     );
-
-//     const renderLink = (href, text, className, key) => (
-//         <Link key={key} href={href}>
-//             <Text className={className}>{text}</Text>
-//         </Link>
-//     );
-
-//     const renderNoteWithPills = (body) => {
-//         const parts = body.split(/(\[`.*?`\]\(.*?\))/);
-//         return (
-//             <Text>
-//                 {parts.map((part, index) => {
-//                     const match = part.match(/\[`(.*?)`\]\((.*?)\)/);
-//                     return match
-//                         ? renderPill(match[1], match[2], index)
-//                         : <Text key={index}>{part}</Text>;
-//                 })}
-//             </Text>
-//         );
-//     };
-
-//     const renderLinkifiedText = (text) => {
-//         const parts = text.split(/(\#\d+|\!\d+|\@\S+|(?<=: )([0-9a-f]{40})|changed target branch from `[^`]+` to `[^`]+`)/);
-
-//         return parts.map((part, index) => {
-//             if (!part) return null; // Handle undefined or empty parts
-
-//             if (part.match(/\#\d+/)) {
-//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "underline text-secondary", index);
-//             } else if (part.includes('[`') && part.includes('`]')) {
-//                 return renderNoteWithPills(part);
-//             } else if (part.match(/\!\d+/)) {
-//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "underline text-secondary", index);
-//             } else if (part.match(/\@\S+/)) {
-//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "font-semibold underline text-secondary", index);
-//             } else if (part.match(/^[0-9a-f]{40}$/)) {
-//                 return renderLink(`https://your-git-repository-url/commit/${part}`, part, "underline text-secondary", index);
-//             } else if (part.match(/changed target branch from `[^`]+` to `[^`]+`/)) {
-//                 const [, oldBranch, newBranch] = part.match(/changed target branch from `([^`]+)` to `([^`]+)`/);
-//                 return (
-//                     <Text key={index}>
-//                         changed target branch from <Text className="font-semibold">`{oldBranch}`</Text> to <Text className="font-semibold">`{newBranch}`</Text>
-//                     </Text>
-//                 );
-//             }
-//             return <Text key={index}>{part}</Text>;
-//         }).filter(Boolean); // Remove null elements
-//     };
-
-
-//     if (note.system) {
-//         return (
-//             <View className="flex-row mb-2">
-//                 <Text className="font-bold">{note?.author?.name} </Text>
-//                 {renderLinkifiedText(note.body)}
-//             </View>
-//         );
-//     }
-
-//     return (
-//         <View className="mb-2 bg-background">
-//             <Text className="font-bold text-white">{note.author.name}</Text>
-//             <Text>{note.body}</Text>
-//         </View>
-//     );
-// };
 
 const IssueNotes = ({ notes }) => {
 
