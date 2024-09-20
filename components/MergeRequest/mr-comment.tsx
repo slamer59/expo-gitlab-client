@@ -1,4 +1,5 @@
 import { styles } from '@/lib/markdown-styles';
+import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
@@ -41,7 +42,7 @@ const MergeRequestComment = ({ mr, projectId }) => {
                     )}
                     <Text className="font-semibold text-white">{author.name}</Text>
                 </View>
-                <Text className="text-sm text-gray-400">{new Date(created_at).toLocaleDateString()}</Text>
+                <Text className="text-sm text-gray-400">{formatDate(created_at)}</Text>
             </View>
 
             {title && <Text className="mb-2 font-bold text-white">{title}</Text>}
@@ -51,6 +52,8 @@ const MergeRequestComment = ({ mr, projectId }) => {
             >
                 {description || body || "No description provided."}
             </Markdown>
+
+
             <View className="flex-row justify-end">
                 <TouchableOpacity onPress={copyToClipboard} className="mr-4">
                     <Ionicons name="share-outline" size={20} color="white" />

@@ -485,24 +485,8 @@ export default function MergeRequestDetails() {
         }
     }
 
-    const params = {
-        path: {
-            id: projectId,
-            mr_iid: mr_iid,
-        },
-    };
-
-    // const { data: mr, isLoading, isError, error } = useGetData(
-    //     ["project_merge_request", params.path],
-    //     `/api/v4/projects/{id}/merge_requests/{mr_iid}`,
-    //     params,
-    // );
     const { data: mr, isLoading, isError, error } = useMergeRequestDetails(projectId, mr_iid);
 
-
-
-
-    // console.log("Merge Request", mr.notes)
     if (isLoading) return <Loading />;
     if (isError) return <Text className="text-white">Error: {error.message}</Text>;
 

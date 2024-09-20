@@ -1,7 +1,7 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, Text } from "react-native";
+import { SafeAreaView, ScrollView, Text } from "react-native";
 
 import { getCodeSectionItems } from "@/hooks/getCodeSectionItems";
 import { getWorkspaceItems } from "@/hooks/getWorkspaceItems";
@@ -27,16 +27,6 @@ export default function ProjectDetailsScreen() {
     url: session?.url,
     token: session?.token,
   });
-  // header function
-  // const response = api.useCreateProjectIssue(
-  //   projectId,
-  //   {
-  //     title: "New Issue",
-  //     description: "This is a new issue.",
-  //   }
-  // )
-
-
 
   const { data: selfData, isLoading: isSelfLoading, error: selfError } = useQuery({
     queryKey: ["self"],
@@ -77,30 +67,36 @@ export default function ProjectDetailsScreen() {
   const listItemsSecond = getCodeSectionItems(repository, router);
 
 
-
   return (
-    <ScrollView className="flex-1 p-2 bg-background">
+    <SafeAreaView className="flex-1">
       <Stack.Screen options={{
-        title: "Project Details",
-        headerRight: headerRightProject({ onEdit: () => console.log("edit") })
-
+        title: "",
+        headerRight: headerRightProject(
+          selfData
+        ),
       }} />
+      <ScrollView
+        className="flex-1 p-2 bg-card"
+        contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
 
-      {isError && <Error error={error} />}
-      {isSelfLoading || isLoading ? (
-        <Loading />
-      ) : (<>
-        <ProjectHeader repository={repository} isLoading={isSelfLoading || isLoading} />
-        <WorkspaceSection listItems={listItems} />
-        <CodeSection
-          selectedBranch={selectedBranch}
-          defaultBranchName={defaultBranchName}
-          repoBranchesName={repoBranchesName}
-          handleValueChange={setSelectedBranch}
-          listItemsSecond={listItemsSecond}
-        />
-      </>
-      )}
-    </ScrollView>
+      >
+        {isError && <Error error={error} />
+        }
+        {isSelfLoading || isLoading ? (
+          <Loading />
+        ) : (<>
+          <ProjectHeader repository={repository} isLoading={isSelfLoading || isLoading} />
+          <WorkspaceSection listItems={listItems} />
+          <CodeSection
+            selectedBranch={selectedBranch}
+            defaultBranchName={defaultBranchName}
+            repoBranchesName={repoBranchesName}
+            handleValueChange={setSelectedBranch}
+            listItemsSecond={listItemsSecond}
+          />
+        </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }

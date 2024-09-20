@@ -98,6 +98,18 @@ export default function Home() {
       text: "DevMergeRequestEdit",
       screen: "workspace/projects/59795263/merge-requests/1/edit", ///edit",
       itemColor: "bg-green"
+    },
+    {
+      icon: "arrow-forward",
+      text: "DevProject",
+      screen: "workspace/projects/59795263", ///edit",
+      itemColor: "bg-green"
+    },
+    {
+      icon: "arrow-forward",
+      text: "DevProjectEdit",
+      screen: "workspace/projects/59795263/edit", ///edit",
+      itemColor: "bg-green"
     }
   ];
   // Remove icons based on feature flags

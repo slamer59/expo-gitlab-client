@@ -310,6 +310,10 @@ class GitLabClient {
 
 
   // Update Methods
+  updateProject = async (projectId, data) => {
+    return this.request(`/projects/${projectId}`, 'PUT', data);
+  };
+
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
     return this.Issues.edit(projectId, issueIid, { ...data, ...options });
   };
