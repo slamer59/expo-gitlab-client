@@ -1,4 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
+
+import * as Clipboard from 'expo-clipboard';
+import { Alert, Share } from "react-native";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -66,5 +69,36 @@ export const getIssueStateColor = (state: IssueState): string => {
       return "blue";
     default:
       return "gray"; // Default color for unknown states
+  }
+};
+
+
+export const copyToClipboard = async (text: string) => {
+  try {
+    await Clipboard.setStringAsync(text);
+    // Optionally, you can show a success message
+    // Alert.alert("Copied", "Text copied to clipboard");
+  } catch (error) {
+    console.error("Failed to copy text: ", error);
+    Alert.alert("Error", "Failed to copy text to clipboard");
+  }
+};
+
+export const shareView = async (url: string) => {
+  try {
+    const result = await Share.share({
+      message: `Check out this GitLab issue: ${url}`,
+    });
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+    }
+  } catch (error) {
+    console.alert(error.message);
   }
 };
