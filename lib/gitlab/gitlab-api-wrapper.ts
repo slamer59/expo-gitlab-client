@@ -131,6 +131,9 @@ class GitLabClient {
     show: async (projectId, branchName) => {
       return this.request(`/projects/${projectId}/repository/branches/${encodeURIComponent(branchName)}`);
     },
+    edit: async (projectId, branchName, data) => {
+      return this.request(`/projects/${projectId}/repository/branches/${encodeURIComponent(branchName)}`, 'PUT', data);
+    },
     create: async (projectId, data) => {
       return this.request(`/projects/${projectId}/repository/branches`, 'POST', data);
     },
@@ -310,8 +313,11 @@ class GitLabClient {
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
     return this.Issues.edit(projectId, issueIid, { ...data, ...options });
   };
-  updateProjectMergeRequest = async (projectId, mergeRequestIid, data, options = {}) => {
+  updateProjectMergeRequest = async (projectId, mergeRequestIid, data) => {
     return this.MergeRequests.edit(projectId, mergeRequestIid, data);
+  };
+  updateProjectBranches = async (projectId, branch, data) => {
+    return this.Branches.edit(projectId, branch, data);
   };
 
 
@@ -392,6 +398,7 @@ class GitLabClient {
   useProjectPipelines = this.createFetchHook(this.Pipelines.all);
   useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
   useProjectMergeRequest = this.createFetchHook(this.MergeRequests.show);
+  useProjectBranches = this.createFetchHook(this.Branches.all);
 
   // Users
   getUsers = this.createFetchHook(this.Users.all);
@@ -413,7 +420,7 @@ class GitLabClient {
   // Update
   useUpdateProjectIssue = this.createOperationHook(this.updateProjectIssue);
   useUpdateProjectMergeRequest = this.createOperationHook(this.updateProjectMergeRequest);
-
+  useUpdateProjectBranches = this.createOperationHook(this.updateProjectBranches);
   // Delete 
   useDeleteProjectIssue = this.createOperationHook(this.deleteProjectIssue);
   useDeleteMergeRequest = this.createOperationHook(this.deleteProjectMergeRequest);

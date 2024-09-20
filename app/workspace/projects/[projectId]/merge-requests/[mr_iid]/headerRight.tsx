@@ -30,14 +30,14 @@ function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, 
                 </Pressable>
             </DropdownMenuTrigger>
             <DropdownMenuContent className='w-lg'>
-                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/merge-requests/${mrIid}/edit`)}>
+                <DropdownMenuItem onPress={() => router.push(`/workspace/projects/${projectId}/merge-request/${mrIid}/edit`)}>
                     <Ionicons name="pencil" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold">Edit</Text>
                 </DropdownMenuItem>
-                <DropdownMenuItem onPress={() => {/* Implement change base branch functionality */ }}>
+                {/* <DropdownMenuItem onPress={() => {console.log("Change branch") }}>
                     <Octicons name="git-branch" size={20} color="white" style={{ marginRight: 10 }} />
                     <Text className="font-semibold text-white">Change Base Branch</Text>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 {state === 'closed' ? <DropdownMenuItem onPress={() => openMr()}>
                     <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
                     <Text className="font-semibold text-success">Reopen Merge Request</Text>
