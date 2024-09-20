@@ -1,13 +1,10 @@
 import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
+import RenderHtml from 'react-native-render-html';
 
-import { Link } from "expo-router";
-import React from 'react';
-import { View } from 'react-native';
-import { Pills } from "../Pills";
+import React, { useEffect, useState } from 'react';
+import { useWindowDimensions, View } from 'react-native';
 import IssueComment from "./issue-comment";
-
-
 type LabelMap = { [key: string]: string };
 
 function determineLabel(body: string, labelMap: LabelMap): string {
@@ -42,6 +39,9 @@ const myLabelMap: LabelMap = {
     "confidential": "confidential",
     "visible": "visible",
     "branch": "branch",
+    "unlocked": "unlocked",
+    "locked": "locked",
+    "requested": "review-request",
 };
 
 
@@ -70,7 +70,10 @@ const iconMap = {
     mentioned: "at",
     changed: "calendar",
     branch: "git-branch",
-    marked: "bookmark"
+    marked: "bookmark",
+    unlocked: "lock-open",
+    locked: "lock-closed",
+    requested: "eye",
 };
 
 
@@ -86,91 +89,159 @@ const getEventIcon = (eventType: string) => {
     ) : null;
 };
 
-const IssueNote = ({ note }) => {
+const convertMarkdownToHtml = async (markdown) => {
+    try {
+        const response = await fetch('https://gitlab.com/api/v4/markdown', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
 
-    const renderNoteWithPills = (body) => {
-        const parts = body.split(/(\[`.*?`\]\(.*?\))/);
-        return (
-            <Text>
-                {parts.map((part, index) => {
-                    if (part.match(/\[`.*?`\]\(.*?\)/)) {
-                        const [_, branchName, url] = part.match(/\[`(.*?)`\]\((.*?)\)/);
-                        return (
-                            <React.Fragment key={index}>
-                                <Pills label={branchName} />
-                                <Text
-                                    className="font-semibold text-primary">
-                                    {" "}{url}
-                                </Text>
-
-                            </React.Fragment>
-                        );
-                    }
-                    return <Text key={index}>{part}</Text>;
-                })}
-            </Text>
-        );
-    };
-    const renderLinkifiedText = (text) => {
-        const parts = text.split(/(\#\d+|\!\d+|\@\S+)/);
-
-        return parts.map((part, index) => {
-            if (part.match(/\#\d+/)) {
-                const issueNumber = part.slice(1);
-                return (
-                    <Link key={index} href={`https://error.url/${issueNumber}`}>
-                        <Text className="underline text-secondary">{part}</Text>
-                    </Link>
-                );
-            } else if (part.match(/\[`(.+?)`\]\((.+?)\)/)) {
-                return renderNoteWithPills(text);
-            }
-            else if (part.match(/\!\d+/)) {
-                const mrNumber = part.slice(1);
-                return (
-                    <Link key={index} href={`https://error.url/${mrNumber}`} >
-                        <Text className="underline text-secondary">{part}</Text>
-                    </Link >
-                );
-            } else if (part.match(/\@\S+/)) {
-                return (
-                    <Link key={index} href={`https://error.url/${part.slice(1)}`} >
-                        <Text className="font-semibold underline text-secondary">{part}</Text>
-                    </Link>
-                );
-            }
-            return <Text key={index}>{part}</Text>;
+                'PRIVATE-TOKEN': "GITLAB_PAT_REMOVED",
+            },
+            body: JSON.stringify({
+                text: markdown,
+                gfm: true,
+            }),
         });
-    };
-    const label = note?.type !== "DiscussionNote" ? determineLabel(note.body, myLabelMap) : "discussion"
 
-    if (note.system) {
-        return <Text className="mb-4">{getEventIcon(label) || <Text className="font-bold">{note?.author?.name}</Text>}  {renderLinkifiedText(note.body)}</Text>;
-    }
-    // else if (note.type === 'DiscussionNote') {
-    //     return (
-    //         <View className="mb-2 bg-background">
-    //             <Text className="font-bold text-white">{note.author.name}</Text>
-    //             <Markdown
-    //                 style={styles}
-    //             >
-    //                 {note.body}
-    //             </Markdown>
-    //         </View>
-    //     );
-    // }
-    else {
-        return (
-            <View className="mb-2 bg-background">
-                <Text className="font-bold text-white">{note.author.name}</Text>
-                <Text>{note.body}</Text>
-            </View>
-        );
+        if (!response.ok) {
+            throw new Error('Failed to convert Markdown to HTML');
+        }
+
+        const data = await response.json();
+        return data.html;
+    } catch (error) {
+        console.error('Error converting Markdown to HTML:', error);
+        return markdown; // Return original markdown if conversion fails
     }
 };
 
-const IssueNotes = ({ notes }) => {
+const IssueNote = ({ note }) => {
+    console.log("note", note)
+    const [htmlContent, setHtmlContent] = useState('');
+    const { width } = useWindowDimensions();
 
+    useEffect(() => {
+        convertMarkdownToHtml(note.body).then(bodyHtml => {
+            const cleanBodyHtml = bodyHtml.replace(/<p/g, '<span').replace(/<\/p>/g, '</span>').trim();
+            setHtmlContent(`<strong>${note.author.name}</strong> ${cleanBodyHtml}`);
+        });
+    }, [note.body, note.author.name]);
+
+    const tagsStyles = {
+        body: {
+            color: 'white',
+            fontSize: 14,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+        },
+        strong: {
+            fontWeight: 'bold',
+            color: '#A1A1A1', // Lighter color for the author name
+            marginRight: 4,
+        },
+        code: {
+            backgroundColor: '#1C2B38',
+            padding: 2,
+            borderRadius: 4,
+        },
+    };
+    console.log("htmlContent", htmlContent)
+    const label = note?.type !== "DiscussionNote" ? determineLabel(note.body, myLabelMap) : "discussion"
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+            {/* <Ionicons name="git-commit" size={16} color="#A1A1A1" style={{ marginRight: 8 }} /> */}
+            {getEventIcon(label)}
+            <RenderHtml
+                contentWidth={width - 24} // Adjust based on your layout
+                source={{ html: htmlContent }}
+                tagsStyles={tagsStyles}
+            />
+        </View>
+    );
+};
+
+
+
+// const IssueNote = ({ note }) => {
+//     const renderPill = (branchName, url, key) => (
+//         <React.Fragment key={key}>
+//             <Pills label={branchName} />
+//             <Text className="font-semibold text-primary"> {url}</Text>
+//         </React.Fragment>
+//     );
+
+//     const renderLink = (href, text, className, key) => (
+//         <Link key={key} href={href}>
+//             <Text className={className}>{text}</Text>
+//         </Link>
+//     );
+
+//     const renderNoteWithPills = (body) => {
+//         const parts = body.split(/(\[`.*?`\]\(.*?\))/);
+//         return (
+//             <Text>
+//                 {parts.map((part, index) => {
+//                     const match = part.match(/\[`(.*?)`\]\((.*?)\)/);
+//                     return match
+//                         ? renderPill(match[1], match[2], index)
+//                         : <Text key={index}>{part}</Text>;
+//                 })}
+//             </Text>
+//         );
+//     };
+
+//     const renderLinkifiedText = (text) => {
+//         const parts = text.split(/(\#\d+|\!\d+|\@\S+|(?<=: )([0-9a-f]{40})|changed target branch from `[^`]+` to `[^`]+`)/);
+
+//         return parts.map((part, index) => {
+//             if (!part) return null; // Handle undefined or empty parts
+
+//             if (part.match(/\#\d+/)) {
+//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "underline text-secondary", index);
+//             } else if (part.includes('[`') && part.includes('`]')) {
+//                 return renderNoteWithPills(part);
+//             } else if (part.match(/\!\d+/)) {
+//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "underline text-secondary", index);
+//             } else if (part.match(/\@\S+/)) {
+//                 return renderLink(`https://error.url/${part.slice(1)}`, part, "font-semibold underline text-secondary", index);
+//             } else if (part.match(/^[0-9a-f]{40}$/)) {
+//                 return renderLink(`https://your-git-repository-url/commit/${part}`, part, "underline text-secondary", index);
+//             } else if (part.match(/changed target branch from `[^`]+` to `[^`]+`/)) {
+//                 const [, oldBranch, newBranch] = part.match(/changed target branch from `([^`]+)` to `([^`]+)`/);
+//                 return (
+//                     <Text key={index}>
+//                         changed target branch from <Text className="font-semibold">`{oldBranch}`</Text> to <Text className="font-semibold">`{newBranch}`</Text>
+//                     </Text>
+//                 );
+//             }
+//             return <Text key={index}>{part}</Text>;
+//         }).filter(Boolean); // Remove null elements
+//     };
+
+
+//     if (note.system) {
+//         return (
+//             <View className="flex-row mb-2">
+//                 <Text className="font-bold">{note?.author?.name} </Text>
+//                 {renderLinkifiedText(note.body)}
+//             </View>
+//         );
+//     }
+
+//     return (
+//         <View className="mb-2 bg-background">
+//             <Text className="font-bold text-white">{note.author.name}</Text>
+//             <Text>{note.body}</Text>
+//         </View>
+//     );
+// };
+
+const IssueNotes = ({ notes }) => {
+    console.log("----")
+
+    console.log(notes)
     return (
         <>
             <Text className="mb-2 text-4xl font-bold text-white">Activity</Text>
@@ -190,3 +261,4 @@ const IssueNotes = ({ notes }) => {
 };
 
 export default IssueNotes;
+

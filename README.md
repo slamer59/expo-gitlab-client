@@ -22,3 +22,8 @@ https://github.com/firebase/functions-samples/tree/main/Python
 ## Maestro setup
 
 `maestro studio`
+
+## Legal 
+https://handbook.gitlab.com/handbook/marketing/brand-and-product-marketing/brand/brand-activation/trademark-guidelines/
+
+https://design.gitlab.com/

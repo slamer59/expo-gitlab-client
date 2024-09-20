@@ -41,7 +41,8 @@ export default function MergeRequestEditComponent() {
                     title: `Edit MergeRequest #${mrIid}`,
                 }}
             />
-            <ScrollView className="flex-1 p-4 bg-card"
+            <ScrollView
+                className="flex-1 p-4 bg-card"
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
                 <EditTitleDescriptionMergeRequestBlock updateMergeRequest={updateMergeRequest} mr={mr} projectId={projectId} mr_iid={mrIid} />

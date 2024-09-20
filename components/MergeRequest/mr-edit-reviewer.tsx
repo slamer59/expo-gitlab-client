@@ -121,7 +121,7 @@ export default function EditReviewerMergeRequest({ projectId, mrIid }) {
 
             {checkedIds && checkedIds.length > 0 ? (
                 users?.map((user: any) => <>
-                    {checkedIds.includes(`${user.id}`) && <Reviewer reviewer={user} />}
+                    {checkedIds.includes(`${user.id}`) && <Reviewer key={user.id} reviewer={user} />}
                 </>)
             ) : (
                 <Text className='h-12 mb-4 text-muted'>No reviewers</Text>
