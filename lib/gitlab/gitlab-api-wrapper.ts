@@ -287,6 +287,37 @@ class GitLabClient {
 
   }
 
+  RepositoryFile = {
+    // GET /projects/:id/repository/files/:file_path
+    show: async (projectId, filePath, options = {}) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`, 'GET', options);
+    },
+    // HEAD /projects/:id/repository/files/:file_path
+    exists: async (projectId, filePath, options = {}) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`, 'HEAD', options);
+    },
+    // GET /projects/:id/repository/files/:file_path/blame
+    blame: async (projectId, filePath, options = {}) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/blame`, 'GET', options);
+    },
+    // GET /projects/:id/repository/files/:file_path/raw
+    raw: async (projectId, filePath, options = {}) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw`, 'GET', options);
+    },
+    // POST /projects/:id/repository/files/:file_path
+    create: async (projectId, filePath, data) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`, 'POST', data);
+    },
+    // PUT /projects/:id/repository/files/:file_path
+    update: async (projectId, filePath, data) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`, 'PUT', data);
+    },
+    // DELETE /projects/:id/repository/files/:file_path
+    remove: async (projectId, filePath) => {
+      return this.request(`/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`, 'DELETE');
+    },
+  }
+
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
@@ -415,6 +446,9 @@ class GitLabClient {
   getUserStatus = this.createFetchHook(this.Users.status)
   getUserFollowing = this.createFetchHook(this.Users.following)
   getUserFollowers = this.createFetchHook(this.Users.followers)
+  getRepositoryFile = this.createFetchHook(this.RepositoryFile.show)
+  getRepositoryFileRaw = this.createFetchHook(this.RepositoryFile.raw)
+
 
   // Operation hooks
   useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
