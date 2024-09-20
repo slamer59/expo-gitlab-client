@@ -117,7 +117,6 @@ const convertMarkdownToHtml = async (markdown) => {
 };
 
 const IssueNote = ({ note }) => {
-    console.log("note", note)
     const [htmlContent, setHtmlContent] = useState('');
     const { width } = useWindowDimensions();
 
@@ -147,10 +146,11 @@ const IssueNote = ({ note }) => {
             borderRadius: 4,
         },
     };
-    console.log("htmlContent", htmlContent)
+
     const label = note?.type !== "DiscussionNote" ? determineLabel(note.body, myLabelMap) : "discussion"
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+        <View className="flex-row items-center mb-4">
+
             {/* <Ionicons name="git-commit" size={16} color="#A1A1A1" style={{ marginRight: 8 }} /> */}
             {getEventIcon(label)}
             <RenderHtml
@@ -239,13 +239,11 @@ const IssueNote = ({ note }) => {
 // };
 
 const IssueNotes = ({ notes }) => {
-    console.log("----")
 
-    console.log(notes)
     return (
         <>
-            <Text className="mb-2 text-4xl font-bold text-white">Activity</Text>
-            {notes && notes.length > 0 ? <View className="p-4 mb-4">
+            <Text className="text-4xl font-bold text-white">Activity</Text>
+            {notes && notes.length > 0 ? <View className="p-4 mb-2">
                 {notes.map((note) => (
                     note.system ? (
                         <IssueNote key={note.id} note={note} />

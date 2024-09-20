@@ -2,6 +2,7 @@ import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
 import MergeRequestComment from "@/components/MergeRequest/mr-comment";
 import MergeRequestHeader from "@/components/MergeRequest/mr-header";
+import { Pills } from "@/components/Pills";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -117,38 +118,6 @@ const StatusItem = ({ icon, text, color, expandable, children }) => {
     );
 };
 
-// const StatusSection = ({ mr }) => (
-//     <View className="p-3 mb-4 bg-gray-800 rounded-lg">
-//         <Text className="mb-2 text-lg font-semibold text-white">Status</Text>
-
-//         <StatusItem
-//             icon="ellipse-outline"
-//             text="Reviews"
-//             color="gray"
-//             expandable={true}
-//         />
-
-//         <StatusItem
-//             icon="checkmark-circle"
-//             text="Checks"
-//             color="green"
-//             expandable={true}
-//         />
-
-//         <StatusItem
-//             icon="close-circle"
-//             text="Unable to merge"
-//             color="red"
-//             expandable={false}
-//         >
-//             <Text className="mt-1 ml-6 text-sm text-gray-400">
-//                 A review is required.
-//             </Text>
-//         </StatusItem>
-//     </View>
-// );
-
-
 const getMergeStatusText = (status: string): string => {
     switch (status) {
         case 'can_be_merged':
@@ -214,7 +183,20 @@ const StatusSection = ({ mr }) => (
         {mr.labels.length > 0 && (
             <StatusItem
                 icon="pricetag-outline"
-                text={`Labels: ${mr.labels.join(', ')}`}
+                text={
+                    <View className="flex-row flex-wrap items-center">
+                        <Text className="mr-2 text-white">Labels:</Text>
+                        {mr.labels.map((label, index) => (
+                            <View key={index} className="mb-1 mr-2">
+                                <Pills
+                                    key={index}
+                                    label={label}
+                                    variant="#000"
+                                />
+                            </View>
+                        ))}
+                    </View>
+                }
                 color="orange"
             />
         )}
@@ -424,11 +406,12 @@ export default function MergeRequestDetails() {
     //     params,
     // );
     const { data: mr, isLoading, isError, error } = useMergeRequestDetails(projectId, mr_iid);
+
     // console.log("Merge Request", mr.notes)
     if (isLoading) return <Loading />;
     if (isError) return <Text className="text-white">Error: {error.message}</Text>;
 
-
+    // console.log("Merge Request", mr?.mr)
     return (
         <>
             <SafeAreaView className="flex-1">
