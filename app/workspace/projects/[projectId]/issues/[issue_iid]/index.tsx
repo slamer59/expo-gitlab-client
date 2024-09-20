@@ -128,7 +128,10 @@ export default function IssueDetails() {
                     headerRight: headerRightProjectIssue(openIssue, closeIssue, deleteIssue, issue)
                 }}
             />
-            <ScrollView className="min-h-screen p-4 bg-card">
+            <ScrollView
+                className="flex-1 p-4 bg-card"
+                contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+            >
                 <IssueHeader issue={issue} />
                 <IssueComment issue={issue} projectId={projectId} />
                 <LinkedIssuesSection

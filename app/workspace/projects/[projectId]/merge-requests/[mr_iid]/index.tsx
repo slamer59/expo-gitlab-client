@@ -446,7 +446,7 @@ export default function MergeRequestDetails() {
                     }}
                 />
                 <ScrollView
-                    className="min-h-screen p-4 bg-card p-50"
+                    className="flex-1 p-4 bg-card"
                     contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
                 >
                     <MergeRequestHeader mr={mr.mr} />
