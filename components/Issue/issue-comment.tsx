@@ -26,7 +26,7 @@ const IssueComment = ({ issue, projectId }) => {
     };
 
     return (
-        <View className="p-4 mb-4 rounded-lg bg-card-600">
+        <View className="p-4 mt-4 mb-4 rounded-lg bg-card-600">
             <View className="flex-row items-center justify-between mb-2">
                 <View className="flex-row items-center">
                     {author.avatar_url ? (

@@ -27,7 +27,7 @@ function getTextColor(backgroundColor: string): string {
     return isColorLight(backgroundColor) ? 'black' : 'white';
 }
 
-export function Pills({ label, variant, className }: PillProps) {
+export function Pills({ label, variant = 'purple', className }: PillProps) {
     let backgroundColor;
     let textColor;
 

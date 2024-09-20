@@ -106,6 +106,7 @@ export default function IssueDetails() {
         `/api/v4/projects/{id}/issues/{issue_iid}/links`,
         params,
     );
+
     // console.log("issue_iid-links", linkedIssues);
     if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedIssues) {
         return <Loading />
