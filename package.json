@@ -19,7 +19,8 @@
     "prepare": "husky",
     "push:android": "adb install $(find . -name \"*.apk\" -type f -print0 | xargs -0 ls -t | head -n 1)",
     "maestro:all": "maestro test .maestro/all.yaml",
-    "maestro:studio": "maestro studio"
+    "maestro:studio": "maestro studio",
+    "licences": "bunx generate-license-file --input ./package.json --output ./third-party-licenses.txt --overwrite"
   },
   "jest": {
     "preset": "jest-expo"

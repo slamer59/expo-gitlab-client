@@ -1,0 +1,15 @@
+inputs:
+  - ./package.json
+output: ./THIRD-PARTY-LICENSES.txt
+overwrite: true
+eol: lf
+ci: true
+no-spinner: true
+replace:
+  doctrine@3.0.0: ./node_modules/doctrine/LICENSE
+  json-schema-deref-sync@0.13.0: ./node_modules/json-schema-deref-sync/LICENSE
+  posthog-react-native@3.1.2: ./node_modules/posthog-react-native@3.1.2/MIT
+  rc@1.2.8: ./node_modules/rc/LICENSE.MIT
+  through@2.3.8: ./node_modules/through/LICENSE.MIT
+  xcode@3.0.1: ./node_modules/xcode/LICENSE
+  "@bcoe/v8-coverage@0.2.3": ./node_modules/@bcoe/v8-coverage/LICENSE.md
