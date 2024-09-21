@@ -55,7 +55,20 @@ export default function TabLayout() {
             title: 'Home',
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
             // ...defaultOptionsHeader
-            // headerRight: () => (
+            headerRight: () => (
+              <Link href="workspace/privacy-policy" asChild>
+                <Pressable>
+                  {({ pressed }) => (
+                    <Ionicons
+                      name="shield-checkmark-outline"
+                      size={25}
+                      color="white"
+                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    />
+                  )}
+                </Pressable>
+              </Link>
+            ),
             //   <View className='flex-row items-center'>
             //     <Link href="/search" asChild>
             //       <Pressable>
