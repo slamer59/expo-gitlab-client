@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Text, View } from 'react-native';
-import { TextClassContext } from '~/components/ui/text';
 import type { TextRef, ViewRef } from '@rn-primitives/types';
+import * as React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { TextClassContext } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 
-const Card = React.forwardRef<ViewRef, React.ComponentPropsWithoutRef<typeof View>>(
-  ({ className, ...props }, ref) => (
+const Card = React.forwardRef<ViewRef, React.ComponentPropsWithoutRef<typeof View> & { onClose?: () => void }>(
+  ({ className, onClose, ...props }, ref) => (
     <View
       ref={ref}
       className={cn(
@@ -13,9 +13,17 @@ const Card = React.forwardRef<ViewRef, React.ComponentPropsWithoutRef<typeof Vie
         className
       )}
       {...props}
-    />
+    >
+      {onClose && (
+        <TouchableOpacity onPress={onClose} style={{ position: 'absolute', top: 10, right: 10 }}>
+          <Text style={{ color: 'white', fontSize: 20 }}>×</Text>
+        </TouchableOpacity>
+      )}
+      {props.children}
+    </View>
   )
 );
+
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<ViewRef, React.ComponentPropsWithoutRef<typeof View>>(
