@@ -168,7 +168,6 @@ const IssueNotes = ({ notes }) => {
 
     return (
         <>
-            <Text className="text-4xl font-bold text-white">Activity</Text>
             {notes && notes.length > 0 ? <View className="p-4 mb-2">
                 {notes.map((note) => (
                     note.system ? (

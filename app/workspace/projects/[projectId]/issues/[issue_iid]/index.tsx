@@ -7,7 +7,11 @@ import IssueComment from "@/components/Issue/issue-comment";
 
 import IssueHeader from "@/components/Issue/issue-header";
 import IssueNotes from "@/components/Issue/issue-note";
-import Loading from "@/components/Loading";
+import { CommentSkeleton } from "@/components/Skeleton/comment";
+import { HeaderSkeleton } from "@/components/Skeleton/header";
+
+import { LinkedItemSkeleton } from "@/components/Skeleton/linkedItems";
+import NotesSkeleton from "@/components/Skeleton/notes";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
@@ -71,7 +75,7 @@ export default function IssueDetails() {
     };
     const {
         data: issue,
-        isLoading,
+        isLoading: isLoadingIssue,
         isError,
     } = useGetData(
         ["project_issue", params.path],
@@ -110,15 +114,11 @@ export default function IssueDetails() {
         params,
     );
 
-    // console.log("issue_iid-links", linkedIssues);
-    if (isLoading || isLoadingNotes || isLoadingMR || isLoadingLinkedIssues) {
-        return <Loading />
-    }
 
     if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
         return <Text>Error fetching data</Text>;
     }
-
+    const isLoadingTest = true
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen
@@ -136,32 +136,45 @@ export default function IssueDetails() {
                 className="flex-1 p-4 bg-card"
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
-                <IssueHeader issue={issue} />
-                <IssueComment issue={issue} projectId={projectId} />
-                <LinkedIssuesSection
-                    title="Linked Items"
-                    iconName="link"
-                    array={linkedIssues}
-                    empty={
-                        <Text className="mt-2 text-white">
-                            Link issues together to show that they're
-                            related.
-                        </Text>
-                    }
-                />
+                {isLoadingIssue ? <HeaderSkeleton /> :
+                    <IssueHeader issue={issue} />
+                }
 
-                <LinksMergeRequestsSection
-                    title="Related merge requests"
-                    iconName="link"
-                    array={relatedMRs}
-                    empty={
-                        <Text className="mt-2 text-white">
-                            Related merge requests will appear here.
-                        </Text>
-                    }
-                />
+                {isLoadingIssue ? <CommentSkeleton /> :
+                    <IssueComment issue={issue} projectId={projectId} />
+                }
 
-                <IssueNotes notes={notes} />
+                {isLoadingLinkedIssues ? <LinkedItemSkeleton /> :
+                    <LinkedIssuesSection
+                        title="Linked Items"
+                        iconName="link"
+                        array={linkedIssues}
+                        empty={
+                            <Text className="mt-2 text-white">
+                                Link issues together to show that they're
+                                related.
+                            </Text>
+                        }
+                    />
+                }
+
+                {isLoadingMR ? <LinkedItemSkeleton /> :
+                    <LinksMergeRequestsSection
+                        title="Related merge requests"
+                        iconName="link"
+                        array={relatedMRs}
+                        empty={
+                            <Text className="mt-2 text-white">
+                                Related merge requests will appear here.
+                            </Text>
+                        }
+                    />
+                }
+
+                <Text className="text-4xl font-bold text-white">Events</Text>
+                {isLoadingNotes ? <NotesSkeleton /> :
+                    <IssueNotes notes={notes} />
+                }
 
                 {/*                <Input
                     className='w-full p-2 mb-2 border border-gray-300 rounded'
