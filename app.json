@@ -3,7 +3,7 @@
     "name": "Gitlalchemy",
     "slug": "expo-gitlab-client",
     "owner": "teepee",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "myapp",
@@ -13,9 +13,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.thomas.pedot.expogitlabclient"
@@ -26,7 +24,7 @@
         "backgroundColor": "#fff"
       },
       "package": "com.thomas.pedot.expogitlabclient",
-      "versionCode": 5
+      "versionCode": 6
     },
     "web": {
       "bundler": "metro",
@@ -34,9 +32,7 @@
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      [
-        "expo-router"
-      ],
+      ["expo-router"],
       "expo-localization",
       "expo-font",
       [
