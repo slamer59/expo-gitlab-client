@@ -11,6 +11,7 @@ export default function LoginScreen() {
     const [token, setToken] = useState('');
     const navigation = useNavigation();
     const { signIn, signOut, session, isLoading } = useSession();
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
 
     useEffect(() => {
         if (session) {
@@ -23,14 +24,29 @@ export default function LoginScreen() {
             Alert.alert('Error', 'Please enter both URL and token.');
             return;
         }
-        // Validate GitLab credentials
+
+        setIsLoginLoading(true);
+
         try {
-            signIn(url, token);
+            await signIn(url, token);
         } catch (error) {
-            Alert.alert('Error', 'Invalid credentials. Please try again.');
+            if (error instanceof Error) {
+                if (error.message.includes('401')) {
+                    Alert.alert('Error', 'Invalid Personal Access Token. Please check and try again.');
+                } else if (error.message.includes('404')) {
+                    Alert.alert('Error', 'GitLab instance not found. Please check the URL and try again.');
+                } else {
+                    Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+                }
+            } else {
+                Alert.alert('Error', 'An unexpected error occurred. Please try again later.');
+            }
             setToken('');
+        } finally {
+            setIsLoginLoading(false);
         }
     }
+
 
     function openTokenInfoPage() {
         Linking.openURL('https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html');
@@ -72,8 +88,18 @@ export default function LoginScreen() {
                 aria-errormessage='input-token-error'
             />
 
-            <Button variant="secondary" size="lg" onPress={handleLogin} className="w-full mt-4 mb-4 text-xl">
-                <Text className="text-xl font-bold text-white">Login</Text>
+            <Button
+                variant="secondary"
+                size="lg"
+                onPress={handleLogin}
+                className="w-full mt-4 mb-4 text-xl"
+                disabled={isLoginLoading}
+            >
+                {isLoginLoading ? (
+                    <Text className="text-xl font-bold text-white">Provide you access...</Text>
+                ) : (
+                    <Text className="text-xl font-bold text-white">Login</Text>
+                )}
             </Button>
 
             <Text className="mt-4 mb-4 text-lg font-bold text-primary" onPress={openTokenInfoPage}>
