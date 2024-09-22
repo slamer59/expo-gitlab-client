@@ -79,16 +79,18 @@ export default function EditReviewerMergeRequest({ projectId, mrIid }) {
                     {checkedIds && checkedIds.length > 0 ? (
                         <>
                             {users?.map((user: any) => (
-                                checkedIds.includes(`${user.id}`) && (
-                                    <Reviewer key={user.id} reviewer={user}>
-                                        <Button
-                                            variant="icon"
-                                            onPress={() => toggleSwitch(`${user.id}`)}
-                                        >
-                                            <Ionicons name="close-circle" size={24} color="white" />
-                                        </Button>
-                                    </Reviewer>
-                                )
+                                <React.Fragment key={user.id}>
+                                    {checkedIds.includes(`${user.id}`) && (
+                                        <Reviewer reviewer={user}>
+                                            <Button
+                                                variant="icon"
+                                                onPress={() => toggleSwitch(`${user.id}`)}
+                                            >
+                                                <Ionicons name="close-circle" size={24} color="white" />
+                                            </Button>
+                                        </Reviewer>
+                                    )}
+                                </React.Fragment>
                             ))}
                             {/* {!users.some((id) => checkedIds?.some(user => `${user.id}` === id)) && (
                                 <Text className='h-14 text-muted'>No reviewers selected</Text>
@@ -123,9 +125,11 @@ export default function EditReviewerMergeRequest({ projectId, mrIid }) {
             </SectionTitle >
 
             {checkedIds && checkedIds.length > 0 ? (
-                users?.map((user: any) => <>
-                    {checkedIds.includes(`${user.id}`) && <Reviewer key={user.id} reviewer={user} />}
-                </>)
+                users?.map((user: any) => (
+                    <React.Fragment key={user.id}>
+                        {checkedIds.includes(`${user.id}`) && <Reviewer reviewer={user} />}
+                    </React.Fragment>
+                ))
             ) : (
                 <Text className='h-12 mb-4 text-muted'>No reviewers</Text>
             )}
