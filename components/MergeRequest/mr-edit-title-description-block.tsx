@@ -8,7 +8,7 @@ import { Textarea } from "../ui/textarea";
 
 export function EditTitleDescriptionMergeRequestBlock({ mr, updateMergeRequest, projectId, mr_iid }) {
     const [formData, setFormData] = useState({
-        title: mr.title || '',
+        title: mr?.title || '',
         description: mr?.description || '',
         // draft: mr?.draft || false
     });

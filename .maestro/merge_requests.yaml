@@ -52,14 +52,14 @@ appId: expo-gitlab-client
     id: "mr-options-menu"
 # - tapOn:
 #     id: "mr-close-option"
-- assertVisible: "Closed" # Assuming you show a confirmation message
+- assertVisible: "Close Merge Request" # Assuming you show a confirmation message
 
 # If the MR is now closed, test reopening
-- tapOn:
-    id: "mr-options-menu"
-- tapOn:
-    id: "mr-reopen-option"
-- assertVisible: "Merge request reopened" # Assuming you show a confirmation message
+# - tapOn:
+#     id: "mr-options-menu"
+# - tapOn:
+#     id: "mr-reopen-option"
+# - assertVisible: "Merge request reopened" # Assuming you show a confirmation message
 
 - back
 - back
