@@ -15,7 +15,7 @@ export function ButtonList({
   listItems: IListItems[];
   isSimple?: boolean;
 }) {
-  if (isSimple === false && listItems.length > 3)
+  if (isSimple === false && listItems?.length > 3)
     return <ComplexButtonListContent listItems={listItems} />;
   else return <SimpleButtonListContent listItems={listItems} />;
 }
@@ -24,7 +24,7 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
 
   return (
     <View className="flex flex-col gap-2 py-2">
-      {listItems.map((item, index) => {
+      {listItems?.map((item, index) => {
         return (
           <TouchableOpacity
             key={index}
@@ -58,8 +58,8 @@ function SimpleButtonListContent({ listItems }: { listItems: IListItems[] }) {
   );
 }
 function ComplexButtonListContent({ listItems }: { listItems: IListItems[] }) {
-  const firstPart = listItems.slice(0, 3);
-  const secondPart = listItems.slice(3);
+  const firstPart = listItems?.slice(0, 3);
+  const secondPart = listItems?.slice(3);
 
   return (
     <View className="flex flex-col gap-2 py-2">

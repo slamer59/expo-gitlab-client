@@ -1,5 +1,4 @@
 import IssueNotes from "@/components/Issue/issue-note";
-import Loading from "@/components/Loading";
 import MergeRequestComment from "@/components/MergeRequest/mr-comment";
 import MergeRequestHeader from "@/components/MergeRequest/mr-header";
 import { Pills } from "@/components/Pills";
@@ -424,7 +423,7 @@ const fetchMergeRequestDetails = async (projectId, mergeRequestIid) => {
             file_path: change.new_path || change.old_path,
             // ...calculateFileChanges(change)
         }));
-        console.log('File changes:', fileChanges); // Add this for debugging
+        // console.log('File changes:', fileChanges); // Add this for debugging
 
         return {
             mr: mergeRequest.data,
@@ -496,16 +495,15 @@ export default function MergeRequestDetails() {
 
     const { data: mr, isLoading, isError, error } = useMergeRequestDetails(projectId, mr_iid);
 
-    if (isLoading) return <Loading />;
     if (isError) return <Text className="text-white">Error: {error.message}</Text>;
 
     const fileChanges = mr?.changes.changes.map(change => calculateFileChanges(change));
     const changeSummaries = {
-        newFiles: fileChanges.filter(file => file.status === 'new').length,
-        deletedFiles: fileChanges.filter(file => file.status === 'deleted').length,
-        modifiedFiles: fileChanges.filter(file => file.status === 'modified').length,
-        totalAdditions: fileChanges.reduce((sum, file) => sum + file.additions, 0),
-        totalDeletions: fileChanges.reduce((sum, file) => sum + file.deletions, 0),
+        newFiles: fileChanges?.filter(file => file.status === 'new').length,
+        deletedFiles: fileChanges?.filter(file => file.status === 'deleted').length,
+        modifiedFiles: fileChanges?.filter(file => file.status === 'modified').length,
+        totalAdditions: fileChanges?.reduce((sum, file) => sum + file.additions, 0),
+        totalDeletions: fileChanges?.reduce((sum, file) => sum + file.deletions, 0),
     }
 
     return (
@@ -514,7 +512,7 @@ export default function MergeRequestDetails() {
                 <Stack.Screen
                     options={{
                         title: "",
-                        headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr.mr),
+                        headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr?.mr),
                     }}
                 />
                 <ScrollView

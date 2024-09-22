@@ -64,7 +64,10 @@ export default function FileView() {
     const { content, commit, file_path, file_name, encoding } = file || {};
     // console.log('File:', content, commit, file_path, file_name, encoding);
     return (
-        <ScrollView className='flex-1 p-4 m-2 bg-white safe-area-inset-bottom'>
+        <ScrollView
+            className='flex-1 p-4 m-2 bg-white safe-area-inset-bottom'
+            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+        >
             <Stack.Screen
                 options={{
                     title: "Explore",

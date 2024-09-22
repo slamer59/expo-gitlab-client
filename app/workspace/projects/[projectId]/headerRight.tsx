@@ -83,12 +83,12 @@ export function headerRightProject(
     project
 
 ) {
-    console.log("project", project.id);
+    console.log("project", project?.id);
     return () => (
         <View className='flex-row items-center'>
             <Pressable
                 onPress={async () => {
-                    await shareView(project.web_url);
+                    await shareView(project?.web_url);
                 }}
                 className='pl-2 pr-2 m-2'
                 testID="mr-share-button"
@@ -103,7 +103,7 @@ export function headerRightProject(
                 )}
             </Pressable>
             <Link
-                href={`/workspace/projects/${project.id}/issues/create`}
+                href={`/workspace/projects/${project?.id}/issues/create`}
                 asChild
             >
                 <Pressable className='pl-2 pr-2 m-2'>
@@ -117,7 +117,7 @@ export function headerRightProject(
                     )}
                 </Pressable>
             </Link>
-            <ProjectOptionsMenu projectId={project.id} />
+            <ProjectOptionsMenu projectId={project?.id} />
         </View>
     );
 }

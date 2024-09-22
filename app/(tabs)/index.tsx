@@ -141,7 +141,10 @@ export default function Home() {
   );
 
   return (
-    <ScrollView className="flex-1 p-4 bg-background">
+    <ScrollView
+      className="flex-1 p-4 bg-background"
+      contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+    >
 
       {showWelcomeCard && (
         <Card

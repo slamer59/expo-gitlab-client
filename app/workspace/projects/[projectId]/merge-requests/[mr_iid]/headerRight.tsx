@@ -70,7 +70,7 @@ export function headerRightProjectMr(
         <View className='flex-row items-center'>
             <Pressable
                 onPress={async () => {
-                    await shareView(mr.web_url);
+                    await shareView(mr?.web_url);
                 }}
                 className='pl-2 pr-2 m-2'
                 testID="mr-share-button"
@@ -88,10 +88,10 @@ export function headerRightProjectMr(
                 openMr={reopenMr}
                 closeMr={closeMr}
                 deleteMr={deleteMr}
-                state={mr.state}
-                projectId={mr.project_id}
-                mrIid={mr.iid}
-                mrUrl={mr.web_url}
+                state={mr?.state}
+                projectId={mr?.project_id}
+                mrIid={mr?.iid}
+                mrUrl={mr?.web_url}
             />
         </View>
     );

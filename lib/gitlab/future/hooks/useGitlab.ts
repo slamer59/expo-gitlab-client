@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
 import GitLabClient from '../../gitlab-api-wrapper';
 
 const createQueryHook = (queryKey: string[], queryFn: () => Promise<any>) => (): UseQueryResult<any> =>
@@ -82,6 +82,32 @@ export const useGitLab = (client: GitLabClient) => {
             []
         ),
     };
+    const useProjectDetails = (projectId: string) => {
+        return useQueries({
+            queries: [
+                {
+                    queryKey: ['project', projectId],
+                    queryFn: () => client.Projects.show(projectId),
+                },
+                {
+                    queryKey: ['projectUsers', projectId],
+                    queryFn: () => client.ProjectsUsers.all(projectId),
+                },
+                {
+                    queryKey: ['projectMergeRequests', projectId],
+                    queryFn: () => client.MergeRequests.all(projectId),
+                },
+                {
+                    queryKey: ['projectBranches', projectId],
+                    queryFn: () => client.Branches.all(projectId),
+                },
+                {
+                    queryKey: ['projectMembers', projectId],
+                    queryFn: () => client.ProjectMembers.all(projectId),
+                },
+            ],
+        });
+    };
 
-    return { ...queryHooks, ...mutationHooks };
+    return { ...queryHooks, ...mutationHooks, useProjectDetails };
 };

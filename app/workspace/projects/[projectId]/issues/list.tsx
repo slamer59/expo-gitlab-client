@@ -30,7 +30,10 @@ export default function ProjectIssuesList() {
 
 
   return (
-    <ScrollView className="flex-1 p-2 bg-background">
+    <ScrollView
+      className="flex-1 p-2 bg-background"
+      contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+    >
       <Stack.Screen
         options={{
           headerTitle: "Issues for Project",

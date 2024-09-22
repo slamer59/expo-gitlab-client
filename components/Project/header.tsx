@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 
 export function ProjectHeader({ repository }) {
+    console.log("repository", repository);
 
     return <>
         <View className="m-4">
@@ -46,7 +47,7 @@ export function ProjectHeader({ repository }) {
             <Link
                 className="flex w-full p-1 overflow-hidden"
                 asChild
-                href={repository.web_url}
+                href={repository?.web_url || "https://example.com/default-url"}
             >
                 <TouchableOpacity className="flex-row items-center mr-4">
                     <Ionicons name="link" size={16} color="white" />
