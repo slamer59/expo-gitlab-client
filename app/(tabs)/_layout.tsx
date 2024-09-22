@@ -1,12 +1,13 @@
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 import Loading from '@/components/Loading';
+import { Text } from "@/components/ui/text";
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -62,12 +63,23 @@ export default function TabLayout() {
                     <Ionicons
                       name="shield-checkmark-outline"
                       size={25}
-                      color="white"
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      color="#0085CA"
+                      style={{ marginRight: 30, opacity: pressed ? 0.5 : 1 }}
                     />
                   )}
                 </Pressable>
               </Link>
+            ),
+            headerTitle: () => (
+              <View className="flex-row items-center">
+
+                <Image
+                  source={require('@/assets/images/logo.png')} // Make sure to add your app logo to this path
+                  style={{ width: 30, height: 30 }}
+                  className="flex flex-row items-center justify-center p-6 mr-4 bg-white rounded-lg"
+                />
+                <Text className="text-4xl font-bold text-white">Home</Text>
+              </View>
             ),
             //   <View className='flex-row items-center'>
             //     <Link href="/search" asChild>
