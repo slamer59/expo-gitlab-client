@@ -31,21 +31,21 @@ const UserSkeleton = () => (
 
 export default function ProfileScreen() {
   const { session } = useSession()
-  const api = new GitLabClient({
+  const client = new GitLabClient({
     url: session?.url,
     token: session?.token,
   });
-  const { useUserProjects, useCurrentUser, useUserStarredProjects, useProjects } = useGitLab(api);
+  const api = useGitLab(client);
 
-  const { data: user, isLoading: isLoadingUser, error: errorUser } = useCurrentUser();
-  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = useUserProjects(user?.username);
-  const { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed } = useProjects({
+  const { data: user, isLoading: isLoadingUser, error: errorUser } = api.useCurrentUser();
+  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useUserProjects(user?.username);
+  const { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed } = api.useProjects({
     membership: true,
     order_by: "last_activity_at",
     sort: "desc",
   });
 
-  const { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred } = useUserStarredProjects(user?.username);
+  const { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred } = api.useUserStarredProjects(user?.username);
 
   if (errorContributed || errorPersonal || errorStarred || errorUser) return <Text>Error: {errorUser.message || errorPersonal.message || errorContributed.message || errorStarred.message}</Text>;
   return (

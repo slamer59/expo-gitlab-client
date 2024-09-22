@@ -11,6 +11,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useState } from 'react';
@@ -21,10 +22,12 @@ const EditIssueDialog = ({ projectId, issueIid }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
 
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
     const { execute: updateIssue, loading: updating, error: updateError } = api.useUpdateProjectIssue(projectId, issueIid);

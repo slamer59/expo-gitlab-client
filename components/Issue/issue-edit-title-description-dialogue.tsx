@@ -88,10 +88,12 @@ function EditTitleDescriptionIssueDialog({ issue, updateIssue, loading, error })
 export default function EditIssueParamDialog({ projectId, issueIid }) {
 
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
 
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
     const { execute: updateIssue, loading: updating, error: updateError } = api.useUpdateProjectIssue(projectId, issueIid);

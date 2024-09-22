@@ -1,5 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useEffect } from 'react';
@@ -10,10 +11,11 @@ import { EditParamIssueDialog } from './issue-edit-param';
 
 export default function EditLabelIssue({ projectId, issueIid }) {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+    const api = useGitLab(client);
 
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
     const { execute: updateIssue, loading: updating, error: updateError } = api.useUpdateProjectIssue(projectId, issueIid);

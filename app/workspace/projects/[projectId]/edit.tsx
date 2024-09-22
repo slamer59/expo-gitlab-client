@@ -1,6 +1,7 @@
 
 import { EditProjectDescription } from '@/components/Project/project-edit-description';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
@@ -10,10 +11,12 @@ import { ScrollView } from 'react-native';
 export default function ProjectEditDescriptionComponent() {
     const { session } = useSession()
 
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
     const { projectId } = useLocalSearchParams();
 
     const { data: project, loading, error } = api.useProject(projectId) ?? {};

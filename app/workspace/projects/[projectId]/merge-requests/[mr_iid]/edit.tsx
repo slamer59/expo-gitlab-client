@@ -6,6 +6,7 @@ import EditTargetBranchMergeRequest from '@/components/MergeRequest/mr-edit-targ
 import { EditTitleDescriptionMergeRequestBlock } from '@/components/MergeRequest/mr-edit-title-description-block';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -14,10 +15,12 @@ import { ScrollView } from 'react-native';
 
 export default function MergeRequestEditComponent() {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
     const { projectId, mr_iid: mrIid } = useLocalSearchParams();
 
     const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};

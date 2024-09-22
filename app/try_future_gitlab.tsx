@@ -9,14 +9,15 @@ import { Platform } from 'react-native';
 
 export default function TestgitlabHook() {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
-    const { useUserProjects, useCurrentUser } = useGitLab(api);
 
-    const { data: user, isLoading: iii, error: err } = useCurrentUser();
-    const { data: projects, isLoading, error } = useUserProjects(user?.username);
+    const api = useGitLab(client);
+
+    const { data: user, isLoading: isLoadingCurrent, error: errorUser } = api.useCurrentUser();
+    const { data: projects, isLoading, error } = api.useUserProjects(user?.username);
 
     if (isLoading) return <Text>Loading user projects...</Text>;
     if (error) return <Text>Error: {error.message}</Text>;

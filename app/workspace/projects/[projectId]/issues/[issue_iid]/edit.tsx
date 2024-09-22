@@ -4,6 +4,7 @@ import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
 import { EditTitleDescriptionIssueBlock } from '@/components/Issue/issue-edit-title-description-block';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -12,10 +13,12 @@ import { ScrollView } from 'react-native';
 
 export default function IssueEditComponent() {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
     const { projectId, issue_iid: issueIid } = useLocalSearchParams();
 
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
