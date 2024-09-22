@@ -6,31 +6,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 
-const ProjectHeaderSkeleton = () => (
-    <View className="p-4 m-2 rounded-lg bg-card">
-        <View className="flex-row items-center">
-            <View className="w-10 h-10 bg-gray-300 rounded-full" />
-            <View className="w-1/3 h-5 ml-2 bg-gray-300 rounded" />
-        </View>
-        <View className="w-2/3 h-8 mt-2 bg-gray-300 rounded" />
-        <View className="w-full h-4 mt-2 bg-gray-300 rounded" />
-        <View className="flex-row items-center mt-2">
-            <View className="w-4 h-4 bg-gray-300 rounded-full" />
-            <View className="w-1/4 h-4 ml-2 bg-gray-300 rounded" />
-        </View>
-        <View className="w-full h-6 mt-2 bg-gray-300 rounded" />
-        <View className="flex-row mt-2">
-            <View className="w-1/4 h-4 mr-4 bg-gray-300 rounded" />
-            <View className="w-1/4 h-4 bg-gray-300 rounded" />
-        </View>
-        <View className="w-1/3 h-4 mt-2 bg-gray-300 rounded" />
-    </View>
-);
-export function ProjectHeader({ repository, isLoading }) {
-    if (isLoading) {
-        return <ProjectHeaderSkeleton />;
-    }
-    console.log(repository);
+export function ProjectHeader({ repository }) {
+
     return <>
         <View className="m-4">
             <View className="flex-row items-center">

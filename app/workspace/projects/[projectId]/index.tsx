@@ -12,6 +12,8 @@ import Loading from "@/components/Loading";
 import { CodeSection } from "@/components/Project/code-section";
 import { ProjectHeader } from "@/components/Project/header";
 import { WorkspaceSection } from "@/components/Project/workspaceSection";
+import { ProjectHeaderSkeleton } from "@/components/Skeleton/project-header";
+import WorkspaceButtonListSkeleton from "@/components/Skeleton/section";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { headerRightProject } from "./headerRight";
 
@@ -66,7 +68,10 @@ export default function ProjectDetailsScreen() {
   const listItems = getWorkspaceItems({ repository, mergeRequest, members }, router);
   const listItemsSecond = getCodeSectionItems(repository, router);
 
-
+  if (isError || selfError) {
+    return <Error error={error} />
+  }
+  const isLoadingTest = true
   return (
     <SafeAreaView className="flex-1">
       <Stack.Screen options={{
@@ -80,23 +85,22 @@ export default function ProjectDetailsScreen() {
         contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
 
       >
-        {isError && <Error error={error} />
-        }
-        {isSelfLoading || isLoading ? (
-          <Loading />
-        ) : (<>
-          <ProjectHeader repository={repository} isLoading={isSelfLoading || isLoading} />
-          <WorkspaceSection listItems={listItems} />
-          <CodeSection
+        <>
+          {isSelfLoading ? <ProjectHeaderSkeleton /> :
+            <ProjectHeader repository={repository} />
+          }
+          {isLoading ? <WorkspaceButtonListSkeleton /> :
+            <WorkspaceSection listItems={listItems} />
+          }
+          {isLoading ? <WorkspaceButtonListSkeleton /> : <CodeSection
             selectedBranch={selectedBranch}
             defaultBranchName={defaultBranchName}
             repoBranchesName={repoBranchesName}
             handleValueChange={setSelectedBranch}
             listItemsSecond={listItemsSecond}
-          />
+          />}
         </>
-        )}
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
