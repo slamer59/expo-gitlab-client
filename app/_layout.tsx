@@ -1,6 +1,3 @@
-if (__DEV__) {
-  require("../ReactotronConfig");
-}
 import "@/global.css";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
