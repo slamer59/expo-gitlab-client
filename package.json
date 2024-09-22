@@ -20,6 +20,7 @@
     "push:android": "adb install $(find . -name \"*.apk\" -type f -print0 | xargs -0 ls -t | head -n 1)",
     "maestro:all": "maestro test .maestro/all.yaml",
     "maestro:studio": "maestro studio",
+    "ts-check": "tsc --noEmit",
     "licences": "bunx generate-license-file --input ./package.json --output ./third-party-licenses.txt --overwrite"
   },
   "jest": {
@@ -67,6 +68,7 @@
     "expo-background-fetch": "^12.0.1",
     "expo-clipboard": "~6.0.3",
     "expo-constants": "~16.0.2",
+    "expo-dev-client": "~4.0.26",
     "expo-device": "~6.0.2",
     "expo-document-picker": "~12.0.2",
     "expo-file-system": "~17.0.1",

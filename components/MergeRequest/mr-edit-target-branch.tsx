@@ -1,4 +1,5 @@
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useEffect, useState } from 'react';
@@ -8,9 +9,11 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { SectionTitle } from '../Section/param';
 
 export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
-    const { session } = useSession();
-    const api = new GitLabClient({ url: session?.url, token: session?.token });
     const [selectedBranch, setSelectedBranch] = useState("");
+
+    const { session } = useSession();
+    const client = new GitLabClient({ url: session?.url, token: session?.token });
+    const api = useGitLab(client);
 
     const { data: mr, loading: mrLoading } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
     const { execute: updateMergeRequest, loading: updating } = api.useUpdateProjectMergeRequest(projectId, mrIid);

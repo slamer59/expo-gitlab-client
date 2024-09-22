@@ -9,10 +9,12 @@ const GitLabIssuesList = () => {
     const [description, setDescription] = useState('');
     const projectId = 59795263
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
 
     const { data: issues = [], loading = false, error = null } = api.useProjectIssues(projectId) ?? {};
 

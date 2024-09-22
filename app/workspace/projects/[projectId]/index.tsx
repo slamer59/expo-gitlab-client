@@ -23,7 +23,7 @@ export default function ProjectDetailsScreen() {
   const { projectId } = useLocalSearchParams();
   const router = useRouter();
 
-  const api = new GitLabClient({
+  const client = new GitLabClient({
     url: session?.url,
     token: session?.token,
   });

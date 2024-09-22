@@ -44,7 +44,7 @@ function MilestonePill({ milestone, onPress }) {
 
 export default function EditMilestoneIssue({ projectId, issueIid }) {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });

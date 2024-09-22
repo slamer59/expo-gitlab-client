@@ -11,6 +11,7 @@ import {
     DialogTrigger
 } from '@/components/ui/dialog';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useState } from 'react';
@@ -88,10 +89,12 @@ function EditTitleDescriptionMergeRequestDialog({ mr, updateMergeRequest, loadin
 export default function EditMergeRequestParamDialog({ projectId, mrIid }) {
 
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
 
     const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
     const { execute: updateMergeRequest, loading: updating, error: updateError } = api.useUpdateProjectMergeRequest(projectId, mrIid);

@@ -10,6 +10,7 @@ import IssueNotes from "@/components/Issue/issue-note";
 import Loading from "@/components/Loading";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useGetData } from "@/lib/gitlab/hooks";
 import { useSession } from "@/lib/session/SessionProvider";
@@ -23,10 +24,12 @@ export default function IssueDetails() {
     const { session } = useSession()
     const router = useRouter();
 
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
     // Delete issue
     const deleteIssue = async () => {
         try {

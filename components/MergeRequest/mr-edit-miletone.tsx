@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SectionTitle } from '../Section/param';
@@ -44,10 +45,12 @@ function MilestonePill({ milestone, onPress }) {
 
 export default function EditMilestoneMergeRequest({ projectId, mrIid }) {
     const { session } = useSession()
-    const api = new GitLabClient({
+    const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+
+    const api = useGitLab(client);
 
     const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
     const { execute: updateMergeRequest, loading: updating, error: updateError } = api.useUpdateProjectMergeRequest(projectId, mrIid);

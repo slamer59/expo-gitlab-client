@@ -98,7 +98,7 @@ export default function ProfileScreen() {
   const [projects, setProjects] = React.useState([]);
   const [starredProjects, setStarredProjects] = React.useState([]);
 
-  const api = new GitLabClient({
+  const client = new GitLabClient({
     url: session?.url,
     token: session?.token,
   });
