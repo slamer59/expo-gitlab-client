@@ -3,6 +3,11 @@ import Loading from "@/components/Loading";
 import MergeRequestComment from "@/components/MergeRequest/mr-comment";
 import MergeRequestHeader from "@/components/MergeRequest/mr-header";
 import { Pills } from "@/components/Pills";
+import { CommentSkeleton } from "@/components/Skeleton/comment";
+import { HeaderSkeleton } from "@/components/Skeleton/header";
+import NotesSkeleton from "@/components/Skeleton/notes";
+import SectionSkeleton from "@/components/Skeleton/section";
+import StatusItemSkeleton from "@/components/Skeleton/status";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -228,6 +233,7 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
         setEditCommitMessage((prev) => !prev);
         // Add any additional logic here
     };
+
     return <View className="p-3 mb-4 rounded-lg bg-card-600">
 
         {mr.mr.state === 'open' ? <Text className="mb-2 text-lg font-semibold text-white">Ready to merge!</Text> : <Text className="mb-2 text-lg font-semibold text-danger">Merge request is closed</Text>}
@@ -501,6 +507,7 @@ export default function MergeRequestDetails() {
         totalAdditions: fileChanges.reduce((sum, file) => sum + file.additions, 0),
         totalDeletions: fileChanges.reduce((sum, file) => sum + file.deletions, 0),
     }
+
     return (
         <>
             <SafeAreaView className="flex-1">
@@ -514,9 +521,12 @@ export default function MergeRequestDetails() {
                     className="flex-1 p-4 bg-card"
                     contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
                 >
-                    <MergeRequestHeader mr={mr.mr} />
-                    <MergeRequestComment mr={mr.mr} projectId={projectId} />
-                    <ChangesSection mr={mr.mr} changeSummaries={changeSummaries} />
+                    {isLoading ? <HeaderSkeleton /> :
+                        <MergeRequestHeader mr={mr.mr} />}
+                    {isLoading ? <CommentSkeleton /> :
+                        <MergeRequestComment mr={mr.mr} projectId={projectId} />}
+                    {isLoading ? <SectionSkeleton /> :
+                        <ChangesSection mr={mr.mr} changeSummaries={changeSummaries} />}
 
                     {/* <View className="mb-4">
                         <Text className="mb-2 font-semibold text-white">Changes</Text>
@@ -527,16 +537,23 @@ export default function MergeRequestDetails() {
                         </View>
                     </View> */}
 
-                    <CommitsSection commits={mr?.commits} fileChanges={changeSummaries} />
-                    <StatusSection mr={mr.mr} />
-                    <ActionButtons
-                        mr={mr}
-                        onMerge={() => {/* Implement merge logic */ }}
-                        onClose={closeMergeRequest}
-                        onReopen={reopenMergeRequest}
-                    />
-
-                    <IssueNotes notes={mr.notes} />
+                    {isLoading ? <SectionSkeleton /> :
+                        <CommitsSection commits={mr?.commits} fileChanges={changeSummaries} />
+                    }
+                    {isLoading ? <StatusItemSkeleton /> :
+                        <StatusSection mr={mr.mr} />
+                    }
+                    {isLoading ? <SectionSkeleton /> :
+                        <ActionButtons
+                            mr={mr}
+                            onMerge={() => {/* Implement merge logic */ }}
+                            onClose={closeMergeRequest}
+                            onReopen={reopenMergeRequest}
+                        />
+                    }
+                    <Text className="text-4xl font-bold text-white">Events</Text>
+                    {isLoading ? <NotesSkeleton /> : <IssueNotes notes={mr.notes} />
+                    }
                 </ScrollView>
             </SafeAreaView>
         </>
