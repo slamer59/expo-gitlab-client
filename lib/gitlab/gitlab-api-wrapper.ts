@@ -286,7 +286,33 @@ class GitLabClient {
 
 
   }
-
+  ProjectMembers = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/members?${queryString}`);
+    },
+    show: async (projectId, userId) => {
+      return this.request(`/projects/${projectId}/members/${userId}`);
+    },
+    add: async (projectId, userId, accessLevel, options = {}) => {
+      const data = {
+        user_id: userId,
+        access_level: accessLevel,
+        ...options,
+      };
+      return this.request(`/projects/${projectId}/members`, 'POST', data);
+    },
+    edit: async (projectId, userId, accessLevel, options = {}) => {
+      const data = {
+        access_level: accessLevel,
+        ...options,
+      };
+      return this.request(`/projects/${projectId}/members/${userId}`, 'PUT', data);
+    },
+    remove: async (projectId, userId) => {
+      return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
+    },
+  }
   RepositoryFile = {
     // GET /projects/:id/repository/files/:file_path
     show: async (projectId, filePath, options = {}) => {

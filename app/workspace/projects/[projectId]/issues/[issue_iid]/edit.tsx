@@ -9,7 +9,6 @@ import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useCallback } from 'react';
-import { ScrollView } from 'react-native';
 
 export default function IssueEditComponent() {
     const { session } = useSession()
@@ -42,7 +41,10 @@ export default function IssueEditComponent() {
                     title: `Edit Issue #${issueIid}`,
                 }}
             />
-            <ScrollView className="flex-1 p-4 bg-card">
+            <C
+                className="flex-1 p-4 bg-card"
+                contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+            >
                 <EditTitleDescriptionIssueBlock updateIssue={updateIssue} issue={issue} projectId={projectId} issue_iid={issueIid} />
                 <Separator className="my-4" />
                 <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
@@ -50,7 +52,7 @@ export default function IssueEditComponent() {
                 <EditLabelIssue projectId={projectId} issueIid={issueIid} />
                 <Separator className="my-4" />
                 <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
-            </ScrollView>
+            </C>
         </>
     );
 };

@@ -43,7 +43,10 @@ export default function FileExplorerScreen() {
     });
   }
   return (
-    <ScrollView className="flex-1 p-4">
+    <ScrollView
+      className="flex-1 p-4"
+      contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+    >
       <Stack.Screen
         options={{
           title: "Explore",

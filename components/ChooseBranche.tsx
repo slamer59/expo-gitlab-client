@@ -35,7 +35,7 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                 </Text>
             </SelectTrigger>
             <SelectContent insets={contentInsets} className='w-[250px] max-h-screen mt-1 font-bold rounded-2xl '>
-                <ScrollView className='max-h-60'>
+                <ScrollView>
                     <SelectGroup>
                         <SelectLabel className="flex-row items-center">
                             Branches name
