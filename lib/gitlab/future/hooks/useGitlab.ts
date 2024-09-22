@@ -42,6 +42,15 @@ export const useGitLab = (client: GitLabClient) => {
         queryFn: () => client.Projects.show(projectId),
     });
 
+
+    const useProjects = (params: any): UseQueryResult<any> =>
+        useQuery({
+            queryKey: ['project', params],
+            queryFn: () => {
+                return client.Projects.all(params);
+            },
+        });
+
     const useProjectIssues = (projectId: string): UseQueryResult<any> => useQuery({
         queryKey: ['projectIssues', projectId],
         queryFn: () => client.Issues.all(projectId),
@@ -137,6 +146,7 @@ export const useGitLab = (client: GitLabClient) => {
         useUserContributedProjects,
         useUserOwnedProjects,
         useUserStarredProjects,
+        useProjects,
         useProject,
         useProjectIssues,
         useProjectMergeRequests,

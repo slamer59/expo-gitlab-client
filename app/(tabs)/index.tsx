@@ -12,9 +12,9 @@ import React, { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 const useDevFeature = (flagName) => {
-  const isDevelopment = Constants.appOwnership === 'expo';
+  const isExpoGo = Constants.appOwnership === 'expo';
   const featureEnabled = useFeatureFlag(flagName);
-  return isDevelopment && featureEnabled;
+  return isExpoGo || featureEnabled;
 };
 
 export default function Home() {

@@ -102,6 +102,8 @@ module.exports = {
         },
         ring: 'hsl(213, 100%, 40%)',
         issues: "#3de63d",
+        personal: "#4B0082",
+        contributed: "#3e64ed",
         commits: "#A9A9A9",
         code: "#A9A9A9",
         pullRequests: "#3e64ed",
