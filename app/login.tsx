@@ -47,6 +47,9 @@ export default function LoginScreen() {
         }
     }
 
+    function openUserSettingsPAT() {
+        Linking.openURL('https://gitlab.com/-/profile/personal_access_tokens');
+    }
 
     function openTokenInfoPage() {
         Linking.openURL('https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html');
@@ -101,11 +104,13 @@ export default function LoginScreen() {
                     <Text className="text-xl font-bold text-white">Login</Text>
                 )}
             </Button>
-
-            <Text className="mt-4 mb-4 text-lg font-bold text-primary" onPress={openTokenInfoPage}>
-                How to set up a Personal Access Token
+            <Text className="mt-4 mb-4 text-lg font-bold text-primary" onPress={openUserSettingsPAT}>
+                Setup Personal Access Token
             </Text>
-            <Text className="mb-4 font-semibold text-center text-primary-700">By signing in you accept our <Text className="text-blue-500" onPress={() => Linking.openURL('#')}>Terms of use</Text> and <Text className="text-primary-700" onPress={() => Linking.openURL('#')}>Privacy policy</Text>.</Text>
+            <Text className="mt-4 mb-4 text-lg font-bold text-primary" onPress={openTokenInfoPage}>
+                Official Documentation to set up a Personal Access Token
+            </Text>
+            <Text className="mb-4 font-semibold text-center text-danger">By signing in you accept our <Text className="text-blue-500" onPress={() => navigation.navigate("/workspace/terms")}>Terms of use</Text> and <Text className="text-primary-700" onPress={() => navigation.navigate("/workspace/privacy-policy")}>Privacy policy</Text>.</Text>
 
         </View >
     );

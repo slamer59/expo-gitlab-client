@@ -1,200 +1,110 @@
-import Loading from "@/components/Loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
-import { GitLabSession, useSession } from "@/lib/session/SessionProvider";
-import { Ionicons } from "@expo/vector-icons";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
+import { Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
+import projects from "../templates/projects";
 
-async function getUserInfo(session: GitLabSession) {
-  // https://docs.gitlab.com/ee/api/users.html#single-user
-  try {
-    const response = await fetch(`${session.url}/api/v4/user`, {
-      headers: {
-        "PRIVATE-TOKEN": session.token,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const user = await response.json();
-    return user;
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-    // You can return a default value or rethrow the error based on your needs
-    return null;
-  }
-}
-
-async function getUserProjects(
-  session: GitLabSession,
-  userId: any,
-  params: { membership: boolean; order_by: string; sort: string },
-) {
-  // Construct the query string from the params object
-  const queryString = new URLSearchParams(params).toString();
-
-  try {
-    const response = await fetch(
-      // `${session.url}/api/v4/users/${userId}/projects?${queryString}`,
-      `${session.url}/api/v4/projects?${queryString}`,
-      {
-        headers: {
-          "PRIVATE-TOKEN": session.token,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const projects = await response.json();
-
-    return projects;
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-    // You can return a default value or rethrow the error based on your needs
-    return [];
-  }
-}
-
-async function getUserStarredProjects(
-  session: GitLabSession,
-  userId: any,
-  params: { path: { id: any }; query: { order_by: string; sort: string } },
-) {
-  const queryString = new URLSearchParams(params.query).toString();
-  try {
-    const response = await fetch(
-      `${session.url}/api/v4/users/${userId}/starred_projects?${queryString}`,
-      {
-        headers: {
-          "PRIVATE-TOKEN": session.token,
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const starredProjects = await response.json();
-    return starredProjects;
-  } catch (error) {
-    console.error("There was a problem with the fetch operation:", error);
-    // You can return a default value or rethrow the error based on your needs
-    return [];
-  }
-}
+const UserSkeleton = () => (
+  <>
+    <View className="flex-row items-center mb-4">
+      <Skeleton className="w-12 h-12 rounded-full bg-muted" />
+      <View className="flex-1 ml-3">
+        <Skeleton className="w-24 h-4 mb-2 bg-muted" />
+        <Skeleton className="w-16 h-3 bg-muted" />
+      </View>
+    </View>
+    <View className="flex mb-4 space-x-2 flex-2">
+      <View className="flex-row items-center m-2">
+        <Skeleton className="w-6 h-6 mr-2 bg-muted" />
+        <Skeleton className="w-24 h-4 bg-muted" />
+      </View>
+    </View>
+  </>
+);
 
 export default function ProfileScreen() {
-  const { session } = useSession();
-  const [user, setUser] = React.useState(null);
-  const [projects, setProjects] = React.useState([]);
-  const [starredProjects, setStarredProjects] = React.useState([]);
+  const { session } = useSession()
+  const api = new GitLabClient({
+    url: session?.url,
+    token: session?.token,
+  });
+  const { useUserProjects, useCurrentUser, useUserStarredProjects, useProjects } = useGitLab(api);
 
-  useEffect(() => {
-    async function fetchData() {
-      const user = await getUserInfo(session);
-      setUser(user);
+  const { data: user, isLoading: isLoadingUser, error: errorUser } = useCurrentUser();
+  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = useUserProjects(user?.username);
+  const { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed } = useProjects({
+    membership: true,
+    order_by: "last_activity_at",
+    sort: "desc",
+  });
 
-      const paramsProjects = {
-        path: {
-          id: user.id,
-        },
-        query: {
-          membership: true,
-          order_by: "last_activity_at",
-          sort: "desc",
-        },
-      };
-      const projects = await getUserProjects(session, user.id, paramsProjects);
-      setProjects(projects);
+  const { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred } = useUserStarredProjects(user?.username);
 
-      // https://docs.gitlab.com/ee/api/projects.html#list-projects-starred-by-a-user
-      const paramsStarredProjects = {
-        path: {
-          id: user.id,
-        },
-        query: {
-          order_by: "last_activity_at",
-          sort: "desc",
-        },
-      };
-
-      const starredProjects = await getUserStarredProjects(
-        session,
-        user.id,
-        paramsStarredProjects,
-      );
-      setStarredProjects(starredProjects);
-    }
-    fetchData();
-  }, [session]);
-
-  if (!user) {
-    return <Loading />;
-  }
-
+  if (errorContributed || errorPersonal || errorStarred || errorUser) return <Text>Error: {errorUser.message || errorPersonal.message || errorContributed.message || errorStarred.message}</Text>;
   return (
     <View className="flex-1 p-4 bg-background">
-      <View className="flex-row items-center mb-4">
-        <Avatar alt={`${user.name}'s Avatar`}>
-          <AvatarImage source={{ uri: user.avatar_url }} />
-          <AvatarFallback>
-            <Ionicons name="person-circle-outline" size={32} color="white" />
-          </AvatarFallback>
-        </Avatar>
-        <View className="flex-1 ml-3">
-          <Text className="font-semibold">{user.name} </Text>
-          <Text className="text-sm text-white">@{user.username}</Text>
-        </View>
-      </View>
-
-      <View className="flex mb-4 space-x-2 flex-2">
-        {user.location && (
-          <View className="flex-row items-center m-2">
-            <Ionicons
-              name="location-outline"
-              size={24}
-              color="gray"
-              className="mr-2"
-            />
-            <Text className="text-">{user.location}</Text>
+      {isLoadingUser ? <UserSkeleton /> : (
+        <>
+          <View className="flex-row items-center mb-4">
+            <Avatar alt={`${user.name}'s Avatar`}>
+              <AvatarImage source={{ uri: user.avatar_url }} />
+              <AvatarFallback>
+                <Ionicons name="person-circle-outline" size={32} color="white" />
+              </AvatarFallback>
+            </Avatar>
+            <View className="flex-1 ml-3">
+              <Text className="font-semibold">{user.name} </Text>
+              <Text className="text-sm text-white">@{user.username}</Text>
+            </View>
           </View>
-        )}
-        {user.public_email && (
-          <View className="flex-row items-center m-2">
-            <Ionicons
-              name="mail-outline"
-              size={24}
-              color="gray"
-              className="mr-2"
-            />
-            <Text className="text-white">
-              {user.public_email}
-            </Text>
+          <View className="flex mb-4 space-x-2 flex-2">
+            {user.location && (
+              <View className="flex-row items-center m-2">
+                <Ionicons
+                  name="location-outline"
+                  size={24}
+                  color="gray"
+                  className="mr-2"
+                />
+                <Text className="text-">{user.location}</Text>
+              </View>
+            )}
+            {user.public_email && (
+              <View className="flex-row items-center m-2">
+                <Ionicons
+                  name="mail-outline"
+                  size={24}
+                  color="gray"
+                  className="mr-2"
+                />
+                <Text className="text-white">
+                  {user.public_email}
+                </Text>
+              </View>
+            )}
+            {user.followers && (
+              <View className="flex-row items-center mb-2">
+                <Ionicons
+                  name="people-outline"
+                  size={24}
+                  color="gray"
+                  className="mr-2"
+                />
+                <Text className="text-white">
+                  {user.followers} followers • {user.following} following
+                </Text>
+              </View>
+            )}
           </View>
-        )}
-        {user.followers && (
-          <View className="flex-row items-center mb-2">
-            <Ionicons
-              name="people-outline"
-              size={24}
-              color="gray"
-              className="mr-2"
-            />
-            <Text className="text-white">
-              {user.followers} followers • {user.following} following
-            </Text>
-          </View>
-        )}
-      </View>
+        </>
+      )}
 
       {/* <View className="mb-4">
         <View className="flex-row items-center mb-2">
@@ -237,7 +147,36 @@ export default function ProfileScreen() {
         >
           <CardContent className="flex-row items-center flex-1">
             <View className="flex-row items-center flex-1">
-              <View className="flex items-center justify-center p-2 rounded-lg bg-projects">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-contributed">
+                <Octicons
+                  name="project"
+                  size={24}
+                  color="white"
+                />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                Contributed Projects
+              </Text>
+            </View>
+            <Text className="text-base text-white" testID="project-count">
+              {isLoadingContributed ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
+                contributedProjects.length >= 20 ? '20+' : projects.length
+              }
+            </Text>
+          </CardContent>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push({
+            pathname: "/workspace/projects/list",
+            params: { owned: "true" },
+          })}
+          className="flex-row bg-card"
+          activeOpacity={0.7}
+        >
+          <CardContent className="flex-row items-center flex-1">
+            <View className="flex-row items-center flex-1">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-personal">
                 <Ionicons
                   name="folder-outline"
                   size={24}
@@ -245,11 +184,13 @@ export default function ProfileScreen() {
                 />
               </View>
               <Text className="ml-4 text-lg text-white">
-                Projects
+                Personal Projects
               </Text>
             </View>
-            <Text className="text-base text-white" testID="project-count">
-              {projects.length >= 20 ? '20+' : projects.length}
+            <Text className="text-base text-white" testID="personal-project-count">
+              {isLoadingPersonal ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
+                personalProjects.length >= 20 ? '20+' : personalProjects.length
+              }
             </Text>
           </CardContent>
         </TouchableOpacity>
@@ -274,7 +215,9 @@ export default function ProfileScreen() {
               </Text>
             </View>
             <Text className="ml-2 text-base" testID="starred-count">
-              {starredProjects.length >= 20 ? '20+' : starredProjects.length}
+              {isLoadingStarred ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
+                starredProjects.length >= 20 ? '20+' : starredProjects.length
+              }
             </Text>
           </CardContent>
         </TouchableOpacity>
