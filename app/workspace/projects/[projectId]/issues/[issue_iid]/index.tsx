@@ -118,7 +118,7 @@ export default function IssueDetails() {
     if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
         return <Text>Error fetching data</Text>;
     }
-    const isLoadingTest = true
+    // const isLoadingTest = true
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen
