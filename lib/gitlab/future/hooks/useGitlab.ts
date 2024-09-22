@@ -74,6 +74,18 @@ export const useGitLab = (client: GitLabClient) => {
                 client.createCommit(data.projectId, data.branch, data.commitMessage, data.actions, data.options),
             ['projectCommits']
         ),
+        useUpdateMergeRequest: createMutationHook(
+            (data: { projectId: string; mergeRequestIid: string; updateData: any }) =>
+                client.updateMergeRequest(data.projectId, data.mergeRequestIid, data.updateData),
+            ['projectMergeRequests']
+        ),
+        useDeleteMergeRequest: createMutationHook(
+            (data: { projectId: string; mergeRequestIid: string }) =>
+                client.deleteMergeRequest(data.projectId, data.mergeRequestIid),
+            ['projectMergeRequests']
+        ),
+
+
 
 
 
@@ -82,32 +94,63 @@ export const useGitLab = (client: GitLabClient) => {
             []
         ),
     };
-    const useProjectDetails = (projectId: string) => {
-        return useQueries({
-            queries: [
-                {
-                    queryKey: ['project', projectId],
-                    queryFn: () => client.Projects.show(projectId),
-                },
-                {
-                    queryKey: ['projectUsers', projectId],
-                    queryFn: () => client.ProjectsUsers.all(projectId),
-                },
-                {
-                    queryKey: ['projectMergeRequests', projectId],
-                    queryFn: () => client.MergeRequests.all(projectId),
-                },
-                {
-                    queryKey: ['projectBranches', projectId],
-                    queryFn: () => client.Branches.all(projectId),
-                },
-                {
-                    queryKey: ['projectMembers', projectId],
-                    queryFn: () => client.ProjectMembers.all(projectId),
-                },
-            ],
-        });
+
+    const detailsHooks = {
+
+        useProjectDetails: (projectId: string) => {
+            return useQueries({
+                queries: [
+                    {
+                        queryKey: ['project', projectId],
+                        queryFn: () => client.Projects.show(projectId),
+                    },
+                    {
+                        queryKey: ['projectUsers', projectId],
+                        queryFn: () => client.ProjectsUsers.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectMergeRequests', projectId],
+                        queryFn: () => client.MergeRequests.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectBranches', projectId],
+                        queryFn: () => client.Branches.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectMembers', projectId],
+                        queryFn: () => client.ProjectMembers.all(projectId),
+                    },
+                ],
+            });
+        },
+        useMergeRequestDetails: (projectId: string, mergeRequestIid: string) => {
+            return useQueries({
+                queries: [
+                    {
+                        queryKey: ['projectMergeRequest', projectId, mergeRequestIid],
+                        queryFn: () => client.MergeRequests.show(projectId, mergeRequestIid),
+                    },
+                    // {
+                    //     queryKey: ['projectMergeRequestComments', projectId, mergeRequestIid],
+                    //     queryFn: () => client.MergeRequests.comments(projectId, mergeRequestIid),
+                    // },
+                    {
+                        queryKey: ['projectMergeRequestCommits', projectId, mergeRequestIid],
+                        queryFn: () => client.MergeRequests.commits(projectId, mergeRequestIid),
+                    },
+                    {
+                        queryKey: ['projectMergeRequestNotes', projectId, mergeRequestIid],
+                        queryFn: () => client.MergeRequests.notes(projectId, mergeRequestIid),
+                    },
+                    {
+                        queryKey: ['projectMergeRequestChanges', projectId, mergeRequestIid],
+                        queryFn: () => client.MergeRequests.changes(projectId, mergeRequestIid),
+                    },
+                ],
+            });
+        },
     };
 
-    return { ...queryHooks, ...mutationHooks, useProjectDetails };
+
+    return { ...queryHooks, ...mutationHooks, ...detailsHooks };
 };

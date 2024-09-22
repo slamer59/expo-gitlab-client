@@ -88,6 +88,7 @@ class GitLabClient {
     },
   };
 
+
   MergeRequests = {
     all: async (projectId, options = {}) => {
       const queryString = new URLSearchParams(options).toString();
@@ -107,6 +108,18 @@ class GitLabClient {
     },
     remove: async (projectId, mergeRequestIid) => {
       return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}`, 'DELETE');
+    },
+    comments: async (projectId, mergeRequestIid) => {
+      return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}/notes`);
+    },
+    commits: async (projectId, mergeRequestIid) => {
+      return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}/commits`);
+    },
+    changes: async (projectId, mergeRequestIid) => {
+      return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}/changes`);
+    },
+    notes: async (projectId, mergeRequestIid) => {
+      return this.request(`/projects/${projectId}/merge_requests/${mergeRequestIid}/notes`);
     },
   };
 
@@ -387,6 +400,18 @@ class GitLabClient {
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);
   };
+  updateMergeRequest = async (projectId, mergeRequestIid, data) => {
+    return this.MergeRequests.edit(projectId, mergeRequestIid, data);
+  };
+  updateUser = async (userId, data) => {
+    return this.request(`/users/${userId}`, 'PUT', data);
+  };
+  updateRepositoryFile = async (projectId, filePath, data) => {
+    return this.RepositoryFile.update(projectId, filePath, data);
+  };
+  updateProjectMember = async (projectId, userId, accessLevel, options = {}) => {
+    return this.Members.update(projectId, userId, accessLevel, options);
+  };
 
 
   // Delete Methods
@@ -396,6 +421,15 @@ class GitLabClient {
   };
   deleteProjectMergeRequest = async (projectId, mergeRequestIid) => {
     return this.MergeRequests.remove(projectId, mergeRequestIid);
+  };
+  deleteMergeRequest = async (projectId, mergeRequestIid) => {
+    return this.MergeRequests.remove(projectId, mergeRequestIid);
+  };
+  deleteProject = async (projectId) => {
+    return this.request(`/projects/${projectId}`, 'DELETE');
+  };
+  deleteUser = async (userId) => {
+    return this.request(`/users/${userId}`, 'DELETE');
   };
 
   // Generic operation hook creator

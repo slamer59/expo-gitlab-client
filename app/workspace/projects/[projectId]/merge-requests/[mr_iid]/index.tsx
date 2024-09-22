@@ -17,8 +17,6 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { formatDate } from "@/lib/utils";
 import { Ionicons } from '@expo/vector-icons';
 import { Label } from "@rn-primitives/select";
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { format } from "date-fns";
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -29,7 +27,7 @@ import { headerRightProjectMr } from "./headerRight";
 
 function CommitItem({ commit }) {
     const [isOpen, setIsOpen] = useState(false);
-    const initials = commit.author_name
+    const initials = commit?.author_name
         .split(' ')
         .map(name => name[0])
         .join('')
@@ -81,7 +79,7 @@ function CommitItem({ commit }) {
 }
 
 
-function CommitsSection({ commits, changeSummaries }) {
+function CommitsSection({ commits }) {
     return (
         <View className="p-3 mb-4 rounded-lg bg-card-600">
             <Text className="mb-4 text-lg font-semibold text-white">Commits</Text>
@@ -95,7 +93,7 @@ function CommitsSection({ commits, changeSummaries }) {
                 </Text>
             }
 
-            {commits && commits.map((commit, index) => (
+            {commits && commits?.map((commit, index) => (
                 <CommitItem key={index} commit={commit} />
             ))}
         </View>
@@ -235,9 +233,9 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
 
     return <View className="p-3 mb-4 rounded-lg bg-card-600">
 
-        {mr.mr.state === 'open' ? <Text className="mb-2 text-lg font-semibold text-white">Ready to merge!</Text> : <Text className="mb-2 text-lg font-semibold text-danger">Merge request is closed</Text>}
+        {mr.state === 'open' ? <Text className="mb-2 text-lg font-semibold text-white">Ready to merge!</Text> : <Text className="mb-2 text-lg font-semibold text-danger">Merge request is closed</Text>}
 
-        {mr.mr.state === 'open' && (
+        {mr.state === 'open' && (
             <>
                 <View className='justify-center flex-1 gap-4 p-2'>
                     <View className='flex-row items-center gap-3'>
@@ -273,7 +271,7 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
                 </View>
 
                 <Text className="mb-3 text-sm text-gray-400">
-                    {mr.commits?.length} commit will be added to {mr.mr.target_branch}.
+                    {mr.commits?.length} commit will be added to {mr.target_branch}.
                 </Text>
                 <TouchableOpacity
                     className="px-4 py-2 bg-blue-600 rounded-md"
@@ -297,7 +295,7 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
 
 const ChangesSection = ({ mr, changeSummaries }) => {
 
-    const { totalAdditions, totalDeletions, newFiles, modifiedFiles, renamedFiles, deletedFiles } = changeSummaries
+    const { totalAdditions, totalDeletions, newFiles, modifiedFiles, deletedFiles } = changeSummaries
 
     return (
         <View className="p-3 mb-4 rounded-lg bg-card-600">
@@ -337,45 +335,6 @@ const ChangesSection = ({ mr, changeSummaries }) => {
 };
 
 
-
-// const ChangesSection = ({ mr }) => (
-//     <View className="p-3 mb-4 rounded-lg bg-card-600">
-//         <Text className="mb-2 text-lg font-semibold text-white">Changes</Text>
-//         <View className="flex-row items-center justify-between">
-//             <View className="flex-row items-center">
-//                 <Ionicons name="document-text-outline" size={16} color="white" />
-//                 <Text className="ml-2 text-white">
-//                     {mr.changes_count || "No"} files changed
-//                 </Text>
-//             </View>
-//             <View className="flex-row">
-//                 <Text className="mr-2 text-green-500">+{mr.additions || 18}</Text>
-//                 <Text className="text-danger">-{mr.deletions || 0}
-//                     GET /projects/:id/merge_requests/:merge_request_iid/versions/:version_id
-
-
-
-//                 </Text>
-//             </View>
-//         </View>
-//         <Text className="mt-1 text-sm text-muted">
-//             You reviewed these changes 1y ago.
-//             {mr.updated_at}
-//         </Text>
-//         <View className="flex flex-row items-center justify-between mb-2">
-
-
-//         </View>
-//     </View>
-// );
-
-
-
-const api = axios.create({
-    baseURL: "https://gitlab.com/api/v4/",
-    headers: { 'PRIVATE-TOKEN': "GITLAB_PAT_REMOVED" },
-});
-
 const calculateFileChanges = (change) => {
     // Default values
     let additions = 0;
@@ -409,45 +368,6 @@ const calculateFileChanges = (change) => {
 };
 
 
-
-const fetchMergeRequestDetails = async (projectId, mergeRequestIid) => {
-    try {
-        const [mergeRequest, commits, notes, changes] = await Promise.all([
-            api.get(`/projects/${projectId}/merge_requests/${mergeRequestIid}`),
-            api.get(`/projects/${projectId}/merge_requests/${mergeRequestIid}/commits`),
-            api.get(`/projects/${projectId}/merge_requests/${mergeRequestIid}/notes`),
-            api.get(`/projects/${projectId}/merge_requests/${mergeRequestIid}/changes`),
-        ]);
-
-        const fileChanges = changes.data.changes.map(change => ({
-            file_path: change.new_path || change.old_path,
-            // ...calculateFileChanges(change)
-        }));
-        // console.log('File changes:', fileChanges); // Add this for debugging
-
-        return {
-            mr: mergeRequest.data,
-            commits: commits.data,
-            notes: notes.data,
-            changes: changes.data,
-            fileChanges: fileChanges
-        };
-    } catch (error) {
-        console.error('Error fetching merge request details:', error.message);
-        throw error;
-    }
-};
-
-
-const useMergeRequestDetails = (projectId, mergeRequestIid) => {
-    return useQuery({
-        queryKey: ['mergeRequestDetails', projectId, mergeRequestIid],
-        queryFn: () => fetchMergeRequestDetails(projectId, mergeRequestIid),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    });
-};
-
-
 export default function MergeRequestDetails() {
     const { projectId, mr_iid } = useLocalSearchParams();
     const { session } = useSession()
@@ -459,11 +379,20 @@ export default function MergeRequestDetails() {
     });
 
     const api = useGitLab(client);
+
+    const [
+        { data: mr, isLoading: isLoadingMR, error: errorMR },
+        { data: commits, isLoading: isLoadingCommits, error: errorCommits },
+        { data: notes, isLoading: isLoadingNotes, error: errorNotes },
+        { data: changes, isLoading: isLoadingChanges, error: errorChanges },
+
+    ] = api.useMergeRequestDetails(projectId, mr_iid);
+
     // Delete Merge Request
     const deleteMergeRequest = async () => {
         try {
             router.push(`/workspace/projects/${projectId}/merge-requests/list`);
-            await api.deleteMergeRequest(projectId, mr_iid);
+            await api.useDeleteMergeRequest(projectId, mr_iid);
         } catch (error) {
             console.error("Error deleting merge request:", error);
         }
@@ -472,7 +401,7 @@ export default function MergeRequestDetails() {
     // Close Merge Request
     const closeMergeRequest = async () => {
         try {
-            await api.updateMergeRequest(projectId, mr_iid, {
+            await api.useUpdateMergeRequest(projectId, mr_iid, {
                 state_event: "close",
             });
             // router.push(`/projects/${projectId}`);
@@ -484,7 +413,7 @@ export default function MergeRequestDetails() {
     // Reopening Merge Request
     const reopenMergeRequest = async () => {
         try {
-            await api.updateMergeRequest(projectId, mr_iid, {
+            await api.useUpdateMergeRequest(projectId, mr_iid, {
                 state_event: "reopen",
             });
             // router.push(`/projects/${projectId}`);
@@ -493,19 +422,31 @@ export default function MergeRequestDetails() {
         }
     }
 
-    const { data: mr, isLoading, isError, error } = useMergeRequestDetails(projectId, mr_iid);
 
-    if (isError) return <Text className="text-white">Error: {error.message}</Text>;
-
-    const fileChanges = mr?.changes.changes.map(change => calculateFileChanges(change));
-    const changeSummaries = {
-        newFiles: fileChanges?.filter(file => file.status === 'new').length,
-        deletedFiles: fileChanges?.filter(file => file.status === 'deleted').length,
-        modifiedFiles: fileChanges?.filter(file => file.status === 'modified').length,
-        totalAdditions: fileChanges?.reduce((sum, file) => sum + file.additions, 0),
-        totalDeletions: fileChanges?.reduce((sum, file) => sum + file.deletions, 0),
+    if (errorMR || errorCommits || errorNotes || errorChanges) {
+        return <Text>Error: {errorMR?.message || errorCommits?.message || errorNotes?.message || errorChanges?.message}</Text>;
     }
 
+    const isLoading = isLoadingChanges || isLoadingCommits || isLoadingMR || isLoadingNotes;
+
+    let fileChanges = null
+    let changeSummaries = null
+    if (!isLoading) {
+        fileChanges = changes?.changes?.map(change => calculateFileChanges(change));
+        changeSummaries = {
+            newFiles: fileChanges?.filter(file => file.status === 'new').length,
+            deletedFiles: fileChanges?.filter(file => file.status === 'deleted').length,
+            modifiedFiles: fileChanges?.filter(file => file.status === 'modified').length,
+            totalAdditions: fileChanges?.reduce((sum, file) => sum + file.additions, 0),
+            totalDeletions: fileChanges?.reduce((sum, file) => sum + file.deletions, 0),
+        }
+    }
+    // console.log('MR:', mr);
+    // console.log('Commits:', commits);
+    // console.log('Notes:', notes);
+    // console.log('Changes:', changes);
+    // console.log('File Changes:', changes?.changes);
+    // console.log('changeSummaries:', changeSummaries);
     return (
         <>
             <SafeAreaView className="flex-1">
@@ -519,12 +460,18 @@ export default function MergeRequestDetails() {
                     className="flex-1 p-4 bg-card"
                     contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
                 >
-                    {isLoading ? <HeaderSkeleton /> :
-                        <MergeRequestHeader mr={mr.mr} />}
-                    {isLoading ? <CommentSkeleton /> :
-                        <MergeRequestComment mr={mr.mr} projectId={projectId} />}
-                    {isLoading ? <SectionSkeleton /> :
-                        <ChangesSection mr={mr.mr} changeSummaries={changeSummaries} />}
+                    {isLoadingMR ?
+                        <HeaderSkeleton /> :
+                        <MergeRequestHeader mr={mr} />
+                    }
+                    {isLoadingMR ?
+                        <CommentSkeleton /> :
+                        <MergeRequestComment mr={mr} projectId={projectId} />
+                    }
+                    {isLoading ?
+                        <SectionSkeleton /> :
+                        <ChangesSection mr={mr} changeSummaries={changeSummaries} />
+                    }
 
                     {/* <View className="mb-4">
                         <Text className="mb-2 font-semibold text-white">Changes</Text>
@@ -535,22 +482,25 @@ export default function MergeRequestDetails() {
                         </View>
                     </View> */}
 
-                    {isLoading ? <SectionSkeleton /> :
-                        <CommitsSection commits={mr?.commits} fileChanges={changeSummaries} />
+                    {isLoadingCommits ?
+                        <SectionSkeleton /> :
+                        <CommitsSection commits={commits} /> //fileChanges={changeSummaries} />
                     }
-                    {isLoading ? <StatusItemSkeleton /> :
-                        <StatusSection mr={mr.mr} />
+                    {isLoadingMR ?
+                        <StatusItemSkeleton /> :
+                        <StatusSection mr={mr} />
                     }
-                    {isLoading ? <SectionSkeleton /> :
+                    {isLoadingMR ?
+                        <SectionSkeleton /> :
                         <ActionButtons
                             mr={mr}
-                            onMerge={() => {/* Implement merge logic */ }}
+                            onMerge={() => { console.log("ok") }}
                             onClose={closeMergeRequest}
                             onReopen={reopenMergeRequest}
                         />
                     }
                     <Text className="text-4xl font-bold text-white">Events</Text>
-                    {isLoading ? <NotesSkeleton /> : <IssueNotes notes={mr.notes} />
+                    {isLoadingNotes ? <NotesSkeleton /> : <IssueNotes notes={notes} />
                     }
                 </ScrollView>
             </SafeAreaView>
