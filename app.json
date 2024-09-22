@@ -13,9 +13,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.thomas.pedot.expogitlabclient"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +34,9 @@
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      ["expo-router"],
+      [
+        "expo-router"
+      ],
       "expo-localization",
       "expo-font",
       [
@@ -40,10 +45,6 @@
           "icon": "./assets/images/logo.png",
           "color": "#ffffff",
           "defaultChannel": "default"
-          // "sounds": [
-          //   "./local/assets/notification-sound.wav",
-          //   "./local/assets/notification-sound-other.wav"
-          // ]
         }
       ]
     ],
