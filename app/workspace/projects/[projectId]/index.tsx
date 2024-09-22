@@ -13,7 +13,7 @@ import { CodeSection } from "@/components/Project/code-section";
 import { ProjectHeader } from "@/components/Project/header";
 import { WorkspaceSection } from "@/components/Project/workspaceSection";
 import { ProjectHeaderSkeleton } from "@/components/Skeleton/project-header";
-import WorkspaceButtonListSkeleton from "@/components/Skeleton/section";
+import SectionSkeleton from "@/components/Skeleton/section";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { headerRightProject } from "./headerRight";
 
@@ -89,10 +89,10 @@ export default function ProjectDetailsScreen() {
           {isSelfLoading ? <ProjectHeaderSkeleton /> :
             <ProjectHeader repository={repository} />
           }
-          {isLoading ? <WorkspaceButtonListSkeleton /> :
+          {isLoading ? <SectionSkeleton /> :
             <WorkspaceSection listItems={listItems} />
           }
-          {isLoading ? <WorkspaceButtonListSkeleton /> : <CodeSection
+          {isLoading ? <SectionSkeleton /> : <CodeSection
             selectedBranch={selectedBranch}
             defaultBranchName={defaultBranchName}
             repoBranchesName={repoBranchesName}

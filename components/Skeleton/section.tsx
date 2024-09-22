@@ -16,7 +16,7 @@ const ButtonListSkeleton = ({ itemCount = 3 }) => {
     );
 };
 
-const WorkspaceButtonListSkeleton = () => {
+const SectionSkeleton = () => {
     return (
         <View className="p-4 mt-4 mb-4 rounded-lg bg-card-600">
             <Skeleton className="w-24 h-6 mb-4 bg-muted" />
@@ -25,4 +25,4 @@ const WorkspaceButtonListSkeleton = () => {
     );
 };
 
-export default WorkspaceButtonListSkeleton;
+export default SectionSkeleton;

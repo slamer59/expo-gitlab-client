@@ -11,10 +11,10 @@ const StatusItemSkeleton: React.FC<StatusItemSkeletonProps> = () => {
         <View className="mb-2">
             <View className="flex-row items-center justify-between py-2">
                 <View className="flex-row items-center">
-                    <Skeleton className="w-5 h-5 rounded-full" /> {/* Icon skeleton */}
-                    <Skeleton className="w-24 h-4 ml-2" /> {/* Text skeleton */}
+                    <Skeleton className="w-5 h-5 rounded-full bg-muted" />
+                    <Skeleton className="w-24 h-4 ml-2 bg-muted" />
                 </View>
-                <Skeleton className="w-5 h-5" /> {/* Chevron skeleton */}
+                <Skeleton className="w-5 h-5 bg-muted" />
             </View>
         </View>
     );
