@@ -318,6 +318,13 @@ class GitLabClient {
     },
   }
 
+  Markdown = {
+    // POST /markdown
+    render: async (text, options = {}) => {
+      return this.request('/markdown', 'POST', { text, ...options });
+    },
+  }
+
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
