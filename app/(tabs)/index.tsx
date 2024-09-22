@@ -5,16 +5,18 @@ import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
 import { Link, useFocusEffect } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 const useDevFeature = (flagName) => {
-  const isExpoGo = Constants.appOwnership === 'expo';
+  const isDev = __DEV__;
+  // console.log(`__DEV__ is ${isDev}`);
   const featureEnabled = useFeatureFlag(flagName);
-  return isExpoGo || featureEnabled;
+  // console.log(`Feature ${flagName} is ${featureEnabled ? 'enabled' : 'disabled'}`);
+  // console.log(`Returning ${isDev || featureEnabled}`);
+  return isDev || featureEnabled;
 };
 
 export default function Home() {

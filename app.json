@@ -26,6 +26,9 @@
       "package": "com.thomas.pedot.expogitlabclient",
       "versionCode": 6
     },
+    "androidNavigationBar": {
+      "backgroundColor": "#000000"
+    },
     "web": {
       "bundler": "metro",
       "output": "static",

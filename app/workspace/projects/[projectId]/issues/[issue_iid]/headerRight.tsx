@@ -60,7 +60,7 @@ export function headerRightProjectIssue(openIssue: () => Promise<void>, closeIss
         <View className='flex-row items-center'>
             <Pressable
                 onPress={async () => {
-                    await shareView(issue.web_url);
+                    await shareView(issue?.web_url);
                 }}
                 className='pl-2 pr-2 m-2'
             >
@@ -77,10 +77,10 @@ export function headerRightProjectIssue(openIssue: () => Promise<void>, closeIss
                 openIssue={openIssue}
                 closeIssue={closeIssue}
                 deleteIssue={deleteIssue}
-                state={issue.state}
-                projectId={issue.project_id}
-                issueIid={issue.iid}
-                issueUrl={issue.web_url}
+                state={issue?.state}
+                projectId={issue?.project_id}
+                issueIid={issue?.iid}
+                issueUrl={issue?.web_url}
             />
         </View>
     );

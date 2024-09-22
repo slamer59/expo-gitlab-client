@@ -6,6 +6,7 @@ import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 
+
 const IssueComment = ({ issue, projectId }) => {
     const { author, created_at, title, description, body, iid, web_url } = issue;
     const router = useRouter();
