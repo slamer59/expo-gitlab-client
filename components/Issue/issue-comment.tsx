@@ -30,17 +30,17 @@ const IssueComment = ({ issue, projectId }) => {
         <View className="p-4 mt-4 mb-4 rounded-lg bg-card-600">
             <View className="flex-row items-center justify-between mb-2">
                 <View className="flex-row items-center">
-                    {author.avatar_url ? (
+                    {author?.avatar_url ? (
                         <Image
-                            source={{ uri: author.avatar_url }}
+                            source={{ uri: author?.avatar_url }}
                             className="w-8 h-8 mr-2 rounded-full"
                         />
                     ) : (
                         <View className="items-center justify-center w-8 h-8 mr-2 bg-purple-500 rounded-full">
-                            <Text className="font-bold text-white">{author.name.charAt(0).toUpperCase()}</Text>
+                            <Text className="font-bold text-white">{author?.name.charAt(0).toUpperCase()}</Text>
                         </View>
                     )}
-                    <Text className="font-semibold text-white">{author.name}</Text>
+                    <Text className="font-semibold text-white">{author?.name}</Text>
                 </View>
                 <Text className="text-sm text-gray-400">{new Date(created_at).toLocaleDateString()}</Text>
             </View>
