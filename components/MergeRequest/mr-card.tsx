@@ -9,7 +9,7 @@ import MergeStatusIcon from "./mr-status-icon";
 export function MergeRequestCardSkeleton() {
   return (
     <View className="flex-row items-center p-4 my-2 space-x-4 rounded-lg bg-card">
-      <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full" />
+      <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full bg-muted" />
       <View className="flex-1 space-y-2">
         <Skeleton className="w-full h-4 mb-2 bg-muted" />
         <Skeleton className="w-3/4 h-4 bg-muted" />
