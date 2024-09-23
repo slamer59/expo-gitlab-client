@@ -10,6 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from 'posthog-react-native';
 import React from 'react';
 import { Platform } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -134,30 +135,28 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-
   return (
-    <PostHogProvider
-      apiKey="POSTHOG_API_KEY_REMOVED"
-      options={{
-        host: "https://eu.i.posthog.com",
-      }}
-      autocapture={{
-        captureTouches: true,
-        noCaptureProp: 'data-no-capture', // You'll use this attribute on password fields
-        navigation: {
-          // Add any specific navigation options here if needed
-          // For example:
-          // captureScreenViews: true,
-          // captureNavigationEvents: true,
-        },
-        captureLifecycleEvents: true,
-      }}
-    >
-      <SessionProvider>
-        <SafeAreaProvider>
-          <RootLayoutNav />
-        </SafeAreaProvider>
-      </SessionProvider>
-    </PostHogProvider >
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PostHogProvider
+        apiKey="POSTHOG_API_KEY_REMOVED"
+        options={{
+          host: "https://eu.i.posthog.com",
+        }}
+        autocapture={{
+          captureTouches: true,
+          noCaptureProp: 'data-no-capture',
+          navigation: {
+            // Add any specific navigation options here if needed
+          },
+          captureLifecycleEvents: true,
+        }}
+      >
+        <SessionProvider>
+          <SafeAreaProvider>
+            <RootLayoutNav />
+          </SafeAreaProvider>
+        </SessionProvider>
+      </PostHogProvider>
+    </GestureHandlerRootView>
   );
 }

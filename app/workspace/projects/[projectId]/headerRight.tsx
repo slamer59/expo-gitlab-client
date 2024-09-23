@@ -83,7 +83,6 @@ export function headerRightProject(
     project
 
 ) {
-    console.log("project", project?.id);
     return () => (
         <View className='flex-row items-center'>
             <Pressable

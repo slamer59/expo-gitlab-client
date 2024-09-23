@@ -45,8 +45,8 @@ export default function ProjectDetailsScreen() {
   if (!isLoading) {
     branchesName = branches?.map(branch => branch.name);
     defaultBranchName = branches?.find(branch => branch.default)?.name || branches[0]?.name;
-    listItems = getWorkspaceItems({ repository, mergeRequests, members }, router);
-    listItemsSecond = getCodeSectionItems(repository, router);
+    listItems = getWorkspaceItems({ project, mergeRequests, members }, router);
+    listItemsSecond = getCodeSectionItems(project, router);
   }
 
   return (

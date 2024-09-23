@@ -162,7 +162,7 @@ export const useGitLab = (client: GitLabClient) => {
                             membership: true,
                             sort: "desc",
                         }),
-                        enabled: !!currentUser?.username,
+                        enabled: !!currentUser,
                     },
                     {
                         queryKey: ['contributedProjects'],
