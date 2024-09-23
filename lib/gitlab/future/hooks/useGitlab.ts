@@ -84,14 +84,31 @@ export const useGitLab = (client: GitLabClient) => {
                 client.deleteMergeRequest(data.projectId, data.mergeRequestIid),
             ['projectMergeRequests']
         ),
-
-
-
-
+        useDeletePipeline: createMutationHook(
+            (data: { projectId: string; pipelineId: string }) =>
+                client.deletePipeline(data.projectId, data.pipelineId),
+            ['projectPipelines']
+        ),
+        useCancelPipeline: createMutationHook(
+            (data: { projectId: string; pipelineId: string }) =>
+                client.cancelPipeline(data.projectId, data.pipelineId),
+            ['projectPipelines']
+        ),
 
         useConvertMarkdownToHtml: createMutationHook(
             (markdown: string) => client.Markdown.render({ text: markdown, gfm: true }),
             []
+        ),
+        // Retry
+        useRetryPipeline: createMutationHook(
+            (data: { projectId: string; pipelineId: string }) =>
+                client.Pipelines.retry(data.projectId, data.pipelineId),
+            ['projectPipelines']
+        ),
+        useRetryJob: createMutationHook(
+            (data: { projectId: string; jobId: string }) =>
+                client.Jobs.retry(data.projectId, data.jobId),
+            ['projectJobs']
         ),
     };
 
@@ -184,7 +201,31 @@ export const useGitLab = (client: GitLabClient) => {
                 { data: currentUser, isLoading: isLoadingUser, error: errorUser },
                 ...queries.map(({ data, isLoading, error }) => ({ data, isLoading, error })),
             ];
-        }
+        },
+
+        usePipelineDetails: (projectId: string, pipelineId: string) => {
+            const pipelineQuery = useQuery({
+                queryKey: ['projectPipeline', projectId, pipelineId],
+                queryFn: () => client.Pipelines.show(projectId, pipelineId),
+            });
+
+            const commitQuery = useQuery({
+                queryKey: ['projectPipelineCommit', projectId, pipelineQuery.data?.sha],
+                queryFn: () => client.Commits.show(projectId, pipelineQuery.data?.sha),
+                enabled: !!pipelineQuery.data?.sha,
+            });
+
+            const jobsQuery = useQuery({
+                queryKey: ['projectPipelineJobs', projectId, pipelineId],
+                queryFn: () => client.Pipelines.jobs(projectId, pipelineId),
+            });
+
+            return [
+                { data: pipelineQuery.data, isLoading: pipelineQuery.isLoading, error: pipelineQuery.error },
+                { data: commitQuery.data, isLoading: commitQuery.isLoading, error: commitQuery.error },
+                { data: jobsQuery.data, isLoading: jobsQuery.isLoading, error: jobsQuery.error },
+            ];
+        },
     };
 
 

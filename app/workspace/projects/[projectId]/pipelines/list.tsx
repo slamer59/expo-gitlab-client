@@ -17,12 +17,12 @@ export default function ProjectMergeRequestsList() {
     };
     const UIFilters = GlobalMergeRequestUIFilters
     const query_cache_name = `project_id_pipelines_${projectId}`
-    const pathname = "/workspace/projects/[projectId]/pipelines"
+    const pathname = "/workspace/projects/[projectId]/pipelines/[iid]"
+
     const endpoint = "/api/v4/projects/{id}/pipelines"
     const paramsMap = {
-        "projectId": "project_id"
+        "projectId": "project_id", "iid": "id"
     }
-
     return (
         <ScrollView
             className="flex-1 p-2 bg-background"

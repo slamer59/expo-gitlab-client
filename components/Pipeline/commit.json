@@ -1,0 +1,38 @@
+{
+  "author_email": "thomas.pedot@gmail.com",
+  "author_name": "Thomas PEDOT",
+  "authored_date": "2024-09-20T14:35:01.000+00:00",
+  "committed_date": "2024-09-20T14:35:01.000+00:00",
+  "committer_email": "thomas.pedot@gmail.com",
+  "committer_name": "Thomas PEDOT",
+  "created_at": "2024-09-20T14:35:01.000+00:00",
+  "extended_trailers": {},
+  "id": "6b9623522dfc88ee0d37e842a6a4f754be905e00",
+  "last_pipeline": {
+    "created_at": "2024-09-20T14:44:55.638Z",
+    "id": 1462352939,
+    "iid": 1,
+    "project_id": 59795263,
+    "ref": "master",
+    "sha": "6b9623522dfc88ee0d37e842a6a4f754be905e00",
+    "source": "web",
+    "status": "success",
+    "updated_at": "2024-09-20T14:47:43.889Z",
+    "web_url": "https://gitlab.com/thomas.pedot1/fake-gitlab/-/pipelines/1462352939"
+  },
+  "message": "Update .gitlab-ci.yml file",
+  "parent_ids": [
+    "27329d3afac51fbf2762428e12f2635d1137c549"
+  ],
+  "project_id": 59795263,
+  "short_id": "6b962352",
+  "stats": {
+    "additions": 49,
+    "deletions": 0,
+    "total": 49
+  },
+  "status": "success",
+  "title": "Update .gitlab-ci.yml file",
+  "trailers": {},
+  "web_url": "https://gitlab.com/thomas.pedot1/fake-gitlab/-/commit/6b9623522dfc88ee0d37e842a6a4f754be905e00"
+}
