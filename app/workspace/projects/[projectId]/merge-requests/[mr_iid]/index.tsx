@@ -453,7 +453,7 @@ export default function MergeRequestDetails() {
                 <Stack.Screen
                     options={{
                         title: "",
-                        headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr?.mr),
+                        headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr),
                     }}
                 />
                 <ScrollView
