@@ -31,23 +31,22 @@ const UserSkeleton = () => (
 
 export default function ProfileScreen() {
   const { session } = useSession()
+
   const client = new GitLabClient({
     url: session?.url,
     token: session?.token,
   });
+
   const api = useGitLab(client);
 
-  const { data: user, isLoading: isLoadingUser, error: errorUser } = api.useCurrentUser();
-  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useUserProjects(user?.username);
-  const { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed } = api.useProjects({
-    membership: true,
-    order_by: "last_activity_at",
-    sort: "desc",
-  });
+  const [
+    { data: user, isLoading: isLoadingUser, error: errorUser },
+    { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal },
+    { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed },
+    { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred }
+  ] = api.useProfileDetails();
 
-  const { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred } = api.useUserStarredProjects(user?.username);
-
-  if (errorContributed || errorPersonal || errorStarred || errorUser) return <Text>Error: {errorUser.message || errorPersonal.message || errorContributed.message || errorStarred.message}</Text>;
+  if (errorContributed || errorPersonal || errorStarred || errorUser) return <Text>Error: {errorUser?.message || errorPersonal?.message || errorContributed?.message || errorStarred?.message}</Text>;
   return (
     <View className="flex-1 p-4 bg-background">
       {isLoadingUser ? <UserSkeleton /> : (
@@ -189,7 +188,7 @@ export default function ProfileScreen() {
             </View>
             <Text className="text-base text-white" testID="personal-project-count">
               {isLoadingPersonal ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
-                personalProjects.length >= 20 ? '20+' : personalProjects.length
+                personalProjects?.length >= 20 ? '20+' : personalProjects?.length
               }
             </Text>
           </CardContent>
@@ -216,7 +215,7 @@ export default function ProfileScreen() {
             </View>
             <Text className="ml-2 text-base" testID="starred-count">
               {isLoadingStarred ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
-                starredProjects.length >= 20 ? '20+' : starredProjects.length
+                starredProjects?.length >= 20 ? '20+' : starredProjects?.length
               }
             </Text>
           </CardContent>
