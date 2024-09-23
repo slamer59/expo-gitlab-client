@@ -296,8 +296,9 @@ class GitLabClient {
     remove: async (projectId, pipelineId) => {
       return this.request(`/projects/${projectId}/pipelines/${pipelineId}`, 'DELETE');
     },
-
-
+    jobs: async (projectId, pipelineId) => {
+      return this.request(`/projects/${projectId}/pipelines/${pipelineId}/jobs`);
+    },
   }
   ProjectMembers = {
     all: async (projectId, options = {}) => {
@@ -431,7 +432,19 @@ class GitLabClient {
   deleteUser = async (userId) => {
     return this.request(`/users/${userId}`, 'DELETE');
   };
+  deletePipeline = async (projectId, pipelineId) => {
+    return this.request(`/projects/${projectId}/pipelines/${pipelineId}`, 'DELETE');
+  };
+  deleteProjectMember = async (projectId, userId) => {
+    return this.Members.remove(projectId, userId);
+  };
+  deleteRepositoryFile = async (projectId, filePath) => {
+    return this.RepositoryFile.remove(projectId, filePath);
+  };
 
+  cancelPipeline = async (projectId, pipelineId) => {
+    return this.request(`/projects/${projectId}/pipelines/${pipelineId}/cancel`, 'POST');
+  };
   // Generic operation hook creator
   createOperationHook = (operationFunc) => (...args) => {
     const [data, setData] = useState(null);

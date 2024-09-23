@@ -99,6 +99,12 @@ export default function Home() {
         screen: "workspace/projects/59795263/edit",
         itemColor: "bg-green"
       },
+      {
+        icon: "arrow-forward",
+        text: "DevProjectPipeline",
+        screen: "workspace/projects/59795263/pipelines/1462352939",
+        itemColor: "bg-green"
+      },
 
     ] : [])
   ];

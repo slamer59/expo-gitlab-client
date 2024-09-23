@@ -1,33 +1,44 @@
 import { Text } from "@/components/ui/text";
 import { Ionicons } from '@expo/vector-icons';
 
-export default function PipelineStatusIcon(issue: any, withText: boolean = false) {
-    return <>
-        {issue.state === 'opened' ? (
-            <>
-                <Ionicons name="checkmark-circle" size={24} color="green" />
-                {withText && <Text className='ml-1 text-green-500'>Open</Text>}
-            </>
-        ) : issue.state === 'closed' ? (
-            <>
-                <Ionicons name="close-circle" size={24} color="red" />
-                {withText && <Text className='ml-1 text-red-500'>Closed</Text>}
-            </>
-        ) : issue.state === 'locked' ? (
-            <>
-                <Ionicons name="lock-closed" size={24} color="orange" />
-                {withText && <Text className='ml-1 text-orange-500'>Locked</Text>}
-            </>
-        ) : issue.state === 'merged' ? (
-            <>
-                <Ionicons name="git-branch" size={24} color="purple" />
-                {withText && <Text className='ml-1 text-purple-500'>Merged</Text>}
-            </>
-        ) : (
-            <>
-                <Ionicons name="help-circle" size={24} color="blue" />
-                {withText && <Text className='ml-1 text-blue-500'>Unknown</Text>}
-            </>
-        )}
-    </>;
+interface PipelineStatusIconProps {
+    status: string;
+    withText?: boolean;
+}
+export default function PipelineStatusIcon({ status, withText = false }: PipelineStatusIconProps) {
+    const getStatusInfo = (status: string) => {
+        switch (status) {
+            case 'created':
+                return { icon: 'create', color: 'orange', text: 'Pending' };
+            case 'waiting_for_resource':
+                return { icon: 'time-outline', color: 'orange', text: 'Pending' };
+            case 'preparing':
+            case 'pending':
+                return { icon: 'pending', color: 'orange', text: 'Pending' };
+            case 'running':
+                return { icon: 'play', color: 'blue', text: 'Running' };
+            case 'success':
+                return { icon: 'checkmark-circle', color: 'green', text: 'Success' };
+            case 'failed':
+                return { icon: 'close-circle', color: 'red', text: 'Failed' };
+            case 'canceled':
+                return { icon: 'stop-circle', color: 'gray', text: 'Canceled' };
+            case 'skipped':
+                return { icon: 'play-skip-forward', color: 'purple', text: 'Skipped' };
+            case 'manual':
+                return { icon: 'hand-left', color: 'teal', text: 'Manual' };
+            case 'scheduled':
+                return { icon: 'calendar', color: 'indigo', text: 'Scheduled' };
+            default:
+                return { icon: 'help-circle', color: 'gray', text: 'Unknown' };
+        }
+    };
+
+    const { icon, color, text } = getStatusInfo(status);
+    return (
+        <>
+            <Ionicons name={icon} size={24} color={color} />
+            {withText && <Text className={`ml-1 text-muted`}>{text}</Text>}
+        </>
+    );
 }
