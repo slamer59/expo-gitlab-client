@@ -1,16 +1,18 @@
 import { IListItems } from "@/components/buttonList";
+import { Router } from "expo-router";
 
 export function getCodeSectionItems(
-  repository: { id: any },
-  router: string[],
+  project: { id: string },
+  router: Router,
 ): IListItems[] {
+
   return [
     {
       icon: "code-slash-outline",
       text: "Code",
       kpi: "",
       onAction: () =>
-        router.push(`workspace/projects/${repository.id}/code/list`),
+        router.push(`workspace/projects/${project.id}/code/list`),
       itemColor: "bg-merge-requests",
     },
     {
@@ -18,7 +20,7 @@ export function getCodeSectionItems(
       text: "Commits",
       kpi: "",
       onAction: () =>
-        router.push(`workspace/projects/${repository.id}/commits/list`),
+        router.push(`workspace/projects/${project.id}/commits/list`),
       itemColor: "bg-commits",
     },
   ];

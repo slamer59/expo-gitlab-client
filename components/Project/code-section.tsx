@@ -9,8 +9,8 @@ import { ChooseBranches } from "@/components/ChooseBranche";
 interface CodeSectionProps {
   selectedBranch: string;
   defaultBranchName: string;
-  repoBranchesName: string[];
-  handlValueChange: (value: string) => void;
+  branchesName: string[];
+  handleValueChange: (value: string) => void;
   listItemsSecond: {
     icon: string;
     text: string;
@@ -21,10 +21,11 @@ interface CodeSectionProps {
 export const CodeSection = ({
   selectedBranch,
   defaultBranchName,
-  repoBranchesName,
+  branchesName,
   handleValueChange,
   listItemsSecond,
 }: CodeSectionProps) => (
+
   <View className="p-4 mt-4 mb-4 rounded-lg bg-card-600">
     <TouchableOpacity
       className="flex-row items-center justify-between py-2"
@@ -37,7 +38,7 @@ export const CodeSection = ({
         </Text>
       </View>
       <ChooseBranches
-        branches={repoBranchesName}
+        branches={branchesName}
         defaultValue={{
           value: defaultBranchName,
           label: defaultBranchName,

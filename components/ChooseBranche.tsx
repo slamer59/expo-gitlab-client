@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Platform, ScrollView, Text } from "react-native";
+import { Platform, Text } from "react-native";
+import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "./ui/select";
 
@@ -21,7 +22,7 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
     return (
         <Select
             defaultValue={{ value: defaultValue.value, label: defaultValue.label }}
-            insets={contentInsets}
+
             // className='w-[250px]'
             onValueChange={(value) => handleValueChange(value)}
         >
@@ -34,10 +35,12 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                     SELECT BRANCH
                 </Text>
             </SelectTrigger>
-            <SelectContent insets={contentInsets} className='w-[250px] max-h-screen mt-1 font-bold rounded-2xl '>
-                <ScrollView>
-                    <SelectGroup>
-                        <SelectLabel className="flex-row items-center">
+            <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold rounded-2xl '>
+
+
+                <SelectGroup>
+                    <ScrollView className='max-h-64'>
+                        <SelectLabel>
                             Branches name
                             {/* <View className="flex-row items-center">
                             <Ionicons name="search" size={20} color="#000" />
@@ -54,7 +57,6 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                         {/* https://github.com/mrzachnugent/react-native-reusables/blob/main/apps/showcase/app/select.tsx */}
                         {branches?.map((branch, index) => (
                             <SelectItem
-                                on
                                 key={index}
                                 label={branch}
                                 value={index}
@@ -63,9 +65,9 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                             </SelectItem>
                         ))
                         }
+                    </ScrollView>
+                </SelectGroup>
 
-                    </SelectGroup>
-                </ScrollView>
 
             </SelectContent>
         </Select>
