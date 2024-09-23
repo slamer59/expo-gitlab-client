@@ -18,15 +18,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thomas.pedot.expogitlabclient"
+      "bundleIdentifier": "com.teepee.expogitlabclient"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-1024x1024.png",
         "backgroundColor": "#fff"
       },
-      "package": "com.thomas.pedot.expogitlabclient",
-      "versionCode": 7
+      "versionCode": 7,
+      "package": "com.teepee.expogitlabclient"
     },
     "androidNavigationBar": {
       "backgroundColor": "#000000"
