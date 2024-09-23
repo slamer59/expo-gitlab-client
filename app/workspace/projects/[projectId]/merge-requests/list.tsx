@@ -35,7 +35,7 @@ export default function ProjectMergeRequestsList() {
   };
   const UIFilters = GlobalMergeRequestUIFilters
   const query_cache_name = `project_id_merge_requests_${projectId}`
-  const pathname = "/workspace/projects/[projectId]/merge-requests"
+  const pathname = "/workspace/projects/[projectId]/merge-requests/[mr_iid]"
   const endpoint = "/api/v4/projects/{id}/merge_requests"
   const paramsMap = {
     "projectId": "project_id", "mr_iid": "iid"
