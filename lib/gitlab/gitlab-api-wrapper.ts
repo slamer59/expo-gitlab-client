@@ -44,7 +44,7 @@ class GitLabClient {
       }
     } catch (error) {
 
-      console.error('API request failed:', error);
+      console.error(`API request ${url} failed on:`, error);
       throw error;
     }
   }
