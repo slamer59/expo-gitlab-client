@@ -134,15 +134,30 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+
   return (
-    <PostHogProvider apiKey="POSTHOG_API_KEY_REMOVED" options={{
-      host: "https://eu.i.posthog.com",
-    }}>
+    <PostHogProvider
+      apiKey="POSTHOG_API_KEY_REMOVED"
+      options={{
+        host: "https://eu.i.posthog.com",
+      }}
+      autocapture={{
+        captureTouches: true,
+        noCaptureProp: 'data-no-capture', // You'll use this attribute on password fields
+        navigation: {
+          // Add any specific navigation options here if needed
+          // For example:
+          // captureScreenViews: true,
+          // captureNavigationEvents: true,
+        },
+        captureLifecycleEvents: true,
+      }}
+    >
       <SessionProvider>
         <SafeAreaProvider>
           <RootLayoutNav />
         </SafeAreaProvider>
       </SessionProvider>
-    </PostHogProvider>
+    </PostHogProvider >
   );
 }

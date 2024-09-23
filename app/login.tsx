@@ -89,6 +89,7 @@ export default function LoginScreen() {
                 secureTextEntry
                 aria-labelledby='input-token-label'
                 aria-errormessage='input-token-error'
+                data-no-capture // Add this line to prevent autocapture
             />
 
             <Button
