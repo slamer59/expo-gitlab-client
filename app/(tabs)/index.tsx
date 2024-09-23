@@ -1,3 +1,4 @@
+import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { expoToken, getProjects } from "@/lib/gitlab/helpers";
@@ -126,26 +127,39 @@ export default function Home() {
     }
   };
 
+  // 1. Fetch projects
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const push_token = await expoToken();
-        const projects = await getProjects(session);
-        await updateOrCreateWebhooks(session, projects, undefined);
-        console.log("Webhooks updated");
-        await mapDeviceToProject(push_token, projects);
-        console.log("Device mapped to project");
+        try {
+          const push_token = await expoToken();
+          const projects = await getProjects(session);
+          await updateOrCreateWebhooks(session, projects, undefined);
+          console.log("Webhooks updated");
+          await mapDeviceToProject(push_token, projects);
+          console.log("Device mapped to project");
+        } catch (error) {
+          console.error("Error in fetchData:", error);
+          setAlertMessage(`An error occurred. Notification might not be possible.`);
+          setIsAlertOpen(true);
+        }
       };
       fetchData();
-    }, []),
+    }, [session]),
   );
-
   return (
     <ScrollView
       className="flex-1 p-4 bg-background"
       contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
     >
-
+      <ErrorAlert
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+        message={alertMessage}
+      />
       {showWelcomeCard && (
         <Card
           className="mb-4 border rounded-lg shadow-sm bg-card"
