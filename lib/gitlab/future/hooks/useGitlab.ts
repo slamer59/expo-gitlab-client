@@ -149,6 +149,42 @@ export const useGitLab = (client: GitLabClient) => {
                 ],
             });
         },
+        useProfileDetails() {
+            const { data: currentUser, isLoading: isLoadingUser, error: errorUser } = useQuery({
+                queryKey: ['currentUser'],
+                queryFn: () => client.Users.current(),
+            });
+            const queries = useQueries({
+                queries: [
+                    {
+                        queryKey: ['personalProjects', currentUser?.username],
+                        queryFn: () => client.Users.projects(currentUser.username, {
+                            membership: true,
+                            sort: "desc",
+                        }),
+                        enabled: !!currentUser?.username,
+                    },
+                    {
+                        queryKey: ['contributedProjects'],
+                        queryFn: () => client.Projects.all({
+                            membership: true,
+                            order_by: "last_activity_at",
+                            sort: "desc",
+                        }),
+                    },
+                    {
+                        queryKey: ['starredProjects', currentUser?.username],
+                        queryFn: () => client.Users.starred_projects(currentUser?.id),
+                        enabled: !!currentUser?.username,
+                    },
+                ],
+            });
+
+            return [
+                { data: currentUser, isLoading: isLoadingUser, error: errorUser },
+                ...queries.map(({ data, isLoading, error }) => ({ data, isLoading, error })),
+            ];
+        }
     };
 
 
