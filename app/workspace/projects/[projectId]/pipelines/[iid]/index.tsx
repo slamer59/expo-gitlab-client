@@ -234,7 +234,7 @@ export default function PipelineDetails() {
                     className="flex-1 p-4 bg-card"
                     contentContainerStyle={{ paddingBottom: 100 }}
                 >
-                    {isLoading ?
+                    {isLoadingCommit ?
                         <HeaderSkeleton /> :
                         <PipelineHeader commit={commit} />
                     }
