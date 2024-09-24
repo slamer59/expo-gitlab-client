@@ -60,22 +60,127 @@ def get_push_tokens(db, project_id):
 
 @https_fn.on_request()
 def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
-
     data = req.get_json()
-    # Get list of push tokens
     project_id = get_project_id(data)
     logger.info(f"Project ID: {project_id}")
     push_tokens = get_push_tokens(db, project_id)
-    # logger.info(f"Push tokens: {push_tokens}")
-    # push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
 
-    # Handle the event based on its type
-    event_messages = handle_event(data, push_tokens)
-    # Send the push notification to the device
-    # logger.info(event_messages.model_dump(mode="json")["messages"])
-    response = send_push_message(event_messages.model_dump(mode="json")["messages"])
-    # Return a success response
+    event_type = data.get("object_kind")
+    event_messages = handle_gitlab_event(data, event_type)
+
+    messages = []
+    for token in push_tokens:
+        message = {
+            "to": token,
+            "sound": "default",
+            "title": event_messages["title"],
+            "body": event_messages["body"],
+            "data": {"type": event_type, "url": event_messages.get("url", "")},
+            "icon": event_messages.get("icon", "📢"),
+        }
+        messages.append(message)
+
+    response = send_push_message({"messages": messages})
     return https_fn.Response(response=response, mimetype="application/json")
+
+
+def handle_gitlab_event(data: Dict[str, Any], event_type: str) -> Dict[str, str]:
+    if event_type == "pipeline":
+        return handle_pipeline_event(data)
+    elif event_type == "merge_request":
+        return handle_merge_request_event(data)
+    elif event_type == "issue":
+        return handle_issue_event(data)
+    elif event_type == "push":
+        return handle_push_event(data)
+    elif event_type == "wiki_page":
+        return handle_wiki_page_event(data)
+    elif event_type == "deployment":
+        return handle_deployment_event(data)
+    elif event_type == "release":
+        return handle_release_event(data)
+    else:
+        return {
+            "title": "GitLab Event",
+            "body": f"A {event_type} event occurred.",
+            "icon": "📢",
+        }
+
+
+def handle_pipeline_event(data: Dict[str, Any]) -> Dict[str, str]:
+    pipeline = data.get("object_attributes", {})
+    status = pipeline.get("status")
+    pipeline_id = pipeline.get("id")
+    project_name = data.get("project", {}).get("name")
+
+    if status == "failed":
+        return {
+            "title": f"🚫 Pipeline #{pipeline_id} has failed",
+            "body": f"Pipeline in project {project_name} has failed. Please check the details.",
+            "icon": "🏗️",
+            "url": pipeline.get("url", ""),
+        }
+    elif status == "success":
+        return {
+            "title": f"✅ Pipeline #{pipeline_id} has succeeded",
+            "body": f"Pipeline in project {project_name} has completed successfully.",
+            "icon": "🏗️",
+            "url": pipeline.get("url", ""),
+        }
+    else:
+        return {
+            "title": f"📊 Pipeline #{pipeline_id} status update",
+            "body": f"Pipeline in project {project_name} status: {status}",
+            "icon": "🏗️",
+            "url": pipeline.get("url", ""),
+        }
+
+
+# Implement similar functions for other event types
+def handle_merge_request_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for merge request events
+    pass
+
+
+def handle_issue_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for issue events
+    pass
+
+
+def handle_push_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for push events
+    pass
+
+
+def handle_wiki_page_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for wiki page events
+    pass
+
+
+def handle_deployment_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for deployment events
+    pass
+
+
+def handle_release_event(data: Dict[str, Any]) -> Dict[str, str]:
+    # Implementation for release events
+    pass
+
+
+# Implement these functions if they're not already defined
+def get_project_id(data):
+    # Implementation to extract project ID from data
+    pass
+
+
+def get_push_tokens(db, project_id):
+    # Implementation to retrieve push tokens from database
+    pass
+
+
+def send_push_message(messages):
+    # Implementation to send push messages
+    pass
 
 
 @https_fn.on_request()
