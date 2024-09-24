@@ -281,15 +281,6 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
                 </TouchableOpacity>
             </>
         )}
-
-        {mr.state === 'closed' && (
-            <TouchableOpacity
-                className="px-4 py-2 bg-blue-600 rounded-md"
-                onPress={onReopen}
-            >
-                <Text className="text-center text-white">Reopen</Text>
-            </TouchableOpacity>
-        )}
     </View>
 }
 
@@ -308,7 +299,7 @@ const ChangesSection = ({ mr, changeSummaries }) => {
                     </Text>
                 </View>
                 <View className="flex-row">
-                    <Text className="mr-2 text-success">+{totalAdditions}</Text>
+                    <Text className="mr-2 text-success-500">+{totalAdditions}</Text>
                     <Text className="text-danger">-{totalDeletions}</Text>
                 </View>
             </View>

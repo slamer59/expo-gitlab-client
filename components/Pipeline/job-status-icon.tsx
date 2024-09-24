@@ -49,7 +49,7 @@ export default function JobStatusIcon({ status, withText = false }: { status: st
         case 'skipped':
             return (
                 <>
-                    <Ionicons name="skip-forward-outline" size={24} color="purple" />
+                    <Ionicons name="play-skip-forward-outline" size={24} color="purple" />
                     {withText && <Text className='ml-1 text-purple-500'>Skipped</Text>}
                 </>
             );

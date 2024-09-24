@@ -38,21 +38,23 @@ export default function ProjectDetailsScreen() {
     { data: mergeRequests, isLoading: isLoadingMergeRequests, error: errorMergeRequests },
     { data: branches, isLoading: isLoadingBranches, error: errorBranches },
     { data: members, isLoading: isLoadingMembers, error: errorMembers },
+    { data: pipelines, isLoading: isLoadingPipelines, error: errorPipelines },
   ] = api.useProjectDetails(projectId);
 
   if (errorProject || errorRepository || errorMergeRequests || errorBranches || errorMembers) {
     return <Text>An error has occurred: {errorProject?.message || errorRepository?.message || errorMergeRequests?.message || errorBranches?.message || errorMembers?.message}</Text>;
   }
 
-  const isLoading = isLoadingProject || isLoadingRepository || isLoadingMergeRequests || isLoadingBranches || isLoadingMembers;
+  const isLoading = isLoadingProject || isLoadingRepository || isLoadingMergeRequests || isLoadingBranches || isLoadingMembers || isLoadingPipelines
 
   let branchesName, defaultBranchName, listItems, listItemsSecond;
   if (!isLoading) {
     branchesName = branches?.map(branch => branch.name);
     defaultBranchName = branches?.find(branch => branch.default)?.name || branches[0]?.name;
-    listItems = getWorkspaceItems({ project, mergeRequests, members }, router);
+    listItems = getWorkspaceItems({ project, mergeRequests, members, pipelines }, router);
     listItemsSecond = getCodeSectionItems(project, router);
   }
+
 
   // Action Options
   const archiveProjectMutation = api.useArchiveProject();
@@ -169,3 +171,4 @@ export default function ProjectDetailsScreen() {
     </SafeAreaView >
   );
 }
+
