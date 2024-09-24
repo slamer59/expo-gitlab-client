@@ -35,12 +35,9 @@ def get_url_from_project_id(project_id):
 
     if response.status_code == 200:
         project_data = response.json()
-        return f"{project_data["web_url"]}.git"
+        return f"{project_data['web_url']}.git"
     else:
         return None
-
-
-import base64
 
 
 def get_push_tokens(db, project_id):

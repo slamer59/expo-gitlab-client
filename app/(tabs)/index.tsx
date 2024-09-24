@@ -147,20 +147,46 @@ export default function Home() {
       const fetchData = async () => {
         try {
           const push_token = await getExpoToken();
-          const projects = await getProjects(session);
-          await updateOrCreateWebhooks(session, projects, undefined);
-          console.log("Webhooks updated");
-          await mapDeviceToProject(push_token, projects);
-          console.log("Device mapped to project");
+          console.log("Expo token retrieved successfully");
+
+          let projects;
+          try {
+            projects = await getProjects(session);
+            console.log("Projects fetched successfully");
+          } catch (error) {
+            console.error("Error fetching projects:", error);
+            setAlertMessage(`Error fetching projects: ${error.message}`);
+            setIsAlertOpen(true);
+            return;
+          }
+
+          try {
+            await updateOrCreateWebhooks(session, projects, undefined);
+            console.log("Webhooks updated successfully");
+          } catch (error) {
+            console.error("Error updating webhooks:", error);
+            setAlertMessage(`Error updating webhooks: ${error.message}`);
+            setIsAlertOpen(true);
+          }
+
+          try {
+            await mapDeviceToProject(push_token, projects);
+            console.log("Device mapped to project successfully");
+          } catch (error) {
+            console.error("Error mapping device to project:", error);
+            setAlertMessage(`Error mapping device to project: ${error.message}`);
+            setIsAlertOpen(true);
+          }
         } catch (error) {
-          console.error("Error in fetchData:", error);
-          setAlertMessage(`An error occurred. Notification might not be possible :${error}`);
+          console.error("Error getting Expo token:", error);
+          setAlertMessage(`Error getting Expo token: ${error.message}`);
           setIsAlertOpen(true);
         }
       };
       fetchData();
     }, [session]),
   );
+
   return (
     <ScrollView
       className="flex-1 p-4 bg-background"
