@@ -71,41 +71,46 @@ export default function Home() {
       },
       {
         icon: "arrow-forward",
-        text: "DevIssueEdit",
-        screen: "workspace/projects/59795263/issues/29/edit",
+        text: "DevIssue",
+        screen: "workspace/projects/59795263/issues/29",
         itemColor: "bg-green"
       },
-      {
-        icon: "arrow-forward",
-        text: "DevMergeRequest",
-        screen: "workspace/projects/59795263/merge-requests/1",
-        itemColor: "bg-green"
-      },
-      {
-        icon: "arrow-forward",
-        text: "DevMergeRequestEdit",
-        screen: "workspace/projects/59795263/merge-requests/1/edit",
-        itemColor: "bg-green"
-      },
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevIssueEdit",
+      //   screen: "workspace/projects/59795263/issues/29/edit",
+      //   itemColor: "bg-green"
+      // },
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevMergeRequest",
+      //   screen: "workspace/projects/59795263/merge-requests/1",
+      //   itemColor: "bg-green"
+      // },
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevMergeRequestEdit",
+      //   screen: "workspace/projects/59795263/merge-requests/1/edit",
+      //   itemColor: "bg-green"
+      // },
       {
         icon: "arrow-forward",
         text: "DevProject",
         screen: "workspace/projects/59795263",
         itemColor: "bg-green"
       },
-      {
-        icon: "arrow-forward",
-        text: "DevProjectEdit",
-        screen: "workspace/projects/59795263/edit",
-        itemColor: "bg-green"
-      },
-      {
-        icon: "arrow-forward",
-        text: "DevProjectPipeline",
-        screen: "workspace/projects/59795263/pipelines/1462352939",
-        itemColor: "bg-green"
-      },
-
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevProjectEdit",
+      //   screen: "workspace/projects/59795263/edit",
+      //   itemColor: "bg-green"
+      // },
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevProjectPipeline",
+      //   screen: "workspace/projects/59795263/pipelines/1462352939",
+      //   itemColor: "bg-green"
+      // },
     ] : [])
   ];
   const [showWelcomeCard, setShowWelcomeCard] = useState(true);
