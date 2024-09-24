@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 
 export function ProjectHeader({ repository }) {
+    console.log("🚀 ~ ProjectHeader ~ repository:", repository)
     return <>
         <View className="m-4">
             <View className="flex-row items-center">
@@ -41,6 +42,22 @@ export function ProjectHeader({ repository }) {
                 <Text className="ml-2 font-bold text-md text-muted">
                     {(repository.visibility || "Default visibility").charAt(0).toUpperCase() + (repository.visibility || "Default visibility").slice(1)}
                 </Text>
+                <Ionicons name="git-branch-outline" size={18} color="white" className="ml-4" />
+                <Text className="ml-2 font-bold text-md text-muted">
+                    {repository.default_branch || "Default branch"}
+                </Text>
+                <Ionicons name="calendar-outline" size={18} color="white" className="ml-4" />
+                <Text className="ml-2 font-bold text-md text-muted">
+                    {new Date(repository.created_at).toLocaleDateString() || "Default date"}
+                </Text>
+                {repository.archived &&
+                    <>
+                        <Ionicons name="archive-outline" size={18} color="orange" className="ml-4" />
+                        <Text className="ml-2 font-bold text-md text-muted">
+                            {repository.archived ? "Archived" : "Active"}
+                        </Text>
+                    </>
+                }
             </View>
             <Link
                 className="flex w-full p-1 overflow-hidden"
@@ -69,6 +86,13 @@ export function ProjectHeader({ repository }) {
                     <Ionicons name="git-network" size={16} color="red" />
                     <Text className="ml-1 font-bold text-white">{repository.forks_count}</Text>
                     <Text className="text-white"> forks</Text>
+                </View>
+                <View className="flex-row items-center mr-4 text-lg font-bold text-white">
+                    <Ionicons name="eye" size={18} color="green" />
+                    <Text className="ml-2 font-bold text-white text-md">
+                        {repository.watchers_count || 0}
+                    </Text>
+                    <Text className="text-white"> watchers</Text>
                 </View>
             </View>
             {repository.language &&

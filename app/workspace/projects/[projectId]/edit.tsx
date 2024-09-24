@@ -1,15 +1,15 @@
-
 import { EditProjectDescription } from '@/components/Project/project-edit-description';
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { ScrollView } from 'react-native';
 
 export default function ProjectEditDescriptionComponent() {
     const { session } = useSession()
+    const router = useRouter();
 
     const client = new GitLabClient({
         url: session?.url,
@@ -19,20 +19,24 @@ export default function ProjectEditDescriptionComponent() {
     const api = useGitLab(client);
     const { projectId } = useLocalSearchParams();
 
-    const { data: project, loading, error } = api.useProject(projectId) ?? {};
+    const { data: project, isLoading: isLoadingProject, isError: isErrorProject, error: errorProject } = api.useProject(projectId) ?? {};
+    const { mutate: updateProject, isLoading: isLoadingUpdateProject, isError: isErrorUpdateProject, error: errorUpdate } = api.useUpdateProject();
 
-    const updateProjectDescription = useCallback(async (updatedDescription) => {
+    const handleUpdateProject = useCallback(async (updatedDescription: string) => {
         try {
-            await api.updateProject(projectId, { description: updatedDescription });
+            await updateProject({
+                projectId: projectId as string,
+                updateData: { description: updatedDescription }
+            })
             router.back(); // Navigate back to the previous screen after updating the description
         } catch (error) {
             console.error('Error updating project description:', error);
             // Handle error (e.g., show an error message to the user)
         }
-    }, [api, projectId]);
+    }, [projectId, updateProject, router]);
 
-    if (loading) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message}</Text>;
+    if (isLoadingProject || isLoadingUpdateProject) return <Text>Loading...</Text>;
+    if (isErrorProject || isErrorUpdateProject) return <Text>Error: {errorProject?.message || errorUpdate?.message}</Text>;
 
     return (
         <>
@@ -42,7 +46,7 @@ export default function ProjectEditDescriptionComponent() {
                 }}
             />
             <ScrollView className="flex-1 p-4 bg-card">
-                <EditProjectDescription updateProject={updateProjectDescription} project={project} />
+                <EditProjectDescription updateProject={handleUpdateProject} project={project} />
             </ScrollView>
         </>
     );
