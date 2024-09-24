@@ -239,6 +239,11 @@ class Runner(BaseModel):
     tags: list[str]
 
 
+class EnvironmentData(BaseModel):
+    name: str
+    action: str
+
+
 class JobEventData(BaseModel):
     object_kind: Optional[str] = None
     ref: Optional[str] = None
@@ -252,7 +257,7 @@ class JobEventData(BaseModel):
     build_created_at: Optional[str] = None
     build_started_at: Optional[str]
     build_finished_at: Optional[str]
-    build_duration: Optional[int]
+    build_duration: Optional[float]  # Changed to float
     build_queued_duration: float
     build_allow_failure: bool
     build_failure_reason: Optional[str] = None
@@ -265,8 +270,8 @@ class JobEventData(BaseModel):
     repository: Repository
     project: Project
     runner: Runner
-    environment: Optional[str]
-    source_pipeline: Optional[SourcePipeline]
+    environment: Optional[EnvironmentData]  # Changed to EnvironmentData
+    source_pipeline: Optional[SourcePipeline] = None  # Made optional
 
 
 class GroupEventData(BaseModel):
@@ -452,7 +457,7 @@ def comment_event(data, push_tokens):
 
 
 @log_event_function
-def merge_request_event(data, push_tokens):
+def merge_request_event(data: dict, push_tokens):
     messages = [
         {
             "title": f"Merge request {data['object_attributes']['title']} in {data['project']['name']}",
