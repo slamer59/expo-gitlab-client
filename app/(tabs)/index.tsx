@@ -1,7 +1,7 @@
 import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
-import { expoToken, getProjects } from "@/lib/gitlab/helpers";
+import { getExpoToken, getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
@@ -146,7 +146,7 @@ export default function Home() {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          const push_token = await expoToken();
+          const push_token = await getExpoToken();
           const projects = await getProjects(session);
           await updateOrCreateWebhooks(session, projects, undefined);
           console.log("Webhooks updated");
