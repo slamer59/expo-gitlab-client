@@ -378,7 +378,7 @@ def push_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user_name"],
                 "total_commits_count": data["total_commits_count"],
-                "url": f"/workspace/project/{data['project']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}",
             },
         }
         for push_token in push_tokens
@@ -399,7 +399,7 @@ def tag_push_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user_name"],
                 "tag": data["ref"],
-                "url": f"/workspace/project/{data['project']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}",
             },
         }
         for push_token in push_tokens
@@ -421,7 +421,7 @@ def issue_event(data, push_tokens):
                 "user_name": data["user"]["name"],
                 "issue_title": data["object_attributes"]["title"],
                 "action": data["object_attributes"]["action"],
-                "url": f"/workspace/project/{data['project']['id']}/issues/{data['object_attributes']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/issues/{data['object_attributes']['id']}",
             },
         }
         for push_token in push_tokens
@@ -441,7 +441,7 @@ def comment_event(data, push_tokens):
             "data": {
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
-                "url": f"/workspace/project/{data['id']}/",
+                "url": f"/workspace/projects/{data['id']}/",
             },
         }
         for push_token in push_tokens
@@ -463,7 +463,7 @@ def merge_request_event(data, push_tokens):
                 "user_name": data["user"]["name"],
                 "merge_request_title": data["object_attributes"]["title"],
                 "action": data["object_attributes"]["action"],
-                "url": f"/workspace/project/{data['project']['id']}/merge-requests/{data['object_attributes']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/merge-requests/{data['object_attributes']['id']}",
             },
         }
         for push_token in push_tokens
@@ -485,7 +485,7 @@ def wiki_page_event(data, push_tokens):
                 "user_name": data["user"]["name"],
                 "wiki_page_title": data["object_attributes"]["title"],
                 "action": data["object_attributes"]["action"],
-                "url": f"/workspace/project/{data['project']['id']}/wikis/{data['object_attributes']['slug']}",
+                "url": f"/workspace/projects/{data['project']['id']}/wikis/{data['object_attributes']['slug']}",
             },
         }
         for push_token in push_tokens
@@ -506,7 +506,7 @@ def pipeline_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "pipeline_status": data["object_attributes"]["status"],
-                "url": f"/workspace/project/{data['project']['id']}/pipelines/{data['object_attributes']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/pipelines/{data['object_attributes']['id']}",
             },
         }
         for push_token in push_tokens
@@ -527,7 +527,7 @@ def job_event(data, push_tokens):
                 "project_name": data["project_name"],
                 "user_name": data["user"]["name"],
                 "job_status": data["build_status"],
-                "url": f"/workspace/project/{data['project_id']}/pipelines/{data['pipeline_id']}/jobs/{data['build_id']}",
+                "url": f"/workspace/projects/{data['project_id']}/pipelines/{data['pipeline_id']}/jobs/{data['build_id']}",
             },
         }
         for push_token in push_tokens
@@ -548,7 +548,7 @@ def deployment_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "deployment_status": data["status"],
-                "url": f"/workspace/project/{data['project']['id']}/deployments/{data['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/deployments/{data['id']}",
             },
         }
         for push_token in push_tokens
@@ -569,7 +569,7 @@ def feature_flag_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "feature_flag_name": data["object_attributes"]["name"],
-                "url": f"/workspace/project/{data['project']['id']}/feature_flags/{data['object_attributes']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/feature_flags/{data['object_attributes']['id']}",
             },
         }
         for push_token in push_tokens
@@ -590,7 +590,7 @@ def release_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 # "release_tag": data['object_attributes']["tag"],
                 # "action": data['object_attributes']["action"],
-                "url": f"/workspace/project/{data['project']['id']}/releases/{data['object_attributes']['id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/releases/{data['object_attributes']['id']}",
             },
         }
         for push_token in push_tokens
@@ -611,7 +611,7 @@ def emoji_event(data, push_tokens):
                 "project_name": data["project"]["name"],
                 "user_name": data["user"]["name"],
                 "emoji_name": data["object_attributes"]["name"],
-                "url": f"/workspace/project/{data['project']['id']}/issues/{data['object_attributes']['issue_id']}",
+                "url": f"/workspace/projects/{data['project']['id']}/issues/{data['object_attributes']['issue_id']}",
             },
         }
         for push_token in push_tokens
@@ -630,7 +630,7 @@ def access_token_event(data, push_tokens):
             "to": push_token,
             "data": {
                 "project_name": data["project"]["name"],
-                "url": f"/workspace/project/{data['project']['id']}/settings/access_tokens",
+                "url": f"/workspace/projects/{data['project']['id']}/settings/access_tokens",
             },
         }
         for push_token in push_tokens
