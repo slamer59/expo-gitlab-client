@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SectionTitle } from '../Section/param';
@@ -49,6 +50,7 @@ export default function EditMilestoneIssue({ projectId, issueIid }) {
         token: session?.token,
     });
 
+    const api = useGitLab(client);
     const { data: issue, loading, error } = api.useProjectIssue(projectId, issueIid) ?? {};
     const { execute: updateIssue, loading: updating, error: updateError } = api.useUpdateProjectIssue(projectId, issueIid);
     const { data: milestones, loading: milestonesLoading, error: milestonesError } = api.useProjectMilestones(projectId);
