@@ -13,9 +13,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.teepee.expogitlabclient"
@@ -37,9 +35,7 @@
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      [
-        "expo-router"
-      ],
+      ["expo-router"],
       "expo-localization",
       "expo-font",
       [
