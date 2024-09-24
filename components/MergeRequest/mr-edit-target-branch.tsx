@@ -3,7 +3,7 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Platform, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { SectionTitle } from '../Section/param';
@@ -30,8 +30,12 @@ export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
     }, [selectedBranch]);
 
     const insets = useSafeAreaInsets();
-    const contentInsets = { top: insets.top, bottom: insets.bottom, left: 12, right: 12 };
-
+    const contentInsets = {
+        top: insets.top,
+        bottom: Platform.select({ ios: insets.bottom, android: insets.bottom + 24 }),
+        left: 12,
+        right: 12,
+    };
 
     return (
         <ScrollView>
@@ -49,19 +53,26 @@ export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
                                 placeholder={updating ? 'Updating...' : (selectedBranch || 'No branch selected')}
                             />
                         </SelectTrigger>
-                        <SelectContent insets={contentInsets} className='w-full'>
+                        <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold rounded-2xl '>
                             <SelectGroup>
-                                {(mrLoading || branchesLoading) ? (
-                                    <SelectItem disabled>Loading branches...</SelectItem>
-                                ) : (
-                                    branches.map((branch) => (
-                                        <SelectItem key={branch.name} label={branch.name} value={branch.name}>
+                                <ScrollView className='max-h-32'>
+                                    {/* {(mrLoading || branchesLoading) ? (
+                                        <SelectItem disabled>Loading branches...</SelectItem>
+                                    ) : ( */}
+                                    {branches?.map((branch) => (
+                                        <SelectItem
+                                            key={branch.name}
+                                            label={branch.name}
+                                            value={branch.name}
+                                        >
                                             {branch.name}
                                         </SelectItem>
                                     ))
-                                )}
+                                    }
 
+                                </ScrollView>
                             </SelectGroup>
+
                         </SelectContent>
                     </Select>
                 </View>

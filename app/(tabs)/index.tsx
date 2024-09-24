@@ -154,7 +154,7 @@ export default function Home() {
           console.log("Device mapped to project");
         } catch (error) {
           console.error("Error in fetchData:", error);
-          setAlertMessage(`An error occurred. Notification might not be possible.`);
+          setAlertMessage(`An error occurred. Notification might not be possible :${error}`);
           setIsAlertOpen(true);
         }
       };

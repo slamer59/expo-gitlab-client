@@ -22,7 +22,6 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
     return (
         <Select
             defaultValue={{ value: defaultValue.value, label: defaultValue.label }}
-
             // className='w-[250px]'
             onValueChange={(value) => handleValueChange(value)}
         >
@@ -36,8 +35,6 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
                 </Text>
             </SelectTrigger>
             <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold rounded-2xl '>
-
-
                 <SelectGroup>
                     <ScrollView className='max-h-64'>
                         <SelectLabel>
