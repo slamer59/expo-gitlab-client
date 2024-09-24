@@ -3,23 +3,23 @@ import { SafeAreaView, ScrollView } from "react-native";
 
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-import IssueComment from "@/components/Issue/issue-comment";
 
+
+import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
+import IssueComment from "@/components/Issue/issue-comment";
 import IssueHeader from "@/components/Issue/issue-header";
 import IssueNotes from "@/components/Issue/issue-note";
 import { CommentSkeleton } from "@/components/Skeleton/comment";
 import { HeaderSkeleton } from "@/components/Skeleton/header";
-
 import { LinkedItemSkeleton } from "@/components/Skeleton/linkedItems";
 import NotesSkeleton from "@/components/Skeleton/notes";
 import { LinksMergeRequestsSection } from "@/components/ui/link-issue-merge-request";
 import { LinkedIssuesSection } from "@/components/ui/link-issue-section";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { useGetData } from "@/lib/gitlab/hooks";
 import { useSession } from "@/lib/session/SessionProvider";
+import { shareView } from "@/lib/utils";
 import { Text } from "~/components/ui/text";
-import { headerRightProjectIssue } from "./headerRight";
 
 
 
@@ -34,91 +34,57 @@ export default function IssueDetails() {
     });
 
     const api = useGitLab(client);
-    // Delete issue
-    const deleteIssue = async () => {
-        try {
-            router.push(`/workspace/projects/${projectId}/issues/list`);
-            await api.deleteProjectIssue(projectId, issue_iid);
-            // Issue deleted successfully, you can navigate back or perform other actions
 
-            console.log('Issue deleted successfully');
-        } catch (error) {
-            // Handle error
-            console.error('Error deleting issue:', error);
-        }
-    };
-    const closeIssue = async () => {
-        try {
-            await api.updateProjectIssue(projectId, issue_iid, { state_event: 'close' });
-            // Issue closed successfully, you can navigate back or perform other actions
-            console.log('Issue closed successfully');
-        } catch (error) {
-            // Handle error
-            console.error('Error closing issue:', error);
-        }
-    };
-    const openIssue = async () => {
-        try {
-            await api.updateProjectIssue(projectId, issue_iid, { state_event: 'reopen' });
-            // Issue closed successfully, you can navigate back or perform other actions
-            console.log('Issue closed successfully');
-        } catch (error) {
-            // Handle error
-            console.error('Error closing issue:', error);
-        }
-    };
-    const params = {
-        path: {
-            id: projectId,
-            issue_iid: issue_iid,
-        },
-    };
-    const {
-        data: issue,
-        isLoading: isLoadingIssue,
-        isError,
-    } = useGetData(
-        ["project_issue", params.path],
-        `/api/v4/projects/{id}/issues/{issue_iid}`,
-        params,
-    );
-    // console.log("issue_iid", issue);
-    const {
-        data: notes,
-        isLoading: isLoadingNotes,
-        isError: isErrorNotes,
-    } = useGetData(
-        ["project_issue_notes", params.path],
-        `/api/v4/projects/{id}/issues/{issue_iid}/notes`,
-        params,
-    );
-    // console.log("issue_iid-notes", notes);
-    const {
-        data: relatedMRs,
-        isLoading: isLoadingMR,
-        isError: isErrorMR,
-    } = useGetData(
-        ["project_issue_mr", params.path],
-        `/api/v4/projects/{id}/issues/{issue_iid}/related_merge_requests`,
-        params,
-    );
-    // console.log("issue_iid-related_merge_requests", relatedMRs);
+    const [
+        { data: issue, isLoading: isLoadingIssue, error: errorIssue },
+        { data: notes, isLoading: isLoadingNotes, error: errorNotes },
+        { data: relatedMRs, isLoading: isLoadingRelatedMergeRequests, error: errorRelatedMRs },
+        { data: linkedIssues, isLoading: isLoadingLinkedIssues, error: errorLinkedIssues },
+    ] = api.useProjectIssueDetails(projectId, issue_iid);
 
-    const {
-        data: linkedIssues,
-        isLoading: isLoadingLinkedIssues,
-        isError: isErrorLinkedIssues,
-    } = useGetData(
-        ["project_issue_linked_issues", params.path],
-        `/api/v4/projects/{id}/issues/{issue_iid}/links`,
-        params,
-    );
-
-
-    if (isError || isErrorNotes || isErrorMR || isErrorLinkedIssues) {
-        return <Text>Error fetching data</Text>;
+    if (errorIssue || errorNotes || errorRelatedMRs || errorLinkedIssues) {
+        return <Text>Error fetching data: {errorIssue?.message || errorNotes?.message || errorRelatedMRs?.message || errorLinkedIssues?.message}
+        </Text>;
     }
-    // const isLoadingTest = true
+
+    const updateIssueMutation = api.useUpdateProjectIssue(projectId, issue_iid);
+    const deleteIssueMutation = api.useDeleteProjectIssue(projectId, issue_iid);
+
+    const openIssue = () => updateIssueMutation.mutateAsync({ state_event: 'reopen' });
+    const closeIssue = () => updateIssueMutation.mutateAsync({ state_event: 'close' });
+    const deleteIssue = () => deleteIssueMutation.mutateAsync(undefined, {
+        onSuccess: () => {
+            router.push(`/workspace/projects/${projectId}/issues/list`);
+        },
+    });
+    const headerActions: HeaderAction[] = [
+        {
+            icon: "share-social-outline",
+            onPress: () => shareView(issue?.web_url),
+            testID: "share-issue-button"
+        }
+    ];
+
+    const headerOptions: HeaderOption[] = [
+        {
+            icon: "pencil",
+            label: "Edit Issue",
+            onPress: () => router.push(`/workspace/projects/${projectId}/issues/${issue_iid}/edit`),
+            testID: "issue-edit-option"
+        },
+        {
+            icon: issue?.state === 'opened' ? 'close-circle-outline' : 'checkmark-circle-outline',
+            label: issue?.state === 'opened' ? 'Close Issue' : 'Reopen Issue',
+            onPress: issue?.state === 'opened' ? closeIssue : openIssue,
+            testID: "toggle-issue-state-option"
+        },
+        {
+            icon: "trash-outline",
+            label: "Delete Issue",
+            onPress: deleteIssue,
+            testID: "delete-issue-option"
+        }
+    ];
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen
@@ -129,7 +95,13 @@ export default function IssueDetails() {
                     //     : issue.references.full,
                     // ...defaultOptionsHeader,
                     // headerTintColor: "black",
-                    headerRight: headerRightProjectIssue(openIssue, closeIssue, deleteIssue, issue)
+                    headerRight: () => (
+                        <HeaderRight
+                            actions={headerActions}
+                            options={headerOptions}
+                            testID="issue-header-right"
+                        />
+                    )
                 }}
             />
             <ScrollView
@@ -158,7 +130,7 @@ export default function IssueDetails() {
                     />
                 }
 
-                {isLoadingMR ? <LinkedItemSkeleton /> :
+                {isLoadingRelatedMergeRequests ? <LinkedItemSkeleton /> :
                     <LinksMergeRequestsSection
                         title="Related merge requests"
                         iconName="link"

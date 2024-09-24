@@ -67,6 +67,25 @@ class GitLabClient {
     show: async (projectId, issueIid) => {
       return this.request(`/projects/${projectId}/issues/${issueIid}`);
     },
+    notes: async (projectId, issueIid) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/notes`);
+    },
+    addNote: async (projectId, issueIid, data) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/notes`, 'POST', data);
+    },
+    editNote: async (projectId, issueIid, noteId, data) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/notes/${noteId}`, 'PUT', data);
+    },
+    removeNote: async (projectId, issueIid, noteId) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/notes/${noteId}`, 'DELETE');
+    },
+    related_merge_requests: async (projectId, issueIid) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/related_merge_requests`);
+    },
+    links: async (projectId, issueIid) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/links`);
+    },
+
   };
 
   Projects = {
@@ -85,6 +104,9 @@ class GitLabClient {
     },
     remove: async (projectId) => {
       return this.request(`/projects/${projectId}`, 'DELETE');
+    },
+    fork: async (projectId, data) => {
+      return this.request(`/projects/${projectId}/fork`, 'POST', data);
     },
   };
 
@@ -500,48 +522,48 @@ class GitLabClient {
     };
   };
 
-  // Fetch hooks
-  useProjectIssues = this.createFetchHook(this.Issues.all);
-  useProjectIssue = this.createFetchHook(this.Issues.show);
-  useProject = this.createFetchHook(this.Projects.show);
-  useMergeRequests = this.createFetchHook(this.MergeRequests.all);
-  useCommits = this.createFetchHook(this.Commits.all);
-  useBranches = this.createFetchHook(this.Branches.all);
-  useProjectUsers = this.createFetchHook(this.ProjectsUsers.all);
-  useProjectLabels = this.createFetchHook(this.Labels.all);
-  useProjectMilestones = this.createFetchHook(this.Milestones.all);
-  useProjectPipelines = this.createFetchHook(this.Pipelines.all);
-  useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
-  useProjectMergeRequest = this.createFetchHook(this.MergeRequests.show);
-  useProjectBranches = this.createFetchHook(this.Branches.all);
+  // // Fetch hooks
+  // useProjectIssues = this.createFetchHook(this.Issues.all);
+  // useProjectIssue = this.createFetchHook(this.Issues.show);
+  // useProject = this.createFetchHook(this.Projects.show);
+  // useMergeRequests = this.createFetchHook(this.MergeRequests.all);
+  // useCommits = this.createFetchHook(this.Commits.all);
+  // useBranches = this.createFetchHook(this.Branches.all);
+  // useProjectUsers = this.createFetchHook(this.ProjectsUsers.all);
+  // useProjectLabels = this.createFetchHook(this.Labels.all);
+  // useProjectMilestones = this.createFetchHook(this.Milestones.all);
+  // useProjectPipelines = this.createFetchHook(this.Pipelines.all);
+  // useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
+  // useProjectMergeRequest = this.createFetchHook(this.MergeRequests.show);
+  // useProjectBranches = this.createFetchHook(this.Branches.all);
 
-  // Users
-  getUsers = this.createFetchHook(this.Users.all);
-  getCurrentUser = this.createFetchHook(this.Users.current);
-  getUserProjects = this.createFetchHook(this.Users.projects);
-  getUserContributedProjects = this.createFetchHook(this.Users.contributed_projects)
-  getUserOwnedProjects = this.createFetchHook(this.Users.owned_projects)
-  getUserStarredProjects = this.createFetchHook(this.Users.starred_projects)
-  getUser = this.createFetchHook(this.Users.show)
-  getUserStatus = this.createFetchHook(this.Users.status)
-  getUserFollowing = this.createFetchHook(this.Users.following)
-  getUserFollowers = this.createFetchHook(this.Users.followers)
-  getRepositoryFile = this.createFetchHook(this.RepositoryFile.show)
-  getRepositoryFileRaw = this.createFetchHook(this.RepositoryFile.raw)
+  // // Users
+  // getUsers = this.createFetchHook(this.Users.all);
+  // getCurrentUser = this.createFetchHook(this.Users.current);
+  // getUserProjects = this.createFetchHook(this.Users.projects);
+  // getUserContributedProjects = this.createFetchHook(this.Users.contributed_projects)
+  // getUserOwnedProjects = this.createFetchHook(this.Users.owned_projects)
+  // getUserStarredProjects = this.createFetchHook(this.Users.starred_projects)
+  // getUser = this.createFetchHook(this.Users.show)
+  // getUserStatus = this.createFetchHook(this.Users.status)
+  // getUserFollowing = this.createFetchHook(this.Users.following)
+  // getUserFollowers = this.createFetchHook(this.Users.followers)
+  // getRepositoryFile = this.createFetchHook(this.RepositoryFile.show)
+  // getRepositoryFileRaw = this.createFetchHook(this.RepositoryFile.raw)
 
 
-  // Operation hooks
-  useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
-  useCreateMergeRequest = this.createOperationHook(this.createMergeRequest);
-  useCreateCommit = this.createOperationHook(this.createCommit);
+  // // Operation hooks
+  // useCreateProjectIssue = this.createOperationHook(this.createProjectIssue);
+  // useCreateMergeRequest = this.createOperationHook(this.createMergeRequest);
+  // useCreateCommit = this.createOperationHook(this.createCommit);
 
-  // Update
-  useUpdateProjectIssue = this.createOperationHook(this.updateProjectIssue);
-  useUpdateProjectMergeRequest = this.createOperationHook(this.updateProjectMergeRequest);
-  useUpdateProjectBranches = this.createOperationHook(this.updateProjectBranches);
-  // Delete 
-  useDeleteProjectIssue = this.createOperationHook(this.deleteProjectIssue);
-  useDeleteMergeRequest = this.createOperationHook(this.deleteProjectMergeRequest);
+  // // Update
+  // useUpdateProjectIssue = this.createOperationHook(this.updateProjectIssue);
+  // useUpdateProjectMergeRequest = this.createOperationHook(this.updateProjectMergeRequest);
+  // useUpdateProjectBranches = this.createOperationHook(this.updateProjectBranches);
+  // // Delete 
+  // useDeleteProjectIssue = this.createOperationHook(this.deleteProjectIssue);
+  // useDeleteMergeRequest = this.createOperationHook(this.deleteProjectMergeRequest);
 
 }
 

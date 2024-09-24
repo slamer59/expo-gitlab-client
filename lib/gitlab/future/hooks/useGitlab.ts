@@ -4,14 +4,23 @@ import GitLabClient from '../../gitlab-api-wrapper';
 const createQueryHook = (queryKey: string[], queryFn: () => Promise<any>) => (): UseQueryResult<any> =>
     useQuery({ queryKey, queryFn });
 
-const createMutationHook = (mutationFn: (...args: any[]) => Promise<any>, invalidateQueries: string[]) => () =>
-    useMutation({
+const createMutationHook = (
+    mutationFn: (...args: any[]) => Promise<any>,
+    invalidateQueries: string[],
+    onSuccessCallback?: (data: any, variables: any, context: unknown) => void
+) => () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
         mutationFn,
-        onSuccess: () => {
-            const queryClient = useQueryClient();
+        onSuccess: (data, variables, context) => {
             invalidateQueries.forEach(query => queryClient.invalidateQueries([query]));
+            if (onSuccessCallback) {
+                onSuccessCallback(data, variables, context);
+            }
         },
     });
+};
 
 export const useGitLab = (client: GitLabClient) => {
     const queryHooks = {
@@ -36,6 +45,28 @@ export const useGitLab = (client: GitLabClient) => {
     };
 
     const mutationHooks = {
+        // Project
+        useCreateProject: createMutationHook(
+            (data: { name: string; options?: any }) => client.Projects.create(data.name, data.options),
+            ['projects'],
+            // (data) => {
+            //     console.log('Project created successfully', data);
+            //     // You can add more logic here if needed
+            // }
+        ),
+        useUpdateProject: createMutationHook(
+            (data: { projectId: string; updateData: any }) =>
+                client.Projects.edit(data.projectId, data.updateData),
+            ['project', 'projectUsers'],
+        ),
+        useDeleteProject: createMutationHook(
+            (projectId: string) => client.Projects.remove(projectId),
+            ['projects'],
+        ),
+        useProjectFork: createMutationHook(
+            (data: { projectId: string; options?: any }) => client.Projects.fork(data.projectId, data.options),
+            ['projects'],
+        ),
         // Project Issue
         useCreateProjectIssue: createMutationHook(
             (data: { projectId: string; title: string; description: string; options?: any }) =>
@@ -113,7 +144,7 @@ export const useGitLab = (client: GitLabClient) => {
     };
 
     const detailsHooks = {
-
+        // Project
         useProjectDetails: (projectId: string) => {
             return useQueries({
                 queries: [
@@ -138,8 +169,33 @@ export const useGitLab = (client: GitLabClient) => {
                         queryFn: () => client.ProjectMembers.all(projectId),
                     },
                 ],
-            });
+            },
+            );
         },
+        // Project Issue
+        useProjectIssueDetails: (projectId: string, issueIid: string) => {
+            return useQueries({
+                queries: [
+                    {
+                        queryKey: ['projectIssue', projectId, issueIid],
+                        queryFn: () => client.Issues.show(projectId, issueIid),
+                    },
+                    {
+                        queryKey: ['projectIssueNotes', projectId, issueIid],
+                        queryFn: () => client.Issues.notes(projectId, issueIid),
+                    },
+                    {
+                        queryKey: ['projectIssueRelatedMergeRequest', projectId, issueIid],
+                        queryFn: () => client.Issues.related_merge_requests(projectId, issueIid),
+                    },
+                    {
+                        queryKey: ['projectIssueLinks', projectId, issueIid],
+                        queryFn: () => client.Issues.links(projectId, issueIid),
+                    }
+                ],
+            })
+        },
+        // Merge Request
         useMergeRequestDetails: (projectId: string, mergeRequestIid: string) => {
             return useQueries({
                 queries: [
@@ -166,6 +222,7 @@ export const useGitLab = (client: GitLabClient) => {
                 ],
             });
         },
+        // Profile
         useProfileDetails() {
             const { data: currentUser, isLoading: isLoadingUser, error: errorUser } = useQuery({
                 queryKey: ['currentUser'],
@@ -196,13 +253,12 @@ export const useGitLab = (client: GitLabClient) => {
                     },
                 ],
             });
-
             return [
                 { data: currentUser, isLoading: isLoadingUser, error: errorUser },
                 ...queries.map(({ data, isLoading, error }) => ({ data, isLoading, error })),
             ];
         },
-
+        // Pipeline
         usePipelineDetails: (projectId: string, pipelineId: string) => {
             const pipelineQuery = useQuery({
                 queryKey: ['projectPipeline', projectId, pipelineId],
@@ -226,6 +282,7 @@ export const useGitLab = (client: GitLabClient) => {
                 { data: jobsQuery.data, isLoading: jobsQuery.isLoading, error: jobsQuery.error },
             ];
         },
+
     };
 
 
