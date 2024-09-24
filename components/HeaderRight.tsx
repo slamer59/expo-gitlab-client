@@ -6,6 +6,7 @@ import { Pressable, View } from 'react-native';
 
 export interface HeaderOption {
     icon: string;
+    color?: string;
     label: string;
     onPress: () => void;
     testID?: string;
@@ -13,6 +14,7 @@ export interface HeaderOption {
 
 export interface HeaderAction {
     icon: string;
+    color?: string;
     onPress: () => void;
     testID?: string;
 }
@@ -37,7 +39,7 @@ export function HeaderRight({ actions = [], options = [], dropdownLabel = "Optio
                         <Ionicons
                             name={action.icon}
                             size={25}
-                            color="white"
+                            color={action.color || "white"}
                             className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
                         />
                     )}
@@ -66,7 +68,12 @@ export function HeaderRight({ actions = [], options = [], dropdownLabel = "Optio
                             {options.map((option, index) => (
                                 <DropdownMenuItem key={index} onPress={option.onPress} testID={option.testID}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Ionicons color="white" name={option.icon} size={20} style={{ marginRight: 10 }} />
+                                        <Ionicons
+                                            color={option.color || "white"}
+                                            name={option.icon}
+                                            size={20}
+                                            style={{ marginRight: 10 }}
+                                        />
                                         <Text>{option.label}</Text>
                                     </View>
                                 </DropdownMenuItem>

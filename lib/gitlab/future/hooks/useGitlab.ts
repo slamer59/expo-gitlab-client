@@ -59,6 +59,14 @@ export const useGitLab = (client: GitLabClient) => {
                 client.Projects.edit(data.projectId, data.updateData),
             ['project', 'projectUsers'],
         ),
+        useArchiveProject: createMutationHook(
+            (projectId: string) => client.Projects.archive(projectId),
+            ['projects'],
+        ),
+        useUnarchiveProject: createMutationHook(
+            (projectId: string) => client.Projects.unarchive(projectId),
+            ['projects'],
+        ),
         useDeleteProject: createMutationHook(
             (projectId: string) => client.Projects.remove(projectId),
             ['projects'],
@@ -74,8 +82,9 @@ export const useGitLab = (client: GitLabClient) => {
             ['projectIssues']
         ),
         useUpdateProjectIssue: createMutationHook(
-            (data: { projectId: string; issueIid: string; updateData: any }) =>
-                client.updateProjectIssue(data.projectId, data.issueIid, data.updateData),
+            (data: { projectId: string, issueIid: string, updateData: any }) => {
+                return client.updateProjectIssue(data.projectId, data.issueIid, data.updateData)
+            },
             ['projectIssues']
         ),
         useDeleteProjectIssue: createMutationHook(

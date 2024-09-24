@@ -58,7 +58,6 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/issues`, 'POST', data);
     },
     edit: async (projectId, issueIid, data) => {
-      console.log('Editing issue:', projectId, issueIid, data);
       return this.request(`/projects/${projectId}/issues/${issueIid}`, 'PUT', data);
     },
     remove: async (projectId, issueIid) => {
@@ -107,6 +106,12 @@ class GitLabClient {
     },
     fork: async (projectId, data) => {
       return this.request(`/projects/${projectId}/fork`, 'POST', data);
+    },
+    archive: async (projectId) => {
+      return this.request(`/projects/${projectId}/archive`, 'POST');
+    },
+    unarchive: async (projectId) => {
+      return this.request(`/projects/${projectId}/unarchive`, 'POST');
     },
   };
 

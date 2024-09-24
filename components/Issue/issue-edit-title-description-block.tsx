@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Text } from "../ui/text";
 import { Textarea } from "../ui/textarea";
 
-export function EditTitleDescriptionIssueBlock({ issue, updateIssue, projectId, issue_iid }) {
+export function EditTitleDescriptionIssueBlock({ issue, updateIssue }) {
     const [formData, setFormData] = useState({
         title: issue.title || '',
         description: issue?.description || '',

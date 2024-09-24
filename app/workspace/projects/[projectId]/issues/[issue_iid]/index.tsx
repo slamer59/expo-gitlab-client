@@ -47,12 +47,17 @@ export default function IssueDetails() {
         </Text>;
     }
 
-    const updateIssueMutation = api.useUpdateProjectIssue(projectId, issue_iid);
-    const deleteIssueMutation = api.useDeleteProjectIssue(projectId, issue_iid);
+    const updateIssueMutation = api.useUpdateProjectIssue();
+    const deleteIssueMutation = api.useDeleteProjectIssue();
 
-    const openIssue = () => updateIssueMutation.mutateAsync({ state_event: 'reopen' });
-    const closeIssue = () => updateIssueMutation.mutateAsync({ state_event: 'close' });
-    const deleteIssue = () => deleteIssueMutation.mutateAsync(undefined, {
+    const openIssue = async () => updateIssueMutation.mutateAsync(
+        { projectId, issueIid: issue_iid, updateData: { state_event: 'reopen' } },
+    );
+    const closeIssue = async () => updateIssueMutation.mutateAsync(
+        { projectId, issueIid: issue_iid, updateData: { state_event: 'close' } }
+    );
+
+    const deleteIssue = async () => deleteIssueMutation.mutateAsync(undefined, {
         onSuccess: () => {
             router.push(`/workspace/projects/${projectId}/issues/list`);
         },
@@ -74,12 +79,14 @@ export default function IssueDetails() {
         },
         {
             icon: issue?.state === 'opened' ? 'close-circle-outline' : 'checkmark-circle-outline',
+            color: issue?.state === 'opened' ? 'red' : 'green',
             label: issue?.state === 'opened' ? 'Close Issue' : 'Reopen Issue',
             onPress: issue?.state === 'opened' ? closeIssue : openIssue,
             testID: "toggle-issue-state-option"
         },
         {
             icon: "trash-outline",
+            color: "#red",
             label: "Delete Issue",
             onPress: deleteIssue,
             testID: "delete-issue-option"
@@ -90,16 +97,10 @@ export default function IssueDetails() {
             <Stack.Screen
                 options={{
                     title: "",
-                    //issue.references.full.length > 14
-                    //     ? `...${issue.references.full.slice(-14)}`
-                    //     : issue.references.full,
-                    // ...defaultOptionsHeader,
-                    // headerTintColor: "black",
                     headerRight: () => (
                         <HeaderRight
                             actions={headerActions}
                             options={headerOptions}
-                            testID="issue-header-right"
                         />
                     )
                 }}
