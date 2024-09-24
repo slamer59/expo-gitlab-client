@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "../ui/separator";
 
 export function ProjectHeader({ repository }) {
-    console.log("🚀 ~ ProjectHeader ~ repository:", repository)
     return <>
         <View className="m-4">
             <View className="flex-row items-center">

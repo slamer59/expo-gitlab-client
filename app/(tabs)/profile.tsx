@@ -9,7 +9,6 @@ import { Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-import projects from "../templates/projects";
 
 const UserSkeleton = () => (
   <>
@@ -159,7 +158,7 @@ export default function ProfileScreen() {
             </View>
             <Text className="text-base text-white" testID="project-count">
               {isLoadingContributed ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
-                contributedProjects.length >= 20 ? '20+' : projects.length
+                contributedProjects.length >= 20 ? '20+' : contributedProjects?.length
               }
             </Text>
           </CardContent>
