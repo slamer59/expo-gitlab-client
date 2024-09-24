@@ -177,6 +177,10 @@ export const useGitLab = (client: GitLabClient) => {
                         queryKey: ['projectMembers', projectId],
                         queryFn: () => client.ProjectMembers.all(projectId),
                     },
+                    {
+                        queryKey: ['projectPipelines', projectId],
+                        queryFn: () => client.Pipelines.all(projectId),
+                    }
                 ],
             },
             );

@@ -8,6 +8,7 @@ interface IProject {
     };
     mergeRequests: any[];
     members: any[];
+    pipelines: any[];
 }
 
 export function getWorkspaceItems(projectDetails: IProject, router: Router): IListItems[] {
@@ -15,14 +16,14 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
         {
             icon: "alert-circle-outline",
             text: "Issues",
-            kpi: projectDetails?.projectDetails?.open_issues_count || 0,
+            kpi: projectDetails?.project.open_issues_count || 0,
             onAction: () => router.push(`workspace/projects/${projectDetails?.project?.id}/issues/list`),
             itemColor: "bg-issues",
         },
         {
             icon: "git-merge",
             text: "Merge Requests",
-            kpi: projectDetails?.mergeRequests ? projectDetails?.mergeRequests.length : 0,
+            kpi: projectDetails?.mergeRequests.length >= 20 ? '20+' : projectDetails?.mergeRequests.length,
             onAction: () => router.push(
                 `workspace/projects/${projectDetails?.project?.id}/merge-requests/list`
             ),
@@ -31,7 +32,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
         {
             icon: "play-outline",
             text: "CI/CD",
-            kpi: "",
+            kpi: projectDetails?.pipelines?.length >= 20 ? '20+' : projectDetails?.pipelines.length,
             onAction: () => router.push(
                 `workspace/projects/${projectDetails?.project?.id}/pipelines/list`
             ),
@@ -44,15 +45,32 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
             onAction: () => router.push(`workspace/projects/${projectDetails?.project?.id}/members/list`),
             itemColor: "bg-members",
         },
-        {
-            icon: "document-text-outline",
-            text: "Licences",
-            kpi: "",
-            onAction: () => router.push(
-                `workspace/projects/${projectDetails?.project?.id}/licences/list`
-            ),
-            itemColor: "bg-licences",
-        },
+        ...(projectDetails?.project?.license_url
+            ? [
+                {
+                    icon: "document-text-outline",
+                    text: "Licences",
+                    kpi: "",
+                    onAction: () => router.push(
+                        `workspace/projects/${projectDetails?.project?.id}/licence`
+                    ),
+                    itemColor: "bg-licences",
+                },
+            ]
+            : []),
+        ...(projectDetails?.project?.readme_url
+            ? [
+                {
+                    icon: "document-text",
+                    text: "README",
+                    kpi: "",
+                    onAction: () => router.push(
+                        `workspace/projects/${projectDetails?.project?.id}/readme`
+                    ),
+                    itemColor: "bg-licences",
+                },
+            ]
+            : []),
         {
             icon: "star-outline",
             text: "Starred",
