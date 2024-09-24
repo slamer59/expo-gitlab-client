@@ -1,0 +1,17 @@
+[project]
+name = "functions"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "exponent-server-sdk>=2.1.0",
+    "firebase-admin>=6.5.0",
+    "firebase-functions>=0.4.2",
+    "pydantic>=2.9.2",
+    "tqdm>=4.66.5",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

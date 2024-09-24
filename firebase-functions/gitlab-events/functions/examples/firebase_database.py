@@ -39,7 +39,7 @@ def list_devices_with_group_id(group_id):
 
 # Set the GitLab API endpoint and your private token
 url = "https://gitlab.com/api/v4/projects"
-headers = {"PRIVATE-TOKEN": "***REMOVED***"}
+headers = {"PRIVATE-TOKEN": "GITLAB_PAT_REMOVED"}
 push_token = "ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"
 
 # Make the GET request to the projects endpoint with the membership parameter set to True

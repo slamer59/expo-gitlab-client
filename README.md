@@ -16,6 +16,10 @@ https://expo.dev/notifications
 
 ### Firebase Functions notification
 https://github.com/firebase/functions-samples/tree/main/Python
+
+Add runtime = python310 to cloud functions
+`firebase deploy --only functions --debug` in `functions` folder
+
 ## Notification (Firebase)
 [FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/)
 
@@ -27,3 +31,5 @@ https://github.com/firebase/functions-samples/tree/main/Python
 https://handbook.gitlab.com/handbook/marketing/brand-and-product-marketing/brand/brand-activation/trademark-guidelines/
 
 https://design.gitlab.com/
+
+
