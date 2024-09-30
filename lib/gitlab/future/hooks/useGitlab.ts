@@ -75,6 +75,16 @@ export const useGitLab = (client: GitLabClient) => {
             (data: { projectId: string; options?: any }) => client.Projects.fork(data.projectId, data.options),
             ['projects'],
         ),
+        useProjectUpload: createMutationHook(
+            (data: { projectId: string; file: File; options?: any }) =>
+                client.Projects.upload(data.projectId, data.file, data.options),
+            ['projects'],
+        ),
+        useProjectSearch: createMutationHook(
+            (data: { projectId: string; search: string; options?: any }) =>
+                client.Projects.search(data.projectId, data.search, data.options),
+            ['projects'],
+        ),
         // Project Issue
         useCreateProjectIssue: createMutationHook(
             (data: { projectId: string; title: string; description: string; options?: any }) =>

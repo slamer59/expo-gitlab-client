@@ -4,7 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import Markdown from 'react-native-markdown-display';
+import MarkdownCustom from '../CustomMarkdown';
 
 
 const IssueComment = ({ issue, projectId }) => {
@@ -46,12 +46,12 @@ const IssueComment = ({ issue, projectId }) => {
             </View>
 
             {title && <Text className="mb-2 font-bold text-white">{title}</Text>}
-            <Markdown
-                className="mb-4"
+            <MarkdownCustom
+                // className="mb-4"
                 style={styles}
             >
                 {description || body || "No description provided."}
-            </Markdown>
+            </MarkdownCustom>
             <View className="flex-row justify-end">
                 <TouchableOpacity onPress={copyToClipboard} className="mr-4">
                     <Ionicons name="share-outline" size={20} color="white" />

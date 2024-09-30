@@ -9,20 +9,35 @@ class GitLabClient {
     this.host = options.host || BASE_URL;
   }
 
-  async request(endpoint, method = 'GET', body = null) {
+  async request(endpoint, method = 'GET', body = null, file = null) {
     const url = `${this.host}${endpoint}`;
     const headers = {
       'Authorization': `Bearer ${this.token}`,
-      //'PRIVATE-TOKEN': `${this.token}`,
-      'Content-Type': 'application/json',
     };
 
-    const options = {
+    const options: RequestInit = {
       method,
       headers,
     };
 
-    if (body && (method === 'POST' || method === 'PUT')) {
+    if (file) {
+      // Handle file upload
+      const formData = new FormData();
+      formData.append('file', file);
+
+      if (body) {
+        // If there's additional data, append it to formData
+        Object.keys(body).forEach(key => {
+          formData.append(key, body[key]);
+        });
+      }
+
+      options.body = formData;
+      // Don't set Content-Type header, let the browser set it with the boundary
+      delete headers['Content-Type'];
+    } else if (body && (method === 'POST' || method === 'PUT')) {
+      // Handle JSON body
+      headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(body);
     }
 
@@ -43,11 +58,11 @@ class GitLabClient {
         return await response.text();
       }
     } catch (error) {
-
       console.error(`API request ${url} failed on:`, error);
       throw error;
     }
   }
+
 
   Issues = {
     all: async (projectId, options = {}) => {
@@ -112,6 +127,12 @@ class GitLabClient {
     },
     unarchive: async (projectId) => {
       return this.request(`/projects/${projectId}/unarchive`, 'POST');
+    },
+    upload: async (projectId, file, data) => {
+      return this.request(`/projects/${projectId}/uploads`, 'POST', data, file);
+    },
+    search: async (query) => {
+      return this.request(`/projects/search/${query}`);
     },
   };
 
