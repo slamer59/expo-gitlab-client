@@ -1,12 +1,14 @@
 import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
-import { getExpoToken, getProjects } from "@/lib/gitlab/helpers";
+import { getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import { isDevice } from "expo-device";
+import * as Notifications from 'expo-notifications';
 import { Link, useFocusEffect } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
@@ -151,7 +153,9 @@ export default function Home() {
       const fetchData = async () => {
         if (isDevice) {
           try {
-            const push_token = await getExpoToken();
+            const push_token = await Notifications.getExpoPushTokenAsync({
+              projectId: Constants.expoConfig.extra.eas.projectId,
+            });
             console.log("Expo token retrieved successfully");
             try {
               await mapDeviceToProject(push_token, projects);
@@ -167,6 +171,10 @@ export default function Home() {
 
         } else {
           console.log("Not a device, skipping Expo token retrieval and device mapping");
+        } if (!push_token) {
+          console.error("Expo token is null or empty");
+          setAlert({ isOpen: true, message: "Unable to retrieve Expo push token. Please check your device settings." });
+          return;
         }
         let projects;
         try {

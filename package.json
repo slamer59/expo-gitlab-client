@@ -21,7 +21,8 @@
     "maestro:all": "maestro test .maestro/all.yaml",
     "maestro:studio": "maestro studio",
     "ts-check": "tsc --noEmit",
-    "licences": "bunx generate-license-file --input ./package.json --output ./third-party-licenses.txt --overwrite"
+    "licences": "bunx generate-license-file --input ./package.json --output ./third-party-licenses.txt --overwrite",
+    "push-google-service-secret": "eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json"
   },
   "jest": {
     "preset": "jest-expo"
