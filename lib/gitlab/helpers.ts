@@ -121,12 +121,11 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
     }
 }
 
-export async function getExpoToken(): Promise<string | null> {
+export async function getExpoToken(): Promise<string> {
     try {
         const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
         if (!projectId) {
-            console.warn("Project ID not found");
-            return null;
+            throw new Error("Project ID not found");
         }
 
         const token = await Notifications.getExpoPushTokenAsync({
@@ -134,14 +133,12 @@ export async function getExpoToken(): Promise<string | null> {
         });
 
         if (token && token.data) {
-            // console.log("Expo push token:", token.data);
             return token.data;
         } else {
-            console.warn("Failed to get Expo push token: Token or token.data is undefined");
-            return null;
+            throw new Error("Failed to get Expo push token: Token or token.data is undefined");
         }
     } catch (error) {
         console.error("Error getting Expo push token:", error);
-        return null;
+        throw error; // Re-throw the error
     }
 }

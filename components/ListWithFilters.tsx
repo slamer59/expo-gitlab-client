@@ -1,5 +1,4 @@
 import { ListComponent } from "@/components/ListCards";
-import { useGetData } from "@/lib/gitlab/hooks";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -20,21 +19,19 @@ interface FilterOption {
 
 interface ListWithFiltersProps {
   UIFilters: Filter[];
+  queryFn: (params: any) => Promise<any>;
   ItemComponent: React.ComponentType<any>;
   SkeletonComponent: React.ComponentType<any>;
-  pathname: string;
   defaultParams: any;
-  paramsMap: any;
-  endpoint: string;
-  query_cache_name: string;
 }
 export default function ListWithFilters({
   UIFilters,
+  queryFn,
   ItemComponent,
   SkeletonComponent,
   pathname,
-  endpoint,
-  query_cache_name,
+  // endpoint,
+  // query_cache_name,
   paramsMap,
   defaultParams,
 }: ListWithFiltersProps) {
@@ -68,14 +65,7 @@ export default function ListWithFilters({
     isLoading,
     isError,
     error,
-  } = useGetData(
-    [query_cache_name, params.query, params.path],
-    endpoint,
-    params,
-    {
-      enabled: true,
-    }
-  );
+  } = queryFn(params);
 
   return (
     <ScrollView className="flex-1 mt-2">
