@@ -164,15 +164,16 @@ export default function Home() {
               console.error("Error mapping device to project:", error);
               setAlert({ isOpen: true, message: `Error mapping device to project: ${error.message}` });
             }
+            if (!push_token) {
+              console.error("Expo token is null or empty");
+              setAlert({ isOpen: true, message: "Unable to retrieve Expo push token. Please check your device settings." });
+              return;
+            }
           } catch (error) {
             console.error("Error getting Expo token:", error);
             setAlert({ isOpen: true, message: `Error getting Expo token: ${error.message}` });
           }
-          if (!push_token) {
-            console.error("Expo token is null or empty");
-            setAlert({ isOpen: true, message: "Unable to retrieve Expo push token. Please check your device settings." });
-            return;
-          }
+
         } else {
           console.log("Not a device, skipping Expo token retrieval and device mapping");
         }
