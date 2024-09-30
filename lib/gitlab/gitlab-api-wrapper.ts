@@ -138,7 +138,8 @@ class GitLabClient {
 
   Discussions = {
     show: async (projectId, issueIid, discussionId) => {
-      return this.request(`/projects/${projectId}/issues/${issueIid}/discussions/${discussionId}`);
+      console.log("🚀 ~ GitLabClient ~ show: ~ projectId, issueIid, discussionId:", projectId, issueIid, discussionId)
+      return this.request(`/projects/${projectId}/issues/${issueIid}/discussions/1`);
     },
     create: async (projectId, issueIid, description) => {
       return this.request(`/projects/${projectId}/issues/${issueIid}/discussions?body=${description}`, 'POST');

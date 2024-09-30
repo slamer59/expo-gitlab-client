@@ -5,6 +5,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 
 
+import CreateDiscussion from "@/components/CreateDiscussion";
 import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
 import IssueComment from "@/components/Issue/issue-comment";
 import IssueHeader from "@/components/Issue/issue-header";
@@ -19,6 +20,7 @@ import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { shareView } from "@/lib/utils";
+import { Separator } from "@rn-primitives/select";
 import { Text } from "~/components/ui/text";
 
 
@@ -92,6 +94,7 @@ export default function IssueDetails() {
             testID: "delete-issue-option"
         }
     ];
+
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen
@@ -114,13 +117,12 @@ export default function IssueDetails() {
                 }
 
                 {isLoadingIssue ? <CommentSkeleton /> :
-                    <IssueComment issue={issue} projectId={projectId} />
+                    <IssueComment issue={issue} />
                 }
 
                 {isLoadingLinkedIssues ? <LinkedItemSkeleton /> :
                     <LinkedIssuesSection
                         title="Linked Items"
-                        iconName="link"
                         array={linkedIssues}
                         empty={
                             <Text className="mt-2 text-white">
@@ -134,7 +136,6 @@ export default function IssueDetails() {
                 {isLoadingRelatedMergeRequests ? <LinkedItemSkeleton /> :
                     <LinksMergeRequestsSection
                         title="Related merge requests"
-                        iconName="link"
                         array={relatedMRs}
                         empty={
                             <Text className="mt-2 text-white">
@@ -147,6 +148,11 @@ export default function IssueDetails() {
                 <Text className="text-4xl font-bold text-white">Events</Text>
                 {isLoadingNotes ? <NotesSkeleton /> :
                     <IssueNotes notes={notes} />
+                }
+
+                <Separator className="my-4" />
+                {isLoadingIssue ? <CommentSkeleton /> :
+                    <CreateDiscussion issue={issue} />
                 }
 
                 {/*                <Input
