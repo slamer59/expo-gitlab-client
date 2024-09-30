@@ -7,13 +7,12 @@ import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useCallback } from 'react';
 import { ScrollView } from 'react-native';
 
 export default function IssueEditComponent() {
     const { session } = useSession()
-    const router = useRouter();
 
     const client = new GitLabClient({
         url: session?.url,
@@ -24,7 +23,6 @@ export default function IssueEditComponent() {
     const { projectId, issue_iid: issueIid } = useLocalSearchParams();
 
     const { data: issue, isLoading: isLoadingIssue, error: errorIssue } = api.useProjectIssue(projectId, issueIid) ?? {};
-    const { mutate: updateProjectIssue, isError: isErrorUpdateProjectIssue, error: errorUpdateProjectIssue } = api.useUpdateProjectIssue();
 
     const updateIssue = useCallback(async (updatedData) => {
         try {
@@ -36,7 +34,7 @@ export default function IssueEditComponent() {
     }, [api, projectId, issueIid]);
 
     if (isLoadingIssue) return <Text>Loading...</Text>;
-    if (errorIssue || errorUpdateProjectIssue) return <Text>Error: {errorIssue?.message || errorUpdateProjectIssue?.message}</Text>;
+    if (errorIssue) return <Text>Error: {errorIssue?.message}</Text>;
     return (
         <>
             <Stack.Screen
