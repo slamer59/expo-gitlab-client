@@ -2,11 +2,11 @@ import { Label } from "@rn-primitives/select";
 import React, { useCallback, useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import EnhancedMarkdownEditor from "../markdown-editor";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Text } from "../ui/text";
-import { Textarea } from "../ui/textarea";
 
 export function EditTitleDescriptionIssueBlock({ issue, updateIssue }) {
     const [formData, setFormData] = useState({
@@ -106,14 +106,10 @@ export function EditTitleDescriptionIssueBlock({ issue, updateIssue }) {
             </View>
             <View className="mb-2">
                 <Label nativeID='description' className="mb-2 text-xl font-semibold text-white">Description</Label>
-
-                <Textarea
-                    placeholder="Issue Description"
-                    value={formData.description}
+                <EnhancedMarkdownEditor
+                    projectId={issue.project_id}
+                    markdown={formData.description}
                     onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
-
-                // multiline
-                // numberOfLines={4}
                 />
             </View>
             <View className="flex flex-row justify-start mt-4 mb-2 space-x-2">

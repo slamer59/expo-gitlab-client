@@ -153,11 +153,11 @@ const MergeRequestNote = ({ note }) => {
     //     return (
     //         <View className="mb-2 bg-background">
     //             <Text className="font-bold text-white">{note.author.name}</Text>
-    //             <Markdown
+    //             <MarkdownCustom
     //                 style={styles}
     //             >
     //                 {note.body}
-    //             </Markdown>
+    //             </MarkdownCustom>
     //         </View>
     //     );
     // }

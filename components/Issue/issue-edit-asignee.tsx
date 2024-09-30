@@ -78,16 +78,20 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
                     {checkedIds && checkedIds.length > 0 ? (
                         <>
                             {users?.map((user: any) => (
-                                checkedIds.includes(`${user.id}`) && (
-                                    <Assignee key={user.id} assignee={user}>
-                                        <Button
-                                            variant="icon"
-                                            onPress={() => toggleSwitch(`${user.id}`)}
-                                        >
-                                            <Ionicons name="close-circle" size={24} color="white" />
-                                        </Button>
-                                    </Assignee>
-                                )
+                                <React.Fragment key={user.id}>
+                                    {!checkedIds.includes(`${user.id}`) ? (
+                                        <Assignee assignee={user}>
+                                            <Button
+                                                variant="icon"
+                                                onPress={() => toggleSwitch(`${user.id}`)}
+                                            >
+                                                <Ionicons name="close-circle" size={24} color="white" />
+                                            </Button>
+                                        </Assignee>
+                                    )
+                                        : null
+                                    }
+                                </React.Fragment>
                             ))}
                             {/* {!users.some((id) => checkedIds?.some(user => `${user.id}` === id)) && (
                                 <Text className='h-14 text-muted'>No assignees selected</Text>
@@ -100,21 +104,24 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
                     <Separator className='my-4 bg-primary' />
                     <Text className='text-xl font-semibold text-white'>Project's Users</Text>
                     {users && users.length > 0 ? (
-                        users?.map((user: any) => <>
-                            {!checkedIds.includes(`${user.id}`) ? <>
+                        users?.map((user: any) =>
+                            <React.Fragment key={user.id}>
+                                {!checkedIds.includes(`${user.id}`) ? <>
 
-                                <Assignee key={user.id} assignee={user}>
-                                    <Button
-                                        variant="icon"
-                                        onPress={() => toggleSwitch(`${user.id}`)}
-                                    >
-                                        <Ionicons name="add-circle" size={24} color="white" />
-                                    </Button>
-                                </Assignee>
+                                    <Assignee key={user.id} assignee={user}>
+                                        <Button
+                                            variant="icon"
+                                            onPress={() => toggleSwitch(`${user.id}`)}
+                                        >
+                                            <Ionicons name="add-circle" size={24} color="white" />
+                                        </Button>
+                                    </Assignee>
 
-                            </> : <Text className='h-14 text-muted'> No more users in project</Text>}
+                                </> : <Text className='h-14 text-muted'> No more users in project</Text>}
 
-                        </>)
+
+
+                            </React.Fragment>)
                     ) : (
                         <Text className='mb-4 text-muted'>No assignees</Text>
                     )}
@@ -122,9 +129,11 @@ export default function EditAssigneeIssue({ projectId, issueIid }) {
             </SectionTitle >
 
             {checkedIds && checkedIds.length > 0 ? (
-                users?.map((user: any) => <>
-                    {checkedIds.includes(`${user.id}`) && <Assignee assignee={user} />}
-                </>)
+                users?.map((user: any) => (
+                    <React.Fragment key={user.id}>
+
+                        {checkedIds.includes(`${user.id}`) && <Assignee assignee={user} />}
+                    </React.Fragment>))
             ) : (
                 <Text className='h-12 mb-4 text-muted'>No assignees</Text>
             )}

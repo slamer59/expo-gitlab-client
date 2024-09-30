@@ -6,6 +6,7 @@ import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { isDevice } from "expo-device";
 import { Link, useFocusEffect } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
@@ -75,12 +76,12 @@ export default function Home() {
         screen: "workspace/projects/59795263/issues/29",
         itemColor: "bg-green"
       },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevIssueEdit",
-      //   screen: "workspace/projects/59795263/issues/29/edit",
-      //   itemColor: "bg-green"
-      // },
+      {
+        icon: "arrow-forward",
+        text: "DevIssueEdit",
+        screen: "workspace/projects/59795263/issues/29/edit",
+        itemColor: "bg-green"
+      },
       // {
       //   icon: "arrow-forward",
       //   text: "DevMergeRequest",
@@ -139,48 +140,50 @@ export default function Home() {
   };
 
   // 1. Fetch projects
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
+
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
+        if (isDevice) {
+          try {
+            const push_token = await getExpoToken();
+            console.log("Expo token retrieved successfully");
+            try {
+              await mapDeviceToProject(push_token, projects);
+              console.log("Device mapped to project successfully");
+            } catch (error) {
+              console.error("Error mapping device to project:", error);
+              setAlert({ isOpen: true, message: `Error mapping device to project: ${error.message}` });
+            }
+          } catch (error) {
+            console.error("Error getting Expo token:", error);
+            setAlert({ isOpen: true, message: `Error getting Expo token: ${error.message}` });
+          }
+
+        } else {
+          console.log("Not a device, skipping Expo token retrieval and device mapping");
+        }
+        let projects;
         try {
-          const push_token = await getExpoToken();
-          console.log("Expo token retrieved successfully");
-
-          let projects;
-          try {
-            projects = await getProjects(session);
-            console.log("Projects fetched successfully");
-          } catch (error) {
-            console.error("Error fetching projects:", error);
-            setAlertMessage(`Error fetching projects: ${error.message}`);
-            setIsAlertOpen(true);
-            return;
-          }
-
-          try {
-            await updateOrCreateWebhooks(session, projects, undefined);
-            console.log("Webhooks updated successfully");
-          } catch (error) {
-            console.error("Error updating webhooks:", error);
-            setAlertMessage(`Error updating webhooks: ${error.message}`);
-            setIsAlertOpen(true);
-          }
-
-          try {
-            await mapDeviceToProject(push_token, projects);
-            console.log("Device mapped to project successfully");
-          } catch (error) {
-            console.error("Error mapping device to project:", error);
-            setAlertMessage(`Error mapping device to project: ${error.message}`);
-            setIsAlertOpen(true);
-          }
+          projects = await getProjects(session);
+          console.log("Projects fetched successfully");
         } catch (error) {
-          console.error("Error getting Expo token:", error);
-          setAlertMessage(`Error getting Expo token: ${error.message}`);
-          setIsAlertOpen(true);
+          console.error("Error fetching projects:", error);
+          setAlert({ isOpen: true, message: `Error fetching projects: ${error.message}` });
+          return;
+        }
+
+        try {
+          await updateOrCreateWebhooks(session, projects, undefined);
+          console.log("Webhooks updated successfully");
+        } catch (error) {
+          console.error("Error updating webhooks:", error);
+          setAlert({ isOpen: true, message: `Error updating webhooks: ${error.message}` });
         }
       };
       fetchData();
@@ -193,9 +196,9 @@ export default function Home() {
       contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
     >
       <ErrorAlert
-        isOpen={isAlertOpen}
-        onClose={() => setIsAlertOpen(false)}
-        message={alertMessage}
+        isOpen={alert.isOpen}
+        onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
+        message={alert.message}
       />
       {showWelcomeCard && (
         <Card
