@@ -231,7 +231,7 @@ export default function EnhancedMarkdownEditor({ projectId, markdown, onChangeTe
 
 
             </View >
-            {preview &&
+            {preview && markdown.length > 0 &&
                 <View className='flex-1 p-2 border-2 border-white rounded-md'>
                     {/* <Text className='text-lg font-bold text-white'>{markdown}</Text> */}
                     <MarkdownCustom                    >
