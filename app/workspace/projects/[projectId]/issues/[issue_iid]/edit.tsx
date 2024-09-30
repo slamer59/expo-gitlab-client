@@ -1,4 +1,4 @@
-import EditAssigneeIssue from '@/components/Issue/issue-edit-asignee';
+import EditAssigneeIssue from '@/components/Issue/issue-edit-assignee';
 import EditLabelIssue from '@/components/Issue/issue-edit-label';
 import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
 import { EditTitleDescriptionIssueBlock } from '@/components/Issue/issue-edit-title-description-block';
@@ -36,24 +36,23 @@ export default function IssueEditComponent() {
     if (isLoadingIssue) return <Text>Loading...</Text>;
     if (errorIssue) return <Text>Error: {errorIssue?.message}</Text>;
     return (
-        <>
+        <ScrollView
+            className="flex-1 p-4 bg-card"
+            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+        >
             <Stack.Screen
                 options={{
                     title: `Edit Issue #${issueIid}`,
                 }}
             />
-            <ScrollView
-                className="flex-1 p-4 bg-card"
-                contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
-            >
-                <EditTitleDescriptionIssueBlock updateIssue={updateIssue} issue={issue} />
-                <Separator className="my-4" />
-                <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
-                <Separator className="my-4" />
-                <EditLabelIssue projectId={projectId} issueIid={issueIid} />
-                <Separator className="my-4" />
-                <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
-            </ScrollView>
-        </>
+
+            <EditTitleDescriptionIssueBlock updateIssue={updateIssue} issue={issue} />
+            <Separator className="my-4" />
+            <EditAssigneeIssue projectId={projectId} issueIid={issueIid} />
+            <Separator className="my-4" />
+            <EditLabelIssue projectId={projectId} issueIid={issueIid} />
+            <Separator className="my-4" />
+            <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
+        </ScrollView>
     );
 };

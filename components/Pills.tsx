@@ -36,7 +36,7 @@ export function Pills({ label, variant = 'purple', className }: PillProps) {
             backgroundColor = variant;
             textColor = getTextColor(variant);
         } else {
-            backgroundColor = `bg-pills-${variant}`;
+            backgroundColor = variant;
             // For predefined colors, you might need to map them to their hex values
             // and then determine the text color. For now, we'll use white as default.
             textColor = 'white';

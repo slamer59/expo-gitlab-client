@@ -1,4 +1,4 @@
-import EditAssigneeMergeRequest from '@/components/MergeRequest/mr-edit-asignee';
+import EditAssigneeMergeRequest from '@/components/MergeRequest/mr-edit-assignee';
 import EditLabelMergeRequest from '@/components/MergeRequest/mr-edit-label';
 import EditMilestoneMergeRequest from '@/components/MergeRequest/mr-edit-miletone';
 import EditReviewerMergeRequest from '@/components/MergeRequest/mr-edit-reviewer';
