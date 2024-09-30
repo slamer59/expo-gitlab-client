@@ -86,7 +86,7 @@ export default function IssueDetails() {
         },
         {
             icon: "trash-outline",
-            color: "#red",
+            color: "red",
             label: "Delete Issue",
             onPress: deleteIssue,
             testID: "delete-issue-option"
