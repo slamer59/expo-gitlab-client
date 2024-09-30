@@ -136,6 +136,18 @@ class GitLabClient {
     },
   };
 
+  Discussions = {
+    show: async (projectId, issueIid, discussionId) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/discussions/${discussionId}`);
+    },
+    create: async (projectId, issueIid, description) => {
+      return this.request(`/projects/${projectId}/issues/${issueIid}/discussions?body=${description}`, 'POST');
+    },
+    add: async (projectId, issueIid, discussionId, query) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/issues/${issueIid}/discussions/${discussionId}?${queryString}`, 'POST');
+    },
+  }
 
   MergeRequests = {
     all: async (projectId, options = {}) => {

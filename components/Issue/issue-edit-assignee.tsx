@@ -13,7 +13,7 @@ import { SectionTitle } from '../Section/param';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { EditParamIssueDialog } from './issue-edit-param';
 
-function Assignee({ assignee, children }: { assignee: any, children: React.ReactNode }) {
+function Assignee({ assignee, children }: { assignee: any, children?: React.ReactNode }) {
 
     return <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center">
