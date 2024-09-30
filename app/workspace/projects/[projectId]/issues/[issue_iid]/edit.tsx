@@ -53,6 +53,7 @@ export default function IssueEditComponent() {
             <EditLabelIssue projectId={projectId} issueIid={issueIid} />
             <Separator className="my-4" />
             <EditMilestoneIssue projectId={projectId} issueIid={issueIid} />
+
         </ScrollView>
     );
 };

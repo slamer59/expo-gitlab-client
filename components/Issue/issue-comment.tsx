@@ -2,13 +2,13 @@ import { styles } from '@/lib/markdown-styles';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MarkdownCustom from '../CustomMarkdown';
 
 
-const IssueComment = ({ issue, projectId }) => {
-    const { author, created_at, title, description, body, iid, web_url } = issue;
+const IssueComment = ({ issue, commentId, showCopy = false, showEdit = false }: { issue: any; showCopy: boolean; showEdit: boolean; commentId?: string }) => {
+    const { author, created_at, title, description, body, id, web_url } = issue;
     const router = useRouter();
 
     const copyToClipboard = async () => {
@@ -16,14 +16,15 @@ const IssueComment = ({ issue, projectId }) => {
     };
 
     const handleEdit = () => {
-        router.push(`/workspace/projects/${projectId}/issues/${iid}/edit`);
+        router.push(`/workspace/projects/${issue.project_id}/issues/${id}/edit`);
     };
+    const scrollViewRef = useRef<ScrollView>(null);
 
-    const handleComment = () => {
-        // Navigate to comment section or open comment modal
-        // This depends on your app's structure
-        // For example:
-        // router.push(`/workspace/projects/${projectId}/issues/${iid}/comments`);
+    const handleComment = (commentId: string) => {
+
+        // scrollViewRef.current?.scrollToEnd({ animated: true });
+
+        router.push(`/workspace/projects/${issue.project_id}/issues/${id}/comments/${commentId}`);
     };
 
     return (
@@ -53,15 +54,17 @@ const IssueComment = ({ issue, projectId }) => {
                 {description || body || "No description provided."}
             </MarkdownCustom>
             <View className="flex-row justify-end">
-                <TouchableOpacity onPress={copyToClipboard} className="mr-4">
+                {showCopy && <TouchableOpacity onPress={copyToClipboard} >
                     <Ionicons name="share-outline" size={20} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleEdit} className="mr-4">
+                </TouchableOpacity>}
+                {showEdit && <TouchableOpacity onPress={handleEdit} className="ml-4">
                     <Ionicons name="create-outline" size={20} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleComment}>
+                </TouchableOpacity>}
+                {commentId && <TouchableOpacity
+                    className="ml-4"
+                    onPress={() => handleComment(commentId)}>
                     <Ionicons name="chatbubble-outline" size={20} color="white" />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
         </View>
     );

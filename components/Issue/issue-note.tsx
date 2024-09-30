@@ -165,6 +165,7 @@ export const IssueNote = ({ note }) => {
 };
 
 const IssueNotes = ({ notes }) => {
+    console.log("🚀 ~ IssueNotes ~ notes:", notes)
 
     return (
         <>
@@ -173,7 +174,9 @@ const IssueNotes = ({ notes }) => {
                     note.system ? (
                         <IssueNote key={note.id} note={note} />
                     ) :
-                        <IssueComment key={note.id} issue={note} />
+                        <IssueComment key={note.id} issue={note}
+                        // commentId={note.noteable_iid}
+                        />
                 ))
                 }
             </View> : <Text className="ml-2 text-white">🔍 No activity found</Text>
