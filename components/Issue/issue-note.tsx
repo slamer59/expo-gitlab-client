@@ -166,6 +166,7 @@ export const IssueNote = ({ note }) => {
 
 const IssueNotes = ({ notes }) => {
     // console.log("🚀 ~ IssueNotes ~ notes:", notes)
+
     return (
         <>
             {notes && notes.length > 0 ? <View className="p-4 mb-2">

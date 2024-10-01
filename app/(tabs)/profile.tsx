@@ -1,3 +1,4 @@
+import InfoAlert from "@/components/InfoAlert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -5,9 +6,10 @@ import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
+import { tapForExpoToken } from "@/lib/utils";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
 const UserSkeleton = () => (
@@ -29,6 +31,18 @@ const UserSkeleton = () => (
 );
 
 export default function ProfileScreen() {
+  const [alert, setAlert] = useState({ message: "", isOpen: false });
+  const [tapCount, setTapCount] = useState(0);
+  const lastTapTimeRef = useRef(0);
+
+  const handlePress = async () => {
+    const result = await tapForExpoToken(tapCount, setTapCount, lastTapTimeRef);
+    if (result) {
+      setAlert({ message: result, isOpen: true });
+    }
+  };
+
+
   const { session } = useSession()
 
   const client = new GitLabClient({
@@ -50,7 +64,15 @@ export default function ProfileScreen() {
     <View className="flex-1 p-4 bg-background">
       {isLoadingUser ? <UserSkeleton /> : (
         <>
-          <View className="flex-row items-center mb-4">
+          <InfoAlert
+            isOpen={alert.isOpen}
+            onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
+            title="Information"
+            message={alert.message}
+          />
+          <TouchableOpacity
+            onPress={handlePress}
+            className="flex-row items-center mb-4">
             <Avatar alt={`${user.name}'s Avatar`}>
               <AvatarImage source={{ uri: user.avatar_url }} />
               <AvatarFallback>
@@ -61,7 +83,8 @@ export default function ProfileScreen() {
               <Text className="font-semibold">{user.name} </Text>
               <Text className="text-sm text-white">@{user.username}</Text>
             </View>
-          </View>
+
+          </TouchableOpacity>
           <View className="flex mb-4 space-x-2 flex-2">
             {user.location && (
               <View className="flex-row items-center m-2">
@@ -102,7 +125,8 @@ export default function ProfileScreen() {
             )}
           </View>
         </>
-      )}
+      )
+      }
 
       {/* <View className="mb-4">
         <View className="flex-row items-center mb-2">

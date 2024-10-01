@@ -63,10 +63,15 @@ class GitLabClient {
     }
   }
 
-
   Issues = {
-    all: async (projectId, options = {}) => {
-      const queryString = new URLSearchParams(options).toString();
+    all: async (params) => {
+      const queryString = new URLSearchParams(params).toString();
+      return this.request(`/issues?${queryString}`, 'GET', params);
+    }
+  }
+  ProjectIssues = {
+    all: async (projectId, params = {}) => {
+      const queryString = new URLSearchParams(params).toString();
       return this.request(`/projects/${projectId}/issues?${queryString}`);
     },
     create: async (projectId, data) => {
@@ -138,7 +143,6 @@ class GitLabClient {
 
   Discussions = {
     show: async (projectId, issueIid, discussionId) => {
-      console.log("🚀 ~ GitLabClient ~ show: ~ projectId, issueIid, discussionId:", projectId, issueIid, discussionId)
       return this.request(`/projects/${projectId}/issues/${issueIid}/discussions/1`);
     },
     create: async (projectId, issueIid, description) => {
@@ -151,6 +155,13 @@ class GitLabClient {
   }
 
   MergeRequests = {
+    all: async (params) => {
+      const queryString = new URLSearchParams(params).toString();
+      return this.request(`/merge_requests?${queryString}`, 'GET', params);
+    }
+  }
+
+  ProjectMergeRequests = {
     all: async (projectId, options = {}) => {
       const queryString = new URLSearchParams(options).toString();
       return this.request(`/projects/${projectId}/merge_requests?${queryString}`);
@@ -429,12 +440,12 @@ class GitLabClient {
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
-    return this.Issues.create(projectId, data);
+    return this.ProjectIssues.create(projectId, data);
   };
 
   createMergeRequest = async (projectId, sourceBranch, targetBranch, title, options = {}) => {
     const data = { source_branch: sourceBranch, target_branch: targetBranch, title, ...options };
-    return this.MergeRequests.create(projectId, data);
+    return this.ProjectMergeRequests.create(projectId, data);
   };
 
   createCommit = async (projectId, branch, commitMessage, actions, options = {}) => {
@@ -454,16 +465,16 @@ class GitLabClient {
   };
 
   updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
-    return this.Issues.edit(projectId, issueIid, { ...data, ...options });
+    return this.ProjectIssues.edit(projectId, issueIid, { ...data, ...options });
   };
   updateProjectMergeRequest = async (projectId, mergeRequestIid, data) => {
-    return this.MergeRequests.edit(projectId, mergeRequestIid, data);
+    return this.ProjectMergeRequests.edit(projectId, mergeRequestIid, data);
   };
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);
   };
   updateMergeRequest = async (projectId, mergeRequestIid, data) => {
-    return this.MergeRequests.edit(projectId, mergeRequestIid, data);
+    return this.ProjectMergeRequests.edit(projectId, mergeRequestIid, data);
   };
   updateUser = async (userId, data) => {
     return this.request(`/users/${userId}`, 'PUT', data);
@@ -479,13 +490,13 @@ class GitLabClient {
   // Delete Methods
   deleteProjectIssue = async (projectId, issueIid) => {
     console.log('Deleting issue:', projectId, issueIid);
-    return this.Issues.remove(projectId, issueIid);
+    return this.ProjectIssues.remove(projectId, issueIid);
   };
   deleteProjectMergeRequest = async (projectId, mergeRequestIid) => {
-    return this.MergeRequests.remove(projectId, mergeRequestIid);
+    return this.ProjectMergeRequests.remove(projectId, mergeRequestIid);
   };
   deleteMergeRequest = async (projectId, mergeRequestIid) => {
-    return this.MergeRequests.remove(projectId, mergeRequestIid);
+    return this.ProjectMergeRequests.remove(projectId, mergeRequestIid);
   };
   deleteProject = async (projectId) => {
     return this.request(`/projects/${projectId}`, 'DELETE');
@@ -562,10 +573,10 @@ class GitLabClient {
   };
 
   // // Fetch hooks
-  // useProjectIssues = this.createFetchHook(this.Issues.all);
-  // useProjectIssue = this.createFetchHook(this.Issues.show);
+  // useProjectIssues = this.createFetchHook(this.ProjectIssues.all);
+  // useProjectIssue = this.createFetchHook(this.ProjectIssues.show);
   // useProject = this.createFetchHook(this.Projects.show);
-  // useMergeRequests = this.createFetchHook(this.MergeRequests.all);
+  // useMergeRequests = this.createFetchHook(this.ProjectMergeRequests.all);
   // useCommits = this.createFetchHook(this.Commits.all);
   // useBranches = this.createFetchHook(this.Branches.all);
   // useProjectUsers = this.createFetchHook(this.ProjectsUsers.all);
@@ -573,7 +584,7 @@ class GitLabClient {
   // useProjectMilestones = this.createFetchHook(this.Milestones.all);
   // useProjectPipelines = this.createFetchHook(this.Pipelines.all);
   // useProjectIssueLinks = this.createFetchHook(this.IssueLinks.all);
-  // useProjectMergeRequest = this.createFetchHook(this.MergeRequests.show);
+  // useProjectMergeRequest = this.createFetchHook(this.ProjectMergeRequests.show);
   // useProjectBranches = this.createFetchHook(this.Branches.all);
 
   // // Users

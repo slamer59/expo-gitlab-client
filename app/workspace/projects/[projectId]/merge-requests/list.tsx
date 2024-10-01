@@ -1,42 +1,45 @@
 import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
 import ListWithFilters from "@/components/ListWithFilters";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
 
 import { Stack, useLocalSearchParams } from "expo-router";
+import React from "react";
 import { ScrollView } from "react-native";
 
 export default function ProjectMergeRequestsList() {
+  const { session } = useSession();
+  const client = new GitLabClient({
+    url: session?.url,
+    token: session?.token,
+  });
+
+  const api = useGitLab(client);
   const { projectId } = useLocalSearchParams();
   const defaultParamsProjectPR = {
-    // https://docs.gitlab.com/ee/api/merge_requests.html
-    path: {
-      id: projectId,
-    },
-    query: {
-      // id: 123, // integer or string
-      // approved_by_ids: [1, 2, 3], // integer array
-      // assignee_id: 456, // integer
-      // author_username: 'username', // string
-      // created_after: '2022-01-01T00:00:00Z', // datetime
-      // labels: 'bug,feature', // string
-      // milestone: 'v1.0', // string
-      // order_by: 'created_at', // string
-      // page: 1, // integer
-      // per_page: 20, // integer
-      // scope: 'all', // string
-      // search: 'search term', // string
-      // sort: 'desc', // string
-      // state: 'opened', // string
-      // view: 'simple', // string
-      // wip: 'no', // string
-      // with_labels_details: true, // boolean
-      // with_merge_status_recheck: false // boolean
-    }
+    // id: 123, // integer or string
+    // approved_by_ids: [1, 2, 3], // integer array
+    // assignee_id: 456, // integer
+    // author_username: 'username', // string
+    // created_after: '2022-01-01T00:00:00Z', // datetime
+    // labels: 'bug,feature', // string
+    // milestone: 'v1.0', // string
+    // order_by: 'created_at', // string
+    // page: 1, // integer
+    // per_page: 20, // integer
+    // scope: 'all', // string
+    // search: 'search term', // string
+    // sort: 'desc', // string
+    // state: 'opened', // string
+    // view: 'simple', // string
+    // wip: 'no', // string
+    // with_labels_details: true, // boolean
+    // with_merge_status_recheck: false // boolean
   };
   const UIFilters = GlobalMergeRequestUIFilters
-  const query_cache_name = `project_id_merge_requests_${projectId}`
   const pathname = "/workspace/projects/[projectId]/merge-requests/[mr_iid]"
-  const endpoint = "/api/v4/projects/{id}/merge_requests"
   const paramsMap = {
     "projectId": "project_id", "mr_iid": "iid"
   }
@@ -61,11 +64,13 @@ export default function ProjectMergeRequestsList() {
       />
       <ListWithFilters
         UIFilters={UIFilters}
+        projectId={projectId}
+        queryFn={api.useProjectMergeRequests}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}
         pathname={pathname}
-        endpoint={endpoint}
-        query_cache_name={query_cache_name}
+
+
         paramsMap={paramsMap}
         defaultParams={defaultParamsProjectPR}
       />

@@ -1,14 +1,12 @@
 import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
-import { getProjects } from "@/lib/gitlab/helpers";
+import { getExpoToken, getProjects } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Constants from "expo-constants";
-import { isDevice } from "expo-device";
-import * as Notifications from 'expo-notifications';
+
 import { Link, useFocusEffect } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
@@ -151,48 +149,38 @@ export default function Home() {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        if (isDevice) {
+        try {
+          const push_token = await getExpoToken();
+          console.log("Expo token retrieved successfully");
+
+          let projects;
           try {
-            const push_token = await Notifications.getExpoPushTokenAsync({
-              projectId: Constants.expoConfig.extra.eas.projectId,
-            });
-            console.log("Expo token retrieved successfully");
-            try {
-              await mapDeviceToProject(push_token, projects);
-              console.log("Device mapped to project successfully");
-            } catch (error) {
-              console.error("Error mapping device to project:", error);
-              setAlert({ isOpen: true, message: `Error mapping device to project: ${error.message}` });
-            }
-            if (!push_token) {
-              console.error("Expo token is null or empty");
-              setAlert({ isOpen: true, message: "Unable to retrieve Expo push token. Please check your device settings." });
-              return;
-            }
+            projects = await getProjects(session);
+            console.log("Projects fetched successfully");
           } catch (error) {
-            console.error("Error getting Expo token:", error);
-            setAlert({ isOpen: true, message: `Error getting Expo token: ${error.message}` });
+            console.error("Error fetching projects:", error);
+            setAlert({ message: `Error fetching projects: ${error.message}`, isOpen: true });
+            return;
           }
 
-        } else {
-          console.log("Not a device, skipping Expo token retrieval and device mapping");
-        }
-        let projects;
-        try {
-          projects = await getProjects(session);
-          console.log("Projects fetched successfully");
-        } catch (error) {
-          console.error("Error fetching projects:", error);
-          setAlert({ isOpen: true, message: `Error fetching projects: ${error.message}` });
-          return;
-        }
+          try {
+            await updateOrCreateWebhooks(session, projects, undefined);
+            console.log("Webhooks updated successfully");
+          } catch (error) {
+            console.error("Error updating webhooks:", error);
+            setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
+          }
 
-        try {
-          await updateOrCreateWebhooks(session, projects, undefined);
-          console.log("Webhooks updated successfully");
+          try {
+            await mapDeviceToProject(push_token, projects);
+            console.log("Device mapped to project successfully");
+          } catch (error) {
+            console.error("Error mapping device to project:", error);
+            setAlert({ message: `Error mapping device to project: ${error.message}`, isOpen: true });
+          }
         } catch (error) {
-          console.error("Error updating webhooks:", error);
-          setAlert({ isOpen: true, message: `Error updating webhooks: ${error.message}` });
+          console.error("Error getting Expo token:", error);
+          setAlert({ message: `Error getting Expo token: ${error.message}`, isOpen: true });
         }
       };
       fetchData();

@@ -56,7 +56,7 @@ const IssueHeader = ({ issue }) => {
                         size={20}
                         color="gray"
                     />
-                    <Text className="ml-1 text-gray-500">
+                    <Text className="ml-1 text-muted">
                         {issue.upvotes}
                     </Text>
                 </TouchableOpacity>
@@ -66,7 +66,7 @@ const IssueHeader = ({ issue }) => {
                         size={20}
                         color="gray"
                     />
-                    <Text className="ml-1 text-gray-500">
+                    <Text className="ml-1 text-muted">
                         {issue.downvotes}
                     </Text>
                 </TouchableOpacity>

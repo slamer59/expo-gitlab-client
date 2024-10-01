@@ -7,7 +7,7 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MarkdownCustom from '../CustomMarkdown';
 
 
-const IssueComment = ({ issue, commentId, showCopy = false, showEdit = false }: { issue: any; showCopy: boolean; showEdit: boolean; commentId?: string }) => {
+const IssueComment = ({ issue, commentId, showCopy = false, showEdit = false }: { issue: any; showCopy?: boolean; showEdit?: boolean; commentId?: string }) => {
     const { author, created_at, title, description, body, id, web_url } = issue;
     const router = useRouter();
 

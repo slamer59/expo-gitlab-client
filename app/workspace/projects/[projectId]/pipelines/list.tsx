@@ -1,25 +1,27 @@
 import ListWithFilters from "@/components/ListWithFilters";
 import { PipelineCard, PipelineCardSkeleton } from "@/components/Pipeline/pipeline-card";
 import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
 
 export default function ProjectMergeRequestsList() {
+    const { session } = useSession();
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
+
     const { projectId } = useLocalSearchParams();
     const defaultParamsProjectPR = {
-        path: {
-            id: projectId,
-        },
-        query: {
-            // ... (previous query options remain unchanged)
-        }
     };
     const UIFilters = GlobalMergeRequestUIFilters
-    const query_cache_name = `project_id_pipelines_${projectId}`
     const pathname = "/workspace/projects/[projectId]/pipelines/[iid]"
-
-    const endpoint = "/api/v4/projects/{id}/pipelines"
     const paramsMap = {
         "projectId": "project_id", "iid": "id"
     }
@@ -35,11 +37,11 @@ export default function ProjectMergeRequestsList() {
             />
             <ListWithFilters
                 UIFilters={UIFilters}
+                queryFn={api.useProjectPipelines}
+                projectId={projectId}
                 ItemComponent={PipelineCard}
                 SkeletonComponent={PipelineCardSkeleton}
                 pathname={pathname}
-                endpoint={endpoint}
-                query_cache_name={query_cache_name}
                 paramsMap={paramsMap}
                 defaultParams={defaultParamsProjectPR}
             />
