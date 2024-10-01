@@ -78,7 +78,7 @@ export const useGitLabRepository = (gitlabClient: GitLabClient) => {
         },
 
         getProjectMergeRequests: async (projectId: number): Promise<MergeRequest[]> => {
-            const mergeRequests = await gitlabClient.MergeRequests.all(projectId);
+            const mergeRequests = await gitlabClient.ProjectMergeRequests.all(projectId);
             return mergeRequests.map(mr => ({
                 id: mr.id,
                 iid: mr.iid,
@@ -89,7 +89,7 @@ export const useGitLabRepository = (gitlabClient: GitLabClient) => {
         },
 
         createMergeRequest: async (projectId: number, sourceBranch: string, targetBranch: string, title: string): Promise<MergeRequest> => {
-            const mr = await gitlabClient.MergeRequests.create(projectId, { source_branch: sourceBranch, target_branch: targetBranch, title });
+            const mr = await gitlabClient.ProjectMergeRequests.create(projectId, { source_branch: sourceBranch, target_branch: targetBranch, title });
             return {
                 id: mr.id,
                 iid: mr.iid,

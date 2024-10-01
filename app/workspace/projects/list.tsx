@@ -2,41 +2,45 @@ import ListWithFilters from "@/components/ListWithFilters";
 import { ProjectCard, ProjectCardSkeleton } from "@/components/Project/project-card";
 
 import { GlobalProjectsUIFilters } from "@/constants/UIFilters";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
 
 export default function ProjectsListScreen() {
+    const { session } = useSession();
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
 
     const localParams = useLocalSearchParams<Record<string, string>>();
 
     const defaultParamsProjects = {
-        query: {
-            // order_by: 'created_at',
-            // sort: 'desc',
-            owned: "false",
-            starred: "false",
-            // imported: false,
-            // membership: false,
-            // with_issues_enabled: false,
-            // with_merge_requests_enabled: false,
-            // wiki_checksum_failed: false,
-            // repository_checksum_failed: false,
-            // include_hidden: false,
-            // page: 1,
-            // per_page: 20,
-            // simple: false,
-            // statistics: false,
-            // with_custom_attributes: false,
-            ...localParams, // This will include all other passed parameters
-
-        },
-
+        // order_by: 'created_at',
+        // sort: 'desc',
+        owned: "false",
+        starred: "false",
+        // imported: false,
+        // membership: false,
+        // with_issues_enabled: false,
+        // with_merge_requests_enabled: false,
+        // wiki_checksum_failed: false,
+        // repository_checksum_failed: false,
+        // include_hidden: false,
+        // page: 1,
+        // per_page: 20,
+        // simple: false,
+        // statistics: false,
+        // with_custom_attributes: false,
+        ...localParams, // This will include all other passed parameters
     };
     const UIFilters = GlobalProjectsUIFilters
-    const query_cache_name = "projects"
     const pathname = "/workspace/projects/[projectId]"
-    const endpoint = "/api/v4/projects"
 
     const paramsMap = {
         projectId: "id",
@@ -74,7 +78,7 @@ export default function ProjectsListScreen() {
         if (localParams.starred === "true") return "⭐ Starred Projects";
         return "📁 Projects";
     };
-
+    console.log("localParams", localParams);
 
     return (
         <ScrollView
@@ -88,14 +92,13 @@ export default function ProjectsListScreen() {
                 }}
             />
             <ListWithFilters
+                UIFilters={UIFilters}
+                queryFn={api.useProjects}
                 ItemComponent={ProjectCard}
                 SkeletonComponent={ProjectCardSkeleton}
-                endpoint={endpoint}
-                query_cache_name={query_cache_name}
                 pathname={pathname}
                 defaultParams={defaultParamsProjects}
                 paramsMap={paramsMap}
-                UIFilters={UIFilters}
             />
             {/* <TopFilterList
                 UIFilters={UIFilters}

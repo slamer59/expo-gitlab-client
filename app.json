@@ -16,7 +16,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.teepee.expogitlabclient"
+      "bundleIdentifier": "com.thomas.pedot.expogitlabclient"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
         "backgroundColor": "#fff"
       },
       "versionCode": 7,
-      "package": "com.teepee.expogitlabclient"
+      "package": "com.thomas.pedot.expogitlabclient"
     },
     "androidNavigationBar": {
       "backgroundColor": "#000000"

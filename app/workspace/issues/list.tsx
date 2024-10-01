@@ -10,25 +10,6 @@ import { ScrollView } from "react-native";
 
 
 export default function IssuesListScreen() {
-    const defaultParamsIssues = {
-        query: {
-            // scope: "all",
-            // state: "opened",
-            // order_by: "created_at",
-            created_by_me: false,
-            // assigned_to_me: false,
-            // issue_type: "issue",
-        },
-    };
-
-    const UIFilters = GlobalIssueUIFilters;
-    // const query_cache_name = "issues";
-    const pathname = "/workspace/issues/[issuesId]/issues/[issue_iid]"
-    // const endpoint = "/api/v4/issues"
-    const paramsMap = {
-        "issuesId": "issues_id", "issue_iid": "iid"
-    }
-
     const { session } = useSession();
     const client = new GitLabClient({
         url: session?.url,
@@ -36,6 +17,21 @@ export default function IssuesListScreen() {
     });
 
     const api = useGitLab(client);
+
+    const defaultParamsIssues = {
+        // scope: "all",
+        // state: "opened",
+        // order_by: "created_at",
+        created_by_me: false,
+        // assigned_to_me: false,
+        // issue_type: "issue",
+    };
+
+    const UIFilters = GlobalIssueUIFilters;
+    const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
+    const paramsMap = {
+        "projectId": "project_id", "issue_iid": "iid"
+    }
 
     return (
         <ScrollView
@@ -45,14 +41,6 @@ export default function IssuesListScreen() {
             <Stack.Screen
                 options={{
                     headerTitle: "Issues",
-                    // // ...defaultOptionsHeader
-                    // headerRight: () => (
-                    //   <Link href={`/workspace/issuess/${issuesId}/issues/new`}>
-                    //     <Button size="sm" variant="primary">
-                    //       New Issue
-                    //     </Button>
-                    //   </Link>
-                    // ),
                 }}
             />
 
@@ -61,6 +49,8 @@ export default function IssuesListScreen() {
                 queryFn={api.useIssues}
                 ItemComponent={IssueCard}
                 SkeletonComponent={IssueCardSkeleton}
+                pathname={pathname}
+                paramsMap={paramsMap}
                 defaultParams={defaultParamsIssues}
             />
         </ScrollView>

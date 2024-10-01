@@ -54,7 +54,7 @@ export default function CreateDiscussion({ issue }) {
 
     return (
         <ScrollView
-            className="flex-1 p-4 bg-card"
+            className="flex-1 bg-card"
             contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
         >
             <Stack.Screen

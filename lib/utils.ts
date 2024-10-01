@@ -1,7 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
-
-
 import * as Clipboard from 'expo-clipboard';
+import * as Notifications from 'expo-notifications';
+import { MutableRefObject, SetStateAction } from "react";
+
+
 import { Alert, Share } from "react-native";
 import { twMerge } from "tailwind-merge";
 
@@ -103,4 +105,32 @@ export const shareView = async (url: string) => {
   } catch (error) {
     console.alert(error.message);
   }
+};
+
+
+export const tapForExpoToken = async (
+  tapCount: number,
+  setTapCount: (value: SetStateAction<number>) => void,
+  lastTapTimeRef: MutableRefObject<number>
+) => {
+  const now = new Date().getTime();
+  const DOUBLE_PRESS_DELAY = 300;
+
+  if (now - lastTapTimeRef.current < DOUBLE_PRESS_DELAY) {
+    setTapCount(prev => prev + 1);
+    if (tapCount === 4) {
+      try {
+        const token = (await Notifications.getExpoPushTokenAsync()).data;
+        await Clipboard.setStringAsync(token);
+        // alert('Expo token copied to clipboard');
+        return `Expo token copied to clipboard : \n ${token}`
+      } catch (error) {
+        console.error('Failed to copy Expo token:', error);
+      }
+      setTapCount(0);
+    }
+  } else {
+    setTapCount(1);
+  }
+  lastTapTimeRef.current = now;
 };

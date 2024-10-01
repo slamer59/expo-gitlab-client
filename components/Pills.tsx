@@ -42,7 +42,7 @@ export function Pills({ label, variant = 'purple', className }: PillProps) {
             textColor = 'white';
         }
     } else {
-        backgroundColor = "bg-pills-purple";
+        backgroundColor = "purple";
         textColor = 'white';
     }
 

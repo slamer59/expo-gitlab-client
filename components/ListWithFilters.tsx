@@ -23,6 +23,9 @@ interface ListWithFiltersProps {
   ItemComponent: React.ComponentType<any>;
   SkeletonComponent: React.ComponentType<any>;
   defaultParams: any;
+  pathname: string;
+  paramsMap: any;
+  projectId?: string;
 }
 export default function ListWithFilters({
   UIFilters,
@@ -30,10 +33,9 @@ export default function ListWithFilters({
   ItemComponent,
   SkeletonComponent,
   pathname,
-  // endpoint,
-  // query_cache_name,
   paramsMap,
   defaultParams,
+  projectId,
 }: ListWithFiltersProps) {
   const [params, setParams] = useState({
     ...defaultParams,
@@ -42,6 +44,7 @@ export default function ListWithFilters({
       // You can add any additional initial query parameters here
     }
   });
+
   const handleFiltersChange = useCallback((newFilters) => {
     const newQuery = UIFilters.reduce((acc, filter) => {
       const selectedValue = newFilters[filter.label]?.value;
@@ -60,13 +63,17 @@ export default function ListWithFilters({
     }));
   }, [UIFilters]);
 
-  const {
-    data: items,
-    isLoading,
-    isError,
-    error,
-  } = queryFn(params);
+  let result;
 
+  if (projectId === undefined) {
+    result = queryFn(params);
+  } else {
+    result = queryFn(projectId, params);
+  }
+  const items = result.data;
+  const isLoading = result.isLoading;
+  const isError = result.isError;
+  const error = result.error;
   return (
     <ScrollView className="flex-1 mt-2">
       <FilterForm
