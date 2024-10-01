@@ -199,11 +199,43 @@ export const useGitLab = (client: GitLabClient) => {
                     {
                         queryKey: ['projectPipelines', projectId],
                         queryFn: () => client.Pipelines.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectMilleStones', projectId],
+                        queryFn: () => client.Milestones.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectLabels', projectId],
+                        queryFn: () => client.Labels.all(projectId),
                     }
                 ],
             },
             );
         },
+        useProjectIssueCreate: (projectId: string) => {
+            return useQueries({
+                queries: [
+                    {
+                        queryKey: ['project', projectId],
+                        queryFn: () => client.Projects.show(projectId),
+                    },
+                    {
+                        queryKey: ['projectMembers', projectId],
+                        queryFn: () => client.ProjectMembers.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectMileStones', projectId],
+                        queryFn: () => client.Milestones.all(projectId),
+                    },
+                    {
+                        queryKey: ['projectLabels', projectId],
+                        queryFn: () => client.Labels.all(projectId),
+                    }
+                ],
+            },
+            );
+        },
+
         // Project Issue
         useProjectIssueDetails: (projectId: string, issueIid: string) => {
             return useQueries({

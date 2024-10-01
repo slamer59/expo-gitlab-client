@@ -1,16 +1,50 @@
+import CreateIssueForm from '@/components/Issue/issue-create-form';
+import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
-import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
+export default function CreateIssue() {
+    const { projectId } = useLocalSearchParams();
+    const { session } = useSession();
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
 
-export default function CreateMergeRequest() {
+    const api = useGitLab(client);
+
+
+    const [
+        { data: project, isLoading: isLoadingProject, error: errorProject },
+        { data: members, isLoading: isLoadingMembers, error: errorMembers },
+        { data: milestones, loading: milestonesLoading, error: milestonesError },
+        { data: labels, loading: labelsLoading, error: labelsError }
+    ] = api.useProjectIssueCreate(projectId);
+    // console.log("🚀 ~ CreateIssue ~ project:", project)
+    // console.log("🚀 ~ CreateIssue ~ members:", members)
+    // console.log("🚀 ~ CreateIssue ~ milestones:", milestones)
+    // console.log("🚀 ~ CreateIssue ~ labels:", labels)
     return (
-        <View className="items-center justify-center flex-1">
-            <Text className="text-2xl font-bold">Modal</Text>
-            <View className="w-4/5 h-px my-6 bg-gray-300 dark:bg-gray-700" />
-            {/* Use a light status bar on iOS to account for the black space above the modal */}
-            <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-        </View>
+        <ScrollView
+            className="flex-1 p-4 bg-background"
+            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+        >
+            {project && project.name_with_namespace &&
+                <Text className="mb-4 text-lg font-bold text-muted">
+                    {project.name_with_namespace || ""}
+                </Text>
+            }
+            <CreateIssueForm
+                projectId={projectId}
+            // members={members}
+            // milestones={milestones}
+            // labels={labels}
+            />
+
+        </ScrollView >
     );
 }
