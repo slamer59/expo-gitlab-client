@@ -78,6 +78,12 @@ export default function Home() {
       },
       {
         icon: "arrow-forward",
+        text: "DevIssueCreate",
+        screen: "workspace/projects/59795263/issues/create",
+        itemColor: "bg-green"
+      },
+      {
+        icon: "arrow-forward",
         text: "DevIssueEdit",
         screen: "workspace/projects/59795263/issues/29/edit",
         itemColor: "bg-green"
