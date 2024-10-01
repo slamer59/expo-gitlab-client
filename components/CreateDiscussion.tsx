@@ -5,7 +5,7 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Label } from '@rn-primitives/select';
-import { Stack, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Keyboard, ScrollView, View } from 'react-native';
 
@@ -57,11 +57,11 @@ export default function CreateDiscussion({ issue }) {
             className="flex-1 bg-card"
             contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
         >
-            <Stack.Screen
+            {/* <Stack.Screen
                 options={{
                     title: `Discussion`,
                 }}
-            />
+            /> */}
 
             {/* <IssueComment issue={issue} projectId={projectId} /> */}
 
