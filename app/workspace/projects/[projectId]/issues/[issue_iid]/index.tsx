@@ -59,11 +59,17 @@ export default function IssueDetails() {
         { projectId, issueIid: issue_iid, updateData: { state_event: 'close' } }
     );
 
-    const deleteIssue = async () => deleteIssueMutation.mutateAsync(undefined, {
-        onSuccess: () => {
-            router.push(`/workspace/projects/${projectId}/issues/list`);
-        },
-    });
+    const deleteIssue = async () => {
+        await deleteIssueMutation.mutateAsync(
+            { projectId, issueIid: issue_iid },
+            {
+                onSuccess: () => {
+                    router.back() //push(`/workspace/projects/${projectId}/issues/list`);
+                },
+            }
+        );
+    };
+
     const headerActions: HeaderAction[] = [
         {
             icon: "share-social-outline",
