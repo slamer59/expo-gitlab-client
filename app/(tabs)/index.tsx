@@ -163,55 +163,73 @@ export default function Home() {
   });
 
 
+  const fetchExpoToken = async () => {
+    try {
+      const token = await getExpoToken();
+      console.log("Expo token retrieved successfully");
+      return token;
+    } catch (error) {
+      console.error("Error getting Expo token:", error);
+      setAlert({ message: `Error getting Expo token: ${error.message}`, isOpen: true });
+      return null;
+    }
+  };
+
+  const prepareProjects = (projects) => {
+    if (!projects) {
+      console.error("Projects are undefined");
+      setAlert({ message: "Error: Projects are undefined", isOpen: true });
+      return null;
+    }
+
+    return projects.map(project => ({
+      http_url_to_repo: project.http_url_to_repo,
+      id: project.id
+    }));
+  };
+
+  const updateWebhooks = async (session, projects) => {
+    try {
+      await updateOrCreateWebhooks(session, projects, undefined);
+      console.log("Webhooks updated successfully");
+    } catch (error) {
+      console.error("Error updating webhooks:", error);
+      setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
+    }
+  };
+
+  const mapDevice = async (token, projects) => {
+    try {
+      await mapDeviceToProject(token, projects);
+      console.log("Device mapped to project successfully");
+    } catch (error) {
+      console.error("Error mapping device to project:", error);
+      setAlert({ message: `Error mapping device to project: ${error.message}`, isOpen: true });
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        try {
-          const push_token = await getExpoToken();
-          console.log("Expo token retrieved successfully");
-
-          if (isLoadingPersonal) {
-            console.log("Projects are still loading");
-            return;
-          }
-
-          if (!personalProjects) {
-            console.error("Personal projects are undefined");
-            setAlert({ message: "Error: Personal projects are undefined", isOpen: true });
-            return;
-          }
-
-          let projects = personalProjects.map(
-            (project: { http_url_to_repo: string; id: number }) => ({
-              http_url_to_repo: project.http_url_to_repo,
-              id: project.id
-            })
-          );
-          console.log("Projects fetched successfully");
-
-          try {
-            await updateOrCreateWebhooks(session, projects, undefined);
-            console.log("Webhooks updated successfully");
-          } catch (error) {
-            console.error("Error updating webhooks:", error);
-            setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
-          }
-
-          try {
-            await mapDeviceToProject(push_token, projects);
-            console.log("Device mapped to project successfully");
-          } catch (error) {
-            console.error("Error mapping device to project:", error);
-            setAlert({ message: `Error mapping device to project: ${error.message}`, isOpen: true });
-          }
-        } catch (error) {
-          console.error("Error getting Expo token:", error);
-          setAlert({ message: `Error getting Expo token: ${error.message}`, isOpen: true });
+        if (isLoadingPersonal) {
+          console.log("Projects are still loading");
+          return;
         }
+
+        const token = await fetchExpoToken();
+        if (!token) return;
+
+        const projects = prepareProjects(personalProjects);
+        if (!projects) return;
+
+        await updateWebhooks(session, projects);
+        await mapDevice(token, projects);
       };
+
       fetchData();
-    }, [session, personalProjects, isLoadingPersonal]),
+    }, [session, personalProjects, isLoadingPersonal])
   );
+
 
 
   return (
