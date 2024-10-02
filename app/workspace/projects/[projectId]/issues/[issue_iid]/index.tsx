@@ -64,7 +64,7 @@ export default function IssueDetails() {
             { projectId, issueIid: issue_iid },
             {
                 onSuccess: () => {
-                    router.back() //push(`/workspace/projects/${projectId}/issues/list`);
+                    router.back()
                 },
             }
         );

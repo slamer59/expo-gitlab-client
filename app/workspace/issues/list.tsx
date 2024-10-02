@@ -4,6 +4,7 @@ import { GlobalIssueUIFilters } from "@/constants/UIFilters";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
+import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -18,16 +19,9 @@ export default function IssuesListScreen() {
 
     const api = useGitLab(client);
 
-    const defaultParamsIssues = {
-        // scope: "all",
-        // state: "opened",
-        // order_by: "created_at",
-        created_by_me: false,
-        // assigned_to_me: false,
-        // issue_type: "issue",
-    };
-
     const UIFilters = GlobalIssueUIFilters;
+    const defaultParams = extractDefaultFilters(UIFilters);
+    const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
     const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
     const paramsMap = {
         "projectId": "project_id", "issue_iid": "iid"
@@ -51,7 +45,8 @@ export default function IssuesListScreen() {
                 SkeletonComponent={IssueCardSkeleton}
                 pathname={pathname}
                 paramsMap={paramsMap}
-                defaultParams={defaultParamsIssues}
+                defaultParams={defaultParams}
+                defaultUIFilterValues={defaultUIFilterValues}
             />
         </ScrollView>
     );

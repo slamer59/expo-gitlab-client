@@ -134,3 +134,34 @@ export const tapForExpoToken = async (
   }
   lastTapTimeRef.current = now;
 };
+
+
+export function extractDefaultFilters(filters) {
+  const defaultFilters = {};
+
+  filters.forEach(filterGroup => {
+    filterGroup.options.forEach(option => {
+      if (option.default) {
+        Object.assign(defaultFilters, option.filter);
+      }
+    });
+  });
+
+  return defaultFilters;
+}
+
+export function extractDefaultUIOptions(filters) {
+  const defaultOptions = {};
+
+  filters.forEach(filter => {
+    const defaultOption = filter.options.find(option => option.default === true);
+    if (defaultOption) {
+      defaultOptions[filter.label] = {
+        label: defaultOption.label,
+        value: defaultOption.value
+      };
+    }
+  });
+
+  return defaultOptions;
+}

@@ -18,11 +18,6 @@ export default function IssueStatusIcon(issue: any, withText: boolean = false) {
                 <Ionicons name="lock-closed" size={24} color="orange" />
                 {withText && <Text className='ml-1 text-orange-500'>Locked</Text>}
             </>
-        ) : issue.state === 'merged' ? (
-            <>
-                <Ionicons name="git-branch" size={24} color="purple" />
-                {withText && <Text className='ml-1 text-purple-500'>Merged</Text>}
-            </>
         ) : (
             <>
                 <Ionicons name="help-circle" size={24} color="blue" />

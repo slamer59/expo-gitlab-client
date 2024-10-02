@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Filter } from "./FilterSelect";
 
 interface Filter {
@@ -15,17 +14,10 @@ interface Filter {
 interface FilterFormProps {
     onFiltersChange: (filters: Record<string, string>) => void;
     UIFilters: Filter[];
+    defaultUIFilterValues: Record<string, string>;
 }
-export default function FilterForm({ onFiltersChange, UIFilters }: FilterFormProps) {
-    const [selectedFilters, setSelectedFilters] = useState({});
-    const insets = useSafeAreaInsets();
-
-    const contentInsets = {
-        top: insets.top,
-        bottom: insets.bottom,
-        left: 12,
-        right: 12,
-    };
+export default function FilterForm({ onFiltersChange, UIFilters, defaultUIFilterValues }: FilterFormProps) {
+    const [selectedFilters, setSelectedFilters] = useState(defaultUIFilterValues || {});
 
     const handleFilterChange = (filterLabel, value) => {
         setSelectedFilters(prevFilters => {
@@ -43,7 +35,7 @@ export default function FilterForm({ onFiltersChange, UIFilters }: FilterFormPro
     };
 
     const resetAllFilters = () => {
-        setSelectedFilters({});
+        setSelectedFilters(defaultUIFilterValues || {});
     };
 
     useEffect(() => {
@@ -72,7 +64,7 @@ export default function FilterForm({ onFiltersChange, UIFilters }: FilterFormPro
                     key={index}
                     options={filter.options}
                     placeholder={filter.placeholder}
-                    selectedValue={selectedFilters[filter.label] || ''}
+                    selectedValue={selectedFilters[filter.label]}
                     onValueChange={(value) => handleFilterChange(filter.label, value)}
                 />
             ))}
