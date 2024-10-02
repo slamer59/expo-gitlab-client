@@ -1,3 +1,4 @@
+import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
 import IssueNotes from "@/components/Issue/issue-note";
 import MergeRequestComment from "@/components/MergeRequest/mr-comment";
 import MergeRequestHeader from "@/components/MergeRequest/mr-header";
@@ -14,7 +15,7 @@ import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
-import { formatDate } from "@/lib/utils";
+import { formatDate, shareView } from "@/lib/utils";
 import { Ionicons } from '@expo/vector-icons';
 import { Label } from "@rn-primitives/select";
 import { format } from "date-fns";
@@ -22,7 +23,6 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Animated, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 import { LinearTransition } from "react-native-reanimated";
-import { headerRightProjectMr } from "./headerRight";
 
 
 function CommitItem({ commit }) {
@@ -159,7 +159,7 @@ const StatusSection = ({ mr }) => (
         <Text className="mb-2 text-lg font-semibold text-white">Status</Text>
 
         <StatusItem
-            icon="git-merge-outline"
+            icon="git-pull-request-outline"
             text={getMergeStatusText(mr.merge_status)}
             color={getMergeStatusColor(mr.merge_status)}
         />
@@ -379,41 +379,26 @@ export default function MergeRequestDetails() {
 
     ] = api.useMergeRequestDetails(projectId, mr_iid);
 
-    // Delete Merge Request
-    const deleteMergeRequest = async () => {
-        try {
-            router.push(`/workspace/projects/${projectId}/merge-requests/list`);
-            await api.useDeleteMergeRequest(projectId, mr_iid);
-        } catch (error) {
-            console.error("Error deleting merge request:", error);
-        }
+    const updateMrMutation = api.useUpdateProjectMergeRequest();
+    const deleteMrMutation = api.useDeleteProjectMergeRequest();
+
+    const openMr = async () => updateMrMutation.mutateAsync(
+        { projectId, mergeRequestIid: mr_iid, updateData: { state_event: 'reopen' } },
+    );
+    const closeMr = async () => updateMrMutation.mutateAsync(
+        { projectId, mergeRequestIid: mr_iid, updateData: { state_event: 'close' } }
+    );
+
+    const deleteMr = async () => {
+        await deleteMrMutation.mutateAsync(
+            { projectId, mergeRequestIid: mr_iid },
+            {
+                onSuccess: () => {
+                    router.back() //push(`/workspace/projects/${projectId}/issues/list`);
+                },
+            }
+        );
     };
-
-    // Close Merge Request
-    const closeMergeRequest = async () => {
-        try {
-            await api.useUpdateMergeRequest(projectId, mr_iid, {
-                state_event: "close",
-            });
-            // router.push(`/projects/${projectId}`);
-        } catch (error) {
-            console.error("Error closing merge request:", error);
-        }
-    }
-
-    // Reopening Merge Request
-    const reopenMergeRequest = async () => {
-        try {
-            await api.useUpdateMergeRequest(projectId, mr_iid, {
-                state_event: "reopen",
-            });
-            // router.push(`/projects/${projectId}`);
-        } catch (error) {
-            console.error("Error reopening merge request:", error);
-        }
-    }
-
-
     if (errorMR || errorCommits || errorNotes || errorChanges) {
         return <Text>Error: {errorMR?.message || errorCommits?.message || errorNotes?.message || errorChanges?.message}</Text>;
     }
@@ -432,19 +417,50 @@ export default function MergeRequestDetails() {
             totalDeletions: fileChanges?.reduce((sum, file) => sum + file.deletions, 0),
         }
     }
-    // console.log('MR:', mr);
-    // console.log('Commits:', commits);
-    // console.log('Notes:', notes);
-    // console.log('Changes:', changes);
-    // console.log('File Changes:', changes?.changes);
-    // console.log('changeSummaries:', changeSummaries);
+
+    const headerActions: HeaderAction[] = [
+        {
+            icon: "share-social-outline",
+            onPress: () => shareView(mr?.web_url),
+            testID: "share-mr-button"
+        }
+    ];
+
+    const headerOptions: HeaderOption[] = [
+        {
+            icon: "pencil",
+            label: "Edit Merge Request",
+            onPress: () => router.push(`/workspace/projects/${projectId}/merge-requests/${mr_iid}/edit`),
+            testID: "mr-edit-option"
+        },
+        {
+            icon: mr?.state === 'opened' ? 'close-circle-outline' : 'checkmark-circle-outline',
+            color: mr?.state === 'opened' ? 'red' : 'green',
+            label: mr?.state === 'opened' ? 'Close Merge Request' : 'Reopen Merge Request',
+            onPress: mr?.state === 'opened' ? closeMr : openMr,
+            testID: "toggle-mr-state-option"
+        },
+        {
+            icon: "trash-outline",
+            color: "red",
+            label: "Delete Merge Request",
+            onPress: deleteMr,
+            testID: "delete-mr-option"
+        }
+    ];
+
     return (
         <>
             <SafeAreaView className="flex-1">
                 <Stack.Screen
                     options={{
                         title: "",
-                        headerRight: headerRightProjectMr(reopenMergeRequest, closeMergeRequest, deleteMergeRequest, mr),
+                        headerRight: () => (
+                            <HeaderRight
+                                actions={headerActions}
+                                options={headerOptions}
+                            />
+                        )
                     }}
                 />
                 <ScrollView
@@ -486,8 +502,8 @@ export default function MergeRequestDetails() {
                         <ActionButtons
                             mr={mr}
                             onMerge={() => { console.log("ok") }}
-                            onClose={closeMergeRequest}
-                            onReopen={reopenMergeRequest}
+                            onClose={closeMr}
+                            onReopen={openMr}
                         />
                     }
                     <Text className="text-4xl font-bold text-white">Events</Text>

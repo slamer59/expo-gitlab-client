@@ -44,7 +44,7 @@ export default function Home() {
       itemColor: "bg-issues"
     },
     {
-      icon: "git-merge",
+      icon: "git-pull-request",
       text: "Merge Requests",
       screen: "workspace/merge-requests/list",
       itemColor: "bg-merge-requests"

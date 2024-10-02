@@ -37,7 +37,7 @@ const Repositories = () => {
             text: "Issues",
             kpi: repository?.open_issues_count || "",
         },
-        { icon: "git-merge", text: "Merge Requests", kpi: "" },
+        { icon: "git-pull-request", text: "Merge Requests", kpi: "" },
         { icon: "play-outline", text: "CI/CD", kpi: "" },
         // { icon: 'chatbubbles-outline', text: 'Discussions', kpi: ""},
         { icon: "eye-outline", text: "Watchers", kpi: "" },
