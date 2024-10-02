@@ -1,7 +1,9 @@
 import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
-import { getExpoToken, getProjects } from "@/lib/gitlab/helpers";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { registerForPushNotificationsAsync } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +25,21 @@ const useDevFeature = (flagName) => {
 
 export default function Home() {
   const { session } = useSession();
+  const client = new GitLabClient({
+    url: session?.url,
+    token: session?.token,
+  });
+
+  const api = useGitLab(client);
+
+  const [
+    // { data: user, isLoading: isLoadingUser, error: errorUser },
+    { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal },
+    // { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed },
+    // { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred }
+  ] = api.useProfileDetails();
+  console.log("🚀 ~ Home ~ personalProjects:", personalProjects)
+
   const devModeEnabled = useDevFeature("development-mode");
 
   const buttons = [
@@ -156,21 +173,12 @@ export default function Home() {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          const push_token = await getExpoToken();
+          const push_token = await registerForPushNotificationsAsync();
           console.log("Expo token retrieved successfully");
 
-          let projects;
-          try {
-            projects = await getProjects(session);
-            console.log("Projects fetched successfully");
-          } catch (error) {
-            console.error("Error fetching projects:", error);
-            setAlert({ message: `Error fetching projects: ${error.message}`, isOpen: true });
-            return;
-          }
 
           try {
-            await updateOrCreateWebhooks(session, projects, undefined);
+            await updateOrCreateWebhooks(session, personalProjects, undefined);
             console.log("Webhooks updated successfully");
           } catch (error) {
             console.error("Error updating webhooks:", error);
@@ -178,7 +186,7 @@ export default function Home() {
           }
 
           try {
-            await mapDeviceToProject(push_token, projects);
+            await mapDeviceToProject(push_token, personalProjects);
             console.log("Device mapped to project successfully");
           } catch (error) {
             console.error("Error mapping device to project:", error);
