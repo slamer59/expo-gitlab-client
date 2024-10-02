@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { registerForPushNotificationsAsync } from "@/lib/gitlab/helpers";
+import { getExpoToken } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,13 +32,7 @@ export default function Home() {
 
   const api = useGitLab(client);
 
-  const [
-    // { data: user, isLoading: isLoadingUser, error: errorUser },
-    { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal },
-    // { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed },
-    // { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred }
-  ] = api.useProfileDetails();
-  console.log("🚀 ~ Home ~ personalProjects:", personalProjects)
+  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
 
   const devModeEnabled = useDevFeature("development-mode");
 
@@ -173,12 +167,30 @@ export default function Home() {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          const push_token = await registerForPushNotificationsAsync();
+          const push_token = await getExpoToken();
           console.log("Expo token retrieved successfully");
 
+          if (isLoadingPersonal) {
+            console.log("Projects are still loading");
+            return;
+          }
+
+          if (!personalProjects) {
+            console.error("Personal projects are undefined");
+            setAlert({ message: "Error: Personal projects are undefined", isOpen: true });
+            return;
+          }
+
+          let projects = personalProjects.map(
+            (project: { http_url_to_repo: string; id: number }) => ({
+              http_url_to_repo: project.http_url_to_repo,
+              id: project.id
+            })
+          );
+          console.log("Projects fetched successfully");
 
           try {
-            await updateOrCreateWebhooks(session, personalProjects, undefined);
+            await updateOrCreateWebhooks(session, projects, undefined);
             console.log("Webhooks updated successfully");
           } catch (error) {
             console.error("Error updating webhooks:", error);
@@ -186,7 +198,7 @@ export default function Home() {
           }
 
           try {
-            await mapDeviceToProject(push_token, personalProjects);
+            await mapDeviceToProject(push_token, projects);
             console.log("Device mapped to project successfully");
           } catch (error) {
             console.error("Error mapping device to project:", error);
@@ -198,8 +210,9 @@ export default function Home() {
         }
       };
       fetchData();
-    }, [session]),
+    }, [session, personalProjects, isLoadingPersonal]),
   );
+
 
   return (
     <ScrollView

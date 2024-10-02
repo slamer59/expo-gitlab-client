@@ -24,7 +24,8 @@
         "backgroundColor": "#fff"
       },
       "versionCode": 7,
-      "package": "com.thomas.pedot.expogitlabclient"
+      "package": "com.thomas.pedot.expogitlabclient",
+      "googleServicesFile": "./google-services.json"
     },
     "androidNavigationBar": {
       "backgroundColor": "#000000"
