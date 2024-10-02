@@ -4,6 +4,7 @@ import { GlobalIssueUIFilters } from "@/constants/UIFilters";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
+import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
 
 import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
@@ -17,15 +18,10 @@ export default function ProjectIssuesList() {
 
   const api = useGitLab(client);
   const { projectId } = useLocalSearchParams();
-  const defaultParamsProjectIssues = {
-    // scope: "all",
-    // state: "opened",
-    // order_by: "created_at",
-    // created_by_me: true,
-    // assigned_to_me: false,
-    // issue_type: "issue",
-  };
+
   const UIFilters = GlobalIssueUIFilters;
+  const defaultParams = extractDefaultFilters(UIFilters);
+  const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
   const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
   const paramsMap = {
     "projectId": "project_id", "issue_iid": "iid"
@@ -40,25 +36,18 @@ export default function ProjectIssuesList() {
       <Stack.Screen
         options={{
           headerTitle: "Issues for Project",
-          // ...defaultOptionsHeader
-          // headerRight: () => (
-          //   <Link href={`/workspace/projects/${projectId}/issues/new`}>
-          //     <Button size="sm" variant="primary">
-          //       New Issue
-          //     </Button>
-          //   </Link>
-          // ),
         }}
       />
       <ListWithFilters
         UIFilters={UIFilters}
-        queryFn={api.useProjectIssues}
         projectId={projectId}
+        queryFn={api.useProjectIssues}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}
         pathname={pathname}
         paramsMap={paramsMap}
-        defaultParams={defaultParamsProjectIssues}
+        defaultParams={defaultParams}
+        defaultUIFilterValues={defaultUIFilterValues}
       />
     </ScrollView>
   );

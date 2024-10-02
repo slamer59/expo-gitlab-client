@@ -26,6 +26,7 @@ interface ListWithFiltersProps {
   pathname: string;
   paramsMap: any;
   projectId?: string;
+  defaultUIFilterValues?: any;
 }
 export default function ListWithFilters({
   UIFilters,
@@ -35,17 +36,15 @@ export default function ListWithFilters({
   pathname,
   paramsMap,
   defaultParams,
+  defaultUIFilterValues,
   projectId,
 }: ListWithFiltersProps) {
-  const [params, setParams] = useState({
-    ...defaultParams,
-    query: {
-      ...defaultParams.query,
-      // You can add any additional initial query parameters here
-    }
-  });
+  const [params, setParams] = useState(defaultParams);
+
+
 
   const handleFiltersChange = useCallback((newFilters) => {
+
     const newQuery = UIFilters.reduce((acc, filter) => {
       const selectedValue = newFilters[filter.label]?.value;
       if (!selectedValue) return acc;
@@ -55,18 +54,16 @@ export default function ListWithFilters({
     }, {});
 
     setParams(prevParams => ({
-      ...prevParams,
-      query: {
-        ...prevParams.query,  // Preserve existing query parameters
-        ...newQuery  // Apply new filters
-      }
+      ...prevParams,  // Preserve existing query parameters
+      ...newQuery  // Apply new filters
     }));
   }, [UIFilters]);
 
-  let result;
 
+  let result;
   if (projectId === undefined) {
     result = queryFn(params);
+
   } else {
     result = queryFn(projectId, params);
   }
@@ -79,6 +76,7 @@ export default function ListWithFilters({
       <FilterForm
         UIFilters={UIFilters}
         onFiltersChange={handleFiltersChange}
+        defaultUIFilterValues={defaultUIFilterValues}
       />
       {/* {isLoading && <Loading />} */}
       {/* <Text>
@@ -108,7 +106,6 @@ export default function ListWithFilters({
           ItemComponent={ItemComponent}
           SkeletonComponent={SkeletonComponent}
           paramsMap={paramsMap}
-          params={defaultParams}
           pathname={pathname}
         />
       ) : (

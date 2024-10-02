@@ -5,6 +5,7 @@ import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
+import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
@@ -18,19 +19,9 @@ export default function MergeRequestsListScreen() {
 
     const api = useGitLab(client);
 
-    const defaultParamsMergeRequests = {
-        // created_by_me: true,
-        state: "all",
-        // milestone: "release",
-        // labels: "bug",
-        // author_id: 5,
-        // my_reaction_emoji: "star",
-        // scope: "assigned_to_me",
-        // search: 'foo',
-        // in: 'title',
-    };
-
     const UIFilters = GlobalMergeRequestUIFilters
+    const defaultParams = extractDefaultFilters(UIFilters);
+    const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
     const pathname = "/workspace/projects/[projectId]/merge-requests/[mr_iid]"
 
     const paramsMap = {
@@ -56,7 +47,8 @@ export default function MergeRequestsListScreen() {
                 SkeletonComponent={MergeRequestCardSkeleton}
                 pathname={pathname}
                 paramsMap={paramsMap}
-                defaultParams={defaultParamsMergeRequests}
+                defaultParams={defaultParams}
+                defaultUIFilterValues={defaultUIFilterValues}
             />
         </ScrollView>
     );

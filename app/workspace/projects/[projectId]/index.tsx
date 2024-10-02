@@ -71,11 +71,6 @@ export default function ProjectDetailsScreen() {
   };
   const unarchiveProject = async () => unArchiveProjectMutation.mutateAsync(projectId);
 
-  const deleteIssue = async () => deleteIssueMutation.mutateAsync(undefined, {
-    onSuccess: () => {
-      router.push(`/workspace/projects/${projectId}/issues/list`);
-    },
-  });
   const headerActions: HeaderAction[] = [
     {
       icon: "share-social-outline",

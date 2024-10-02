@@ -2,7 +2,7 @@ export const GlobalIssueUIFilters = [
     {
         label: "Issues",
         options: [
-            { value: "all", label: "All Issues", filter: { all: 1 } },
+            { value: "all", label: "All Issues", filter: { all: 1 }, default: true },
             { value: "opened", label: "Opened", filter: { state: "opened" } },
             { value: "closed", label: "Closed", filter: { state: "closed" } },
         ],
@@ -12,6 +12,7 @@ export const GlobalIssueUIFilters = [
         label: "Scope",
         options: [
             {
+                default: true,
                 value: "created_by_me",
                 label: "Created By Me",
                 filter: { created_by_me: true },
@@ -33,7 +34,12 @@ export const GlobalIssueUIFilters = [
                 label: "Incident",
                 filter: { issue_type: "incident" },
             },
-            { value: "issue", label: "Issue", filter: { issue_type: "issue" } },
+            {
+                value: "issue",
+                label: "Issue",
+                filter: { issue_type: "issue" },
+                default: true
+            },
             {
                 value: "test_case",
                 label: "Test Case",
@@ -49,6 +55,7 @@ export const GlobalIssueUIFilters = [
                 value: "create_at",
                 label: "Created At",
                 filter: { order_by: "created_at" },
+                default: true,
             },
             {
                 value: "due_date",
@@ -96,12 +103,23 @@ export const GlobalMergeRequestUIFilters = [
     {
         label: "State",
         options: [
+            { value: "all", label: "All", filter: { state: "all" } },
             {
                 value: "opened",
                 label: "Opened",
                 filter: { state: "opened" },
+                default: true,
             },
-            { value: "all", label: "All", filter: { state: "all" } },
+            {
+                value: "closed",
+                label: "Closed",
+                filter: { state: "closed" },
+            },
+            {
+                value: "merged",
+                label: "Merged",
+                filter: { state: "merged" },
+            }
         ],
         placeholder: "State",
     },
@@ -118,8 +136,24 @@ export const GlobalMergeRequestUIFilters = [
     },
     {
         label: "Labels",
+        // Returns merge requests matching a comma-separated list of labels. None lists all merge requests with no labels. Any lists all merge requests with at least one label. Predefined names are case-insensitive.
         options: [
-            { value: "bug", label: "Bug", filter: { labels: "bug" } },
+            {
+                value: "none",
+                label: "None",
+                filter: { labels: "none" },
+                // default: true,
+            },
+            {
+                value: "any",
+                label: "Any",
+                filter: { labels: "any" },
+            },
+            {
+                value: "bug",
+                label: "Bug",
+                filter: { labels: "bug" },
+            },
             {
                 value: "reproduced",
                 label: "Reproduced",
@@ -184,6 +218,7 @@ export const GlobalProjectsUIFilters = [
                 value: "all",
                 label: "All Projects",
                 filter: { owned: false, starred: false },
+                default: true,
             },
             // { value: 'archived', label: 'Archived' },
             // { value: 'starred', label: 'Starred' },
@@ -262,6 +297,7 @@ export const GlobalProjectsUIFilters = [
                 value: "desc",
                 label: "Descending",
                 filter: { sort: "desc" },
+                default: true,
             },
         ],
         placeholder: "Sort by",
@@ -276,6 +312,7 @@ export const GlobalProjectsUIFilters = [
                 value: "created_at",
                 label: "Created At",
                 filter: { order_by: "created_at" },
+                default: true,
             },
             {
                 value: "updated_at",
@@ -316,3 +353,5 @@ export const GlobalProjectsUIFilters = [
         placeholder: "Ordered By...",
     },
 ];
+
+export const GlobalPipelinesUIFilters = []

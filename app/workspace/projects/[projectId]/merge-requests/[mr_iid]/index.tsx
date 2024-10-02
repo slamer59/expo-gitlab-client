@@ -394,7 +394,7 @@ export default function MergeRequestDetails() {
             { projectId, mergeRequestIid: mr_iid },
             {
                 onSuccess: () => {
-                    router.back() //push(`/workspace/projects/${projectId}/issues/list`);
+                    router.back()
                 },
             }
         );
