@@ -27,6 +27,10 @@
       "package": "com.thomas.pedot.expogitlabclient",
       "googleServicesFile": "./google-services.json"
     },
+    "androidStatusBar": {
+      "backgroundColor": "#000000"
+      // "translucent": false
+    },
     "androidNavigationBar": {
       "backgroundColor": "#000000"
     },
