@@ -1,5 +1,6 @@
 import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 
 export default function MergeRequestStatusIcon(
     MergeRequest: any,
@@ -9,14 +10,14 @@ export default function MergeRequestStatusIcon(
         <>
             {MergeRequest.state === "opened" ? (
                 <>
-                    <Ionicons name="git-merge" size={24} color="green" />
+                    <Ionicons name="git-pull-request" size={24} color="green" />
                     {withText && (
                         <Text className="ml-1 font-semibold text-green-500">Open</Text>
                     )}
                 </>
             ) : MergeRequest.state === "closed" ? (
                 <>
-                    <Ionicons name="close-circle" size={24} color="red" />
+                    <Ionicons name="git-pull-request" size={24} color="red" />
                     {withText && (
                         <Text className="ml-1 font-semibold text-red-500">Closed</Text>
                     )}
@@ -30,7 +31,7 @@ export default function MergeRequestStatusIcon(
                 </>
             ) : MergeRequest.state === "merged" ? (
                 <>
-                    <Ionicons name="git-branch" size={24} color="purple" />
+                    <Ionicons name="git-merge" size={24} color="purple" />
                     {withText && (
                         <Text className="ml-1 font-semibold text-purple-500">Merged</Text>
                     )}

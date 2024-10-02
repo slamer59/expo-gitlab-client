@@ -21,7 +21,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
             itemColor: "bg-issues",
         },
         {
-            icon: "git-merge",
+            icon: "git-pull-request",
             text: "Merge Requests",
             kpi: projectDetails?.mergeRequests.length >= 20 ? '20+' : projectDetails?.mergeRequests.length,
             onAction: () => router.push(

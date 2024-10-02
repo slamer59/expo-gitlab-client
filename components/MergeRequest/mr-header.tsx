@@ -1,7 +1,7 @@
 import MergeStatusIcon from "@/components/MergeRequest/mr-status-icon";
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 const MergeRequestHeader = ({ mr }) => {
 
@@ -17,7 +17,7 @@ const MergeRequestHeader = ({ mr }) => {
                 label={mr?.state}
                 variant={getMergeRequestStateColor(mr?.state as MergeRequestState) as unknown as PillProps}
             /> */}
-            <View className="flex-row items-center justify-between mb-4">
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-row mb-4">
                 <View className="flex-row items-center">
                     {MergeStatusIcon(mr, true)}
                     <Text className="px-2 m-2 text-white border rounded-md border-muted bg-muted">
@@ -28,7 +28,7 @@ const MergeRequestHeader = ({ mr }) => {
                         {mr?.target_branch}
                     </Text>
                 </View>
-            </View>
+            </ScrollView>
             <View className="flex-row items-center mb-4">
                 <TouchableOpacity className="flex-row items-center mr-2">
                     <Ionicons

@@ -97,7 +97,7 @@ export default function ProjectDetailsScreen() {
       testID: "project-edit-option"
     },
     {
-      icon: "git-merge-outline",
+      icon: "git-pull-request-outline",
       color: "#3e64ed",
       label: "Create Merge Request",
       onPress: () => router.push(`/workspace/projects/${project.id}/merge-requests/create`),

@@ -42,7 +42,7 @@ function ProjectOptionsMenu({ projectId }) {
             testID: "project-edit-option"
         },
         {
-            icon: "git-merge-outline",
+            icon: "git-pull-request-outline",
             label: "Create Merge Request",
             onPress: () => router.push(`/workspace/projects/${projectId}/merge-requests/create`),
             testID: "create-mr-option"

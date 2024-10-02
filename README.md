@@ -23,6 +23,13 @@ Add runtime = python310 to cloud functions
 ## Notification (Firebase)
 [FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/)
 
+## Debug Expo 
+https://www.youtube.com/watch?v=V-hois8dgM4
+- ajout env dans eas.json pour preview et production
+- ajout googleservice.json dans app.json (local)
+- eas credeantials `eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value google-services.json`
+- ajout GOOGLE_SERVICES_JSON dans eas.json
+
 ## Maestro setup
 
 `maestro studio`
