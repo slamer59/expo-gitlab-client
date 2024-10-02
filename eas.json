@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 9.1.0"
+    "version": ">= 9.1.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -11,12 +12,15 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "GOOGLE_SERVICES_JSON": "GOOGLE_SERVICES_JSON"
+        "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
       }
     }
   },
