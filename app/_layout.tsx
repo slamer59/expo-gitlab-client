@@ -4,13 +4,10 @@ import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as NavigationBar from 'expo-navigation-bar';
 import * as Notifications from 'expo-notifications';
 import { router, SplashScreen, Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { PostHogProvider } from 'posthog-react-native';
 import React, { useEffect } from 'react';
-import { Platform } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -88,40 +85,6 @@ function RootLayoutNav() {
 
   useNotificationObserver();
 
-  // Effect for color scheme
-  React.useEffect(() => {
-    const setBackgroundColor = async () => {
-      if (Platform.OS === 'android') {
-        await NavigationBar.setBackgroundColorAsync('#ffffff00')
-      }
-    };
-    setBackgroundColor();
-  }, []);
-
-
-
-  // React.useEffect(() => {
-  //   async function loadColorScheme() {
-  //     const theme = await AsyncStorage.getItem('theme');
-  //     if (Platform.OS === 'web') {
-  //       document.documentElement.classList.add('bg-background');
-  //     }
-  //     if (!theme) {
-  //       await AsyncStorage.setItem('theme', colorScheme);
-  //     } else {
-  //       const colorTheme = theme === 'dark' ? 'dark' : 'light';
-  //       if (colorTheme !== colorScheme) {
-  //         setColorScheme(colorTheme);
-  //         setAndroidNavigationBar(colorTheme);
-  //       } else {
-  //         setAndroidNavigationBar(colorTheme);
-  //       }
-  //     }
-  //     setIsReady(prev => ({ ...prev, colorScheme: true }));
-  //   }
-  //   loadColorScheme();
-  // }, []);
-
   // Effect for other preparations
   React.useEffect(() => {
     async function prepare() {
@@ -154,7 +117,6 @@ function RootLayoutNav() {
 
     <QueryClientProvider client={queryClient}>
       {/* <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}> */}
-      <StatusBar />
 
       <Stack
         screenOptions={{
