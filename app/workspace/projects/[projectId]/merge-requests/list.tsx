@@ -40,7 +40,7 @@ export default function ProjectMergeRequestsList() {
       />
       <ListWithFilters
         UIFilters={UIFilters}
-        projectId={projectId}
+        itemId={projectId}
         queryFn={api.useProjectMergeRequests}
         ItemComponent={MergeRequestCard}
         SkeletonComponent={MergeRequestCardSkeleton}

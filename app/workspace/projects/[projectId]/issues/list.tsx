@@ -40,7 +40,7 @@ export default function ProjectIssuesList() {
       />
       <ListWithFilters
         UIFilters={UIFilters}
-        projectId={projectId}
+        itemId={projectId}
         queryFn={api.useProjectIssues}
         ItemComponent={IssueCard}
         SkeletonComponent={IssueCardSkeleton}

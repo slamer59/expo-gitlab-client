@@ -42,7 +42,6 @@ export default function ProfileScreen() {
     }
   };
 
-
   const { session } = useSession()
 
   const client = new GitLabClient({
@@ -154,15 +153,37 @@ export default function ProfileScreen() {
           </CardTitle>
         </CardHeader>
         {/* <TouchableOpacity
-            key={index}
-            onPress={() =>
-              navigation.navigate(button.screen || "/")
-            }
-          > */}
+          onPress={() => router.push({
+            pathname: `/workspace/users/${user?.id}/list`,
+            params: { groups: true }
+          })}
+          className="flex-row bg-card"
+          activeOpacity={0.7}
+        >
+          <CardContent className="flex-row items-center flex-1">
+            <View className="flex-row items-center flex-1">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-members">
+                <Octicons
+                  name="people"
+                  size={24}
+                  color="white"
+                />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                Groups
+              </Text>
+            </View>
+            <Text className="text-base text-white" testID="project-count">
+              {isLoadingContributed ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
+                contributedProjects.length >= 20 ? '20+' : contributedProjects?.length
+              }
+            </Text>
+          </CardContent>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => router.push({
-            pathname: "/workspace/projects/list",
-            params: { owned: "true" },
+            pathname: `/workspace/users/${user?.id}/list`,
+            params: { contributed: "true" },
           })}
           className="flex-row bg-card"
           activeOpacity={0.7}
@@ -190,8 +211,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           onPress={() => router.push({
-            pathname: "/workspace/projects/list",
-            params: { owned: "true" },
+            pathname: `/workspace/users/${user?.id}/list`,
           })}
           className="flex-row bg-card"
           activeOpacity={0.7}
@@ -218,7 +238,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => router.push({
-            pathname: "/workspace/projects/list",
+            pathname: `/workspace/users/${user?.id}/list`,
             params: { starred: "true" },
           })}
           className="flex-row items-center justify-between bg-card"

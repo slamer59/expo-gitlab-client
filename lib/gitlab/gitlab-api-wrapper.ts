@@ -257,10 +257,10 @@ class GitLabClient {
       return this.request(`/users/${userId}/projects`, 'GET', options);
     },
     contributed_projects: async (userId, options = {}) => {
-      return this.request(`/users/${userId}/projects/contributed`, 'GET', options);
+      return this.request(`/users/${userId}/contributed_projects`, 'GET', options);
     },
-    owned_projects: async (userId, options = {}) => {
-      return this.request(`/users/${userId}/projects/owned`, 'GET', options);
+    groups: async (userId, options = {}) => {
+      return this.request(`/users/${userId}/groups`, 'GET', options);
     },
     starred_projects: async (userId, options = {}) => {
       return this.request(`/users/${userId}/starred_projects`, 'GET', options);

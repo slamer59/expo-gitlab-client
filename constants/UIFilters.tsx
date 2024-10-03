@@ -232,6 +232,22 @@ export const GlobalProjectsUIFilters = [
         ],
         placeholder: "Select a project...",
     },
+    // membership
+    {
+        label: "Membership",
+        options: [
+            {
+                value: "membership",
+                label: "Member", filter: { membership: true }
+            },
+            {
+                value: "membership",
+                label: "Not Member", filter: { membership: false },
+                default: true,
+            },
+        ],
+        placeholder: "Select a membership...",
+    },
     // {
     //     label: "Visibility",
     //     options: [
@@ -353,5 +369,295 @@ export const GlobalProjectsUIFilters = [
         placeholder: "Ordered By...",
     },
 ];
+
+// User profile filters 
+export const GlobalUserProjectUIFilters = [
+    {
+        label: "User ID",
+        options: [
+            { value: "current_user", label: "Current User", filter: { user_id: "current_user" } },
+        ],
+        placeholder: "Enter user ID or username...",
+    },
+    {
+        label: "Archived",
+        options: [
+            { value: true, label: "Archived", filter: { archived: true } },
+            { value: false, label: "Not Archived", filter: { archived: false }, default: true },
+        ],
+        placeholder: "Select archived status...",
+    },
+    {
+        label: "ID Range",
+        options: [
+            { value: "after", label: "After ID", filter: { id_after: null } },
+            { value: "before", label: "Before ID", filter: { id_before: null } },
+        ],
+        placeholder: "Enter ID...",
+    },
+    {
+        label: "Membership",
+        options: [
+            { value: true, label: "Member", filter: { membership: true } },
+            { value: false, label: "Not Member", filter: { membership: false }, default: true },
+        ],
+        placeholder: "Select membership status...",
+    },
+    {
+        label: "Min Access Level",
+        options: [
+            { value: 10, label: "Guest", filter: { min_access_level: 10 } },
+            { value: 20, label: "Reporter", filter: { min_access_level: 20 } },
+            { value: 30, label: "Developer", filter: { min_access_level: 30 } },
+            { value: 40, label: "Maintainer", filter: { min_access_level: 40 } },
+            { value: 50, label: "Owner", filter: { min_access_level: 50 } },
+        ],
+        placeholder: "Select minimum access level...",
+    },
+    {
+        label: "Owned",
+        options: [
+            { value: true, label: "Owned", filter: { owned: true } },
+            { value: false, label: "Not Owned", filter: { owned: false }, default: true },
+        ],
+        placeholder: "Select ownership status...",
+    },
+    {
+        label: "Search",
+        options: [],
+        placeholder: "Enter search criteria...",
+    },
+    {
+        label: "Simple",
+        options: [
+            { value: true, label: "Simple", filter: { simple: true } },
+            { value: false, label: "Detailed", filter: { simple: false }, default: true },
+        ],
+        placeholder: "Select detail level...",
+    },
+    {
+        label: "Starred",
+        options: [
+            { value: true, label: "Starred", filter: { starred: true } },
+            { value: false, label: "Not Starred", filter: { starred: false }, default: true },
+        ],
+        placeholder: "Select starred status...",
+    },
+    {
+        label: "Statistics",
+        options: [
+            { value: true, label: "Include Statistics", filter: { statistics: true } },
+            { value: false, label: "Exclude Statistics", filter: { statistics: false }, default: true },
+        ],
+        placeholder: "Select statistics inclusion...",
+    },
+    {
+        label: "Updated",
+        options: [
+            { value: "after", label: "After Date", filter: { updated_after: null } },
+            { value: "before", label: "Before Date", filter: { updated_before: null } },
+        ],
+        placeholder: "Enter date (YYYY-MM-DDTHH:MM:SSZ)...",
+    },
+    {
+        label: "Visibility",
+        options: [
+            { value: "public", label: "Public", filter: { visibility: "public" } },
+            { value: "internal", label: "Internal", filter: { visibility: "internal" } },
+            { value: "private", label: "Private", filter: { visibility: "private" } },
+        ],
+        placeholder: "Select visibility...",
+    },
+    {
+        label: "Custom Attributes",
+        options: [
+            { value: true, label: "Include", filter: { with_custom_attributes: true } },
+            { value: false, label: "Exclude", filter: { with_custom_attributes: false }, default: true },
+        ],
+        placeholder: "Select custom attributes inclusion...",
+    },
+    {
+        label: "Features",
+        options: [
+            { value: "issues", label: "With Issues", filter: { with_issues_enabled: true } },
+            { value: "merge_requests", label: "With Merge Requests", filter: { with_merge_requests_enabled: true } },
+        ],
+        placeholder: "Select features...",
+    },
+    {
+        label: "Programming Language",
+        options: [],
+        placeholder: "Enter programming language...",
+    },
+];
+export const GlobalUserGroupsUIFilters = []
+export const GlobalUserContributedProjectsUIFilters = [
+    {
+        label: "User ID",
+        options: [
+            { value: "current_user", label: "Current User", filter: { user_id: "current_user" } },
+        ],
+        placeholder: "Enter user ID or username...",
+    },
+    {
+        label: "Ordered By",
+        options: [
+            { value: "id", label: "Id", filter: { order_by: "id" } },
+            { value: "name", label: "Name", filter: { order_by: "name" } },
+            { value: "path", label: "Path", filter: { order_by: "path" } },
+            { value: "created_at", label: "Created At", filter: { order_by: "created_at" }, default: true },
+            { value: "updated_at", label: "Updated At", filter: { order_by: "updated_at" } },
+            { value: "star_count", label: "Star Count", filter: { order_by: "star_count" } },
+            { value: "last_activity_at", label: "Last Activity", filter: { order_by: "last_activity_at" } },
+        ],
+        placeholder: "Select ordering...",
+    },
+    {
+        label: "Simple",
+        options: [
+            { value: true, label: "Simple", filter: { simple: true } },
+            { value: false, label: "Detailed", filter: { simple: false }, default: true },
+        ],
+        placeholder: "Select detail level...",
+    },
+    {
+        label: "Sort",
+        options: [
+            { value: "asc", label: "Ascending", filter: { sort: "asc" } },
+            { value: "desc", label: "Descending", filter: { sort: "desc" }, default: true },
+        ],
+        placeholder: "Select sort order...",
+    },
+];
+
+
+export const GlobalUserStarredProjectsUIFilters = [
+    {
+        label: "User ID",
+        options: [
+            { value: "current_user", label: "Current User", filter: { user_id: "current_user" } },
+        ],
+        placeholder: "Enter user ID or username...",
+    },
+    {
+        label: "Archived",
+        options: [
+            { value: true, label: "Archived", filter: { archived: true } },
+            { value: false, label: "Not Archived", filter: { archived: false }, default: true },
+        ],
+        placeholder: "Select archived status...",
+    },
+    {
+        label: "Membership",
+        options: [
+            { value: true, label: "Member", filter: { membership: true } },
+            { value: false, label: "Not Member", filter: { membership: false }, default: true },
+        ],
+        placeholder: "Select membership status...",
+    },
+    {
+        label: "Min Access Level",
+        options: [
+            { value: 10, label: "Guest", filter: { min_access_level: 10 } },
+            { value: 20, label: "Reporter", filter: { min_access_level: 20 } },
+            { value: 30, label: "Developer", filter: { min_access_level: 30 } },
+            { value: 40, label: "Maintainer", filter: { min_access_level: 40 } },
+            { value: 50, label: "Owner", filter: { min_access_level: 50 } },
+        ],
+        placeholder: "Select minimum access level...",
+    },
+    {
+        label: "Ordered By",
+        options: [
+            { value: "id", label: "Id", filter: { order_by: "id" } },
+            { value: "name", label: "Name", filter: { order_by: "name" } },
+            { value: "path", label: "Path", filter: { order_by: "path" } },
+            { value: "created_at", label: "Created At", filter: { order_by: "created_at" }, default: true },
+            { value: "updated_at", label: "Updated At", filter: { order_by: "updated_at" } },
+            { value: "star_count", label: "Star Count", filter: { order_by: "star_count" } },
+            { value: "last_activity_at", label: "Last Activity", filter: { order_by: "last_activity_at" } },
+        ],
+        placeholder: "Select ordering...",
+    },
+    {
+        label: "Owned",
+        options: [
+            { value: true, label: "Owned", filter: { owned: true } },
+            { value: false, label: "Not Owned", filter: { owned: false }, default: true },
+        ],
+        placeholder: "Select ownership status...",
+    },
+    {
+        label: "Search",
+        options: [],
+        placeholder: "Enter search criteria...",
+    },
+    {
+        label: "Simple",
+        options: [
+            { value: true, label: "Simple", filter: { simple: true } },
+            { value: false, label: "Detailed", filter: { simple: false }, default: true },
+        ],
+        placeholder: "Select detail level...",
+    },
+    {
+        label: "Sort",
+        options: [
+            { value: "asc", label: "Ascending", filter: { sort: "asc" } },
+            { value: "desc", label: "Descending", filter: { sort: "desc" }, default: true },
+        ],
+        placeholder: "Select sort order...",
+    },
+    {
+        label: "Starred",
+        options: [
+            { value: true, label: "Starred", filter: { starred: true }, default: true },
+            { value: false, label: "Not Starred", filter: { starred: false } },
+        ],
+        placeholder: "Select starred status...",
+    },
+    {
+        label: "Statistics",
+        options: [
+            { value: true, label: "Include Statistics", filter: { statistics: true } },
+            { value: false, label: "Exclude Statistics", filter: { statistics: false }, default: true },
+        ],
+        placeholder: "Select statistics inclusion...",
+    },
+    {
+        label: "Updated",
+        options: [
+            { value: "after", label: "After Date", filter: { updated_after: null } },
+            { value: "before", label: "Before Date", filter: { updated_before: null } },
+        ],
+        placeholder: "Enter date (YYYY-MM-DDTHH:MM:SSZ)...",
+    },
+    {
+        label: "Visibility",
+        options: [
+            { value: "public", label: "Public", filter: { visibility: "public" } },
+            { value: "internal", label: "Internal", filter: { visibility: "internal" } },
+            { value: "private", label: "Private", filter: { visibility: "private" } },
+        ],
+        placeholder: "Select visibility...",
+    },
+    {
+        label: "Custom Attributes",
+        options: [
+            { value: true, label: "Include", filter: { with_custom_attributes: true } },
+            { value: false, label: "Exclude", filter: { with_custom_attributes: false }, default: true },
+        ],
+        placeholder: "Select custom attributes inclusion...",
+    },
+    {
+        label: "Features",
+        options: [
+            { value: "issues", label: "With Issues", filter: { with_issues_enabled: true } },
+            { value: "merge_requests", label: "With Merge Requests", filter: { with_merge_requests_enabled: true } },
+        ],
+        placeholder: "Select features...",
+    },
+];
+
 
 export const GlobalPipelinesUIFilters = []

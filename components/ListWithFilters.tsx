@@ -25,7 +25,7 @@ interface ListWithFiltersProps {
   defaultParams: any;
   pathname: string;
   paramsMap: any;
-  projectId?: string;
+  itemId?: string;
   defaultUIFilterValues?: any;
 }
 export default function ListWithFilters({
@@ -37,11 +37,9 @@ export default function ListWithFilters({
   paramsMap,
   defaultParams,
   defaultUIFilterValues,
-  projectId,
+  itemId,
 }: ListWithFiltersProps) {
   const [params, setParams] = useState(defaultParams);
-
-
 
   const handleFiltersChange = useCallback((newFilters) => {
 
@@ -61,16 +59,17 @@ export default function ListWithFilters({
 
 
   let result;
-  if (projectId === undefined) {
+  if (itemId === undefined) {
     result = queryFn(params);
 
   } else {
-    result = queryFn(projectId, params);
+    result = queryFn(itemId, params);
   }
   const items = result.data;
   const isLoading = result.isLoading;
   const isError = result.isError;
   const error = result.error;
+
   return (
     <ScrollView className="flex-1 mt-2">
       <FilterForm
