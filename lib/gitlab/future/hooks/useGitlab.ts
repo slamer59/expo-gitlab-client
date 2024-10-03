@@ -28,7 +28,7 @@ export const useGitLab = (client: GitLabClient) => {
         useCurrentUser: createQueryHook(['currentUser'], () => client.Users.current()),
         useUserProjects: (userId: string) => createQueryHook(['userProjects', userId], () => client.Users.projects(userId))(),
         useUserContributedProjects: (userId: string) => createQueryHook(['userContributedProjects', userId], () => client.Users.contributed_projects(userId))(),
-        useUserOwnedProjects: (userId: string) => createQueryHook(['userOwnedProjects', userId], () => client.Users.owned_projects(userId))(),
+        useUserGroupsProjects: (userId: string) => createQueryHook(['userGroupsProjects', userId], () => client.Users.groups(userId))(),
         useUserStarredProjects: (userId: string) => createQueryHook(['userStarredProjects', userId], () => client.Users.starred_projects(userId))(),
         useProject: (projectId: string) => createQueryHook(['project', projectId], () => client.Projects.show(projectId))(),
         useProjects: (params: any) => createQueryHook(['project', params], () => client.Projects.all(params))(),
@@ -304,7 +304,7 @@ export const useGitLab = (client: GitLabClient) => {
                     },
                     {
                         queryKey: ['contributedProjects'],
-                        queryFn: () => client.Projects.all({
+                        queryFn: () => client.Users.contributed_projects(currentUser.id, {
                             membership: true,
                             order_by: "last_activity_at",
                             sort: "desc",

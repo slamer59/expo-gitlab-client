@@ -109,7 +109,7 @@ module.exports = {
         pullRequests: "#3e64ed",
         "merge-requests": "#3e64ed",
         organizations : "#FD8112",
-        members: "#3e64ed",
+        members: "#c7ff33"
         licences: "#3e64ed",
         starred: "#d5e",
         cicd: "#d5ea4e",
