@@ -5,6 +5,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { GitLabSession, useSession } from "../session/SessionProvider";
 
 const defaultBaseUrl = "https://gitlab.com";
@@ -21,32 +22,42 @@ export const useGetData = <T>(
   options?: UseQueryOptions<T>,
 ) => {
   const { session } = useSession();
+  console.log("🚀 ~ session:", session);
 
-  // Replace all occurrences of {key} in the endpoint string with the corresponding value from the params object
-  const url = generateUrlFromParams(session, endpoint, params);
+  const url = useMemo(() => generateUrlFromParams(session, endpoint, params), [session, endpoint, params]);
+  console.log("🚀 ~ url:", url);
+
   return useQuery<T>({
     queryKey: key,
     queryFn: async () => {
+      if (!session?.token) {
+        throw new Error("No authentication token available");
+      }
+
       try {
         const response = await fetch(url, {
           headers: {
-            Authorization: `Bearer ${session?.token}`,
+            "PRIVATE-TOKEN": session.token,
+            "Accept": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch data: ${response.statusText}`,
-          );
+          const errorText = await response.text();
+          console.error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+          console.error(`Response body:`, errorText);
+          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`);
         }
+
         return response.json();
       } catch (error) {
-        console.error(`An error occurred: ${error}`);
+        console.error(`An error occurred:`, error);
         throw error;
       }
     },
-    cacheTime: 1000 * 60, // cache data for 1 minutes
+    cacheTime: 1000 * 60, // cache data for 1 minute
     staleTime: 1000 * 60, // consider data stale after 1 minute
+    enabled: !!session?.token, // Only run the query if we have a token
     ...options,
   });
 };
@@ -188,6 +199,8 @@ function generateUrlFromParams(
   endpoint: string,
   params: Record<string, any> | params,
 ) {
+  console.log("🚀 ~ params:", params)
+
 
   let url: URL;
   try {
@@ -198,9 +211,11 @@ function generateUrlFromParams(
       url = `${getbaseUrl(session?.url)}${endpoint}`;
       if (params?.path) {
         for (const key in params.path) {
-          url = url.replace(`{${key}}`, params.path[key]);
+          const encodedValue = encodeURIComponent(params.path[key]);
+          url = url.replace(`{${key}}`, encodedValue);
         }
       }
+
       const query = `?${new URLSearchParams(params?.query)}` || ""
       url = `${url}${query}`
     } else {

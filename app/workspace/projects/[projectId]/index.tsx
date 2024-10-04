@@ -52,7 +52,7 @@ export default function ProjectDetailsScreen() {
     branchesName = branches?.map(branch => branch.name);
     defaultBranchName = branches?.find(branch => branch.default)?.name || branches[0]?.name;
     listItems = getWorkspaceItems({ project, mergeRequests, members, pipelines }, router);
-    listItemsSecond = getCodeSectionItems(project, router);
+    listItemsSecond = getCodeSectionItems(project, router, selectedBranch?.label || defaultBranchName);
   }
 
 

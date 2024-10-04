@@ -99,6 +99,13 @@ export default function Home() {
       //   screen: "workspace/projects/59795263/issues/29/edit",
       //   itemColor: "bg-green"
       // },
+      // Tree 
+      {
+        icon: "arrow-forward",
+        text: "DevFolderTree",
+        screen: "tree/59853773",
+        itemColor: "bg-tree"
+      },
       {
         icon: "arrow-forward",
         text: "DevMergeRequest",
@@ -111,12 +118,12 @@ export default function Home() {
         screen: "workspace/projects/59795263/merge-requests/1/edit",
         itemColor: "bg-green"
       },
-      {
-        icon: "arrow-forward",
-        text: "DevMergeRequestCreate",
-        screen: "workspace/projects/59795263/merge-requests/create?issue_iid=34&title=ok&source_branch=34-real-image-should-show-in-editmarkdown-instead-of-generique-picture&target_branch=master",
-        itemColor: "bg-green"
-      },
+      // {
+      //   icon: "arrow-forward",
+      //   text: "DevMergeRequestCreate",
+      //   screen: "workspace/projects/59795263/merge-requests/create?issue_iid=34&title=ok&source_branch=34-real-image-should-show-in-editmarkdown-instead-of-generique-picture&target_branch=master",
+      //   itemColor: "bg-green"
+      // },
       {
         icon: "arrow-forward",
         text: "DevProject",
