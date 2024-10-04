@@ -106,7 +106,7 @@ export const useGitLab = (client: GitLabClient) => {
             ['projectIssues']
         ),
         // Project Merge Request
-        useCreateMergeRequest: createMutationHook(
+        useCreateProjectMergeRequest: createMutationHook(
             (data: { projectId: string; sourceBranch: string; targetBranch: string; title: string; options?: any }) =>
                 client.createMergeRequest(data.projectId, data.sourceBranch, data.targetBranch, data.title, data.options),
             ['projectMergeRequests']
@@ -168,6 +168,16 @@ export const useGitLab = (client: GitLabClient) => {
                 client.Discussions.create(data.projectId, data.issueId, data.body),
             ['projectIssuesDiscussions']
         ),
+        useCreateProjectBranch: createMutationHook(
+            (data: { projectId: string, branchName: string, ref: string }) =>
+                client.Branches.create(data.projectId, data.branchName, data.ref),
+            ['projectBranches']
+        ),
+        useDeleteProjectBranch: createMutationHook(
+            (data: { projectId: string, branchName: string }) =>
+                client.Branches.remove(data.projectId, data.branchName),
+            ['projectBranches']
+        )
 
     };
 

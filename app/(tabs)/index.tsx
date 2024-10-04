@@ -84,33 +84,39 @@ export default function Home() {
       {
         icon: "arrow-forward",
         text: "DevIssue",
-        screen: "workspace/projects/59795263/issues/29",
-        itemColor: "bg-green"
-      },
-      {
-        icon: "arrow-forward",
-        text: "DevIssueCreate",
-        screen: "workspace/projects/59795263/issues/create",
-        itemColor: "bg-green"
-      },
-      {
-        icon: "arrow-forward",
-        text: "DevIssueEdit",
-        screen: "workspace/projects/59795263/issues/29/edit",
+        screen: "workspace/projects/59795263/issues/43",
         itemColor: "bg-green"
       },
       // {
       //   icon: "arrow-forward",
-      //   text: "DevMergeRequest",
-      //   screen: "workspace/projects/59795263/merge-requests/1",
+      //   text: "DevIssueCreate",
+      //   screen: "workspace/projects/59795263/issues/create",
       //   itemColor: "bg-green"
       // },
       // {
       //   icon: "arrow-forward",
-      //   text: "DevMergeRequestEdit",
-      //   screen: "workspace/projects/59795263/merge-requests/1/edit",
+      //   text: "DevIssueEdit",
+      //   screen: "workspace/projects/59795263/issues/29/edit",
       //   itemColor: "bg-green"
       // },
+      {
+        icon: "arrow-forward",
+        text: "DevMergeRequest",
+        screen: "workspace/projects/59795263/merge-requests/1",
+        itemColor: "bg-green"
+      },
+      {
+        icon: "arrow-forward",
+        text: "DevMergeRequestEdit",
+        screen: "workspace/projects/59795263/merge-requests/1/edit",
+        itemColor: "bg-green"
+      },
+      {
+        icon: "arrow-forward",
+        text: "DevMergeRequestCreate",
+        screen: "workspace/projects/59795263/merge-requests/create?issue_iid=34&title=ok&source_branch=34-real-image-should-show-in-editmarkdown-instead-of-generique-picture&target_branch=master",
+        itemColor: "bg-green"
+      },
       {
         icon: "arrow-forward",
         text: "DevProject",

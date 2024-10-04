@@ -167,6 +167,7 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/merge_requests?${queryString}`);
     },
     create: async (projectId, data) => {
+      console.log("🚀 ~ GitLabClient ~ create: ~ data:", data)
       return this.request(`/projects/${projectId}/merge_requests`, 'POST', data);
     },
     edit: async (projectId, mergeRequestIid, data) => {
@@ -219,8 +220,8 @@ class GitLabClient {
     edit: async (projectId, branchName, data) => {
       return this.request(`/projects/${projectId}/repository/branches/${encodeURIComponent(branchName)}`, 'PUT', data);
     },
-    create: async (projectId, data) => {
-      return this.request(`/projects/${projectId}/repository/branches`, 'POST', data);
+    create: async (projectId, options) => {
+      return this.request(`/projects/${projectId}/repository/branches`, 'POST', options);
     },
     remove: async (projectId, branchName) => {
       return this.request(`/projects/${projectId}/repository/branches/${encodeURIComponent(branchName)}`, 'DELETE');
@@ -443,8 +444,8 @@ class GitLabClient {
     return this.ProjectIssues.create(projectId, data);
   };
 
-  createMergeRequest = async (projectId, sourceBranch, targetBranch, title, options = {}) => {
-    const data = { source_branch: sourceBranch, target_branch: targetBranch, title, ...options };
+  createMergeRequest = async (projectId, source_branch, title, description, options = {}) => {
+    const data = { source_branch, title, description, ...options };
     return this.ProjectMergeRequests.create(projectId, data);
   };
 
