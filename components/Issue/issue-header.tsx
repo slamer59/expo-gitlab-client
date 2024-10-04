@@ -1,10 +1,10 @@
 import { getIssueStateColor, IssueState } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
+import { Link, useNavigation } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { PillProps, Pills } from '../Pills';
 import { Skeleton } from '../ui/skeleton';
-
 export const IssueHeaderSkeleton = () => {
     return (
         <View className="mb-4">
@@ -36,13 +36,21 @@ export const IssueHeaderSkeleton = () => {
 };
 
 const IssueHeader = ({ issue }) => {
+    console.log("🚀 ~ IssueHeader ~ issue:", issue)
+
+    const navigation = useNavigation();
 
     return (
         <View className="mb-4">
-            <Text className="mb-2 font-bold text-md text-muted" >
-                {issue.references.full}
-            </Text>
-            <Text className="mb-2 text-4xl font-bold text-white" >
+            <Link href={{
+                pathname: '/workspace/projects/[projectId]',
+                params: { projectId: issue.project_id }
+            }}>
+                <Text className="mb-2 font-bold text-md text-muted">
+                    {issue.references.full}
+                </Text>
+            </Link>
+            <Text className="mb-2 text-4xl font-bold text-white">
                 {issue.title}
             </Text>
             <Pills
@@ -54,8 +62,7 @@ const IssueHeader = ({ issue }) => {
                     <Ionicons
                         name="thumbs-up-sharp"
                         size={20}
-                        color="gray"
-                    />
+                        color="gray" />
                     <Text className="ml-1 text-muted">
                         {issue.upvotes}
                     </Text>
@@ -64,17 +71,15 @@ const IssueHeader = ({ issue }) => {
                     <Ionicons
                         name="thumbs-down-sharp"
                         size={20}
-                        color="gray"
-                    />
+                        color="gray" />
                     <Text className="ml-1 text-muted">
                         {issue.downvotes}
                     </Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity>
-                            <FontAwesome6 name="bookmark" size={20} color="gray" />
-                        </TouchableOpacity> */}
+                <FontAwesome6 name="bookmark" size={20} color="gray" />
+            </TouchableOpacity> */}
             </View>
-
         </View>
     );
 };
