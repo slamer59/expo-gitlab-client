@@ -1,20 +1,32 @@
+import MarkdownCustom from "@/components/CustomMarkdown";
+import Loading from "@/components/Loading";
 import { Text } from "@/components/ui/text";
 import { useGetData } from '@/lib/gitlab/hooks';
+import { styles } from "@/lib/markdown-styles";
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Dimensions, ScrollView, View } from 'react-native';
-import Markdown from 'react-native-markdown-display';
 import * as mime from 'react-native-mime-types';
 
 
+const decodeBase64 = (str) => {
+    try {
+        return atob(str);
+    } catch (e) {
+        console.error('Error decoding base64:', e);
+        return str; // Return the original string if decoding fails
+    }
+};
 
-const Component = (mimeType, content) => {
+
+const Component = ({ mimeType, content }) => {
     console.log('MIME Type:', mimeType);
 
     // console.log('Content:', content);
     let contentComponent;
-    const decodedContent = content ? atob(content) : 'Cannot read this file yet';
+    const decodedContent = content ? decodeBase64(content) : 'Cannot read this file yet';
+    // console.log("🚀 ~ Component ~ decodedContent:", decodedContent)
 
     switch (mimeType) {
         case 'text/yaml':
@@ -22,7 +34,11 @@ const Component = (mimeType, content) => {
         case 'application/json':
         case 'text/markdown':
         case 'text/plain':
-            contentComponent = <Markdown>{decodedContent}</Markdown>;
+            contentComponent = <MarkdownCustom
+                className="mb-4"
+                style={styles}
+
+            >{decodedContent}</MarkdownCustom>;
             break;
         case 'image/jpeg':
         case 'image/png':
@@ -39,9 +55,6 @@ const Component = (mimeType, content) => {
 
 export default function FileView() {
     const { projectId, path, ref } = useLocalSearchParams();
-    console.log('Project ID:', projectId);
-    console.log('Path:', path);
-
     const params = {
         path: {
             id: projectId, // Replace with your project ID
@@ -53,7 +66,7 @@ export default function FileView() {
     }
 
     const { data: file, isLoading, isError } = useGetData(
-        ['project_repository_file_path', params.query],
+        ['project_repository_file_path', params.query, path],
         "/api/v4/projects/{id}/repository/files/{file_path}",
         params
     );
@@ -62,20 +75,24 @@ export default function FileView() {
 
 
     const { content, commit, file_path, file_name, encoding } = file || {};
-    // console.log('File:', content, commit, file_path, file_name, encoding);
+    // console.log('File:', content);
     return (
         <ScrollView
-            className='flex-1 p-4 m-2 bg-white safe-area-inset-bottom'
-            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+            className="flex-1 p-2 bg-card"
+            contentContainerStyle={{ paddingBottom: 100 }}
         >
             <Stack.Screen
                 options={{
-                    title: "Explore",
+                    title: file_name
                     // ...defaultOptionsHeader
                 }}
             />
-            {Component(mime.lookup(file_name), content)}
-            <Text>{file_name}</Text>
+            {isLoading ? <Loading />
+                :
+                <Component
+                    mimeType={mime.lookup(file_name)}
+                    content={content}
+                />}
             <View className='flex-row h-6'></View>
         </ScrollView>
     );

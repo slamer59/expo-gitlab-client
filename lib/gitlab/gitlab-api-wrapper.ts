@@ -490,7 +490,6 @@ class GitLabClient {
 
   // Delete Methods
   deleteProjectIssue = async (projectId, issueIid) => {
-    console.log('Deleting issue:', projectId, issueIid);
     return this.ProjectIssues.remove(projectId, issueIid);
   };
   deleteProjectMergeRequest = async (projectId, mergeRequestIid) => {
