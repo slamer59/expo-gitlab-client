@@ -167,7 +167,6 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/merge_requests?${queryString}`);
     },
     create: async (projectId, data) => {
-      console.log("🚀 ~ GitLabClient ~ create: ~ data:", data)
       return this.request(`/projects/${projectId}/merge_requests`, 'POST', data);
     },
     edit: async (projectId, mergeRequestIid, data) => {

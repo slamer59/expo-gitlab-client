@@ -22,10 +22,8 @@ export const useGetData = <T>(
   options?: UseQueryOptions<T>,
 ) => {
   const { session } = useSession();
-  console.log("🚀 ~ session:", session);
 
   const url = useMemo(() => generateUrlFromParams(session, endpoint, params), [session, endpoint, params]);
-  console.log("🚀 ~ url:", url);
 
   return useQuery<T>({
     queryKey: key,
@@ -199,8 +197,6 @@ function generateUrlFromParams(
   endpoint: string,
   params: Record<string, any> | params,
 ) {
-  console.log("🚀 ~ params:", params)
-
 
   let url: URL;
   try {

@@ -12,6 +12,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 export default function FileExplorerScreen() {
   const [error, setError] = useState<string | null>(null);
   const { path, ref, projectId } = useLocalSearchParams();
+  const isRoot = !path || path === "";
 
   const params = {
     path: {
@@ -28,7 +29,7 @@ export default function FileExplorerScreen() {
   };
 
   const { data: files, isLoading, isError } = useGetData(
-    ["project_repository_tree", params.query],
+    ["project_repository_tree", params.query, path],
     "/api/v4/projects/{id}/repository/tree",
     params
   );
@@ -51,7 +52,12 @@ export default function FileExplorerScreen() {
         options={{
           // title: "Explore",
           headerLeft: () => (
-            <ParentLink projectId={projectId} parentPath={parentPath} path={path} />
+            <ParentLink
+              projectId={projectId}
+              parentPath={parentPath}
+              path={path}
+              isRoot={isRoot}
+            />
           ),
           headerTitleStyle: {
             color: 'white',
@@ -72,16 +78,28 @@ export default function FileExplorerScreen() {
   );
 }
 
-function ParentLink({ projectId, parentPath, path }) {
-  console.log("🚀 ~ ParentLink ~ projectId, parentPath, path:", projectId, parentPath, path)
+function ParentLink({ projectId, parentPath, path, isRoot }) {
   const router = useRouter();
 
   const handlePress = () => {
-    if (parentPath === undefined) {
-      // Go back if parentPath is undefined
-      router.back();
+    if (isRoot) {
+      // Go to the project page if we're at the root
+      router.push({
+        pathname: "/workspace/projects/[projectId]",
+        params: {
+          projectId: projectId,
+        },
+      });
+    } else if (parentPath === "") {
+      // Go to the root if the parent path is empty
+      router.push({
+        pathname: "/tree/[projectId]",
+        params: {
+          projectId: projectId,
+        },
+      });
     } else {
-      // Navigate to the specified route if parentPath is defined
+      // Navigate to the parent directory
       router.push({
         pathname: "/tree/[projectId]",
         params: {
@@ -95,10 +113,13 @@ function ParentLink({ projectId, parentPath, path }) {
   return (
     <TouchableOpacity onPress={handlePress} className="flex-row items-center">
       <Ionicons name="arrow-back" size={24} color="white" />
-      <Text className="ml-2 text-lg font-bold text-white">{path}</Text>
+      <Text className="ml-2 text-lg font-bold text-white">
+        {isRoot ? "Project" : path}
+      </Text>
     </TouchableOpacity>
   );
 }
+
 function FileList({ files, projectId, branch_ref }) {
   return (
     <View className="p-4 bg-card ">
