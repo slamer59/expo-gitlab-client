@@ -3,8 +3,6 @@ import { SafeAreaView, ScrollView } from "react-native";
 
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
-
-
 import CreateDiscussion from "@/components/CreateDiscussion";
 import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
 import IssueComment from "@/components/Issue/issue-comment";

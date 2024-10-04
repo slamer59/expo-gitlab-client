@@ -40,3 +40,8 @@ https://handbook.gitlab.com/handbook/marketing/brand-and-product-marketing/brand
 https://design.gitlab.com/
 
 
+## Gitlachemy test account
+
+```gitalchemy@gmail.com
+gitalchemy.test.account```
+
