@@ -1,6 +1,6 @@
 import { getIssueStateColor, IssueState } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
-import { Link, useNavigation } from 'expo-router';
+import { Link } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { PillProps, Pills } from '../Pills';
@@ -36,9 +36,6 @@ export const IssueHeaderSkeleton = () => {
 };
 
 const IssueHeader = ({ issue }) => {
-    console.log("🚀 ~ IssueHeader ~ issue:", issue)
-
-    const navigation = useNavigation();
 
     return (
         <View className="mb-4">

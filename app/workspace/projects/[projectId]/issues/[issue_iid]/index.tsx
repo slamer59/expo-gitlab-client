@@ -90,6 +90,13 @@ export default function IssueDetails() {
             onPress: issue?.state === 'opened' ? closeIssue : openIssue,
             testID: "toggle-issue-state-option"
         },
+        // Create merge request
+        {
+            icon: "git-merge",
+            label: "Create Merge Request",
+            onPress: () => router.push(`/workspace/projects/${projectId}/merge-requests/create?issue_iid=${issue_iid}&title=${encodeURIComponent(issue?.title || '')}`),
+            testID: "create-merge-request-option"
+        },
         {
             icon: "trash-outline",
             color: "red",
@@ -98,7 +105,7 @@ export default function IssueDetails() {
             testID: "delete-issue-option"
         }
     ];
-
+    console.log("issue", issue)
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen

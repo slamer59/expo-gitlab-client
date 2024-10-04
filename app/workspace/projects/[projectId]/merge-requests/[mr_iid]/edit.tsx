@@ -27,7 +27,7 @@ export default function MergeRequestEditComponent() {
 
     const updateMergeRequest = useCallback(async (updatedData) => {
         try {
-            await api.updateProjectMergeRequest(projectId, mrIid, updatedData);
+            await client.updateMergeRequest(projectId, mrIid, updatedData);
         } catch (error) {
             console.error('Error updating mr:', error);
             // Handle error (e.g., show an error message to the user)

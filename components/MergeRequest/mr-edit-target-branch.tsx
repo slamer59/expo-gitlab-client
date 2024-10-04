@@ -8,15 +8,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { SectionTitle } from '../Section/param';
 
-export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
+export default function EditTargetBranchMergeRequest({ projectId, mrIid, target_branch, onBranchChange }) {
     const [selectedBranch, setSelectedBranch] = useState("");
 
     const { session } = useSession();
     const client = new GitLabClient({ url: session?.url, token: session?.token });
     const api = useGitLab(client);
 
-    const { data: mr, loading: mrLoading } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
-    const { execute: updateMergeRequest, loading: updating } = api.useUpdateProjectMergeRequest(projectId, mrIid);
+    const { data: mr, loading: mrLoading } = mrIid ? api.useProjectMergeRequest(projectId, mrIid) ?? {} : { data: { target_branch }, loading: false };
+    const { execute: updateMergeRequest, loading: updating } = mrIid ? api.useUpdateProjectMergeRequest(projectId, mrIid) : { execute: null, loading: false };
     const { data: branches, loading: branchesLoading } = api.useProjectBranches(projectId);
 
     useEffect(() => {
@@ -24,8 +24,12 @@ export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
     }, [mr]);
 
     useEffect(() => {
-        if (selectedBranch && selectedBranch !== mr?.target_branch) {
-            updateMergeRequest({ target_branch: selectedBranch }).catch(console.error);
+        if (selectedBranch) {
+            if (mrIid && selectedBranch !== mr?.target_branch) {
+                updateMergeRequest({ target_branch: selectedBranch }).catch(console.error);
+            } else if (onBranchChange) {
+                onBranchChange(selectedBranch);
+            }
         }
     }, [selectedBranch]);
 
@@ -56,9 +60,6 @@ export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
                         <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold rounded-2xl '>
                             <SelectGroup>
                                 <ScrollView className='max-h-32'>
-                                    {/* {(mrLoading || branchesLoading) ? (
-                                        <SelectItem disabled>Loading branches...</SelectItem>
-                                    ) : ( */}
                                     {branches?.map((branch) => (
                                         <SelectItem
                                             key={branch.name}
@@ -67,12 +68,9 @@ export default function EditTargetBranchMergeRequest({ projectId, mrIid }) {
                                         >
                                             {branch.name}
                                         </SelectItem>
-                                    ))
-                                    }
-
+                                    ))}
                                 </ScrollView>
                             </SelectGroup>
-
                         </SelectContent>
                     </Select>
                 </View>
