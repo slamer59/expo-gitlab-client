@@ -83,6 +83,12 @@ export default function Home() {
       },
       {
         icon: "arrow-forward",
+        text: "DevGitlabNotification",
+        screen: "options/profile",
+        itemColor: "bg-green"
+      },
+      {
+        icon: "arrow-forward",
         text: "DevIssue",
         screen: "workspace/projects/59795263/issues/43",
         itemColor: "bg-green"
