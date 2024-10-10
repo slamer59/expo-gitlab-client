@@ -1,4 +1,4 @@
-import { GitLabNotificationSettings } from '@/components/Settings/GitlabNotificationSettings';
+import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { useSession } from '@/lib/session/SessionProvider';
 import * as Application from 'expo-application';
 import { Redirect, Stack } from 'expo-router';
 import { default as React } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 export default function OptionScreen() {
 
@@ -28,7 +28,7 @@ export default function OptionScreen() {
         }}
       />
 
-      <View className='flex-1 p-4 bg-background'>
+      <ScrollView className='flex-1 p-4 bg-background'>
         <SystemSettingsScreen />
         <GitLabNotificationSettings />
 
@@ -87,7 +87,7 @@ export default function OptionScreen() {
 
         </View>
         <Text className='mt-2 text-sm'>{Application.applicationName} v{Application.nativeBuildVersion}</Text>
-      </View>
+      </ScrollView>
     </>
   );
 }
