@@ -7,9 +7,10 @@ import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import React, { useEffect, useMemo } from 'react';
-import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { create } from 'zustand';
 import { Separator } from '../ui/separator';
+import { Skeleton } from '../ui/skeleton';
 
 // Initialize Firebase
 let app;
@@ -20,9 +21,6 @@ if (!getApps().length) {
 }
 
 const db = getFirestore(app);
-
-const API_BASE_URL = 'https://gitlab.com/api/v4';
-const ACCESS_TOKEN = 'GITLAB_PAT_REMOVED';
 
 const notificationLevels = [
     { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
@@ -215,14 +213,14 @@ export default function NotificationDashboard() {
         }
     }, [session?.url, session?.token]);
 
-    if (isLoading) {
-        return (
-            <View className="items-center justify-center flex-1">
-                <ActivityIndicator size="large" color="#0000ff" />
-                <Text className="mt-2 text-white">Loading...</Text>
-            </View>
-        );
-    }
+    // if (isLoading) {
+    //     return (
+    //         <View className="items-center justify-center flex-1">
+    //             <ActivityIndicator size="large" color="#0000ff" />
+    //             <Text className="mt-2 text-white">Loading...</Text>
+    //         </View>
+    //     );
+    // }
 
     return (
         <>
@@ -233,7 +231,11 @@ export default function NotificationDashboard() {
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
                     <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted">
-                        <Text className="text-white">Use primary email {global.notification_email}</Text>
+                        {isLoading ? (
+                            <Skeleton className="w-3/4 h-4" />
+                        ) : (
+                            <Text className="text-white">Use primary email {global.notification_email}</Text>
+                        )}
                         <Ionicons name="chevron-down" size={18} color="#fff" />
                     </TouchableOpacity>
                 </View>
@@ -242,7 +244,7 @@ export default function NotificationDashboard() {
                     <View className="mb-6">
                         <Text className="mb-2 text-xl font-bold text-white">Global notification level</Text>
                         <Text className="mb-3 text-muted">By default, all projects and groups use the global notifications setting.</Text>
-                        <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted" onPress={() => openModal('global')}>
+                        <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted" onPress={() => openModal('global', null)}>
                             <Ionicons name={global.level.icon} size={18} color="#fff" />
                             <Text className="text-white">{global.level.label}</Text>
                             <Ionicons name="chevron-down" size={18} color="#fff" />
@@ -286,38 +288,57 @@ export default function NotificationDashboard() {
                 <Separator className="my-4 bg-secondary" />
 
                 <View className="mb-6">
-                    <Text className="mb-2 text-xl font-bold text-white">Projects ({projects.length})</Text>
+                    <Text className="mb-2 text-xl font-bold text-white">Projects ({isLoading ? "..." : projects.length})</Text>
                     <Text className="mb-3 text-muted">To specify the notification level per project of a group you belong to, visit the project page and change the notification level there.</Text>
-                    {projects.map((project, index) => (
-                        <ScrollView
-                            key={project.id}
-                            horizontal
-                            className="mb-2 ml-4 bg-transparent max-h-16"
-                            contentContainerStyle={{ flexGrow: 1 }}
-                        >
-                            <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
-                                <View className="flex-row items-center flex-1 mr-4">
-                                    <Ionicons
-                                        name={`notifications${project.level.value === 'disabled' ? '-off' : ''}`}
-                                        size={18}
-                                        color="#fff"
-                                    />
-                                    <Text className="ml-2 text-white" numberOfLines={1} ellipsizeMode="tail">
-                                        {project.name}
-                                    </Text>
+
+                    {isLoading ? (
+                        // Skeleton loading
+                        Array.from({ length: 3 }).map((_, index) => (
+                            <View key={index} className="mb-2 ml-4 bg-transparent">
+                                <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
+                                    <View className="flex-row items-center flex-1 mr-4">
+                                        <Skeleton className="w-5 h-5 rounded-full" />
+                                        <Skeleton className="w-3/4 h-4 ml-2" />
+                                    </View>
+                                    <Skeleton className="w-24 h-8 rounded-md" />
                                 </View>
-                                <TouchableOpacity
-                                    className="flex-row items-center p-2 rounded-md bg-muted"
-                                    onPress={() => openModal('project', index)}
-                                >
-                                    <Ionicons name={project.level.icon} size={18} color="#fff" />
-                                    <Text className="mx-1 text-white">{project.level.label}</Text>
-                                    <Ionicons name="chevron-down" size={18} color="#fff" />
-                                </TouchableOpacity>
                             </View>
-                        </ScrollView>
-                    ))}
+                        ))
+                    ) : (<>{
+                        projects.map((project, index) => (
+                            <ScrollView
+                                key={project.id}
+                                horizontal
+                                className="mb-2 ml-4 bg-transparent max-h-16"
+                                contentContainerStyle={{ flexGrow: 1 }}
+                            >
+                                <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
+                                    <View className="flex-row items-center flex-1 mr-4">
+                                        <Ionicons
+                                            name={`notifications${project.level.value === 'disabled' ? '-off' : ''}`}
+                                            size={18}
+                                            color="#fff"
+                                        />
+                                        <Text className="ml-2 text-white" numberOfLines={1} ellipsizeMode="tail">
+                                            {project.name}
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        className="flex-row items-center p-2 rounded-md bg-muted"
+                                        onPress={() => openModal('project', index)}
+                                    >
+                                        <Ionicons name={project.level.icon} size={18} color="#fff" />
+                                        <Text className="mx-1 text-white">{project.level.label}</Text>
+                                        <Ionicons name="chevron-down" size={18} color="#fff" />
+                                    </TouchableOpacity>
+                                </View>
+                            </ScrollView>
+                        ))
+                    }
+                    </>
+                    )}
                 </View>
+
             </View>
 
             <Modal
