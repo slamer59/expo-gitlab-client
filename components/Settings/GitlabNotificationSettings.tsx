@@ -1,11 +1,12 @@
 import { firebaseConfig } from '@/lib/firebase/helpers';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { getExpoToken } from '@/lib/gitlab/helpers';
+import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { create } from 'zustand';
 import { Separator } from '../ui/separator';
@@ -53,10 +54,11 @@ interface NotificationStore {
     setSelectedItemType: (type: string) => void;
     setSelectedItemIndex: (index: number) => void;
     setIsLoading: (loading: boolean) => void;
-    fetchData: () => Promise<void>;
+    fetchData: (api: GitLabClient) => Promise<void>;
     selectNotificationLevel: (level: typeof notificationLevels[0]) => Promise<void>;
     openModal: (type: string, index: number) => void;
 }
+
 
 const useNotificationStore = create<NotificationStore>((set, get) => ({
     groups: [],
@@ -73,27 +75,39 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
     setSelectedItemType: (type) => set({ selectedItemType: type }),
     setSelectedItemIndex: (index) => set({ selectedItemIndex: index }),
     setIsLoading: (loading) => set({ isLoading: loading }),
-    fetchData: async () => {
+    fetchData: async (client: GitLabClient) => {
         set({ isLoading: true });
         try {
             const fetchNotificationSettings = async (type, id) => {
                 try {
-                    const response = await axios.get(`${API_BASE_URL}/${type}s/${id}/notification_settings`, {
-                        headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
-                    });
-                    return notificationLevels.find(level => level.value === response.data.level) || notificationLevels[0];
+                    let response = {};
+                    if (type === 'global') {
+                        response = await client.GlobalNotification.all();
+                    } else if (type === 'group') {
+                        response = await client.GroupNotifications.all(id);
+                    } else if (type === 'project') {
+                        response = await client.ProjectNotifications.all(id);
+                    }
+                    return notificationLevels.find(level => level.value === response.level) || notificationLevels[0];
                 } catch (error) {
                     console.error(`Error fetching ${type} notification settings:`, error);
                     return notificationLevels[0];
                 }
             };
+            // Fetches groups
+            const groups = await client.Groups.all();
 
+            // const groups = await client.Groups.all({ membership: true, owned: true });
+            const groupsWithSettings = await Promise.all(groups.map(async group => ({
+                id: group.id,
+                name: group.full_name,
+                level: await fetchNotificationSettings('group', group.id)
+            })));
+            set({ groups: groupsWithSettings });
             // Fetch projects
-            const projectsResponse = await axios.get(`${API_BASE_URL}/projects`, {
-                params: { membership: true, owned: true },
-                headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
-            });
-            const projectsWithSettings = await Promise.all(projectsResponse.data.map(async project => ({
+            const projects = await client.Projects.all({ membership: true, owned: true });
+
+            const projectsWithSettings = await Promise.all(projects.map(async project => ({
                 id: project.id,
                 name: project.path_with_namespace,
                 level: await fetchNotificationSettings('project', project.id)
@@ -101,14 +115,12 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
             set({ projects: projectsWithSettings });
 
             // Fetch global notification settings
-            const globalSettingsResponse = await axios.get(`${API_BASE_URL}/notification_settings`, {
-                headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
-            });
-            const globalSettings = {
-                level: notificationLevels.find(level => level.value === globalSettingsResponse.data.level) || notificationLevels[0],
-                notification_email: globalSettingsResponse.data.notification_email
+            const globalSettings = await fetchNotificationSettings('global', null);
+            const global = {
+                level: notificationLevels.find(level => level.value === globalSettings.level) || notificationLevels[0],
+                notification_email: globalSettings.notification_email || ''
             };
-            set({ global: globalSettings });
+            set({ global });
 
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -116,6 +128,7 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
             set({ isLoading: false });
         }
     },
+
     selectNotificationLevel: async (level) => {
         const { selectedItemType, selectedItemIndex, projects, global } = get();
         let updatedProjects = [...projects];
@@ -178,8 +191,15 @@ async function updateNotificationLevel(expoToken: string, globalNotification: an
 }
 
 export default function NotificationDashboard() {
+    const { session } = useSession();
+    const client = useMemo(() => new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    }), [session?.url, session?.token]);
+
     const {
         projects,
+        groups,
         global,
         modalVisible,
         isLoading,
@@ -190,8 +210,10 @@ export default function NotificationDashboard() {
     } = useNotificationStore();
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (session?.url && session?.token) {
+            fetchData(client);
+        }
+    }, [session?.url, session?.token]);
 
     if (isLoading) {
         return (
@@ -227,8 +249,42 @@ export default function NotificationDashboard() {
                         </TouchableOpacity>
                     </View>
                 )}
-
+                {/* <Separator className="my-4 bg-secondary" />
+                <View className="mb-6">
+                    <Text className="mb-2 text-xl font-bold text-white">Groups ({groups.length})</Text>
+                    <Text className="mb-3 text-muted">To specify the notification level per group you belong to, visit the project page and change the notification level there.</Text>
+                    {groups.map((group, index) => (
+                        <ScrollView
+                            key={group.id}
+                            horizontal
+                            className="mb-2 ml-4 bg-transparent max-h-16"
+                            contentContainerStyle={{ flexGrow: 1 }}
+                        >
+                            <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
+                                <View className="flex-row items-center flex-1 mr-4">
+                                    <Ionicons
+                                        name={`notifications${group.level.value === 'disabled' ? '-off' : ''}`}
+                                        size={18}
+                                        color="#fff"
+                                    />
+                                    <Text className="ml-2 text-white" numberOfLines={1} ellipsizeMode="tail">
+                                        {group.name}
+                                    </Text>
+                                </View>
+                                <TouchableOpacity
+                                    className="flex-row items-center p-2 rounded-md bg-muted"
+                                    onPress={() => openModal('group', index)}
+                                >
+                                    <Ionicons name={group.level.icon} size={18} color="#fff" />
+                                    <Text className="mx-1 text-white">{group.level.label}</Text>
+                                    <Ionicons name="chevron-down" size={18} color="#fff" />
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    ))}
+                </View> */}
                 <Separator className="my-4 bg-secondary" />
+
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Projects ({projects.length})</Text>
                     <Text className="mb-3 text-muted">To specify the notification level per project of a group you belong to, visit the project page and change the notification level there.</Text>
