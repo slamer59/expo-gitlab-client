@@ -8,7 +8,7 @@ from exponent_server_sdk import (
     PushTicketError,
 )
 from firebase_functions import logger
-from google.cloud.firestore import ArrayUnion
+from google.cloud.firestore import ArrayUnion, FieldFilter
 from requests.exceptions import ConnectionError, HTTPError
 
 
@@ -64,7 +64,6 @@ def send_push_message(messages):
 
 
 def list_devices_with_group_id(db, group_id):
-
     notification_group_id = base64.b64encode(group_id.encode()).decode()
 
     # Get the notification group document reference
@@ -78,6 +77,34 @@ def list_devices_with_group_id(db, group_id):
     # Get the devices array from the document
     devices = notification_group_doc.to_dict().get("devices", [])
     return devices
+
+
+def users_from_project_id(db, project_id):
+    users_ref = db.collection("userNotifications")
+
+    # Query to get users where the 'notification' field is not None
+    matching_users = users_ref.stream()
+
+    filtered_users = []
+    for user_doc in matching_users:
+        user_data = user_doc.to_dict()
+
+        # Check if the 'notifications' field exists and iterate through it
+        if "notifications" in user_data:
+            for notification in user_data["notifications"]:
+                # Check if the notification id matches the project_id
+                if notification.get("id") == project_id:
+                    # logger.info("notification", notification)
+                    # Append user data with the document ID as expoToken
+                    filtered_users.append(
+                        {
+                            "expoToken": user_doc.id,  # Assuming the document ID is the expoToken
+                            **notification,
+                        }
+                    )
+                    break  # No need to check other notifications for this user
+    logger.info("Matching users:", filtered_users)
+    return filtered_users
 
 
 def add_device_to_notification_group(db, projects, push_token):

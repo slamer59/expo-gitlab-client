@@ -1,48 +1,166 @@
+import { firebaseConfig } from '@/lib/firebase/helpers';
+import { getExpoToken } from '@/lib/gitlab/helpers';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import { getApps, initializeApp } from 'firebase/app';
+import 'firebase/firestore';
+import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { Checkbox } from '../ui/checkbox';
 import { Separator } from '../ui/separator';
 
 const notificationLevels = [
     { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
-    { value: 'watch', label: 'Watch', description: 'You will receive notifications for any activity', icon: 'eye' },
+    // { value: 'watch', label: 'Watch', description: 'You will receive notifications for any activity', icon: 'eye' },
     { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
-    { value: 'mention', label: 'On mention', description: 'You will receive notifications only for @mentions', icon: 'at' },
+    // { value: 'mention', label: 'On mention', description: 'You will receive notifications only for @mentions', icon: 'at' },
     { value: 'disabled', label: 'Disabled', description: 'You will not receive any notifications', icon: 'notifications-off' },
     // { value: 'custom', label: 'Custom', description: 'You will receive notifications based on your custom settings', icon: 'settings' },
 ];
 
+
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApps()[0];
+}
+
+
+const db = getFirestore(app);
+
+async function addSampleData(expoToken) {
+    try {
+        const currentDate = new Date().toISOString();
+
+        await setDoc(doc(db, "userNotifications", expoToken), {
+            changedDate: currentDate,
+            notifications: [
+                {
+                    id: 59853773,
+                    notification_level: "mention", //"global", //"custom", //"disabled", // "mention"
+                    name: "expo-app",
+                    http_url: "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
+                    custom_events: ['new_issue', 'close_issue'] //, "push"]  // Only relevant if level is CUSTOM
+
+                }
+            ]
+        });
+        console.log("Sample data added successfully");
+    } catch (error) {
+        console.error("Error adding sample data: ", error);
+    }
+}
+
+interface UserNotificationData {
+    changedDate: string;
+    notifications: Array<{
+        id: number;
+        name: string;
+        http_url: string;
+        notification_level: string;
+        custom_events: Array<string>;
+    }>;
+}
+
+async function updateNotificationLevel(expoToken: string, projectId: number, notifications: list[UserNotificationData]) {
+    try {
+        const currentDate = new Date().toISOString();
+
+        await setDoc(doc(db, "userNotifications", expoToken), {
+            changedDate: currentDate,
+            notifications: notifications
+            //     [
+            //     {
+            //         id: projectId,
+            //         notification_level: "mention", //"global", //"custom", //"disabled", // "mention"
+            //         name: "expo-app",
+            //         http_url: "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
+            //         custom_events: ['new_issue', 'close_issue'] //, "push"]  // Only relevant if level is CUSTOM
+
+            //     }
+            // ]
+        });
+        console.log("Update mobile notification successfully")
+    } catch (error) {
+        console.error("Error mobile notification: ", error)
+    }
+}
+
+async function fetchUserData(expoToken: string) {
+    try {
+        const docRef = doc(db, "userNotifications", expoToken);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const userData = docSnap.data();
+            console.log("User data:", userData);
+            return {
+                changedDate: userData.changedDate,
+                notifications: userData.notifications
+            };
+        } else {
+            console.log("No such document!");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching user data: ", error);
+        return null;
+    }
+}
+
+
 export default function NotificationDashboard() {
     const [groups, setGroups] = useState([]);
     const [projects, setProjects] = useState([]);
-    const [globalNotificationLevel, setGlobalNotificationLevel] = useState(notificationLevels[0]);
+    // console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
+    const [global, setGlobal] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItemType, setSelectedItemType] = useState('');
     const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
     const [isLoading, setIsLoading] = useState(true);
     const [isChecked, setIsChecked] = useState(false);
-
-
-    // Get all info from axios 
+    // Initialize Firebase
+    // const [userData, setUserData] = useState(null);
 
     const API_BASE_URL = 'https://gitlab.com/api/v4';
     const ACCESS_TOKEN = 'GITLAB_PAT_REMOVED';
 
 
     useEffect(() => {
+        const initializeData = async () => {
+            try {
+                const token = await getExpoToken();
+                if (!token) {
+                    throw new Error('Failed to retrieve Expo token');
+                }
+
+                // console.log("Expo token retrieved:", token);
+                await addSampleData(token);
+
+                const data = await fetchUserData(token);
+                if (!data) {
+                    throw new Error('No user data received');
+                }
+
+                // setUserData(data);
+            } catch (err) {
+                console.error('Error initializing data:', err);
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        initializeData()
+
         const fetchData = async () => {
             setIsLoading(true);
             try {
                 const fetchNotificationSettings = async (type, id) => {
-                    console.log("🚀 ~ fetchNotificationSettings ~ id:", id)
                     try {
                         const response = await axios.get(`${API_BASE_URL}/${type}s/${id}/notification_settings`, {
                             headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
                         });
-                        console.log("🚀 ~ fetchNotificationSettings ~ response:", response.data.level)
-
                         return notificationLevels.find(level => level.value === response.data.level) || notificationLevels[0];
                     } catch (error) {
                         console.error(`Error fetching ${type} notification settings:`, error);
@@ -59,7 +177,6 @@ export default function NotificationDashboard() {
                     name: group.name,
                     level: await fetchNotificationSettings('group', group.id)
                 })));
-                console.log("🚀 ~ groupsWithSettings ~ groupsWithSettings:", groupsWithSettings)
                 setGroups(groupsWithSettings);
 
                 // Fetch projects
@@ -78,7 +195,10 @@ export default function NotificationDashboard() {
                 const globalSettingsResponse = await axios.get(`${API_BASE_URL}/notification_settings`, {
                     headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
                 });
-                setGlobalNotificationLevel(notificationLevels.find(level => level.value === globalSettingsResponse.data.level) || notificationLevels[0]);
+                const globalSettings = { level: (notificationLevels.filter(level => level.value === globalSettingsResponse.data.level).value || notificationLevels[0]), notification_email: globalSettingsResponse.data.notification_email };
+                // console.log("🚀 ~ fetchData ~ globalSettings:", globalSettings)
+
+                setGlobal(globalSettings);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -96,20 +216,63 @@ export default function NotificationDashboard() {
         setModalVisible(true);
     };
 
-    const selectNotificationLevel = (level) => {
-        if (selectedItemType === 'global') {
-            setGlobalNotificationLevel(level);
-        } else if (selectedItemType === 'group') {
-            setGroups(groups.map((group, index) =>
-                index === selectedItemIndex ? { ...group, level } : group
-            ));
-        } else if (selectedItemType === 'project') {
-            setProjects(projects.map((project, index) =>
-                index === selectedItemIndex ? { ...project, level } : project
-            ));
+    const selectNotificationLevel = async (level, projects, global, groups) => {
+        try {
+            const expoToken = await getExpoToken();
+            if (!expoToken) {
+                throw new Error('Failed to retrieve Expo token');
+            }
+
+            let updatedNotifications;
+
+            if (selectedItemType === 'global') {
+                updatedNotifications = projects.map(project => ({
+                    id: project.id,
+                    name: project.name,
+                    // http_url: project.http_url,
+                    notification_level: level.value,
+                    custom_events: [] // Set this based on your requirements
+                }));
+            } else if (selectedItemType === 'group') {
+                updatedNotifications = projects.map(project => ({
+                    id: project.id,
+                    name: project.name,
+                    // http_url: project.http_url,
+                    notification_level: project.id === groups[selectedItemIndex].id ? level.value : project.level.value,
+                    custom_events: [] // Set this based on your requirements
+                }));
+            } else if (selectedItemType === 'project') {
+                updatedNotifications = projects.map((project, index) => ({
+                    id: project.id,
+                    name: project.name,
+                    // http_url: project.http_url,
+                    notification_level: index === selectedItemIndex ? level.value : project.level.value,
+                    custom_events: [] // Set this based on your requirements
+                }));
+            }
+
+            await updateNotificationLevel(expoToken, null, updatedNotifications);
+
+            // Update local state
+            if (selectedItemType === 'global') {
+                setGlobal(level);
+            } else if (selectedItemType === 'group') {
+                setGroups(groups.map((group, index) =>
+                    index === selectedItemIndex ? { ...group, level } : group
+                ));
+            } else if (selectedItemType === 'project') {
+                setProjects(projects.map((project, index) =>
+                    index === selectedItemIndex ? { ...project, level } : project
+                ));
+            }
+
+        } catch (error) {
+            console.error("Error updating notification level:", error);
+        } finally {
+            setModalVisible(false);
         }
-        setModalVisible(false);
     };
+
     if (isLoading) {
         return (
             <View className="items-center justify-center flex-1">
@@ -118,26 +281,32 @@ export default function NotificationDashboard() {
             </View>
         );
     }
+
     return (
         <>
             <View className="p-4 m-1 rounded-lg bg-card">
+                {/* {userData && (
+                    <View>
+                        <Text className="text-white">Username: {JSON.stringify(userData)}</Text>
+                    </View>
+                )} */}
                 <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
                 <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
 
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
                     <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted">
-                        <Text className="text-white">Use primary email (thomas.pedot@gmail.com)</Text>
+                        <Text className="text-white">Use primary email {global.notification_email}</Text>
                         <Ionicons name="chevron-down" size={18} color="#fff" />
                     </TouchableOpacity>
                 </View>
 
-                <View className="mb-6">
+                {/* {global && global.level && <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Global notification level</Text>
                     <Text className="mb-3 text-muted">By default, all projects and groups use the global notifications setting.</Text>
                     <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted" onPress={() => openModal('global')}>
-                        <Ionicons name={globalNotificationLevel.icon} size={18} color="#fff" />
-                        <Text className="text-white">{globalNotificationLevel.label}</Text>
+                        <Ionicons name={global.level.icon} size={18} color="#fff" />
+                        <Text className="text-white">{global.level.label}</Text>
                         <Ionicons name="chevron-down" size={18} color="#fff" />
                     </TouchableOpacity>
                     <View className='flex-row items-center'>
@@ -148,8 +317,9 @@ export default function NotificationDashboard() {
                         />
                         <Text className="ml-2 text-white">Owned activity ?</Text>
                     </View>
-                </View>
-                <Separator className="my-4 bg-secondary" />
+                </View>} */}
+
+                {/* <Separator className="my-4 bg-secondary" />
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Groups ({groups.length})</Text>
                     {groups.map((group, index) => (
@@ -180,7 +350,7 @@ export default function NotificationDashboard() {
                             </View>
                         </ScrollView>
                     ))}
-                </View>
+                </View> */}
                 <Separator className="my-4 bg-secondary" />
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Projects ({projects.length})</Text>
@@ -212,9 +382,6 @@ export default function NotificationDashboard() {
                                 </TouchableOpacity>
                             </View>
                         </ScrollView>
-
-
-
                     ))}
                 </View>
             </View>
@@ -226,7 +393,6 @@ export default function NotificationDashboard() {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-
                     <View className="justify-end flex-1 bg-black bg-opacity-50">
                         <View className="p-5 bg-card rounded-t-2xl">
                             <Text className="mb-4 text-4xl font-bold text-white">Select Notification Level</Text>
@@ -234,7 +400,7 @@ export default function NotificationDashboard() {
                                 <TouchableOpacity
                                     key={index}
                                     className="py-3 border-b border-muted"
-                                    onPress={() => selectNotificationLevel(level)}
+                                    onPress={() => selectNotificationLevel(level, projects, global, groups)}
                                 >
                                     <Text className="mb-1 text-xl font-bold text-white">{level.label}</Text>
                                     <Text className="text-muted">{level.description}</Text>
