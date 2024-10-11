@@ -106,7 +106,12 @@ class GitLabClient {
     },
 
   };
-
+  Groups = {
+    all: async (options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/groups?${queryString}`);
+    },
+  }
   Projects = {
     all: async (options = {}) => {
       const queryString = new URLSearchParams(options).toString();
@@ -242,6 +247,48 @@ class GitLabClient {
     },
     remove: async (projectId, userId) => {
       return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
+    },
+  }
+  //   const response = await axios.get(`${API_BASE_URL}/${type}s/${id}/notification_settings`, {
+  //     headers: { 'Authorization': `Bearer ${ACCESS_TOKEN}` }
+  // });
+  Notifications = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/notification_settings?${queryString}`);
+    },
+    show: async (projectId, userId) => {
+      return this.request(`/projects/${projectId}/notification_settings/${userId}`);
+    },
+    update: async (projectId, userId, data) => {
+      return this.request(`/projects/${projectId}/notification_settings/${userId}`, 'PUT', data);
+    },
+  }
+  GlobalNotification = {
+    all: async (options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/notification_settings?${queryString}`);
+    },
+    update: async (data) => {
+      return this.request(`/notification_settings`, 'PUT', data);
+    },
+  }
+  GroupNotifications = {
+    all: async (groupId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/groups/${groupId}/notification_settings?${queryString}`);
+    },
+    update: async (groupId, data) => {
+      return this.request(`/groups/${groupId}/notification_settings`, 'PUT', data);
+    },
+  }
+  ProjectNotifications = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/notification_settings?${queryString}`);
+    },
+    update: async (projectId, data) => {
+      return this.request(`/projects/${projectId}/notification_settings`, 'PUT', data);
     },
   }
 
