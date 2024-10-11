@@ -51,7 +51,7 @@ export default function ProjectDetailsScreen() {
   if (!isLoading) {
     branchesName = branches?.map(branch => branch.name);
     defaultBranchName = branches?.find(branch => branch.default)?.name || branches[0]?.name;
-    listItems = getWorkspaceItems({ project, mergeRequests, members, pipelines }, router);
+    listItems = getWorkspaceItems({ project, mergeRequests, members, pipelines, selectedBranch }, router);
     listItemsSecond = getCodeSectionItems(project, router, selectedBranch?.label || defaultBranchName);
   }
 
@@ -113,7 +113,6 @@ export default function ProjectDetailsScreen() {
       testID: "delete-project-option"
     }
   ];
-
 
   return (
     <SafeAreaView className="flex-1">

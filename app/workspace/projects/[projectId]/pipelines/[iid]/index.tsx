@@ -21,7 +21,7 @@ import { headerRightProjectPipeline } from "./headerRight";
 
 
 function JobItem({ job }) {
-    console.log("🚀 ~ JobItem ~ job:", job.web_url)
+
     const [isOpen, setIsOpen] = useState(false);
 
     const handleViewDetails = () => {
