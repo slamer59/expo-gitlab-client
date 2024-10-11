@@ -45,6 +45,7 @@ export const useGitLab = (client: GitLabClient) => {
         useIssues: (params: any) => createQueryHook(['issues', params], () => client.Issues.all(params))(),
         useIssueDiscussion: (projectId: string, issueId: string, discussionId: string) => createQueryHook(['issueDiscussion', projectId, issueId, discussionId], () => client.Discussions.show(projectId, issueId, discussionId))(),
         useMergeRequests: (params: any) => createQueryHook(['mergeRequests', params], () => client.MergeRequests.all(params))(),
+
     };
 
     const mutationHooks = {
