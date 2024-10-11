@@ -23,7 +23,11 @@
     "maestro:studio": "maestro studio",
     "ts-check": "tsc --noEmit",
     "licences": "bunx generate-license-file --input ./package.json --output ./third-party-licenses.txt --overwrite",
-    "push-google-service-secret": "eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json"
+    "push-google-service-secret": "eas secret:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json",
+    "firebase:env": "source ./firebase-functions/gitlab-events/functions/venv/bin/activate",
+    "firebase:build": "npm run firebase:env && cd ./firebase-functions/gitlab-events/functions && uv pip install .",
+    "firebase:emulators": "npm run firebase:env  && cd ./firebase-functions/gitlab-events && firebase emulators:start",
+    "firebase:deploy-functions": "npm run firebase:env  && cd ./firebase-functions/gitlab-events && firebase deploy --only functions"
   },
   "jest": {
     "preset": "jest-expo"
@@ -90,6 +94,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-task-manager": "^11.8.2",
     "expo-web-browser": "~13.0.3",
+    "firebase": "^10.14.1",
     "lucide-react-native": "^0.378.0",
     "nativewind": "^4.0.33",
     "openapi-client-axios": "^7.5.5",
@@ -114,7 +119,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
-    "zustand": "^4.4.7"
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

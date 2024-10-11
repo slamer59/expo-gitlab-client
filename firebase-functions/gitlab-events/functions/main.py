@@ -7,6 +7,7 @@ from notifications import (
     add_device_to_notification_group,
     list_devices_with_group_id,
     send_push_message,
+    users_from_project_id,
 )
 
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
@@ -41,6 +42,9 @@ def get_url_from_project_id(project_id):
 
 
 def get_push_tokens(db, project_id):
+    users = users_from_project_id(db, project_id)
+    print("users)", users)
+    print("🚀 ~ project_id:", project_id)
     # Query the Firestore collection for the project ID
     notification_group_id = get_url_from_project_id(project_id)
     # logger.info(f"Project URL: {project_url}")
@@ -58,6 +62,298 @@ def get_push_tokens(db, project_id):
     #     return []
 
 
+class NotificationSetting:
+    class Level:
+        GLOBAL = "global"
+        WATCH = "watch"
+        PARTICIPATING = "participating"
+        ON_MENTION = "mention"
+        DISABLED = "disabled"
+        CUSTOM = "custom"
+
+    # email_events = [
+    #     "new_note",
+    #     "new_issue",
+    #     "reopen_issue",
+    #     "close_issue",
+    #     "reassign_issue",
+    #     "issue_due",
+    #     "new_merge_request",
+    #     "push_to_merge_request",
+    #     "reopen_merge_request",
+    #     "close_merge_request",
+    #     "reassign_merge_request",
+    #     "merge_merge_request",
+    #     "failed_pipeline",
+    #     "fixed_pipeline",
+    #     "success_pipeline",
+    #     "moved_project",
+    #     "merge_when_pipeline_succeeds",
+    #     "new_epic",
+    # ]
+
+    notification_matrix = {
+        "push": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "tag_push": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "issue": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "note": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "wiki_page": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "pipeline": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "build": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "deployment": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "feature_flag": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "release": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "emoji": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "access_token": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "new_note": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "new_issue": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "reopen_issue": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "close_issue": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "reassign_issue": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "issue_due": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "new_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "push_to_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "reopen_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "close_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "reassign_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "merge_merge_request": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "failed_pipeline": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "fixed_pipeline": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "success_pipeline": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "moved_project": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "merge_when_pipeline_succeeds": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: False,
+            Level.ON_MENTION: False,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+        "new_epic": {
+            Level.GLOBAL: True,
+            Level.WATCH: True,
+            Level.PARTICIPATING: True,
+            Level.ON_MENTION: True,
+            Level.DISABLED: False,
+            Level.CUSTOM: True,
+        },
+    }
+
+    @staticmethod
+    def should_notify(user_settings, event):
+        level = user_settings.get(
+            "notification_level", NotificationSetting.Level.DISABLED
+        )
+        if level == NotificationSetting.Level.CUSTOM:
+            custom_events = user_settings.get("custom_events", [])
+            return event in custom_events
+        return NotificationSetting.notification_matrix.get(event, {}).get(level, False)
+
+
 @https_fn.on_request()
 def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
 
@@ -65,12 +361,25 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     # Get list of push tokens
     project_id = get_project_id(data)
     logger.info(f"Project ID: {project_id}")
-    push_tokens = get_push_tokens(db, project_id)
-    # logger.info(f"Push tokens: {push_tokens}")
-    # push_tokens = ["ExponentPushToken[8i6Z2PGCrtfL2ZchhUHdKA]"]
+    #########
+    users_settings = users_from_project_id(db, project_id)
 
+    # logger.info("user_settings ", users_settings)
+
+    # Filter push_tokens based on user settings
+    event_type = data.get("object_kind")
+    # logger.info("event_type ", event_type)
+    filtered_push_tokens = [
+        user["expoToken"]
+        for user in users_settings
+        if NotificationSetting.should_notify(user, event_type)
+    ]
+    logger.info("filtered_push_tokens ", filtered_push_tokens)
+
+    # push_tokens = get_push_tokens(db, project_id)
     # Handle the event based on its type
-    event_messages = handle_event(data, push_tokens)
+    # logger.info("push_tokens", push_tokens)
+    event_messages = handle_event(data, filtered_push_tokens)
     # Send the push notification to the device
     # logger.info(event_messages.model_dump(mode="json")["messages"])
     response = send_push_message(event_messages.model_dump(mode="json")["messages"])
