@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
+import { copyToClipboard } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { router, Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -20,13 +21,11 @@ import { headerRightProjectPipeline } from "./headerRight";
 
 
 function JobItem({ job }) {
+    console.log("🚀 ~ JobItem ~ job:", job.web_url)
     const [isOpen, setIsOpen] = useState(false);
-    const copyToClipboard = async () => {
-        await Clipboard.setStringAsync(job.web_url);
-    };
 
     const handleViewDetails = () => {
-        router.push(`/workspace/projects/${job.project_id}/jobs/${job.id}`);
+        router.push(`/workspace/projects/${job.pipeline.project_id}/jobs/${job.id}`);
     };
 
     const handleRetry = () => {
@@ -87,7 +86,7 @@ function JobItem({ job }) {
 
                         </View>
                         <View className="flex-row justify-end p-2">
-                            <TouchableOpacity onPress={copyToClipboard} className="mr-4">
+                            <TouchableOpacity onPress={async () => await copyToClipboard(job.web_url)} className="mr-4">
                                 <Ionicons name="share-outline" size={20} color="white" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleViewDetails} className="mr-4">

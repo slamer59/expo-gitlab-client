@@ -6,10 +6,10 @@ import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
 
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native";
 
-export default function ProjectMergeRequestsList() {
+export default function ProjectPipelineList() {
     const { session } = useSession();
     const client = new GitLabClient({
         url: session?.url,
@@ -17,6 +17,7 @@ export default function ProjectMergeRequestsList() {
     });
 
     const api = useGitLab(client);
+    const { projectId } = useLocalSearchParams();
 
     const UIFilters = GlobalPipelinesUIFilters
     const defaultParams = extractDefaultFilters(UIFilters);
@@ -37,6 +38,7 @@ export default function ProjectMergeRequestsList() {
             />
             <ListWithFilters
                 UIFilters={UIFilters}
+                itemId={projectId}
                 queryFn={api.useProjectPipelines}
                 ItemComponent={PipelineCard}
                 SkeletonComponent={PipelineCardSkeleton}
