@@ -1,4 +1,3 @@
-python_version>=3.10
 firebase_functions
 firebase_admin
 exponent_server_sdk
