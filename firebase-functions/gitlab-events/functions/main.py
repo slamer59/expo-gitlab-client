@@ -361,7 +361,6 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     # Get list of push tokens
     project_id = get_project_id(data)
     logger.info(f"Project ID: {project_id}")
-    #########
     users_settings = users_from_project_id(db, project_id)
 
     # logger.info("user_settings ", users_settings)
