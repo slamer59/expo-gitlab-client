@@ -310,6 +310,7 @@ class GitLabClient {
       return this.request(`/users/${userId}/groups`, 'GET', options);
     },
     starred_projects: async (userId, options = {}) => {
+      console.log("🚀 ~ GitLabClient ~ starred_projects: ~ userId:", userId)
       return this.request(`/users/${userId}/starred_projects`, 'GET', options);
     },
     show: async (userId, options = {}) => {

@@ -52,6 +52,12 @@ export default function Home() {
       screen: "workspace/projects/list",
       itemColor: "bg-projects"
     },
+    {
+      icon: "star-outline",
+      text: "Starred",
+      screen: "workspace/starred/list",
+      itemColor: "bg-starred"
+    },
     // Development-only buttons
     ...(devModeEnabled ? [
       {
@@ -72,12 +78,7 @@ export default function Home() {
         screen: "workspace/organizations/list",
         itemColor: "bg-organizations"
       },
-      {
-        icon: "star-outline",
-        text: "Starred",
-        screen: "workspace/starred/list",
-        itemColor: "bg-starred"
-      },
+
       {
         icon: "arrow-forward",
         text: "DevGitlabNotification",
