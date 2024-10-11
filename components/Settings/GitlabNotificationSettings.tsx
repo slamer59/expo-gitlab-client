@@ -1,10 +1,9 @@
 import { firebaseConfig } from '@/lib/firebase/helpers';
-import { getExpoToken } from '@/lib/gitlab/helpers';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Separator } from '../ui/separator';
@@ -28,29 +27,6 @@ if (!getApps().length) {
 
 
 const db = getFirestore(app);
-
-async function addSampleData(expoToken) {
-    try {
-        const currentDate = new Date().toISOString();
-
-        await setDoc(doc(db, "userNotifications", expoToken), {
-            changedDate: currentDate,
-            notifications: [
-                {
-                    id: 59853773,
-                    notification_level: "mention", //"global", //"custom", //"disabled", // "mention"
-                    name: "expo-app",
-                    http_url: "https://gitlab.com/thomas.pedot1/expo-gitlab-client",
-                    custom_events: ['new_issue', 'close_issue'] //, "push"]  // Only relevant if level is CUSTOM
-
-                }
-            ]
-        });
-        console.log("Sample data added successfully");
-    } catch (error) {
-        console.error("Error adding sample data: ", error);
-    }
-}
 
 interface UserNotificationData {
     changedDate: string;
@@ -87,28 +63,6 @@ async function updateNotificationLevel(expoToken: string, projectId: number, not
     }
 }
 
-async function fetchUserData(expoToken: string) {
-    try {
-        const docRef = doc(db, "userNotifications", expoToken);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const userData = docSnap.data();
-            console.log("User data:", userData);
-            return {
-                changedDate: userData.changedDate,
-                notifications: userData.notifications
-            };
-        } else {
-            console.log("No such document!");
-            return null;
-        }
-    } catch (error) {
-        console.error("Error fetching user data: ", error);
-        return null;
-    }
-}
-
 
 export default function NotificationDashboard() {
     const [groups, setGroups] = useState([]);
@@ -116,10 +70,12 @@ export default function NotificationDashboard() {
     // console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
     const [global, setGlobal] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
+
     const [selectedItemType, setSelectedItemType] = useState('');
     const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
     const [isLoading, setIsLoading] = useState(true);
     const [isChecked, setIsChecked] = useState(false);
+
     // Initialize Firebase
     // const [userData, setUserData] = useState(null);
 
@@ -128,31 +84,6 @@ export default function NotificationDashboard() {
 
 
     useEffect(() => {
-        const initializeData = async () => {
-            try {
-                const token = await getExpoToken();
-                if (!token) {
-                    throw new Error('Failed to retrieve Expo token');
-                }
-
-                // console.log("Expo token retrieved:", token);
-                await addSampleData(token);
-
-                const data = await fetchUserData(token);
-                if (!data) {
-                    throw new Error('No user data received');
-                }
-
-                // setUserData(data);
-            } catch (err) {
-                console.error('Error initializing data:', err);
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        initializeData()
-
         const fetchData = async () => {
             setIsLoading(true);
             try {
@@ -214,63 +145,6 @@ export default function NotificationDashboard() {
         setSelectedItemType(type);
         setSelectedItemIndex(index);
         setModalVisible(true);
-    };
-
-    const selectNotificationLevel = async (level, projects, global, groups) => {
-        try {
-            const expoToken = await getExpoToken();
-            if (!expoToken) {
-                throw new Error('Failed to retrieve Expo token');
-            }
-
-            let updatedNotifications;
-
-            if (selectedItemType === 'global') {
-                updatedNotifications = projects.map(project => ({
-                    id: project.id,
-                    name: project.name,
-                    // http_url: project.http_url,
-                    notification_level: level.value,
-                    custom_events: [] // Set this based on your requirements
-                }));
-            } else if (selectedItemType === 'group') {
-                updatedNotifications = projects.map(project => ({
-                    id: project.id,
-                    name: project.name,
-                    // http_url: project.http_url,
-                    notification_level: project.id === groups[selectedItemIndex].id ? level.value : project.level.value,
-                    custom_events: [] // Set this based on your requirements
-                }));
-            } else if (selectedItemType === 'project') {
-                updatedNotifications = projects.map((project, index) => ({
-                    id: project.id,
-                    name: project.name,
-                    // http_url: project.http_url,
-                    notification_level: index === selectedItemIndex ? level.value : project.level.value,
-                    custom_events: [] // Set this based on your requirements
-                }));
-            }
-
-            await updateNotificationLevel(expoToken, null, updatedNotifications);
-
-            // Update local state
-            if (selectedItemType === 'global') {
-                setGlobal(level);
-            } else if (selectedItemType === 'group') {
-                setGroups(groups.map((group, index) =>
-                    index === selectedItemIndex ? { ...group, level } : group
-                ));
-            } else if (selectedItemType === 'project') {
-                setProjects(projects.map((project, index) =>
-                    index === selectedItemIndex ? { ...project, level } : project
-                ));
-            }
-
-        } catch (error) {
-            console.error("Error updating notification level:", error);
-        } finally {
-            setModalVisible(false);
-        }
     };
 
     if (isLoading) {
@@ -410,6 +284,7 @@ export default function NotificationDashboard() {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+
         </>
     );
 }

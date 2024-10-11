@@ -1,9 +1,7 @@
 import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mapDeviceToProject } from "@/lib/firebase/helpers";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { getExpoToken } from "@/lib/gitlab/helpers";
 import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
 import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +14,6 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
 const useDevFeature = (flagName) => {
   const isDev = __DEV__;
-  // console.log(`__DEV__ is ${isDev}`);
   const featureEnabled = useFeatureFlag(flagName);
   // console.log(`Feature ${flagName} is ${featureEnabled ? 'enabled' : 'disabled'}`);
   // console.log(`Returning ${isDev || featureEnabled}`);
@@ -152,6 +149,7 @@ export default function Home() {
   ];
   const [showWelcomeCard, setShowWelcomeCard] = useState(true);
 
+
   useEffect(() => {
     const loadWelcomeCardState = async () => {
       try {
@@ -182,18 +180,6 @@ export default function Home() {
   });
 
 
-  const fetchExpoToken = async () => {
-    try {
-      const token = await getExpoToken();
-      console.log("Expo token retrieved successfully");
-      return token;
-    } catch (error) {
-      console.error("Error getting Expo token:", error);
-      setAlert({ message: `Error getting Expo token: ${error.message}`, isOpen: true });
-      return null;
-    }
-  };
-
   const prepareProjects = (projects) => {
     if (!projects) {
       console.error("Projects are undefined");
@@ -217,16 +203,6 @@ export default function Home() {
     }
   };
 
-  const mapDevice = async (token, projects) => {
-    try {
-      await mapDeviceToProject(token, projects);
-      console.log("Device mapped to project successfully");
-    } catch (error) {
-      console.error("Error mapping device to project:", error);
-      setAlert({ message: `Error mapping device to project: ${error.message}`, isOpen: true });
-    }
-  };
-
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
@@ -235,14 +211,11 @@ export default function Home() {
           return;
         }
 
-        const token = await fetchExpoToken();
-        if (!token) return;
 
         const projects = prepareProjects(personalProjects);
         if (!projects) return;
 
         await updateWebhooks(session, projects);
-        await mapDevice(token, projects);
       };
 
       fetchData();
