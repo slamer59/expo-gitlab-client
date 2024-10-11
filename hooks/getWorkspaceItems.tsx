@@ -11,7 +11,8 @@ interface IProject {
     pipelines: any[];
 }
 
-export function getWorkspaceItems(projectDetails: IProject, router: Router): IListItems[] {
+export function getWorkspaceItems(projectDetails: IProject, router: Router, selectedBranch: string): IListItems[] {
+
     return [
         {
             icon: "alert-circle-outline",
@@ -51,8 +52,15 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
                     icon: "document-text-outline",
                     text: "Licences",
                     kpi: "",
-                    onAction: () => router.push(
-                        `workspace/projects/${projectDetails?.project?.id}/licence`
+                    onAction: () => router.push({
+                        pathname: "/tree/[projectId]/[fileId]",
+                        params: {
+                            projectId: projectDetails?.project?.id,
+                            path: encodeURIComponent(projectDetails?.project?.license_url),
+                            fileId: encodeURIComponent(projectDetails?.project?.license_url),
+                            ref: selectedBranch || projectDetails?.project?.default_branch,
+                        }
+                    }
                     ),
                     itemColor: "bg-licences",
                 },
@@ -64,9 +72,15 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router): ILi
                     icon: "document-text",
                     text: "README",
                     kpi: "",
-                    onAction: () => router.push(
-                        `workspace/projects/${projectDetails?.project?.id}/readme`
-                    ),
+                    onAction: () => router.push({
+                        pathname: "/tree/[projectId]/[fileId]",
+                        params: {
+                            projectId: projectDetails?.project?.id,
+                            path: "README.md",//encodeURIComponent(projectDetails?.project?.readme_url),
+                            fileId: "README.md",
+                            ref: selectedBranch || projectDetails?.project?.default_branch,
+                        }
+                    }),
                     itemColor: "bg-licences",
                 },
             ]
