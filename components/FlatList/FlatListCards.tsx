@@ -1,6 +1,6 @@
 import { Issue } from "@/lib/gitlab/future/repository";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { EmptyComponent } from "./EmptyComponent";
 
@@ -23,7 +23,7 @@ type ListComponentProps<T extends ListItem> = {
 
 export function FlatListCards<T extends ListItem>({
   items,
-  useScreenStore,
+  // useScreenStore,
   ItemComponent,
   SkeletonComponent,
   pathname,
@@ -31,27 +31,38 @@ export function FlatListCards<T extends ListItem>({
   isLoading,
   error,
   handleLoadMore,
-  handleRefresh
+  // handleRefresh
 }: ListComponentProps<T>) {
   const router = useRouter();
+  const MemoizedItemComponent = React.memo(ItemComponent);
+  const getParams = useMemo(() => (item: T) =>
+    Object.entries(paramsMap).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: item[value],
+      }),
+      {}
+    ), [paramsMap]);
+  const ITEM_HEIGHT = 100; // Adjust this value based on your item height
   return (
     <>
       <FlatList
         data={items}
-        renderItem={({ item }: { item: Issue }) => (
-          <TouchableOpacity
+        renderItem={({ item }: { item: Issue }) => {
+          const params = getParams(item);
+          return <TouchableOpacity
             key={item.id}
             onPress={() => {
               router.push({
                 pathname: pathname,
-                params: paramsMap,
+                params: params,
               });
             }}
             testID={`card-${item.id}`}
           >
-            <ItemComponent item={item} />
+            <MemoizedItemComponent item={item} />
           </TouchableOpacity>
-        )}
+        }}
         keyExtractor={(item) => item.id.toString()}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
@@ -64,10 +75,15 @@ export function FlatListCards<T extends ListItem>({
             </View>
           ) : null
         }
-        refreshing={isLoading && useScreenStore.getState().page === 1}
-        onRefresh={handleRefresh}
+        // refreshing={isLoading && useScreenStore.getState().page === 1}
+        // onRefresh={handleRefresh}
         ListEmptyComponent={() => EmptyComponent(items, isLoading, error)}
-
+        windowSize={5}
+        removeClippedSubviews={true}
+        // Uncomment and adjust if you know your item height
+        getItemLayout={(data, index) => (
+          { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
+        )}
       />
     </>
   );

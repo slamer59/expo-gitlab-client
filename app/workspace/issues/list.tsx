@@ -1,13 +1,13 @@
-import { IssueCard, IssueCardSkeleton } from "@/components/Issue/issue-card";
-import ListWithFilters from "@/components/ListWithFilters";
-import { GlobalIssueUIFilters } from "@/constants/UIFilters";
-import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
-import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { useSession } from "@/lib/session/SessionProvider";
-import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
-import { Stack } from "expo-router";
-import React from "react";
-import { ScrollView } from "react-native";
+import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
+import { FlatListCards } from '@/components/FlatList/FlatListCards';
+import { IssueCard, IssueCardSkeleton } from '@/components/Issue/issue-card';
+import { GlobalIssueUIFilters } from '@/constants/UIFilters';
+import { createScreenStore } from '@/lib/filter/state';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+import { Stack } from 'expo-router';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { ScrollView, View } from 'react-native';
 
 
 export default function IssuesListScreen() {
@@ -17,37 +17,61 @@ export default function IssuesListScreen() {
         token: session?.token,
     });
 
-    const api = useGitLab(client);
-
     const UIFilters = GlobalIssueUIFilters;
-    const defaultParams = extractDefaultFilters(UIFilters);
-    const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
+    const useScreenStore = useMemo(() => createScreenStore(client.Issues.all, undefined, UIFilters), []);
+    const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
     const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
     const paramsMap = {
         "projectId": "project_id", "issue_iid": "iid"
     }
+    useEffect(() => {
+        // reset(); // Reset the store when the component mounts
+        fetchItems(true);
+    }, [filters, fetchItems]);
+
+
+    const handleLoadMore = useCallback(() => {
+        if (!loading) {
+            fetchItems();
+        }
+    }, [loading, fetchItems]);
 
     return (
-        <ScrollView
+        <View
             className="flex-1 p-2 bg-background"
-            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
         >
             <Stack.Screen
                 options={{
                     headerTitle: "Issues",
                 }}
             />
+            <View className="*:mb-2 flex-col justify-between">
+                <ScrollView horizontal className='px-2'>
 
-            <ListWithFilters
-                UIFilters={UIFilters}
-                queryFn={api.useIssues}
-                ItemComponent={IssueCard}
-                SkeletonComponent={IssueCardSkeleton}
-                pathname={pathname}
-                paramsMap={paramsMap}
-                defaultParams={defaultParams}
-                defaultUIFilterValues={defaultUIFilterValues}
-            />
-        </ScrollView>
+                    {UIFilters.map((filter, index) => (
+                        <FlatFilterButton
+                            key={index}
+                            options={filter.options}
+                            placeholder={filter.placeholder}
+                            selectedValue={filters[filter.label]}
+                            onValueChange={(option) => setFilter(filter.label.toLowerCase(), option.value)}
+                        />
+                    ))}
+                </ScrollView>
+                <FlatListCards
+                    items={items}
+                    handleLoadMore={handleLoadMore}
+                    ItemComponent={IssueCard}
+                    SkeletonComponent={IssueCardSkeleton}
+                    pathname={pathname}
+                    paramsMap={paramsMap}
+                    isLoading={loading}
+                    error={error}
+                />
+
+            </View>
+        </View>
     );
-}
+
+
+};
