@@ -84,6 +84,8 @@ export function FlatListCards<T extends ListItem>({
         getItemLayout={(data, index) => (
           { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
         )}
+        contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+
       />
     </>
   );
