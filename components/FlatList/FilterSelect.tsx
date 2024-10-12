@@ -3,17 +3,18 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
 import React from 'react';
 
+interface FilterOption {
+    label: string;
+    value: string;
+}
+
 interface FilterProps {
-    options: {
-        label: string;
-        value: string;
-    }[];
+    options: FilterOption[];
     placeholder: string;
     selectedValue: string;
     onValueChange: (value: string) => void;
@@ -23,8 +24,8 @@ export function FlatFilterButton({
     options,
     placeholder,
     selectedValue,
-    onValueChange }: FilterProps) {
-
+    onValueChange
+}: FilterProps) {
     return (
         <Select
             className='m-2'
@@ -32,31 +33,30 @@ export function FlatFilterButton({
             onValueChange={onValueChange}
         >
             <SelectTrigger
-                className='flex-row items-center justify-center flex-1 bg-filters rounded-3xl'
+                className="flex-row items-center justify-between px-4 py-2 rounded-full bg-filters"
             >
                 <SelectValue
-                    className='mr-1 text-sm font-bold text-white'
+                    className="text-sm font-semibold text-white"
                     placeholder={placeholder}
                 />
+                {/* <ChevronDownIcon className="w-4 h-4 text-white" /> */}
             </SelectTrigger>
             <SelectContent
-                className='max-h-screen mt-1 font-bold rounded-2xl bg-filters'
+                className="max-h-screen mt-1 text-white border border-gray-700 rounded-2xl bg-filters"
             >
                 <SelectGroup>
-                    <SelectLabel>
-                        {"Items"}
-                    </SelectLabel>
-                    {Object.keys(options).map((key, index) => (
+                    {options.map((option, index) => (
                         <SelectItem
                             key={index}
-                            label={options[key].label}
-                            value={options[key].value}
+                            label={option.label}
+                            value={option.value}
+                            className="px-4 py-2 text-sm text-white "
                         >
-                            {options[key].label}
+                            {option.label}
                         </SelectItem>
                     ))}
                 </SelectGroup>
             </SelectContent>
-        </Select >
+        </Select>
     );
 }

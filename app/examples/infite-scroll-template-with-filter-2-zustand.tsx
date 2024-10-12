@@ -6,6 +6,7 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { extractDefaultUIOptions } from '@/lib/utils';
+import { Stack } from 'expo-router';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 import { create } from 'zustand';
@@ -14,7 +15,7 @@ const PROJECT_ID = '59853773';
 
 export const UIFilters = GlobalIssueUIFilters;
 
-interface Issue {
+interface Item {
     id: number;
     web_url: string;
     state: string;
@@ -29,13 +30,13 @@ interface FilterState {
 }
 
 interface ScreenState {
-    items: Issue[];
+    items: Item[];
     page: number;
     loading: boolean;
     filters: FilterState;
     hasMore: boolean;
     error: string | null;
-    setItems: (items: Issue[]) => void;
+    setItems: (items: Item[]) => void;
     setPage: (page: number) => void;
     setLoading: (loading: boolean) => void;
     setFilter: (key: string, value: string) => void;
@@ -122,7 +123,6 @@ const GitLabProjectsList = () => {
 
     const useScreenStore = useMemo(() => createScreenStore(client.ProjectIssues.all, PROJECT_ID), []);
     const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
-    console.log("🚀 ~ GitLabProjectsList ~ filters:", filters)
     const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
     const pathname = "/workspace/projects/[projectId]/issues/[issue_iid]"
     const paramsMap = {
@@ -143,52 +143,42 @@ const GitLabProjectsList = () => {
         fetchItems(true);
     }, [fetchItems]);
 
-    // const FilterButton = useCallback(({ option, filterKey }: { option: any, filterKey: string }) => (
-    //     <TouchableOpacity
-    //         className={`py-1.5 px-3 rounded-full bg-gray-200 mr-2 mb-2 ${filters[filterKey] === option.value ? 'bg-blue-500' : ''}`}
-    //         onPress={() => setFilter(filterKey, option.value)}
-    //     >
-    //         <Text className={`text-xs ${filters[filterKey] === option.value ? 'text-white' : 'text-gray-700'}`}>
-    //             {option.label}
-    //         </Text>
-    //     </TouchableOpacity>
-    // ), [filters, setFilter]);
-
     return (
-        <View className="flex-1 p-2.5">
-            <ScrollView horizontal className="flex-row mb-2.5">
-                {/* {UIFilters.map((filter, index) => (
-                    <View key={index} className="mr-4">
-                        <Text className="mb-1 text-base font-bold">{filter.label}</Text>
-                        <View className="flex-row flex-wrap">
-                            {filter.options.map((option, optionIndex) => (
-                                <FilterButton key={optionIndex} option={option} filterKey={filter.label.toLowerCase()} />
-                            ))}
-                        </View>
-                    </View>
-                ))} */}
-                {UIFilters.map((filter, index) => (
-                    <FlatFilterButton
-                        key={index}
-                        options={filter.options}
-                        placeholder={filter.placeholder}
-                        selectedValue={filters[filter.label]}
-                        onValueChange={(option) => setFilter(filter.label.toLowerCase(), option.value)}
-                    />
-                ))}
-            </ScrollView>
-            <FlatListCards
-                items={items}
-                useScreenStore={useScreenStore}
-                handleLoadMore={handleLoadMore}
-                handleRefresh={handleRefresh}
-                ItemComponent={IssueCard}
-                SkeletonComponent={IssueCardSkeleton}
-                pathname={pathname}
-                paramsMap={paramsMap}
-                isLoading={loading}
-                error={error}
+        <View
+            className="flex-1 p-2 bg-background"
+        >
+            <Stack.Screen
+                options={{
+                    headerTitle: "Issues",
+                }}
             />
+            <View className="*:mb-2 flex-col justify-between">
+                <ScrollView horizontal className='px-2'>
+
+                    {UIFilters.map((filter, index) => (
+                        <FlatFilterButton
+                            key={index}
+                            options={filter.options}
+                            placeholder={filter.placeholder}
+                            selectedValue={filters[filter.label]}
+                            onValueChange={(option) => setFilter(filter.label.toLowerCase(), option.value)}
+                        />
+                    ))}
+                </ScrollView>
+                <FlatListCards
+                    items={items}
+                    useScreenStore={useScreenStore}
+                    handleLoadMore={handleLoadMore}
+                    handleRefresh={handleRefresh}
+                    ItemComponent={IssueCard}
+                    SkeletonComponent={IssueCardSkeleton}
+                    pathname={pathname}
+                    paramsMap={paramsMap}
+                    isLoading={loading}
+                    error={error}
+                />
+
+            </View>
         </View>
     );
 

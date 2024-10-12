@@ -77,6 +77,7 @@ export default function FileView() {
     const { content, commit, file_path, file_name, encoding } = file || {};
     // console.log('File:', content);
     return (
+
         <ScrollView
             className="flex-1 p-2 bg-card"
             contentContainerStyle={{ paddingBottom: 100 }}

@@ -1,14 +1,14 @@
+import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
+import { FlatListCards } from '@/components/FlatList/FlatListCards';
+import { MergeRequestCard, MergeRequestCardSkeleton } from '@/components/MergeRequest/mr-card';
+import { GlobalMergeRequestUIFilters } from '@/constants/UIFilters';
+import { createScreenStore } from '@/lib/filter/state';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+import { Stack } from 'expo-router';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { ScrollView, View } from 'react-native';
 
-import ListWithFilters from "@/components/ListWithFilters";
-import { MergeRequestCard, MergeRequestCardSkeleton } from "@/components/MergeRequest/mr-card";
-import { GlobalMergeRequestUIFilters } from "@/constants/UIFilters";
-import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
-import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { useSession } from "@/lib/session/SessionProvider";
-import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
-import { Stack } from "expo-router";
-import React from "react";
-import { ScrollView } from "react-native";
 
 export default function MergeRequestsListScreen() {
     const { session } = useSession();
@@ -16,12 +16,10 @@ export default function MergeRequestsListScreen() {
         url: session?.url,
         token: session?.token,
     });
-
-    const api = useGitLab(client);
-
     const UIFilters = GlobalMergeRequestUIFilters
-    const defaultParams = extractDefaultFilters(UIFilters);
-    const defaultUIFilterValues = extractDefaultUIOptions(UIFilters);
+    const useScreenStore = useMemo(() => createScreenStore(client.MergeRequests.all, undefined, UIFilters), []);
+    const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
+
     const pathname = "/workspace/projects/[projectId]/merge-requests/[mr_iid]"
 
     const paramsMap = {
@@ -29,27 +27,54 @@ export default function MergeRequestsListScreen() {
         mr_iid: "iid",
     }
 
+    useEffect(() => {
+        // reset(); // Reset the store when the component mounts
+        fetchItems(true);
+    }, [filters, fetchItems]);
+
+
+    const handleLoadMore = useCallback(() => {
+        if (!loading) {
+            fetchItems();
+        }
+    }, [loading, fetchItems]);
+
     return (
-        <ScrollView
+        <View
             className="flex-1 p-2 bg-background"
-            contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
         >
             <Stack.Screen
                 options={{
-                    title: "Merge Requests",
-                    // ...defaultOptionsHeader
+                    headerTitle: "Merge Requests",
                 }}
             />
-            <ListWithFilters
-                UIFilters={UIFilters}
-                queryFn={api.useMergeRequests}
-                ItemComponent={MergeRequestCard}
-                SkeletonComponent={MergeRequestCardSkeleton}
-                pathname={pathname}
-                paramsMap={paramsMap}
-                defaultParams={defaultParams}
-                defaultUIFilterValues={defaultUIFilterValues}
-            />
-        </ScrollView>
+            <View className="*:mb-2 flex-col justify-between">
+                <ScrollView horizontal className='px-2'>
+
+                    {UIFilters.map((filter, index) => (
+                        <FlatFilterButton
+                            key={index}
+                            options={filter.options}
+                            placeholder={filter.placeholder}
+                            selectedValue={filters[filter.label]}
+                            onValueChange={(option) => setFilter(filter.label.toLowerCase(), option.value)}
+                        />
+                    ))}
+                </ScrollView>
+                <FlatListCards
+                    items={items}
+                    handleLoadMore={handleLoadMore}
+                    ItemComponent={MergeRequestCard}
+                    SkeletonComponent={MergeRequestCardSkeleton}
+                    pathname={pathname}
+                    paramsMap={paramsMap}
+                    isLoading={loading}
+                    error={error}
+                />
+
+            </View>
+        </View>
     );
-}
+
+
+};
