@@ -1,0 +1,73 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Filter } from "./FilterSelect";
+
+interface Filter {
+    label: string;
+    options: {
+        label: string;
+        value: string;
+    }[]
+    placeholder: string;
+}
+interface FilterFormProps {
+    onFiltersChange: (filters: Record<string, string>) => void;
+    UIFilters: Filter[];
+    defaultUIFilterValues: Record<string, string>;
+}
+export default function FilterForm({ onFiltersChange, UIFilters, defaultUIFilterValues }: FilterFormProps) {
+    const [selectedFilters, setSelectedFilters] = useState(defaultUIFilterValues || {});
+
+    const handleFilterChange = (filterLabel, value) => {
+        setSelectedFilters(prevFilters => {
+            const newFilters = {
+                ...prevFilters,
+                [filterLabel]: value
+            };
+
+            if (value === '') {
+                delete newFilters[filterLabel];
+            }
+
+            return newFilters;
+        });
+    };
+
+    const resetAllFilters = () => {
+        setSelectedFilters(defaultUIFilterValues || {});
+    };
+
+    useEffect(() => {
+        onFiltersChange(selectedFilters);
+    }, [selectedFilters, onFiltersChange]);
+
+    return (
+        <ScrollView
+            horizontal
+            className="flex flex-row mb-2 ml-4 bg-transparent max-h-16"
+        >
+            <View className="flex-row items-center justify-between mt-4 mb-4 mr-2">
+                <TouchableOpacity
+                    onPress={resetAllFilters}
+                    className="items-center justify-center" // m-1 bg-transparent bg-white rounded-3xl"
+                >
+                    <Ionicons
+                        name="close-circle-outline"
+                        size={24}
+                        color="red"
+                    />
+                </TouchableOpacity>
+            </View>
+            {UIFilters.map((filter, index) => (
+                <Filter
+                    key={index}
+                    options={filter.options}
+                    placeholder={filter.placeholder}
+                    selectedValue={selectedFilters[filter.label]}
+                    onValueChange={(value) => handleFilterChange(filter.label, value)}
+                />
+            ))}
+        </ScrollView>
+    );
+}
