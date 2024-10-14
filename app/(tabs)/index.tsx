@@ -106,6 +106,12 @@ export default function Home() {
       // Tree 
       {
         icon: "arrow-forward",
+        text: "DevFileDisplay",
+        screen: "tree/59853773/",
+        itemColor: "bg-tree"
+      },
+      {
+        icon: "arrow-forward",
         text: "DevFolderTree",
         screen: "tree/59853773",
         itemColor: "bg-tree"
