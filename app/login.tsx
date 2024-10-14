@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, Linking, View } from 'react-native';
 
 export default function LoginScreen() {
+
     const [url, setUrl] = useState('https://gitlab.com');
     const [token, setToken] = useState('');
     const navigation = useNavigation();
@@ -48,7 +49,7 @@ export default function LoginScreen() {
     }
 
     function openUserSettingsPAT() {
-        Linking.openURL('https://gitlab.com/-/profile/personal_access_tokens');
+        Linking.openURL(`${url}/-/profile/personal_access_tokens`);
     }
 
     function openTokenInfoPage() {
