@@ -83,7 +83,7 @@ export default function LoginScreen() {
             />
 
             <Input
-                className="w-full px-3 py-2 mb-6 text-black bg-white rounded-lg native:h-14"
+                className="w-full px-3 py-2 mb-6 font-bold text-black bg-white rounded-lg native:h-14"
                 placeholder="Enter your GitLab Personal Access Token (PAT)"
                 value={token}
                 onChangeText={setToken}
