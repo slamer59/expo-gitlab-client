@@ -1,13 +1,8 @@
-import ErrorAlert from "@/components/ErrorAlert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
-import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { updateOrCreateWebhooks } from "@/lib/gitlab/webhooks";
-import { useSession } from "@/lib/session/SessionProvider";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { Link, useFocusEffect } from "expo-router";
+import { Link } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
@@ -21,15 +16,6 @@ const useDevFeature = (flagName) => {
 };
 
 export default function Home() {
-  const { session } = useSession();
-  const client = new GitLabClient({
-    url: session?.url,
-    token: session?.token,
-  });
-
-  const api = useGitLab(client);
-
-  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
 
   const devModeEnabled = useDevFeature("development-mode");
 
@@ -180,55 +166,6 @@ export default function Home() {
     }
   };
 
-  // 1. Fetch projects
-  const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
-    isOpen: false,
-    message: '',
-  });
-
-
-  const prepareProjects = (projects) => {
-    if (!projects) {
-      console.error("Projects are undefined");
-      setAlert({ message: "Error: Projects are undefined", isOpen: true });
-      return null;
-    }
-
-    return projects.map(project => ({
-      http_url_to_repo: project.http_url_to_repo,
-      id: project.id
-    }));
-  };
-
-  const updateWebhooks = async (session, projects) => {
-    try {
-      await updateOrCreateWebhooks(session, projects, undefined);
-      console.log("Webhooks updated successfully");
-    } catch (error) {
-      console.error("Error updating webhooks:", error);
-      setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
-    }
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        if (isLoadingPersonal) {
-          console.log("Projects are still loading");
-          return;
-        }
-
-
-        const projects = prepareProjects(personalProjects);
-        if (!projects) return;
-
-        await updateWebhooks(session, projects);
-      };
-
-      fetchData();
-    }, [session, personalProjects, isLoadingPersonal])
-  );
-
 
 
   return (
@@ -236,11 +173,6 @@ export default function Home() {
       className="flex-1 p-4 bg-background"
       contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
     >
-      <ErrorAlert
-        isOpen={alert.isOpen}
-        onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
-        message={alert.message}
-      />
       {showWelcomeCard && (
         <Card
           className="mb-4 border rounded-lg shadow-sm bg-card"

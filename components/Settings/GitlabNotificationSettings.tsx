@@ -1,14 +1,18 @@
 import { firebaseConfig } from '@/lib/firebase/helpers';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { getExpoToken } from '@/lib/gitlab/helpers';
+import { updateOrCreateWebhooks } from '@/lib/gitlab/webhooks';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { create } from 'zustand';
+import ErrorAlert from '../ErrorAlert';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
 
@@ -195,6 +199,10 @@ export default function NotificationDashboard() {
         token: session?.token,
     }), [session?.url, session?.token]);
 
+    const api = useGitLab(client);
+
+    const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
+
     const {
         projects,
         groups,
@@ -213,17 +221,64 @@ export default function NotificationDashboard() {
         }
     }, [session?.url, session?.token]);
 
-    // if (isLoading) {
-    //     return (
-    //         <View className="items-center justify-center flex-1">
-    //             <ActivityIndicator size="large" color="#0000ff" />
-    //             <Text className="mt-2 text-white">Loading...</Text>
-    //         </View>
-    //     );
-    // }
+    // 1. Fetch projects
+    const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
+        isOpen: false,
+        message: '',
+    });
+
+
+    const prepareProjects = (projects) => {
+        if (!projects) {
+            console.error("Projects are undefined");
+            setAlert({ message: "Error: Projects are undefined", isOpen: true });
+            return null;
+        }
+
+        return projects.map(project => ({
+            http_url_to_repo: project.http_url_to_repo,
+            id: project.id
+        }));
+    };
+
+    const updateWebhooks = async (session, projects) => {
+        try {
+            await updateOrCreateWebhooks(session, projects, undefined);
+            console.log("Webhooks updated successfully");
+        } catch (error) {
+            console.error("Error updating webhooks:", error);
+            setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchData = async () => {
+                if (isLoadingPersonal) {
+                    console.log("Projects are still loading");
+                    return;
+                }
+
+
+                const projects = prepareProjects(personalProjects);
+                if (!projects) return;
+
+                await updateWebhooks(session, projects);
+            };
+
+            fetchData();
+        }, [session, personalProjects, isLoadingPersonal])
+    );
+
+
 
     return (
         <>
+            <ErrorAlert
+                isOpen={alert.isOpen}
+                onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
+                message={alert.message}
+            />
             <View className="p-4 m-1 rounded-lg bg-card">
                 <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
                 <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
