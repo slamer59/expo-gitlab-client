@@ -80,6 +80,7 @@ export default function LoginScreen() {
                 onChangeText={setUrl}
                 aria-labelledby='input-gitlab-label'
                 aria-errormessage='input-gitlab-error'
+                testID="gitlab-url-input"  // Add this line
             />
 
             <Input
@@ -91,6 +92,7 @@ export default function LoginScreen() {
                 aria-labelledby='input-token-label'
                 aria-errormessage='input-token-error'
                 data-no-capture // Add this line to prevent autocapture
+                testID="gitlab-token-input"  // Add this line
             />
 
             <Button
@@ -99,6 +101,7 @@ export default function LoginScreen() {
                 onPress={handleLogin}
                 className="w-full mt-4 mb-4 text-xl"
                 disabled={isLoginLoading}
+                testID="login-button"  // Add this line
             >
                 {isLoginLoading ? (
                     <Text className="text-xl font-bold text-white">Provide you access...</Text>
