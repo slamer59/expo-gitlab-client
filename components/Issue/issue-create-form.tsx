@@ -64,17 +64,15 @@ export default function CreateIssueForm({ projectId, members, milestones, labels
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     const onSubmit = (data: IssueFormData) => {
+        if (!projectId) {
+            setAlert({ message: "Project ID is missing. Unable to create issue.", isOpen: true });
+            return;
+        }
+
         createIssue({
             projectId,
-            title: data.title,
-            description: data.description,
-            options: {
-                confidential: data.confidential,
-                due_date: data.due_date ? format(data.due_date, 'yyyy-MM-dd') : undefined,
-                labels: data.labels,
-                assignee_id: data.assignee_id,
-                milestone_id: data.milestone_id,
-            }
+            ...data,
+            due_date: data.due_date ? format(data.due_date, 'yyyy-MM-dd') : undefined,
         }, {
             onSuccess: (data) => {
                 setAlert({ message: `Issue #${data.iid} has been successfully created.`, isOpen: true });

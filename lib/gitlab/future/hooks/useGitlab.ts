@@ -53,10 +53,6 @@ export const useGitLab = (client: GitLabClient) => {
         useCreateProject: createMutationHook(
             (data: { name: string; options?: any }) => client.Projects.create(data.name, data.options),
             ['projects'],
-            // (data) => {
-            //     console.log('Project created successfully', data);
-            //     // You can add more logic here if needed
-            // }
         ),
         useUpdateProject: createMutationHook(
             (data: { projectId: string; updateData: any }) =>
@@ -91,8 +87,9 @@ export const useGitLab = (client: GitLabClient) => {
         ),
         // Project Issue
         useCreateProjectIssue: createMutationHook(
-            (data: { projectId: string; title: string; description: string; options?: any }) =>
-                client.createProjectIssue(data.projectId, data.title, data.description, data.options),
+            (data: { projectId: string; title: string; description: string; options?: any }) => {
+                return client.createProjectIssue(data.projectId, data.title, data.description, data.options)
+            },
             ['projectIssues']
         ),
         useUpdateProjectIssue: createMutationHook(

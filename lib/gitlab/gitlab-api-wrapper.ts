@@ -488,6 +488,7 @@ class GitLabClient {
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
+    return this.ProjectIssues.create(projectId, data);
   };
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);
