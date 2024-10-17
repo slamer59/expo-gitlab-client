@@ -490,6 +490,17 @@ class GitLabClient {
     const data = { title, description, ...options };
     return this.ProjectIssues.create(projectId, data);
   };
+
+  createProjectMergeRequest = async (projectId, source_branch, target_branch, title, description, options = {}) => {
+    const data = {
+      source_branch,
+      target_branch,
+      title,
+      description,
+      ...options
+    };
+    return this.ProjectMergeRequests.create(projectId, data);
+  };
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);
   };

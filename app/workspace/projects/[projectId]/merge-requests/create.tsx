@@ -21,10 +21,10 @@ export default function MergeRequestEditComponent() {
     const { projectId, issue_iid: issueIid, title } = useLocalSearchParams();
     const { data: project, isLoading, isError } = api.useProject(projectId);
     const router = useRouter();
-    const [branchName, setBranchName] = useState(transformToBranchName(title));
+    const [branchName, setBranchName] = useState(() => title ? transformToBranchName(title) : '');
 
     const mr = {
-        title: `Draft: Resolve "${title}"`,
+        title: title ? `Draft: Resolve "${title}"` : '',
         description: `Closes #${issueIid}`,
     }
 
@@ -53,6 +53,7 @@ export default function MergeRequestEditComponent() {
     }, [projectId, issueIid, branchName]);
 
     function transformToBranchName(title: string): string {
+        if (!title) return '';
         return `${issueIid}-${title
             .toLowerCase()
             .trim()
@@ -92,6 +93,9 @@ export default function MergeRequestEditComponent() {
                         <Separator className="my-2" />
                     </>
                 }
+                {/* {!isLoading && <CreateMergeRequestForm
+                    projectId={projectId}
+                /> */}
                 {/* <EditTargetBranchMergeRequest
                     projectId={projectId}
                     issueIid={issueIid}
