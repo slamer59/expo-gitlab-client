@@ -26,13 +26,6 @@ interface IssueFormData {
     // weight: string;
 }
 
-interface CreateIssueResponse {
-    id: number;
-    iid: number;
-    title: string;
-    // Add other response fields as needed
-}
-
 export default function CreateIssueForm({ projectId, members, milestones, labels }: { projectId: string, members: any[], milestones: any[], labels: any[] }) {
     const [alert, setAlert] = useState({ message: "", isOpen: false });
     const router = useRouter();
