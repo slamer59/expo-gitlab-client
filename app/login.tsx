@@ -3,33 +3,42 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useSession } from "@/lib/session/SessionProvider";
 import { useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, Image, Linking, View } from 'react-native';
 
 export default function LoginScreen() {
 
-    const [url, setUrl] = useState('https://gitlab.com');
+    const [domain, setDomain] = useState('gitlab.com');
     const [token, setToken] = useState('');
     const navigation = useNavigation();
     const { signIn, signOut, session, isLoading } = useSession();
     const [isLoginLoading, setIsLoginLoading] = useState(false);
 
-    useEffect(() => {
-        if (session) {
-            navigation.navigate("(tabs)", { screen: "/" });
-        }
-    }, [session]);
+    function normalizeDomain(input: string): string {
+        // Remove any leading or trailing whitespace
+        let normalized = input.trim();
+
+        // Remove 'http://' or 'https://' if present
+        normalized = normalized.replace(/^(https?:\/\/)/, '');
+
+        // Remove any trailing slash
+        normalized = normalized.replace(/\/$/, '');
+
+        return normalized;
+    }
 
     async function handleLogin() {
-        if (!url || !token) {
-            Alert.alert('Error', 'Please enter both URL and token.');
+        if (!domain || !token) {
+            Alert.alert('Error', 'Please enter both domain and Personal Access Token.');
             return;
         }
 
-        setIsLoginLoading(true);
+        const normalizedDomain = normalizeDomain(domain);
 
         try {
-            await signIn(url, token);
+            const fullUrl = `https://${normalizedDomain}`;
+            await signIn(fullUrl, token);
+            navigation.navigate("(tabs)", { screen: "/" });
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.includes('401')) {
@@ -75,16 +84,16 @@ export default function LoginScreen() {
             <Text className="mb-6 text-xl font-bold text-center text-secondary">GitAlchemy: Your GitLab Companion</Text>
             <Input
                 className="w-full px-3 py-2 mb-6 text-black bg-white rounded-lg native:h-14"
-                placeholder="GitLab URL"
-                value={url}
-                onChangeText={setUrl}
+                placeholder="GitLab Domain (e.g. gitlab.com, https://gitlab.com)"
+                value={domain}
+                onChangeText={setDomain}
                 aria-labelledby='input-gitlab-label'
                 aria-errormessage='input-gitlab-error'
-                testID="gitlab-url-input"  // Add this line
+                testID="gitlab-url-input"
             />
 
             <Input
-                className="w-full px-3 py-2 mb-6 font-bold text-black bg-white rounded-lg native:h-14"
+                className="w-full px-3 py-2 mb-6 text-black bg-white rounded-lg native:h-14"
                 placeholder="Enter your GitLab Personal Access Token (PAT)"
                 value={token}
                 onChangeText={setToken}

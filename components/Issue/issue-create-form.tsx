@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Label } from "@rn-primitives/select";
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { format } from 'date-fns';
 import { useRouter } from "expo-router";
 import React, { useState } from 'react';
@@ -13,10 +14,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import InfoAlert from "../InfoAlert";
 import EnhancedMarkdownEditor from "../markdown-editor";
-
-// Replace these with your actual GitLab API base URL and access token
-const GITLAB_API_BASE_URL = 'https://gitlab.com/api/v4';
-const GITLAB_ACCESS_TOKEN = 'GITLAB_PAT_REMOVED';
 
 interface IssueFormData {
     title: string;
@@ -39,6 +36,19 @@ interface CreateIssueResponse {
 export default function CreateIssueForm({ projectId, members, milestones, labels }: { projectId: string, members: any[], milestones: any[], labels: any[] }) {
     const [alert, setAlert] = useState({ message: "", isOpen: false });
     const router = useRouter();
+
+    const { session } = useSession()
+
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
+
+    const { mutate: createIssue, isLoading: isCreatingIssue, error: createIssueError } = api.useCreateProjectIssue();
+
+
     const { control, handleSubmit, formState: { errors }, reset } = useForm<IssueFormData>({
         defaultValues: {
             title: '',
@@ -48,36 +58,33 @@ export default function CreateIssueForm({ projectId, members, milestones, labels
             labels: '',
             assignee_id: '',
             milestone_id: '',
-            // weight: '',
         },
     });
 
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    const createIssueMutation = useMutation<CreateIssueResponse, Error, IssueFormData>({
-        mutationFn: (data) =>
-            axios.post(`${GITLAB_API_BASE_URL}/projects/${projectId}/issues`, {
-                ...data,
-                due_date: data.due_date ? format(data.due_date, 'yyyy-MM-dd') : undefined,
-            }, {
-                headers: {
-                    'PRIVATE-TOKEN': GITLAB_ACCESS_TOKEN,
-                },
-            }).then(response => response.data),
-        onSuccess: (data) => {
-            // Alert.alert('Success', `Issue #${data.iid} has been successfully created.`);
-            setAlert({ message: `Issue #${data.iid} has been successfully created.`, isOpen: true });
-            reset();
-            router.push(`/workspace/projects/${projectId}/issues/${data.iid}`);
-        },
-        onError: (error) => {
-            // Alert.alert('Error', `Failed to create issue: ${error.message}`);
-            setAlert({ message: `Failed to create issue: ${error.message}`, isOpen: true });
-        },
-    });
-
     const onSubmit = (data: IssueFormData) => {
-        createIssueMutation.mutate(data);
+        createIssue({
+            projectId,
+            title: data.title,
+            description: data.description,
+            options: {
+                confidential: data.confidential,
+                due_date: data.due_date ? format(data.due_date, 'yyyy-MM-dd') : undefined,
+                labels: data.labels,
+                assignee_id: data.assignee_id,
+                milestone_id: data.milestone_id,
+            }
+        }, {
+            onSuccess: (data) => {
+                setAlert({ message: `Issue #${data.iid} has been successfully created.`, isOpen: true });
+                reset();
+                router.push(`/workspace/projects/${projectId}/issues/${data.iid}`);
+            },
+            onError: (error) => {
+                setAlert({ message: `Failed to create issue: ${error.message}`, isOpen: true });
+            }
+        });
     };
 
     return (
@@ -221,10 +228,10 @@ export default function CreateIssueForm({ projectId, members, milestones, labels
 
             <Button
                 onPress={handleSubmit(onSubmit)}
-                disabled={createIssueMutation.isPending}
+                disabled={isCreatingIssue}
                 className="mt-4"
             >
-                <Text>{createIssueMutation.isPending ? "Creating..." : "Create Issue"}</Text>
+                <Text>{isCreatingIssue ? "Creating..." : "Create Issue"}</Text>
             </Button>
         </>
     );

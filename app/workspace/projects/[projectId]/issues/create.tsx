@@ -38,12 +38,12 @@ export default function CreateIssue() {
                     {project.name_with_namespace || ""}
                 </Text>
             }
-            <CreateIssueForm
+            {!isLoadingProject && <CreateIssueForm
                 projectId={projectId}
             // members={members}
             // milestones={milestones}
             // labels={labels}
-            />
+            />}
 
         </ScrollView >
     );

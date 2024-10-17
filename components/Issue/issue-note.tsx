@@ -2,8 +2,12 @@ import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
 import RenderHtml from 'react-native-render-html';
 
-import React, { useEffect, useState } from 'react';
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
+import React from 'react';
 import { useWindowDimensions, View } from 'react-native';
+import { Skeleton } from "../ui/skeleton";
 import IssueComment from "./issue-comment";
 type LabelMap = { [key: string]: string };
 
@@ -44,7 +48,6 @@ const myLabelMap: LabelMap = {
     "requested": "review-request",
     "merge": "merged",
 };
-
 
 
 const iconMap = {
@@ -91,43 +94,17 @@ const getEventIcon = (eventType: string) => {
     ) : null;
 };
 
-const convertMarkdownToHtml = async (markdown) => {
-    try {
-        const response = await fetch('https://gitlab.com/api/v4/markdown', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-
-                'PRIVATE-TOKEN': "GITLAB_PAT_REMOVED",
-            },
-            body: JSON.stringify({
-                text: markdown,
-                gfm: true,
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to convert Markdown to HTML');
-        }
-
-        const data = await response.json();
-        return data.html;
-    } catch (error) {
-        console.error('Error converting Markdown to HTML:', error);
-        return markdown; // Return original markdown if conversion fails
-    }
-};
-
 export const IssueNote = ({ note }) => {
-    const [htmlContent, setHtmlContent] = useState('');
     const { width } = useWindowDimensions();
+    const { session } = useSession()
 
-    useEffect(() => {
-        convertMarkdownToHtml(note.body).then(bodyHtml => {
-            const cleanBodyHtml = bodyHtml.replace(/<p/g, '<span').replace(/<\/p>/g, '</span>').trim();
-            setHtmlContent(`<strong>${note.author.name}</strong> ${cleanBodyHtml}`);
-        });
-    }, [note.body, note.author.name]);
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
+    const { data: htmlContent, isLoading: isConverting, error: convertError } = api.useConvertMarkdownToHtml(note.body)
 
     const tagsStyles = {
         body: {
@@ -155,18 +132,19 @@ export const IssueNote = ({ note }) => {
 
             {/* <Ionicons name="git-commit" size={16} color="#A1A1A1" style={{ marginRight: 8 }} /> */}
             {getEventIcon(label)}
-            <RenderHtml
-                contentWidth={width - 24} // Adjust based on your layout
-                source={{ html: htmlContent }}
-                tagsStyles={tagsStyles}
-            />
+            {isConverting ?
+                <Skeleton className="w-full h-4 mb-2 bg-muted" /> :
+                <RenderHtml
+                    contentWidth={width - 24} // Adjust based on your layout
+                    source={{ html: `<strong>${note.author.name}</strong> ${htmlContent.replace(/<p/g, '<span').replace(/<\/p>/g, '</span>').trim()}` }}
+                    tagsStyles={tagsStyles}
+                />
+            }
         </View>
     );
 };
 
 const IssueNotes = ({ notes }) => {
-    // console.log("🚀 ~ IssueNotes ~ notes:", notes)
-
     return (
         <>
             {notes && notes.length > 0 ? <View className="p-4 mb-2">
