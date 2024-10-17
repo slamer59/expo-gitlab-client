@@ -1,6 +1,7 @@
 import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
 import { FlatListCards } from '@/components/FlatList/FlatListCards';
 import { ProjectCard, ProjectCardSkeleton } from '@/components/Project/project-card';
+import { Text } from '@/components/ui/text';
 import { GlobalUserStarredProjectsUIFilters } from '@/constants/UIFilters';
 import { createScreenStore } from '@/lib/filter/state';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
@@ -24,19 +25,13 @@ export default function StarredListScreen() {
     });
     const UIFilters = GlobalUserStarredProjectsUIFilters;
 
-    const useScreenStore = useMemo(() => {
-        if (isLoadingUser || !currentUser) {
-            return null;
-        }
-        return createScreenStore(client.Users.starred_projects, currentUser.id, UIFilters);
-    }, [isLoadingUser, currentUser, UIFilters]);
-    const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore() || {};
+    if (isLoadingUser) {
+        return <View className="items-center justify-center flex-1"><Text className="text-foreground" variant="body">Loading user...</Text></View>;
+    }
+    const useScreenStore = useMemo(() => createScreenStore(client.Users.starred_projects, currentUser?.id, UIFilters), [currentUser?.id, UIFilters]);
 
-    useEffect(() => {
-        if (useScreenStore) {
-            fetchItems(true);
-        }
-    }, [useScreenStore, fetchItems]);
+    const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore()
+
     const pathname = "/workspace/projects/[projectId]"
 
     const paramsMap = {
@@ -79,16 +74,17 @@ export default function StarredListScreen() {
                         />
                     ))}
                 </ScrollView>
-                <FlatListCards
-                    items={items}
-                    handleLoadMore={handleLoadMore}
-                    ItemComponent={ProjectCard}
-                    SkeletonComponent={ProjectCardSkeleton}
-                    pathname={pathname}
-                    paramsMap={paramsMap}
-                    isLoading={loading}
-                    error={error}
-                />
+                {!isLoadingUser &&
+                    <FlatListCards
+                        items={items}
+                        handleLoadMore={handleLoadMore}
+                        ItemComponent={ProjectCard}
+                        SkeletonComponent={ProjectCardSkeleton}
+                        pathname={pathname}
+                        paramsMap={paramsMap}
+                        isLoading={loading}
+                        error={error}
+                    />}
 
             </View>
         </View>
