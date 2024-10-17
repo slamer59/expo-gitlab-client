@@ -21,7 +21,7 @@ const MarkdownCustom = ({ children,
             className={className}
             rules={{
                 image: (node, children, parent, styles) => {
-                    console.log("🚀 ~ parent:", node.attributes.src)
+                    // console.log("🚀 ~ parent:", node.attributes.src)
                     return (
                         <View className='items-center justify-center flex-1'>
                             <Image

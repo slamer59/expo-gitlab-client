@@ -11,6 +11,7 @@ class GitLabClient {
 
   async request(endpoint, method = 'GET', body = null, file = null) {
     const url = `${this.host}${endpoint}`;
+
     const headers = {
       'Authorization': `Bearer ${this.token}`,
     };
@@ -31,7 +32,6 @@ class GitLabClient {
           formData.append(key, body[key]);
         });
       }
-
       options.body = formData;
       // Don't set Content-Type header, let the browser set it with the boundary
       delete headers['Content-Type'];
@@ -43,6 +43,7 @@ class GitLabClient {
 
     try {
       const response = await fetch(url, options);
+      // console.log("🚀 ~ GitLabClient ~ request ~ url, options:", url, options)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -479,44 +480,14 @@ class GitLabClient {
   }
 
   Markdown = {
-    // POST /markdown
-    render: async (text, options = {}) => {
-      return this.request('/markdown', 'POST', { text, ...options });
+    render: async (body) => {
+      const response = await this.request('/markdown', 'POST', body);
+      return response.html;
     },
   }
-
   // Create methods
   createProjectIssue = async (projectId, title, description, options = {}) => {
     const data = { title, description, ...options };
-    return this.ProjectIssues.create(projectId, data);
-  };
-
-  createMergeRequest = async (projectId, source_branch, title, description, options = {}) => {
-    const data = { source_branch, title, description, ...options };
-    return this.ProjectMergeRequests.create(projectId, data);
-  };
-
-  createCommit = async (projectId, branch, commitMessage, actions, options = {}) => {
-    const data = { branch, commit_message: commitMessage, actions, ...options };
-    return this.Commits.create(projectId, data);
-  };
-
-  createUser = async (username, email, password, name, options = {}) => {
-    const data = { username, email, password, name, ...options };
-    return this.Users.create(data);
-  }
-
-
-  // Update Methods
-  updateProject = async (projectId, data) => {
-    return this.request(`/projects/${projectId}`, 'PUT', data);
-  };
-
-  updateProjectIssue = async (projectId, issueIid, data, options = {}) => {
-    return this.ProjectIssues.edit(projectId, issueIid, { ...data, ...options });
-  };
-  updateProjectMergeRequest = async (projectId, mergeRequestIid, data) => {
-    return this.ProjectMergeRequests.edit(projectId, mergeRequestIid, data);
   };
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);

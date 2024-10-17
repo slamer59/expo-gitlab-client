@@ -45,7 +45,7 @@ export const useGitLab = (client: GitLabClient) => {
         useIssues: (params: any) => createQueryHook(['issues', params], () => client.Issues.all(params))(),
         useIssueDiscussion: (projectId: string, issueId: string, discussionId: string) => createQueryHook(['issueDiscussion', projectId, issueId, discussionId], () => client.Discussions.show(projectId, issueId, discussionId))(),
         useMergeRequests: (params: any) => createQueryHook(['mergeRequests', params], () => client.MergeRequests.all(params))(),
-
+        useConvertMarkdownToHtml: (markdown: string) => createQueryHook(['convertMarkdownToHtml', markdown], () => client.Markdown.render({ text: markdown, gfm: true }))(),
     };
 
     const mutationHooks = {
@@ -147,11 +147,6 @@ export const useGitLab = (client: GitLabClient) => {
             (data: { projectId: string; pipelineId: string }) =>
                 client.cancelPipeline(data.projectId, data.pipelineId),
             ['projectPipelines']
-        ),
-
-        useConvertMarkdownToHtml: createMutationHook(
-            (markdown: string) => client.Markdown.render({ text: markdown, gfm: true }),
-            []
         ),
         // Retry
         useRetryPipeline: createMutationHook(
