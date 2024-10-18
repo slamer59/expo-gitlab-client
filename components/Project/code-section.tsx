@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { ButtonList } from "@/components/buttonList";
 import { ChooseBranches } from "@/components/ChooseBranche";
+import { Text } from "../ui/text";
 
 // interface for code
 interface CodeSectionProps {
@@ -34,7 +35,8 @@ export const CodeSection = ({
       <View className="flex flex-row items-center">
         <Ionicons name="git-branch-outline" size={24} color="white" />
         <Text className="ml-2 font-bold text-white truncate max-w-[120px]">
-          {selectedBranch?.label || defaultBranchName}
+          {/* {selectedBranch?.label || defaultBranchName} */}
+          Branch
         </Text>
       </View>
       <ChooseBranches

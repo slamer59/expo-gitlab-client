@@ -1,12 +1,10 @@
-import { EditTitleDescriptionMergeRequestBlock } from '@/components/MergeRequest/mr-edit-title-description-block';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import CreateMergeRequestForm from '@/components/MergeRequest/mr-create-form';
+import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
 import { ScrollView } from 'react-native';
 
 export default function MergeRequestEditComponent() {
@@ -19,39 +17,21 @@ export default function MergeRequestEditComponent() {
     const api = useGitLab(client);
 
     const { projectId, issue_iid: issueIid, title } = useLocalSearchParams();
-    const { data: project, isLoading, isError } = api.useProject(projectId);
-    const router = useRouter();
-    const [branchName, setBranchName] = useState(() => title ? transformToBranchName(title) : '');
 
-    const mr = {
+    const [
+        { data: project, isLoading: isLoadingProject, error: errorProject },
+        { data: branches, isLoading: isLoadingBranches, error: errorBranches },
+    ] = api.useProjectBranchDetails(projectId);
+
+    let branchesName: string[], defaultBranchName: any, listItemsSecond;
+    if (!isLoadingBranches) {
+        branchesName = branches?.map(branch => branch.name);
+        defaultBranchName = branches?.find(branch => branch.default)?.name || branches[0]?.name;
+    }
+    const mrDescription = {
         title: title ? `Draft: Resolve "${title}"` : '',
         description: `Closes #${issueIid}`,
     }
-
-    const createMergeRequest = useCallback(async (createdData) => {
-        const { title, description } = createdData;
-        try {
-            // First, create the branch
-            const response = await client.Branches.create(projectId, {
-                branch: branchName, ref: project?.default_branch,
-            });
-
-            // Then, create the merge request
-            const mr = await client.ProjectMergeRequests.create(projectId, {
-                source_branch: branchName,
-                target_branch: project?.default_branch,
-                title,
-                description,
-                // Add any other options if needed
-            });
-
-            // Navigate to the new merge request
-            router.push(`/workspace/projects/${projectId}/merge-requests/${mr.iid}`);
-        } catch (error) {
-            console.error('Error creating branch or merge request:', error);
-        }
-    }, [projectId, issueIid, branchName]);
-
     function transformToBranchName(title: string): string {
         if (!title) return '';
         return `${issueIid}-${title
@@ -65,34 +45,48 @@ export default function MergeRequestEditComponent() {
 
     return (
         <>
-            <Stack.Screen
+            {/* <Stack.Screen
                 options={{
                     title: `Edit MergeRequest #${issueIid}`,
                 }}
-            />
+            /> */}
             <ScrollView
                 className="flex-1 p-4 bg-card"
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
-                {!isLoading &&
+                {project && project.name_with_namespace &&
                     <>
-                        <Label className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" nativeID={''}>
-                            Source Branch
-                        </Label>
-                        <Input
-                            className='mb-2'
-                            value={branchName}
-                            onChangeText={setBranchName}
-                        />
-                        <Label className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" nativeID={''}>
-                            Target Branch
-                        </Label>
-                        <Input editable={false} className='mb-2' value={project?.default_branch} />
+                        <Text className="mb-4 text-lg font-bold text-muted">
+                            {project.name_with_namespace || ""}
+                        </Text>
 
-                        <EditTitleDescriptionMergeRequestBlock updateMergeRequest={createMergeRequest} mr={mr} projectId={projectId} mr_iid={issueIid} />
-                        <Separator className="my-2" />
                     </>
                 }
+                {!isLoadingBranches && !isLoadingProject && <CreateMergeRequestForm
+                    projectId={projectId}
+                    mrDescription={mrDescription}
+                    branches={{
+                        targetBranchName: project?.default_branch,
+                        defaultBranchName,
+                        branchesName
+                    }}
+                // <> <Label className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" nativeID={''}>
+                //         Source Branch
+                //     </Label>
+                //     <Input
+                //         className='mb-2'
+                //         value={branchName}
+                //         onChangeText={setBranchName}
+                //     />
+                //     <Label className="mb-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" nativeID={''}>
+                //         Target Branch
+                //     </Label>
+                //     <Input editable={false} className='mb-2' value={project?.default_branch} />
+
+                //     <EditTitleDescriptionMergeRequestBlock updateMergeRequest={createMergeRequest} mr={mr} projectId={projectId} mr_iid={issueIid} />
+                //     <Separator className="my-2" /> 
+                //     </>
+                />}
                 {/* {!isLoading && <CreateMergeRequestForm
                     projectId={projectId}
                 /> */}

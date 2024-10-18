@@ -91,13 +91,13 @@ export default function ProjectDetailsScreen() {
       onPress: () => router.push(`/workspace/projects/${project.id}/edit`),
       testID: "project-edit-option"
     },
-    {
-      icon: "git-pull-request-outline",
-      color: "#3e64ed",
-      label: "Create Merge Request",
-      onPress: () => router.push(`/workspace/projects/${project.id}/merge-requests/create`),
-      testID: "create-mr-option"
-    },
+    // {
+    //   icon: "git-pull-request-outline",
+    //   color: "#3e64ed",
+    //   label: "Create Merge Request",
+    //   onPress: () => router.push(`/workspace/projects/${project.id}/merge-requests/create`),
+    //   testID: "create-mr-option"
+    // },
     {
       icon: project?.archived ? "archive-outline" : "archive",
       color: project?.archived ? "#3e64ed" : "#ffa500",
