@@ -62,7 +62,10 @@ export default function IssueDetails() {
             { projectId, issueIid: issue_iid },
             {
                 onSuccess: () => {
+                    // Navigate back to the issues list after deletion
                     router.push(`/workspace/projects/${projectId}/issues/list`);
+                    // Navigate back to the issues list after deletion
+                    // Replace '/issues/list' with the actual path to your issues list screen
                 },
             }
         );
@@ -93,6 +96,7 @@ export default function IssueDetails() {
         // Create merge request
         {
             icon: "git-merge",
+            color: "#3e64ed",
             label: "Create Merge Request",
             onPress: () => router.push(`/workspace/projects/${projectId}/merge-requests/create?issue_iid=${issue_iid}&title=${encodeURIComponent(issue?.title || '')}`),
             testID: "create-merge-request-option"

@@ -30,7 +30,7 @@ export default function CreateIssue() {
     // console.log("🚀 ~ CreateIssue ~ labels:", labels)
     return (
         <ScrollView
-            className="flex-1 p-4 bg-background"
+            className="flex-1 p-4 bg-card"
             contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
         >
             {project && project.name_with_namespace &&

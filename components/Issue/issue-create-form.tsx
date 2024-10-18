@@ -37,8 +37,8 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
         token: session?.token,
     });
 
-    const { useCreateProjectIssue } = useGitLab(client);
-    const createIssueMutation = useCreateProjectIssue();
+    const api = useGitLab(client);
+    const createIssueMutation = api.useCreateProjectIssue();
 
     const { control, handleSubmit: handleSave, formState: { errors }, reset } = useForm<IssueFormData>({
         defaultValues: {
@@ -91,7 +91,7 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
-                        className="mb-2 border-2 border-white bg-card"
+                        className="mb-2 border-2 border-white"
                         aria-errormessage={!!errors.title}
                     />
                 )}
@@ -135,7 +135,7 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
                     <View>
                         <Button
                             onPress={() => setShowDatePicker(true)}
-                            className="flex-row items-center justify-start w-full border-2 border-white rounded-md bg-card"
+                            className="flex-row items-center justify-start w-full border-2 border-white rounded-md bg-background"
                         >
                             <Octicons name="calendar" size={16} color="white" style={{ marginRight: 8 }} />
                             <Text className="text-white">{value ? format(value, 'PPP') : 'Select Due Date'}</Text>

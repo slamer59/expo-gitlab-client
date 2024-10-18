@@ -2,15 +2,18 @@ import * as React from "react";
 import { Platform, Text } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from "./ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 
 type ChooseBranchesProps = {
     branches: string[];
     defaultValue: { value: string; label: string };
     handleValueChange: (value: string) => void;
+    placeholder?: any;
 };
 
-export function ChooseBranches({ branches, defaultValue, handleValueChange }: ChooseBranchesProps) {
+export function ChooseBranches({ branches, defaultValue, handleValueChange, placeholder }: ChooseBranchesProps) {
+
+    const [selectedBranch, setSelectedBranch] = React.useState(defaultValue.value);
 
     const insets = useSafeAreaInsets();
     const contentInsets = {
@@ -19,22 +22,35 @@ export function ChooseBranches({ branches, defaultValue, handleValueChange }: Ch
         left: 12,
         right: 12,
     };
+
+    const onValueChange = (value: string) => {
+        setSelectedBranch(value);
+        handleValueChange(value);
+    };
+
     return (
         <Select
             defaultValue={{ value: defaultValue.value, label: defaultValue.label }}
             // className='w-[250px]'
-            onValueChange={(value) => handleValueChange(value)}
+            onValueChange={(value) => onValueChange(value)}
         >
-            <SelectTrigger className='w-[200px] flex-row items-center justify-center flex-1 rounded-3xl'>
+            <SelectTrigger className='web:flex h-10 native:h-12 web:w-full rounded-md border border-input bg-background px-3 web:py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2'>
                 {/* <SelectValue
                     className='text-sm text-foreground native:text-lg'
                     placeholder='Select a fruit'
                 /> */}
-                <Text className="ml-2 font-bold text-right text-white">
-                    SELECT BRANCH
-                </Text>
+                {/* <Text className="ml-2 text-right text-white">
+                    {placeholder ? placeholder : "SELECT BRANCH"}
+                </Text> */}
+                <SelectValue
+                    className='text-sm text-foreground native:text-lg'
+                    placeholder={placeholder || "SELECT BRANCH"}>
+                    <Text className="ml-2 font-bold text-right text-white">
+                        {selectedBranch}
+                    </Text>
+                </SelectValue>
             </SelectTrigger>
-            <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold rounded-2xl '>
+            <SelectContent insets={contentInsets} className='w-[250px]  mt-1 font-bold '>
                 <SelectGroup>
                     <ScrollView className='max-h-64'>
                         <SelectLabel>

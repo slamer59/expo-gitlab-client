@@ -105,8 +105,10 @@ export const useGitLab = (client: GitLabClient) => {
         ),
         // Project Merge Request
         useCreateProjectMergeRequest: createMutationHook(
-            (data: { projectId: string; sourceBranch: string; targetBranch: string; title: string; options?: any }) =>
-                client.createMergeRequest(data.projectId, data.sourceBranch, data.targetBranch, data.title, data.options),
+            (data: { projectId: string; sourceBranch: string; targetBranch: string; title: string; options?: any }) => {
+                console.log('data', data)
+                return client.createProjectMergeRequest(data.projectId, data.sourceBranch, data.targetBranch, data.title, data.options)
+            },
             ['projectMergeRequests']
         ),
         useUpdateProjectMergeRequest: createMutationHook(
@@ -211,6 +213,22 @@ export const useGitLab = (client: GitLabClient) => {
                         queryKey: ['projectLabels', projectId],
                         queryFn: () => client.Labels.all(projectId),
                     }
+                ],
+            },
+            );
+        },
+        useProjectBranchDetails: (projectId: string) => {
+            return useQueries({
+                queries: [
+                    {
+                        queryKey: ['project', projectId],
+                        queryFn: () => client.Projects.show(projectId),
+                    },
+
+                    {
+                        queryKey: ['projectBranches', projectId],
+                        queryFn: () => client.Branches.all(projectId),
+                    },
                 ],
             },
             );

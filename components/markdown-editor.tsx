@@ -166,21 +166,21 @@ export default function EnhancedMarkdownEditor({ projectId, markdown, onChangeTe
                             value={activeStyles}
                             onValueChange={setActiveStyles}
                             type='multiple'
-                            className="flex-row bg-card"
+                            className="flex-row bg-card-600"
                         >
                             <Select
 
                                 onValueChange={(value) => insertHeader(value)}
-                                className='bg-card '
+                                className='bg-card-600 '
                             >
-                                <SelectTrigger className="w-[120px] bg-card">
+                                <SelectTrigger className="w-[120px] bg-card-600">
                                     <SelectValue
-                                        className='text-sm bg-card text-foreground native:text-lg'
+                                        className='text-sm bg-card-600 text-foreground native:text-lg'
                                         placeholder="Header"
                                     />
                                 </SelectTrigger>
                                 <SelectContent
-                                    className='bg-card'
+                                    className='bg-card-600'
                                 >
                                     <SelectItem value="1" label="H1" className='text-white' />
                                     <SelectItem value="2" label="H2" className='text-white'><Octicons name="heading" size={16} color="white" />2</SelectItem>
@@ -227,7 +227,7 @@ export default function EnhancedMarkdownEditor({ projectId, markdown, onChangeTe
                     onSelectionChange={(event) => setSelection(event.nativeEvent.selection)}
                     multiline={true}
                     numberOfLines={10}
-                    className="flex-1 rounded-md bg-card text-foreground"
+                    className="flex-1 rounded-md bg-background text-foreground"
                     // Add onDrop and onDragOver handlers for web
                     {...(Platform.OS === 'web' && { onDrop, onDragOver: (e: React.DragEvent<HTMLTextAreaElement>) => e.preventDefault() })}
                 />

@@ -25,6 +25,7 @@ interface ScreenState {
     setFilter: (key: string, value: string) => void;
     setHasMore: (hasMore: boolean) => void;
     setError: (error: string | null) => void;
+    reset: () => void; // New reset function
     fetchItems: (refresh?: boolean) => Promise<void>;
 }
 
