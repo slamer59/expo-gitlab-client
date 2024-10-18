@@ -11,6 +11,7 @@ import { Platform, ScrollView, TextInput, View } from 'react-native';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
+import { Octicons } from '@expo/vector-icons';
 import { CircleX, Undo } from 'lucide-react-native';
 import MarkdownCustom from './CustomMarkdown';
 import ErrorAlert from './ErrorAlert';
@@ -169,22 +170,24 @@ export default function EnhancedMarkdownEditor({ projectId, markdown, onChangeTe
                         >
                             <Select
 
-                                onValueChange={(value) => insertHeader(value)}>
-                                <SelectTrigger className="w-[120px]">
+                                onValueChange={(value) => insertHeader(value)}
+                                className='bg-card '
+                            >
+                                <SelectTrigger className="w-[120px] bg-card">
                                     <SelectValue
-                                        className='text-sm text-foreground native:text-lg'
+                                        className='text-sm bg-card text-foreground native:text-lg'
                                         placeholder="Header"
                                     />
                                 </SelectTrigger>
                                 <SelectContent
                                     className='bg-card'
                                 >
-                                    <SelectItem value="1" label="Heading 1" className='text-white'>Heading 1</SelectItem>
-                                    <SelectItem value="2" label="Heading 2" className='text-white'>Heading 2</SelectItem>
-                                    <SelectItem value="3" label="Heading 3" className='text-white'>Heading 3</SelectItem>
-                                    <SelectItem value="4" label="Heading 4" className='text-white'>Heading 4</SelectItem>
-                                    <SelectItem value="5" label="Heading 5" className='text-white'>Heading 5</SelectItem>
-                                    <SelectItem value="6" label="Heading 6" className='text-white'>Heading 6</SelectItem>
+                                    <SelectItem value="1" label="H1" className='text-white' />
+                                    <SelectItem value="2" label="H2" className='text-white'><Octicons name="heading" size={16} color="white" />2</SelectItem>
+                                    <SelectItem value="3" label="H3" className='text-white'><Octicons name="heading" size={16} color="white" />3</SelectItem>
+                                    <SelectItem value="4" label="H4" className='text-white'><Octicons name="heading" size={16} color="white" />4</SelectItem>
+                                    <SelectItem value="5" label="H5" className='text-white'><Octicons name="heading" size={16} color="white" />5</SelectItem>
+                                    <SelectItem value="6" label="H6" className='text-white'><Octicons name="heading" size={16} color="white" />6</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Separator orientation="vertical" className="w-px h-6 mx-1 bg-white" />
