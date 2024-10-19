@@ -16,50 +16,78 @@ appId: expo-gitlab-client
 - tapOn: "Odio aut et rerum."
 - assertVisible: "Changes"
 - takeScreenshot: ./assets/maestro/Merge Request Details
+- copyTextFrom:
+    id: "issue-title"
+    index: 0
+
+- scrollUntilVisible:
+    element:
+      text: "Events"
+    direction: DOWN # DOWN|UP|LEFT|RIGHT (optional, default: DOWN)
+    timeout: 50000 # (optional, default: 20000) ms
+    speed: 80 # 0-100 (optional, default: 40) Scroll speed. Higher values scroll faster.
+    visibilityPercentage: 100 # 0-100 (optional, default: 100) Percentage of element visible in viewport
+    centerElement: false # true|false (optional, default: false)
+- takeScreenshot: ./assets/maestro/Merge Request Details Commits
+
+- scrollUntilVisible:
+    element:
+      text: "Events"
+    direction: DOWN # DOWN|UP|LEFT|RIGHT (optional, default: DOWN)
+    timeout: 50000 # (optional, default: 20000) ms
+    speed: 80 # 0-100 (optional, default: 40) Scroll speed. Higher values scroll faster.
+    visibilityPercentage: 100 # 0-100 (optional, default: 100) Percentage of element visible in viewport
+    centerElement: false # true|false (optional, default: false)
+- takeScreenshot: ./assets/maestro/Merge Request Details Events
 
 # Test share button
 - tapOn:
-    id: "mr-share-button"
-- assertVisible: "Sharing text" # This might vary depending on the device's share dialog
-- back
-
-# Test options menu
-- tapOn:
-    id: "mr-options-menu"
-- assertVisible: "Edit"
-- assertVisible: "Copy Url"
-
-# Test edit option
-# - copyTextFrom:
-#     id: "issue-card"
-#     index: 0
+    id: "options"
+- takeScreenshot: ./assets/maestro/Merge Request Dropdown Option
+- assertVisible: "Edit Merge Request"
+- assertVisible: "Close Merge Request"
+- assertVisible: "Delete Merge Request"
 - tapOn:
     id: "mr-edit-option"
-- takeScreenshot: ./assets/maestro/Merge Request Edit
+
+- assertVisible: ${maestro.copiedText}
+# # Additional tests for the edit screen
+- assertVisible: "Edit Merge Request #"
+- assertVisible:
+    id: "mr-title-input"
+- assertVisible:
+    id: "mr-description-input"
+- tapOn:
+    id: "mr-title-input"
+- inputText: "Updated Merge Request Title"
+- tapOn:
+    id: "mr-description-input"
+- inputText: "This is an updated description for the merge request."
+- tapOn: Save changes
+
 # - assertVisible: "Edit Merge Request #27" # Assuming this is the title of the edit page
 - back
-
-# Test copy URL option
-- tapOn:
-    id: "mr-options-menu"
-- tapOn:
-    id: "mr-copy-url-option"
-# - assertVisible: "URL copied to clipboard" # Assuming you show a toast or alert when URL is copied
-# - back
-
-# Test close/reopen option (this will depend on the current state of the MR)
-- tapOn:
-    id: "mr-options-menu"
-# - tapOn:
-#     id: "mr-close-option"
-- assertVisible: "Close Merge Request" # Assuming you show a confirmation message
-
-# If the MR is now closed, test reopening
+# # Test copy URL option
 # - tapOn:
 #     id: "mr-options-menu"
 # - tapOn:
-#     id: "mr-reopen-option"
-# - assertVisible: "Merge request reopened" # Assuming you show a confirmation message
+#     id: "mr-copy-url-option"
+# # - assertVisible: "URL copied to clipboard" # Assuming you show a toast or alert when URL is copied
+# # - back
 
+# Test close/reopen option (this will depend on the current state of the MR)
+- tapOn:
+    id: "options"
+- assertVisible: "Close Merge Request" # Assuming you show a confirmation message
+- tapOn:
+    id: "toggle-mr-state-option"
+- assertVisible: "Closed" # Assuming you show a confirmation message
+# If the MR is now closed, test reopening
+- tapOn:
+    id: "options"
+- assertVisible: "Reopen Merge Request" # Assuming you show a confirmation message
+- tapOn:
+    id: "toggle-mr-state-option"
+- assertVisible: "Open" # Assuming you show a confirmation message
 - back
 - back

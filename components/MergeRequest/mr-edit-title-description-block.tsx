@@ -80,7 +80,7 @@ export function EditTitleDescriptionMergeRequestBlock({ mr, updateMergeRequest, 
                     onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
                     aria-labelledby="title"
                     aria-errormessage='titleInputError'
-                    testID="input-title"
+                    testID="mr-input-title"
                 />
             </View>
             <View className="mb-4">
@@ -103,6 +103,7 @@ export function EditTitleDescriptionMergeRequestBlock({ mr, updateMergeRequest, 
                     placeholder="MergeRequest Description"
                     value={formData.description}
                     onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
+                    testID="mr-description-input"
                 />
             </View>
             <View className="flex flex-row justify-start mt-4 mb-2 space-x-2">

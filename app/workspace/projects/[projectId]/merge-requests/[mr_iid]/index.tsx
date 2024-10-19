@@ -445,7 +445,7 @@ export default function MergeRequestDetails() {
             color: "red",
             label: "Delete Merge Request",
             onPress: deleteMr,
-            testID: "delete-mr-option"
+            testID: "mr-delete-option"
         }
     ];
 

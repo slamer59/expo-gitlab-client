@@ -47,7 +47,7 @@ export default function MergeRequestEditComponent() {
         <>
             {/* <Stack.Screen
                 options={{
-                    title: `Edit MergeRequest #${issueIid}`,
+                    title: `Edit Merge Request #${issueIid}`,
                 }}
             /> */}
             <ScrollView

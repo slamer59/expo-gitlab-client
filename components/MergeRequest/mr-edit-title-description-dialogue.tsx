@@ -42,7 +42,7 @@ function EditTitleDescriptionMergeRequestDialog({ mr, updateMergeRequest, loadin
         <Dialog>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    <Text>Edit MergeRequest</Text>
+                    <Text>Edit Merge Request</Text>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" >

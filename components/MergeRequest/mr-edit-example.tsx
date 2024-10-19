@@ -55,7 +55,7 @@ const EditMergeRequestDialog = ({ projectId, mrIid }) => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Edit MergeRequest</DialogTitle>
+                    <DialogTitle>Edit Merge Request</DialogTitle>
                     <DialogDescription>
                         Make changes to the mr here. Click save when you're done.
                     </DialogDescription>

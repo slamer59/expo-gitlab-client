@@ -24,6 +24,7 @@ export default function MergeRequestEditComponent() {
     const { projectId, mr_iid: mrIid } = useLocalSearchParams();
 
     const { data: mr, loading, error } = api.useProjectMergeRequest(projectId, mrIid) ?? {};
+    // const updateMergeRequest = api.useUpdateProjectMergeRequest();
 
     const updateMergeRequest = useCallback(async (updatedData) => {
         try {
@@ -41,7 +42,7 @@ export default function MergeRequestEditComponent() {
         <>
             <Stack.Screen
                 options={{
-                    title: `Edit MergeRequest #${mrIid}`,
+                    title: `Edit Merge Request #${mrIid}`,
                 }}
             />
             <ScrollView
