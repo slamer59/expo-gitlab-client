@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -19,11 +19,15 @@ import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { shareView } from "@/lib/utils";
 import { Separator } from "@rn-primitives/select";
+import { useQueryClient } from "@tanstack/react-query";
 import { Text } from "~/components/ui/text";
 
 
 
 export default function IssueDetails() {
+    const [isDeleted, setDeleted] = useState(false)
+    const queryClient = useQueryClient();
+
     const { projectId, issue_iid } = useLocalSearchParams();
     const { session } = useSession()
     const router = useRouter();
@@ -40,7 +44,7 @@ export default function IssueDetails() {
         { data: notes, isLoading: isLoadingNotes, error: errorNotes },
         { data: relatedMRs, isLoading: isLoadingRelatedMergeRequests, error: errorRelatedMRs },
         { data: linkedIssues, isLoading: isLoadingLinkedIssues, error: errorLinkedIssues },
-    ] = api.useProjectIssueDetails(projectId, issue_iid);
+    ] = api.useProjectIssueDetails(projectId, issue_iid, isDeleted);
 
     if (errorIssue || errorNotes || errorRelatedMRs || errorLinkedIssues) {
         return <Text>Error fetching data: {errorIssue?.message || errorNotes?.message || errorRelatedMRs?.message || errorLinkedIssues?.message}
@@ -58,19 +62,44 @@ export default function IssueDetails() {
     );
 
     const deleteIssue = async () => {
-        await deleteIssueMutation.mutateAsync(
+        setDeleted(true)
+        await deleteIssueMutation.mutate(
             { projectId, issueIid: issue_iid },
             {
                 onSuccess: () => {
-                    // Navigate back to the issues list after deletion
+                    setDeleted(true)
+                    // Invalidate and refetch issues after deletion
+                    queryClient.invalidateQueries({ queryKey: ['projectIssue', projectId, issue_iid] });
+                    queryClient.invalidateQueries({ queryKey: ['projectIssueNotes', projectId, issue_iid] })
+                    queryClient.invalidateQueries({ queryKey: ['projectIssueRelatedMergeRequest', projectId, issue_iid] })
+                    queryClient.invalidateQueries({ queryKey: ['projectIssueLinks', projectId, issue_iid] })
                     router.push(`/workspace/projects/${projectId}/issues/list`);
-                    // Navigate back to the issues list after deletion
-                    // Replace '/issues/list' with the actual path to your issues list screen
                 },
             }
         );
     };
 
+    // const deleteIssue = async () => {
+    //     await client.ProjectIssues.remove(projectId, issue_iid)
+    //     setDeleted(true)
+    // };
+    // // Mutation for deleting the issue
+    // const mutation = useMutation({
+    //     mutationFn: deleteIssue,
+    //     onSuccess: () => {
+    //         // Invalidate and refetch issues after deletion
+    //         queryClient.invalidateQueries({ queryKey: ['projectIssue', projectId, issue_iid] });
+    //         queryClient.invalidateQueries({ queryKey: ['projectIssueNotes', projectId, issue_iid] })
+    //         queryClient.invalidateQueries({ queryKey: ['projectIssueRelatedMergeRequest', projectId, issue_iid] })
+    //         queryClient.invalidateQueries({ queryKey: ['projectIssueLinks', projectId, issue_iid] })
+    //         router.push(`/workspace/projects/${projectId}/issues/list`);
+    //     },
+    //     onError: (error) => {
+    //         console.log("🚀 ~ IssueDetails ~ error:", error)
+
+    //         Alert.alert('Error', 'Failed to delete the issue');
+    //     },
+    // });
     const headerActions: HeaderAction[] = [
         {
             icon: "share-social-outline",
@@ -105,7 +134,8 @@ export default function IssueDetails() {
             icon: "trash-outline",
             color: "red",
             label: "Delete Issue",
-            onPress: deleteIssue,
+            // onPress: () => mutation.mutate(),
+            onPress: () => deleteIssue(),
             testID: "delete-issue-option"
         }
     ];

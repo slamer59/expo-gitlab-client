@@ -113,7 +113,7 @@ export const useGitLab = (client: GitLabClient) => {
         ),
         useUpdateProjectMergeRequest: createMutationHook(
             (data: { projectId: string; mergeRequestIid: string; updateData: any }) =>
-                client.updateProjectMergeRequest(data.projectId, data.mergeRequestIid, data.updateData),
+                client.updateMergeRequest(data.projectId, data.mergeRequestIid, data.updateData),
             ['projectMergeRequests']
         ),
         useDeleteProjectMergeRequest: createMutationHook(
@@ -258,24 +258,28 @@ export const useGitLab = (client: GitLabClient) => {
         },
 
         // Project Issue
-        useProjectIssueDetails: (projectId: string, issueIid: string) => {
+        useProjectIssueDetails: (projectId: string, issueIid: string, isDeleted: boolean) => {
             return useQueries({
                 queries: [
                     {
                         queryKey: ['projectIssue', projectId, issueIid],
                         queryFn: () => client.ProjectIssues.show(projectId, issueIid),
+                        enabled: !isDeleted,
                     },
                     {
                         queryKey: ['projectIssueNotes', projectId, issueIid],
                         queryFn: () => client.ProjectIssues.notes(projectId, issueIid),
+                        enabled: !isDeleted,
                     },
                     {
                         queryKey: ['projectIssueRelatedMergeRequest', projectId, issueIid],
                         queryFn: () => client.ProjectIssues.related_merge_requests(projectId, issueIid),
+                        enabled: !isDeleted,
                     },
                     {
                         queryKey: ['projectIssueLinks', projectId, issueIid],
                         queryFn: () => client.ProjectIssues.links(projectId, issueIid),
+                        enabled: !isDeleted,
                     }
                 ],
             })
