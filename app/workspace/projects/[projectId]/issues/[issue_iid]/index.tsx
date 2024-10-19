@@ -109,7 +109,7 @@ export default function IssueDetails() {
             testID: "delete-issue-option"
         }
     ];
-    console.log("issue", issue)
+
     return (
         <SafeAreaView className="flex-1">
             <Stack.Screen
@@ -128,7 +128,10 @@ export default function IssueDetails() {
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
                 {isLoadingIssue ? <HeaderSkeleton /> :
-                    <IssueHeader issue={issue} />
+                    <IssueHeader
+                        issue={issue}
+                        isPending={updateIssueMutation.isPending}
+                    />
                 }
 
                 {isLoadingIssue ? <CommentSkeleton /> :

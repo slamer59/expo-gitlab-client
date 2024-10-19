@@ -147,11 +147,12 @@ export default function RootLayout() {
         }}
         autocapture={{
           captureTouches: true,
+          captureLifecycleEvents: true,
           noCaptureProp: 'data-no-capture',
           navigation: {
-            // Add any specific navigation options here if needed
+            routeToProperties: (name, properties) => properties,
+            routeToName: (name, properties) => name,
           },
-          captureLifecycleEvents: true,
         }}
       >
         <SessionProvider>

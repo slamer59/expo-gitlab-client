@@ -35,7 +35,7 @@ export const IssueHeaderSkeleton = () => {
     );
 };
 
-const IssueHeader = ({ issue }) => {
+const IssueHeader = ({ issue, isPending }) => {
 
     return (
         <View className="mb-4">
@@ -56,10 +56,15 @@ const IssueHeader = ({ issue }) => {
             >
                 {issue.title}
             </Text>
-            <Pills
-                label={issue.state}
-                variant={getIssueStateColor(issue.state as IssueState) as unknown as PillProps}
-            />
+
+            {isPending ? <Pills
+                label="pending"
+                variant='gray'
+            /> :
+                <Pills
+                    label={issue.state}
+                    variant={getIssueStateColor(issue.state as IssueState) as unknown as PillProps}
+                />}
             <View className="flex-row items-center mt-2">
                 <TouchableOpacity className="flex-row items-center mr-2">
                     <Ionicons
