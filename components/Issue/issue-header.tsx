@@ -43,11 +43,17 @@ const IssueHeader = ({ issue }) => {
                 pathname: '/workspace/projects/[projectId]',
                 params: { projectId: issue.project_id }
             }}>
-                <Text className="mb-2 font-bold text-md text-muted">
+                <Text
+                    className="mb-2 font-bold text-md text-muted"
+                    testID='issue-reference'
+                >
                     {issue.references.full}
                 </Text>
             </Link>
-            <Text className="mb-2 text-4xl font-bold text-white">
+            <Text
+                className="mb-2 text-4xl font-bold text-white"
+                testID="issue-title"
+            >
                 {issue.title}
             </Text>
             <Pills

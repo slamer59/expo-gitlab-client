@@ -35,7 +35,6 @@ interface CreateMergeRequestResponse {
 }
 
 export default function CreateMergeRequestForm({ projectId, mrDescription, branches, members, milestones, labels }: any) {
-    console.log("🚀 ~ CreateMergeRequestForm ~ mrDescription:", mrDescription)
     const { targetBranchName, branchesName, defaultBranchName } = branches
     const [alert, setAlert] = useState({ message: "", isOpen: false });
     const router = useRouter();

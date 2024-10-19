@@ -38,12 +38,12 @@ function MergeRequestOptionsMenu({ openMr, closeMr, deleteMr, state, projectId, 
                     <Text className="font-semibold">Copy Url</Text>
                 </DropdownMenuItem>
                 {state === 'closed' ? (
-                    <DropdownMenuItem onPress={() => openMr()} testID="mr-reopen-option">
+                    <DropdownMenuItem onPress={() => openMr()}>
                         <Octicons name="issue-opened" size={20} color="green" style={{ marginRight: 10 }} />
                         <Text className="font-semibold text-success">Reopen Merge Request</Text>
                     </DropdownMenuItem>
                 ) : (
-                    <DropdownMenuItem onPress={() => closeMr()} testID="mr-close-option">
+                    <DropdownMenuItem onPress={() => closeMr()} >
                         <Ionicons name="close-circle-outline" size={20} color="red" style={{ marginRight: 10 }} />
                         <Text className="font-semibold text-danger">Close Merge Request</Text>
                     </DropdownMenuItem>
@@ -73,7 +73,6 @@ export function headerRightProjectMr(
                     await shareView(mr?.web_url);
                 }}
                 className='pl-2 pr-2 m-2'
-                testID="mr-share-button"
             >
                 {({ pressed }) => (
                     <Ionicons

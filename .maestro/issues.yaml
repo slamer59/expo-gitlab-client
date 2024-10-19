@@ -11,5 +11,20 @@ appId: expo-gitlab-client
     index: 0
 - assertVisible: ${maestro.copiedText}
 - takeScreenshot: ./assets/maestro/Issue Details
+- tapOn:
+    id: options
+- assertVisible: Edit Issue
+- assertVisible: Close Issue
+- assertVisible: Create Merge Request
+- assertVisible: Delete Issue
+- tapOn:
+    id: create-merge-request-option
+- assertVisible: Create MergeRequest
+- takeScreenshot: ./assets/maestro/Create Merge Request
+- takeScreenshot: ./assets/maestro/Create Merge Request Open Branch
+- tapOn:
+    point: 50%,25%
+- tapOn: Cancel
+- back
 - back
 - back
