@@ -20,9 +20,9 @@ export default function CreateIssue() {
 
     const [
         { data: project, isLoading: isLoadingProject, error: errorProject },
-        { data: members, isLoading: isLoadingMembers, error: errorMembers },
-        { data: milestones, loading: milestonesLoading, error: milestonesError },
-        { data: labels, loading: labelsLoading, error: labelsError }
+        // { data: members, isLoading: isLoadingMembers, error: errorMembers },
+        // { data: milestones, loading: milestonesLoading, error: milestonesError },
+        // { data: labels, loading: labelsLoading, error: labelsError }
     ] = api.useProjectIssueCreate(projectId);
     // console.log("🚀 ~ CreateIssue ~ project:", project)
     // console.log("🚀 ~ CreateIssue ~ members:", members)

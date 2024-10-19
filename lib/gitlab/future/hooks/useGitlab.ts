@@ -1,9 +1,37 @@
 import { useMutation, useQueries, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query';
+import { usePostHog } from 'posthog-react-native';
 import GitLabClient from '../../gitlab-api-wrapper';
 
-const createQueryHook = (queryKey: string[], queryFn: () => Promise<any>) => (): UseQueryResult<any> =>
-    useQuery({ queryKey, queryFn });
 
+
+// Create a custom query hook
+const createQueryHook = <T>(queryKey: string[], queryFn: () => Promise<T>) => (): UseQueryResult<T> => {
+    const posthog = usePostHog(); // Initialize PostHog
+
+    const result = useQuery({
+        queryKey,
+        queryFn,
+        // ...options,
+    });
+
+    // Handle success
+    // if (result.isSuccess) {
+    //     posthog.capture('Query Success', {
+    //         queryKey,
+    //         // Add any other properties you want to capture
+    //     });
+    // }
+
+    // Handle error
+    if (result.isError) {
+        posthog.capture('Query Error', {
+            queryKey,
+            errorMessage: result.error?.message,
+        });
+    }
+
+    return result;
+};
 const createMutationHook = (
     mutationFn: (...args: any[]) => Promise<any>,
     invalidateQueries: string[],
@@ -240,18 +268,18 @@ export const useGitLab = (client: GitLabClient) => {
                         queryKey: ['project', projectId],
                         queryFn: () => client.Projects.show(projectId),
                     },
-                    {
-                        queryKey: ['projectMembers', projectId],
-                        queryFn: () => client.ProjectMembers.all(projectId),
-                    },
-                    {
-                        queryKey: ['projectMileStones', projectId],
-                        queryFn: () => client.Milestones.all(projectId),
-                    },
-                    {
-                        queryKey: ['projectLabels', projectId],
-                        queryFn: () => client.Labels.all(projectId),
-                    }
+                    // {
+                    //     queryKey: ['projectMembers', projectId],
+                    //     queryFn: () => client.ProjectMembers.all(projectId),
+                    // },
+                    // {
+                    //     queryKey: ['projectMileStones', projectId],
+                    //     queryFn: () => client.Milestones.all(projectId),
+                    // },
+                    // {
+                    //     queryKey: ['projectLabels', projectId],
+                    //     queryFn: () => client.Labels.all(projectId),
+                    // }
                 ],
             },
             );
