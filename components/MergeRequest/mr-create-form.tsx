@@ -281,15 +281,15 @@ export default function CreateMergeRequestForm({ projectId, mrDescription, branc
                     variant="destructive"
                     onPress={handleSave(onSubmit)}
                     className='m-2'
-                    disabled={createMergeRequestMutation.isLoading}
+                    disabled={createMergeRequestMutation.isPending}
                 >
-                    <Text>{createMergeRequestMutation.isLoading ? "⏳  Loading   " : "Save changes"}</Text>
+                    <Text>{createMergeRequestMutation.isPending ? "⏳  Loading   " : "Save changes"}</Text>
                 </Button>
                 <Button
                     variant="outline"
                     onPress={() => router.back()}
                     className='m-2'
-                    disabled={createMergeRequestMutation.isLoading}
+                    disabled={createMergeRequestMutation.isPending}
                 >
                     <Text>Cancel</Text>
                 </Button>

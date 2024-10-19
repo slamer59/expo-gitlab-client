@@ -230,15 +230,15 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
                     variant="destructive"
                     onPress={handleSave(onSubmit)}
                     className='m-2'
-                    disabled={createIssueMutation.isLoading}
+                    disabled={createIssueMutation.isPending}
                 >
-                    <Text>{createIssueMutation.isLoading ? "⏳  Loading   " : "Save changes"}</Text>
+                    <Text>{createIssueMutation.isPending ? "⏳  Loading   " : "Save changes"}</Text>
                 </Button>
                 <Button
                     variant="outline"
                     onPress={() => router.back()}
                     className='m-2'
-                    disabled={createIssueMutation.isLoading}
+                    disabled={createIssueMutation.isPending}
                 >
                     <Text>Cancel</Text>
                 </Button>
