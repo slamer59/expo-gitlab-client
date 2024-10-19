@@ -1,12 +1,26 @@
 // GitLabClient.js
+import { PostHog } from 'posthog-react-native';
 import { useEffect, useState } from 'react';
 
 const BASE_URL = 'https://gitlab.com/api/v4';
 
+// Default PostHog instance initialization with error handling
+const defaultPosthog = process.env.EXPO_PUBLIC_POSTHOG_API_KEY
+  ? new PostHog(process.env.EXPO_PUBLIC_POSTHOG_API_KEY, {
+    host: process.env.EXPO_PUBLIC_POSTHOG_HOST,
+  })
+  : null;
 class GitLabClient {
-  constructor(options = {}) {
+  constructor(options = {}, logger = defaultPosthog) {
     this.token = options.token;
     this.host = options.host || BASE_URL;
+    this.logger = logger; // Injected logger/analytics tool (PostHog, etc.)
+
+    // Automatically wrap all methods in logging
+    this.autoWrapMethods();
+    if (this.logger) {
+      this.logger.debug = true; // This enables verbose logging
+    }
   }
 
   async request(endpoint, method = 'GET', body = null, file = null) {
@@ -16,53 +30,153 @@ class GitLabClient {
       'Authorization': `Bearer ${this.token}`,
     };
 
-    const options: RequestInit = {
+    const options = {
       method,
       headers,
     };
 
     if (file) {
-      // Handle file upload
       const formData = new FormData();
       formData.append('file', file);
-
       if (body) {
-        // If there's additional data, append it to formData
-        Object.keys(body).forEach(key => {
-          formData.append(key, body[key]);
-        });
+        Object.keys(body).forEach(key => formData.append(key, body[key]));
       }
       options.body = formData;
-      // Don't set Content-Type header, let the browser set it with the boundary
-      delete headers['Content-Type'];
+      delete headers['Content-Type']; // Let the browser set the boundary
     } else if (body && (method === 'POST' || method === 'PUT')) {
-      // Handle JSON body
       headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(body);
     }
 
     try {
+      const startTime = Date.now(); // Track request duration
+
       const response = await fetch(url, options);
-      // console.log("🚀 ~ GitLabClient ~ request ~ url, options:", url, options)
+
+      const duration = Date.now() - startTime; // Calculate request duration
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorMessage = await response.text();
+        if (this.logger) {
+          this.logger.capture('API Error', {
+            endpoint: url,
+            method,
+            status: response.status,
+            message: errorMessage,
+            duration,
+          });
+        }
+        console.error(`API request failed: ${response.status} ${errorMessage}`);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorMessage}`);
       }
+
+      // if (this.logger) {
+      //   this.logger.capture('API Success', {
+      //     endpoint: url,
+      //     method,
+      //     status: response.status,
+      //     duration,
+      //   });
+      // }
+
       if (response.status === 204) {
-        // For 204 No Content responses, return a success object
         return { success: true, message: 'Operation completed successfully' };
       }
+
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
         return await response.json();
       } else {
-        // For other non-JSON responses
         return await response.text();
       }
+
     } catch (error) {
-      console.error(`API request ${url} failed on:`, error);
+      if (this.logger) {
+        this.logger.capture('API Request Failed', {
+          endpoint: url,
+          method,
+          error: error.message,
+        });
+      }
+      console.error(`API request ${url} failed:`, error);
       throw error;
     }
   }
+
+  withLogging(methodName, fn) {
+    return async (...args) => {
+      const startTime = Date.now();
+      let requestInfo = {};
+
+      // Check if this is a request method
+      if (methodName === 'request') {
+        const [endpoint, method, params] = args;
+        requestInfo = {
+          endpoint,
+          method,
+          params: JSON.stringify(params, null, 2),
+        };
+      }
+
+      // console.log(`🚀 Calling ${methodName}:`, {
+      //   args: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg),
+      //   ...requestInfo
+      // });
+
+      try {
+        const result = await fn.apply(this, args);
+        // const duration = Date.now() - startTime;
+
+        // console.log(`✅ ${methodName} Success:`, {
+        //   duration: `${duration}ms`,
+        //   result: typeof result === 'object' ? JSON.stringify(result, null, 2) : result,
+        //   ...requestInfo
+        // });
+
+        // if (this.logger) {
+        //   this.logger.capture(`${methodName} Success`, {
+        //     duration,
+        //     ...requestInfo,
+        //     result: typeof result === 'object' ? JSON.stringify(result) : result,
+        //   });
+        // }
+
+        return result;
+      } catch (error) {
+        const duration = Date.now() - startTime;
+
+        // console.error(`❌ ${methodName} Error:`, {
+        //   duration: `${duration}ms`,
+        //   error: error.message,
+        //   ...requestInfo
+        // });
+
+        if (this.logger) {
+          this.logger.capture(`${methodName} Error`, {
+            duration,
+            error: error.message,
+            ...requestInfo
+          });
+        }
+
+        throw error; // Re-throw the error after logging it
+      }
+    };
+  }
+
+
+  // Method to automatically wrap all class methods with logging
+  autoWrapMethods() {
+    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
+
+    methods.forEach(methodName => {
+      if (typeof this[methodName] === 'function' && methodName !== 'constructor') {
+        const originalMethod = this[methodName];
+        this[methodName] = this.withLogging(methodName, originalMethod);
+      }
+    });
+  }
+
 
   Issues = {
     all: async (params) => {
@@ -502,6 +616,9 @@ class GitLabClient {
   };
   updateProjectBranches = async (projectId, branch, data) => {
     return this.Branches.edit(projectId, branch, data);
+  };
+  updateProjectIssue = async (projectId, issueIid, data) => {
+    return this.ProjectIssues.edit(projectId, issueIid, data);
   };
   updateMergeRequest = async (projectId, mergeRequestIid, data) => {
     return this.ProjectMergeRequests.edit(projectId, mergeRequestIid, data);
