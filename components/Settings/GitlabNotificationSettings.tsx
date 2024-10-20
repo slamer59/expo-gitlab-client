@@ -8,8 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import React, { useEffect, useMemo, useState } from 'react';
+import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { create } from 'zustand';
 import ErrorAlert from '../ErrorAlert';
@@ -49,6 +49,7 @@ interface NotificationStore {
     selectedItemType: string;
     selectedItemIndex: number;
     isLoading: boolean;
+    isInitialized: boolean;
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: typeof notificationLevels[0]; notification_email: string }) => void;
@@ -56,11 +57,30 @@ interface NotificationStore {
     setSelectedItemType: (type: string) => void;
     setSelectedItemIndex: (index: number) => void;
     setIsLoading: (loading: boolean) => void;
-    fetchData: (api: GitLabClient) => Promise<void>;
+    setIsInitialized: (initialized: boolean) => void;
+    fetchFirebaseData: (expoToken: string) => Promise<any>;
+    syncNotificationSettings: (client: GitLabClient) => Promise<void>;
     selectNotificationLevel: (level: typeof notificationLevels[0]) => Promise<void>;
     openModal: (type: string, index: number) => void;
+    fetchGitLabEmailSettings: (client: GitLabClient) => Promise<void>;
+    fetchFirebaseNotifications: (expoToken: string) => Promise<void>;
+    syncGitLabWithFirebase: (client: GitLabClient, expoToken: string) => Promise<void>;
 }
 
+async function getAllProjects(client: GitLabClient, page = 1, allProjects = []) {
+    const perPage = 100; // Maximum allowed by GitLab API
+    const projects = await client.Projects.all({ membership: true, owned: true, per_page: perPage, page: page });
+
+    allProjects = allProjects.concat(projects);
+
+    if (projects.length === perPage) {
+        // There might be more pages
+        return getAllProjects(client, page + 1, allProjects);
+    } else {
+        // No more pages
+        return allProjects;
+    }
+}
 
 const useNotificationStore = create<NotificationStore>((set, get) => ({
     groups: [],
@@ -70,6 +90,8 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
     selectedItemType: '',
     selectedItemIndex: -1,
     isLoading: true,
+    isInitialized: false,
+
     setGroups: (groups) => set({ groups }),
     setProjects: (projects) => set({ projects }),
     setGlobal: (global) => set({ global }),
@@ -77,9 +99,32 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
     setSelectedItemType: (type) => set({ selectedItemType: type }),
     setSelectedItemIndex: (index) => set({ selectedItemIndex: index }),
     setIsLoading: (loading) => set({ isLoading: loading }),
-    fetchData: async (client: GitLabClient) => {
+    setIsInitialized: (initialized) => set({ isInitialized: initialized }),
+
+    fetchFirebaseData: async (expoToken: string) => {
+        try {
+            const docRef = doc(db, "userNotifications", expoToken);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return docSnap.data();
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching Firebase data:", error);
+            return null;
+        }
+    },
+
+    syncNotificationSettings: async (client: GitLabClient) => {
         set({ isLoading: true });
         try {
+            const { isInitialized } = get();
+            const expoToken = await getExpoToken();
+
+            if (!expoToken) {
+                throw new Error('Failed to retrieve Expo token');
+            }
+
             const fetchNotificationSettings = async (type, id) => {
                 try {
                     let response = {};
@@ -96,34 +141,74 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
                     return notificationLevels[0];
                 }
             };
-            // Fetches groups
-            const groups = await client.Groups.all();
 
-            // const groups = await client.Groups.all({ membership: true, owned: true });
-            const groupsWithSettings = await Promise.all(groups.map(async group => ({
-                id: group.id,
-                name: group.full_name,
-                level: await fetchNotificationSettings('group', group.id)
-            })));
-            set({ groups: groupsWithSettings });
-            // Fetch projects
-            const projects = await client.Projects.all({ membership: true, owned: true });
+            if (!isInitialized) {
+                const groups = await client.Groups.all();
+                const groupsWithSettings = await Promise.all(groups.map(async group => ({
+                    id: group.id,
+                    name: group.full_name,
+                    level: await fetchNotificationSettings('group', group.id)
+                })));
 
-            const projectsWithSettings = await Promise.all(projects.map(async project => ({
-                id: project.id,
-                name: project.path_with_namespace,
-                level: await fetchNotificationSettings('project', project.id)
-            })));
-            set({ projects: projectsWithSettings });
+                const projects = await getAllProjects(client);
+                const projectsWithSettings = await Promise.all(projects.map(async project => ({
+                    id: project.id,
+                    name: project.path_with_namespace,
+                    level: await fetchNotificationSettings('project', project.id)
+                })));
 
-            // Fetch global notification settings
-            const globalSettings = await fetchNotificationSettings('global', null);
-            const global = {
-                level: notificationLevels.find(level => level.value === globalSettings.level) || notificationLevels[0],
-                notification_email: globalSettings.notification_email || ''
-            };
-            set({ global });
+                const globalSettings = await fetchNotificationSettings('global', null);
+                const global = {
+                    level: notificationLevels.find(level => level.value === globalSettings.level) || notificationLevels[0],
+                    notification_email: globalSettings.notification_email || ''
+                };
 
+                const firebaseData = await get().fetchFirebaseData(expoToken);
+
+                if (!firebaseData) {
+                    await updateNotificationLevel(expoToken, {
+                        notification_level: global.level.value,
+                        custom_events: []
+                    }, projectsWithSettings.map(project => ({
+                        id: project.id,
+                        name: project.name,
+                        notification_level: project.level.value,
+                        custom_events: []
+                    })));
+
+                    set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
+                } else {
+                    set({
+                        projects: firebaseData.notifications.map(n => ({
+                            id: n.id,
+                            name: n.name,
+                            level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
+                        })),
+                        global: {
+                            level: notificationLevels.find(l => l.value === firebaseData.global_notification.notification_level) || notificationLevels[0],
+                            notification_email: global.notification_email
+                        },
+                        groups: groupsWithSettings
+                    });
+                }
+
+                set({ isInitialized: true });
+            } else {
+                const firebaseData = await get().fetchFirebaseData(expoToken);
+                if (firebaseData) {
+                    set({
+                        projects: firebaseData.notifications.map(n => ({
+                            id: n.id,
+                            name: n.name,
+                            level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
+                        })),
+                        global: {
+                            level: notificationLevels.find(l => l.value === firebaseData.global_notification.notification_level) || notificationLevels[0],
+                            notification_email: get().global.notification_email
+                        }
+                    });
+                }
+            }
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -169,12 +254,84 @@ const useNotificationStore = create<NotificationStore>((set, get) => ({
             console.error("Error updating notification level:", error);
         }
     },
+
     openModal: (type, index = -1) => {
         set({
             selectedItemType: type,
             selectedItemIndex: index,
             modalVisible: true
         });
+    },
+
+    fetchGitLabEmailSettings: async (client: GitLabClient) => {
+        try {
+            const response = await client.GlobalNotification.all();
+            set({
+                global: {
+                    level: notificationLevels.find(level => level.value === response.level) || notificationLevels[0],
+                    notification_email: response.notification_email || ''
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching GitLab email settings:", error);
+        }
+    },
+
+    fetchFirebaseNotifications: async (expoToken: string) => {
+        try {
+            const firebaseData = await get().fetchFirebaseData(expoToken);
+            if (firebaseData) {
+                set({
+                    projects: firebaseData.notifications.map(n => ({
+                        id: n.id,
+                        name: n.name,
+                        level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
+                    })),
+                    global: {
+                        level: notificationLevels.find(l => l.value === firebaseData.global_notification.notification_level) || notificationLevels[0],
+                        notification_email: get().global.notification_email
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching Firebase notifications:", error);
+        }
+    },
+
+    syncGitLabWithFirebase: async (client: GitLabClient, expoToken: string) => {
+        try {
+            const projects = await getAllProjects(client);
+            const firebaseData = await get().fetchFirebaseData(expoToken);
+            const firebaseProjects = firebaseData?.notifications || [];
+
+            const firebaseProjectMap = new Map(firebaseProjects.map(p => [p.id, p]));
+
+            const updatedNotifications = projects.map(project => {
+                const firebaseProject = firebaseProjectMap.get(project.id);
+                return {
+                    id: project.id,
+                    name: project.path_with_namespace,
+                    notification_level: firebaseProject?.notification_level || get().global.level.value,
+                    custom_events: firebaseProject?.custom_events || []
+                };
+            });
+
+            await updateNotificationLevel(expoToken, {
+                notification_level: get().global.level.value,
+                custom_events: []
+            }, updatedNotifications);
+
+            set({
+                projects: updatedNotifications.map(n => ({
+                    id: n.id,
+                    name: n.name,
+                    level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
+                }))
+            });
+
+        } catch (error) {
+            console.error("Error syncing GitLab with Firebase:", error);
+        }
     },
 }));
 
@@ -209,15 +366,20 @@ export default function NotificationDashboard() {
         global,
         modalVisible,
         isLoading,
-        fetchData,
+        syncNotificationSettings,
         selectNotificationLevel,
         openModal,
-        setModalVisible
+        setModalVisible,
+        // Remove syncWithFirebase from here
+        fetchGitLabEmailSettings,
+        fetchFirebaseNotifications,
+        syncGitLabWithFirebase,
     } = useNotificationStore();
+
 
     useEffect(() => {
         if (session?.url && session?.token) {
-            fetchData(client);
+            syncNotificationSettings(client);
         }
     }, [session?.url, session?.token]);
 
@@ -250,23 +412,51 @@ export default function NotificationDashboard() {
             setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
         }
     };
+    // const syncNotifications = useCallback(async () => {
+    //     if (session?.url && session?.token) {
+    //         await fetchData(client);
+    //         console.log("Sync notification updated successfully");
+
+    //     }
+    // }, [session?.url, session?.token, fetchData]);
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         syncNotifications();
+    //     }, [syncNotifications])
+    // );
+
+    useFocusEffect(
+        useCallback(() => {
+            const syncNotifications = async () => {
+                if (session?.url && session?.token) {
+                    const expoToken = await getExpoToken();
+                    if (expoToken) {
+                        await fetchGitLabEmailSettings(client);
+                        await fetchFirebaseNotifications(expoToken);
+                        await syncGitLabWithFirebase(client, expoToken);
+                    }
+                }
+            };
+
+            syncNotifications();
+        }, [session?.url, session?.token, client])
+    );
 
     useFocusEffect(
         React.useCallback(() => {
-            const fetchData = async () => {
+            const setupProjectWebhooks = async () => {
                 if (isLoadingPersonal) {
                     console.log("Projects are still loading");
                     return;
                 }
-
-
                 const projects = prepareProjects(personalProjects);
                 if (!projects) return;
 
                 await updateWebhooks(session, projects);
             };
 
-            fetchData();
+            setupProjectWebhooks();
         }, [session, personalProjects, isLoadingPersonal])
     );
 
@@ -282,6 +472,9 @@ export default function NotificationDashboard() {
             <View className="p-4 m-1 rounded-lg bg-card">
                 <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
                 <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
+
+                <Text className="mb-6 text-muted">Configure your mobile app notification preferences here. These settings are independent from your GitLab email notifications.</Text>
+
 
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
