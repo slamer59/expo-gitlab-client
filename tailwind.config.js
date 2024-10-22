@@ -123,7 +123,13 @@ module.exports = {
         insights: "#B3B3B3",
         settings: "#B3B3B3",
         admin: "#B3B3B3",
-        
+        accessLevel: {
+          guest: '#FFA500',     // Orange
+          reporter: '#4CAF50',  // Green
+          developer: '#2196F3', // Blue
+          maintainer: '#9C27B0',// Purple
+          owner: '#F44336'      // Red
+        }
       },
 
       borderWidth: {

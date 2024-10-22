@@ -3,12 +3,9 @@ import requests
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
 from gitlab_webhook_handlers import get_project_id, handle_event
-from notifications import (
-    add_device_to_notification_group,
-    list_devices_with_group_id,
-    send_push_message,
-    users_from_project_id,
-)
+from notifications import (add_device_to_notification_group,
+                           list_devices_with_group_id, send_push_message,
+                           users_from_project_id)
 
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
 firebaseProjectId = "gitalchemy"
@@ -384,6 +381,38 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     response = send_push_message(event_messages.model_dump(mode="json")["messages"])
     # Return a success response
     return https_fn.Response(response=response, mimetype="application/json")
+
+@https_fn.on_request()
+def notifications(req: https_fn.Request) -> https_fn.Response:
+
+    data = req.get_json()
+    # Get list of push tokens
+    project_id = get_project_id(data)
+    logger.info(f"Project ID: {project_id}")
+    users_settings = users_from_project_id(db, project_id)
+
+    # logger.info("user_settings ", users_settings)
+
+    # Filter push_tokens based on user settings
+    event_type = data.get("object_kind")
+    # logger.info("event_type ", event_type)
+    filtered_push_tokens = [
+        user["expoToken"]
+        for user in users_settings
+        if NotificationSetting.should_notify(user, event_type)
+    ]
+    logger.info("filtered_push_tokens ", filtered_push_tokens)
+
+    # push_tokens = get_push_tokens(db, project_id)
+    # Handle the event based on its type
+    # logger.info("push_tokens", push_tokens)
+    event_messages = handle_event(data, filtered_push_tokens)
+    # Send the push notification to the device
+    # logger.info(event_messages.model_dump(mode="json")["messages"])
+    response = send_push_message(event_messages.model_dump(mode="json")["messages"])
+    # Return a success response
+    return https_fn.Response(response=response, mimetype="application/json")
+
 
 
 @https_fn.on_request()

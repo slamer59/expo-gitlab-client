@@ -561,6 +561,27 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/members/${userId}`, 'DELETE');
     },
   }
+  GroupMembers = {
+    show: async (groupId, userId) => {
+      return this.request(`/groups/${groupId}/members/${userId}`);
+    },
+    add: async (groupId, userId, accessLevel) => {
+      const data = {
+        user_id: userId,
+        access_level: accessLevel,
+      };
+      return this.request(`/groups/${groupId}/members`, 'POST', data);
+    },
+    edit: async (groupId, userId, accessLevel) => {
+      const data = {
+        access_level: accessLevel,
+      };
+      return this.request(`/groups/${groupId}/members/${userId}`, 'PUT', data);
+    },
+    remove: async (groupId, userId) => {
+      return this.request(`/groups/${groupId}/members/${userId}`, 'DELETE');
+    },
+  }
   RepositoryFile = {
     // GET /projects/:id/repository/files/:file_path
     show: async (projectId, filePath, options = {}) => {

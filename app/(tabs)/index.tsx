@@ -73,6 +73,12 @@ export default function Home() {
       },
       {
         icon: "arrow-forward",
+        text: "DevMember",
+        screen: "workspace/projects/59795263/members/11041577",
+        itemColor: "bg-green"
+      },
+      {
+        icon: "arrow-forward",
         text: "DevIssue",
         screen: "workspace/projects/59795263/issues/43",
         itemColor: "bg-green"
