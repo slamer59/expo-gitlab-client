@@ -71,6 +71,7 @@ export const useGitLab = (client: GitLabClient) => {
         useProjectPipelines: (projectId: string) => createQueryHook(['projectPipelines', projectId], () => client.Pipelines.all(projectId))(),
         useProjectMergeRequest: (projectId: string, mergeRequestIid: string) => createQueryHook(['projectMergeRequest', projectId, mergeRequestIid], () => client.ProjectMergeRequests.show(projectId, mergeRequestIid))(),
         useProjectMember: (projectId: string, userId: string) => createQueryHook(['projectMember', projectId, userId], () => client.ProjectMembers.show(projectId, userId))(),
+        useProjectCommit: (projectId: string, sha: string) => createQueryHook(['projectCommit', projectId, sha], () => client.Commits.show(projectId, sha))(),
         useGroupMember: (groupId: string, userId: string) => createQueryHook(['groupMember', groupId, userId], () => client.GroupMembers.show(groupId, userId))(),
         useIssues: (params: any) => createQueryHook(['issues', params], () => client.Issues.all(params))(),
         useIssueDiscussion: (projectId: string, issueId: string, discussionId: string) => createQueryHook(['issueDiscussion', projectId, issueId, discussionId], () => client.Discussions.show(projectId, issueId, discussionId))(),

@@ -15,7 +15,7 @@ import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
-import { formatDate, shareView } from "@/lib/utils";
+import { calculateFileChanges, formatDate, shareView } from "@/lib/utils";
 import { Ionicons } from '@expo/vector-icons';
 import { Label } from "@rn-primitives/select";
 import { format } from "date-fns";
@@ -100,31 +100,6 @@ function CommitsSection({ commits }) {
     );
 }
 
-const StatusItem = ({ icon, text, color, expandable, children }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    return (
-        <View className="mb-2">
-            <TouchableOpacity
-                className="flex-row items-center justify-between py-2"
-                onPress={() => expandable && setIsExpanded(!isExpanded)}
-            >
-                <View className="flex-row items-center">
-                    <Ionicons name={icon} size={20} color={color} />
-                    <Text className="ml-2 text-white">{text}</Text>
-                </View>
-                {expandable && (
-                    <Ionicons
-                        name={isExpanded ? "chevron-up" : "chevron-down"}
-                        size={20}
-                        color="gray"
-                    />
-                )}
-            </TouchableOpacity>
-            {isExpanded && children}
-        </View>
-    );
-};
 
 const getMergeStatusText = (status: string): string => {
     switch (status) {
@@ -326,37 +301,7 @@ const ChangesSection = ({ mr, changeSummaries }) => {
 };
 
 
-const calculateFileChanges = (change) => {
-    // Default values
-    let additions = 0;
-    let deletions = 0;
-    let status = 'modified';
 
-    if (change.new_file) {
-        status = 'new';
-        additions = change.new_lines || 0;
-    } else if (change.deleted_file) {
-        status = 'deleted';
-        deletions = change.old_lines || 0;
-    }
-    // Extract information from @@ patterns
-    const chunkHeaders = change.diff.match(/@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@/g);
-
-    if (chunkHeaders) {
-        chunkHeaders.forEach(header => {
-            const [, oldStart, oldLines, newStart, newLines] = header.match(/@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
-
-            deletions += parseInt(oldLines) || 0;
-            additions += parseInt(newLines) || 0;
-        });
-    }
-    return {
-        additions,
-        deletions,
-        total_changes: additions + deletions,
-        status
-    };
-};
 
 
 export default function MergeRequestDetails() {

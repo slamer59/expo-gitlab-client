@@ -50,7 +50,6 @@ export function FlatListCards<T extends ListItem>({
         data={items}
         renderItem={({ item }: { item }) => {
           const params = getParams(item);
-          console.log("🚀 ~ params:", params)
           return <TouchableOpacity
             key={item.id}
             onPress={() => {
