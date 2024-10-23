@@ -83,6 +83,12 @@ export default function Home() {
         screen: "workspace/projects/59795263/issues/43",
         itemColor: "bg-green"
       },
+      {
+        icon: "arrow-forward",
+        text: "DevCommitList",
+        screen: "workspace/projects/59795263/commits/list",
+        itemColor: "bg-green"
+      },
       // {
       //   icon: "arrow-forward",
       //   text: "DevIssueCreate",
