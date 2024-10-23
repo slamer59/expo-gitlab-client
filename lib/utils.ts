@@ -165,3 +165,35 @@ export function extractDefaultUIOptions(filters) {
 
   return defaultOptions;
 }
+
+export const calculateFileChanges = (change) => {
+  // Default values
+  let additions = 0;
+  let deletions = 0;
+  let status = 'modified';
+
+  if (change.new_file) {
+    status = 'new';
+    additions = change.new_lines || 0;
+  } else if (change.deleted_file) {
+    status = 'deleted';
+    deletions = change.old_lines || 0;
+  }
+  // Extract information from @@ patterns
+  const chunkHeaders = change.diff.match(/@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@/g);
+
+  if (chunkHeaders) {
+    chunkHeaders.forEach(header => {
+      const [, oldStart, oldLines, newStart, newLines] = header.match(/@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
+
+      deletions += parseInt(oldLines) || 0;
+      additions += parseInt(newLines) || 0;
+    });
+  }
+  return {
+    additions,
+    deletions,
+    total_changes: additions + deletions,
+    status
+  };
+};
