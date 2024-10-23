@@ -40,9 +40,9 @@ export default function CommitsList() {
     const useScreenStore = useMemo(() => createScreenStore(client.Commits.all, projectId, UIFilters), []);
     const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
 
-    const pathname = "/workspace/projects/[projectId]/commits/[sha]";
+    const pathname = `/workspace/projects/${projectId}/commits/[sha]`;
     const paramsMap = {
-        "projectId": "project_id", "sha": "sha"
+        "sha": "short_id"
     }
 
     useEffect(() => {

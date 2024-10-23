@@ -1,4 +1,3 @@
-import { Issue } from "@/lib/gitlab/future/repository";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
@@ -33,6 +32,7 @@ export function FlatListCards<T extends ListItem>({
   handleLoadMore,
   // handleRefresh
 }: ListComponentProps<T>) {
+
   const router = useRouter();
   const MemoizedItemComponent = React.memo(ItemComponent);
   const getParams = useMemo(() => (item: T) =>
@@ -48,8 +48,9 @@ export function FlatListCards<T extends ListItem>({
     <>
       <FlatList
         data={items}
-        renderItem={({ item }: { item: Issue }) => {
+        renderItem={({ item }: { item }) => {
           const params = getParams(item);
+          console.log("🚀 ~ params:", params)
           return <TouchableOpacity
             key={item.id}
             onPress={() => {
