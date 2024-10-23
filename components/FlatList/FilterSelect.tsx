@@ -7,6 +7,8 @@ import {
     SelectValue
 } from '@/components/ui/select';
 import React from 'react';
+import { Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface FilterOption {
     label: string;
@@ -26,6 +28,13 @@ export function FlatFilterButton({
     selectedValue,
     onValueChange
 }: FilterProps) {
+    const insets = useSafeAreaInsets();
+    const contentInsets = {
+        top: insets.top,
+        bottom: Platform.select({ ios: insets.bottom, android: insets.bottom + 24 }),
+        left: 12,
+        right: 12,
+    };
     return (
         <Select
             className='m-2'
@@ -45,6 +54,7 @@ export function FlatFilterButton({
                 className="max-h-screen mt-1 text-white border border-gray-700 rounded-2xl bg-filters"
             >
                 <SelectGroup>
+                    {/* <ScrollView className='max-h-64'> */}
                     {options.map((option, index) => (
                         <SelectItem
                             key={index}
@@ -55,6 +65,7 @@ export function FlatFilterButton({
                             {option.label}
                         </SelectItem>
                     ))}
+                    {/* </ScrollView> */}
                 </SelectGroup>
             </SelectContent>
         </Select>

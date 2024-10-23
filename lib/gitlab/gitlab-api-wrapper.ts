@@ -118,38 +118,14 @@ class GitLabClient {
         };
       }
 
-      // console.log(`🚀 Calling ${methodName}:`, {
-      //   args: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg),
-      //   ...requestInfo
-      // });
+
 
       try {
         const result = await fn.apply(this, args);
-        // const duration = Date.now() - startTime;
-
-        // console.log(`✅ ${methodName} Success:`, {
-        //   duration: `${duration}ms`,
-        //   result: typeof result === 'object' ? JSON.stringify(result, null, 2) : result,
-        //   ...requestInfo
-        // });
-
-        // if (this.logger) {
-        //   this.logger.capture(`${methodName} Success`, {
-        //     duration,
-        //     ...requestInfo,
-        //     result: typeof result === 'object' ? JSON.stringify(result) : result,
-        //   });
-        // }
 
         return result;
       } catch (error) {
         const duration = Date.now() - startTime;
-
-        // console.error(`❌ ${methodName} Error:`, {
-        //   duration: `${duration}ms`,
-        //   error: error.message,
-        //   ...requestInfo
-        // });
 
         if (this.logger) {
           this.logger.capture(`${methodName} Error`, {
@@ -316,8 +292,8 @@ class GitLabClient {
   };
 
   Commits = {
-    all: async (projectId, options = {}) => {
-      const queryString = new URLSearchParams(options).toString();
+    all: async (projectId, params = {}) => {
+      const queryString = new URLSearchParams(params).toString();
       return this.request(`/projects/${projectId}/repository/commits?${queryString}`);
     },
     show: async (projectId, sha) => {

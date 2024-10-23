@@ -86,7 +86,7 @@ export default function Home() {
       {
         icon: "arrow-forward",
         text: "DevCommitList",
-        screen: "workspace/projects/59795263/commits/list",
+        screen: "workspace/projects/59853773/commits/list",
         itemColor: "bg-green"
       },
       // {

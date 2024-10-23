@@ -8,31 +8,38 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { CommitCard, CommitCardSkeleton } from '@/components/Commit/commit-card';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 
 export default function CommitsList() {
+    const { projectId } = useLocalSearchParams();
+
     const { session } = useSession();
     const client = new GitLabClient({
         url: session?.url,
         token: session?.token,
     });
+    const api = useGitLab(client);
+
+    const { data: branches, loading: branchesLoading } = api.useProjectBranches(projectId);
 
     const UIFilters = [
         {
             label: 'Branch',
             placeholder: 'Select Branch',
             options: [
-                { label: 'All Branches', value: '' },
-                { label: 'Main', value: 'main' },
-                { label: 'Develop', value: 'develop' },
-                // Add more branches as needed
+                { label: 'All Branches', value: '', default: true, ref_name: '' },
+                ...(branches?.map(branch => ({
+                    label: branch.name,
+                    value: branch.name,
+
+                    filter: { ref_name: branch.name },
+                })) || [])
             ],
         },
     ];
-
-    const { projectId } = useLocalSearchParams();
-
     const useScreenStore = useMemo(() => createScreenStore(client.Commits.all, projectId, UIFilters), []);
     const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
+
     const pathname = "/workspace/projects/[projectId]/commits/[sha]";
     const paramsMap = {
         "projectId": "project_id", "sha": "sha"
@@ -42,15 +49,13 @@ export default function CommitsList() {
         fetchItems(true);
     }, [filters, fetchItems]);
 
+
     const handleLoadMore = useCallback(() => {
         if (!loading) {
             fetchItems();
         }
     }, [loading, fetchItems]);
 
-    const handleRefresh = useCallback(() => {
-        fetchItems(true);
-    }, [fetchItems]);
 
     return (
         <View className="flex-1 p-2 bg-background">
@@ -67,7 +72,7 @@ export default function CommitsList() {
                             options={filter.options}
                             placeholder={filter.placeholder}
                             selectedValue={filters[filter.label]}
-                            onValueChange={(value: string) => setFilter(filter.label.toLowerCase(), value)}
+                            onValueChange={(option) => setFilter(filter.label.toLowerCase(), option.value)}
                         />
                     ))}
                 </ScrollView>
@@ -75,7 +80,6 @@ export default function CommitsList() {
                 <FlatListCards
                     items={items}
                     handleLoadMore={handleLoadMore}
-                    handleRefresh={handleRefresh}
                     ItemComponent={CommitCard}
                     SkeletonComponent={CommitCardSkeleton}
                     pathname={pathname}
@@ -83,7 +87,6 @@ export default function CommitsList() {
                     isLoading={loading}
                     error={error}
                 />
-
             </View>
         </View>
     );
