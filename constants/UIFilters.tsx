@@ -98,7 +98,18 @@ export const GlobalIssueUIFilters = [
         placeholder: "Ordered By",
     },
 ];
-
+export const GlobalCommitUIFilters = [
+    {
+        label: 'Branch',
+        placeholder: 'Select Branch',
+        options: [
+            { label: 'All Branches', value: '' },
+            { label: 'Main', value: 'main' },
+            { label: 'Develop', value: 'develop' },
+            // Add more branches as needed
+        ],
+    },
+];
 export const GlobalMergeRequestUIFilters = [
     {
         label: "State",
