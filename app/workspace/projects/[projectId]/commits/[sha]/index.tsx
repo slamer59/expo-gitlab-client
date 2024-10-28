@@ -138,7 +138,7 @@ export default function Commit() {
     const api = useGitLab(client);
 
     const { data: commit, error, isLoading, isError, refetch } = api.useProjectCommit(projectId, sha);
-    console.log("🚀 ~ Commit ~ commit:", commit)
+
 
     const handleRevert = () => console.log("revert")
     const handleCherryPick = () => console.log("cherry")
@@ -209,20 +209,27 @@ export default function Commit() {
                 className="flex-1 p-4 bg-card"
                 contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
             >
-                <View className="mb-4">
-                    <Text className="mb-2 font-bold text-md text-muted" >
-                        {commit?.short_id}
-                    </Text>
-                    <Text className="mb-2 text-4xl font-bold text-white" >
-                        {commit?.title}
-                    </Text>
 
-                </View>
+                {!commit ?
+                    <View className="mb-4 ">
+                        <Skeleton className="mb-2 font-bold text-md bg-muted" />
+                        <Skeleton className="mb-2 text-4xl font-bold bg-white" />
+                    </View>
+                    :
+                    <View className="mb-4">
+                        <Text className="mb-2 font-bold text-md text-muted" >
+                            {commit?.short_id}
+                        </Text>
+                        <Text className="mb-2 text-4xl font-bold text-white" >
+                            {commit?.title}
+                        </Text>
+
+                    </View>}
 
                 {isLoading ?
                     <View className="flex-col p-3 mb-4 rounded-lg bg-card-600">
                         {Array.from({ length: 4 }).map((_, index) => (
-                            <View key={index} className="flex-row">
+                            <View key={index} className="flex-row items-center py-2 mb-2">
                                 <Skeleton className="w-4 h-4 mr-2 space-x-4 rounded-full bg-muted" />
                                 <Skeleton className="w-3/4 h-4 mb-2 bg-muted" />
                             </View>

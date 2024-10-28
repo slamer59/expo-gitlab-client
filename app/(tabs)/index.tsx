@@ -39,6 +39,12 @@ export default function Home() {
       itemColor: "bg-projects"
     },
     {
+      icon: "people-outline" as const,
+      text: "Groups",
+      screen: "/workspace/groups/list",
+      itemColor: "bg-groups",
+    },
+    {
       icon: "star-outline",
       text: "Starred",
       screen: "workspace/starred/list",

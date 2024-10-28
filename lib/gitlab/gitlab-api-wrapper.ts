@@ -197,12 +197,23 @@ class GitLabClient {
     },
 
   };
+
   Groups = {
     all: async (options = {}) => {
       const queryString = new URLSearchParams(options).toString();
-      return this.request(`/groups?${queryString}`);
+      return this.request(`/groups?${queryString}`)
     },
-  }
+    show: async (groupId) => {
+      return this.request(`/groups/${groupId}`);
+    },
+    subgroups: async (groupId, options = {}) => {
+      return this.request(`/groups/${groupId}/subgroups`, 'GET', options);
+    },
+    projects: async (groupId, options = {}) => {
+      return this.request(`/groups/${groupId}/projects`, 'GET', options);
+    },
+  };
+
   Projects = {
     all: async (options = {}) => {
       const queryString = new URLSearchParams(options).toString();
@@ -557,7 +568,11 @@ class GitLabClient {
     remove: async (groupId, userId) => {
       return this.request(`/groups/${groupId}/members/${userId}`, 'DELETE');
     },
+    members: async (groupId, options = {}) => {
+      return this.request(`/groups/${groupId}/members`, 'GET', options);
+    },
   }
+
   RepositoryFile = {
     // GET /projects/:id/repository/files/:file_path
     show: async (projectId, filePath, options = {}) => {

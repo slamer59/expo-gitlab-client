@@ -117,6 +117,7 @@ module.exports = {
         discussions: "#9370DB",
         actions: "#8FCF50",
         projects: "#A9A9A9",
+        groups: "#FD8112", 
         repositories: "#696969",
         packages: "#FF9F05",
         security: "#B00020",
