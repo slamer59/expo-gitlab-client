@@ -21,6 +21,7 @@ export default function CommitsList() {
     const api = useGitLab(client);
 
     const { data: branches, loading: branchesLoading } = api.useProjectBranches(projectId);
+    // GET /projects/:id/repository/commits/:sha/diff
 
     const UIFilters = [
         {

@@ -546,3 +546,26 @@ export const GlobalUserStarredProjectsUIFilters = []
 
 
 export const GlobalPipelinesUIFilters = []
+
+export const GlobalGroupUIFilters = [
+    // {
+    //     label: 'Visibility',
+    //     placeholder: 'Filter by visibility',
+    //     options: [
+    //         { label: 'All', value: '' },
+    //         { label: 'Private', value: 'private' },
+    //         { label: 'Internal', value: 'internal' },
+    //         { label: 'Public', value: 'public' }
+    //     ]
+    // },
+    {
+        label: 'Sort',
+        placeholder: 'Sort by',
+        options: [
+            // { label: 'Name', value: 'name' },
+            // { label: 'Path', value: 'path' },
+            { label: 'Created At', value: 'created_at' },
+            { label: 'Updated At', value: 'updated_at' }
+        ]
+    }
+];
