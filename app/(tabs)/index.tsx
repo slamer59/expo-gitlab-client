@@ -41,7 +41,7 @@ export default function Home() {
     {
       icon: "people-outline" as const,
       text: "Groups",
-      screen: "/workspace/groups/list",
+      screen: "/workspace/groups/dashboard-list",
       itemColor: "bg-groups",
     },
     {
