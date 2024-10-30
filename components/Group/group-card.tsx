@@ -20,10 +20,6 @@ export interface GitLabGroup {
     created_at?: string;
 }
 
-// interface GroupCardProps {
-//     item: GitLabGroup;
-// }
-
 export function GroupCardSkeleton() {
     return (
         <View className="flex-row items-center p-4 my-2 space-x-4 rounded-lg bg-card">
@@ -37,10 +33,8 @@ export function GroupCardSkeleton() {
 }
 
 export function GroupCard({ item }) {
-
     return (<>
         <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
-
             <View className="flex-1 mt-1">
                 <View className="flex-row items-center justify-between mb-1">
                     <View className="flex-row items-center">
@@ -55,17 +49,13 @@ export function GroupCard({ item }) {
                         )}
                         <LucideComponent size={16} color="grey" />
                         <Text className="ml-1 mr-2 text-sm text-gray-400">{item.subgroups?.length || 0}</Text>
-
                     </View>
                     <Text className="text-sm text-muted">{formatDate(item.created_at)}</Text>
                 </View>
                 <View className="flex-row items-center justify-between mb-1">
-
                     <Text className="mb-2 text-lg font-bold text-white" testID={`group-card`}>{item.name}</Text>
                     <View className="flex-row items-center">
-
                     </View>
-
                 </View>
                 <View className="flex-row items-center space-x-2">
                     <Pills
@@ -73,9 +63,7 @@ export function GroupCard({ item }) {
                         variant="purple"
                     />
                 </View>
-
             </View>
-
         </View>
     </>
     );
@@ -87,92 +75,118 @@ export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level =
 
     return (
         <>
-            <TouchableOpacity
-                className="p-4 border-b border-gray-700"
-                onPress={() => hasSubgroups && toggleGroup(group.id)}
-            >
-                <View className="flex-row items-center">
-                    {/* Indentation based on level */}
-                    {level > 0 && (
-                        <View style={{ width: level * 24 }} />
-                    )}
+            <View className={`${hasSubgroups && "mt-2 mb-2"}`}>
+                <View className="p-2 rounded-lg bg-card">
+                    <TouchableOpacity
+                        onPress={() => hasSubgroups && toggleGroup(group.id)}
+                    >
 
-                    {/* Expand/Collapse arrow */}
-                    {hasSubgroups ? (
-                        <>
-                            <TouchableOpacity
-                                onPress={() => toggleGroup(group.id)}
-                                className="flex-row items-center mr-2 jusitfy-center"
-                            >
-                                <ChevronRight
-                                    size={16}
-                                    color="#9CA3AF"
-                                    style={{
-                                        transform: [{ rotate: isExpanded ? '90deg' : '0deg' }]
-                                    }}
-                                />
-                                {/* <Octicons name="people" size={16} color="#9CA3AF" className='ml-2 mr-2' /> */}
-                            </TouchableOpacity>
-                        </>
-                    )
-                        :
-                        <View className='mr-10' />
-                    }
-
-                    {/* Group avatar */}
-                    <View className="items-center justify-center w-8 h-8 mr-3 bg-gray-700 rounded-lg">
-                        <Text className="text-lg text-white">
-                            {group.name.charAt(0).toUpperCase()}
-                        </Text>
-                    </View>
-
-                    <View className="flex-1">
-                        <Text className="mr-2 text-lg text-white">{group.name}</Text>
-
-                    </View>
-
-                    <View className="flex-row items-center gap-4">
-                        {/* <View className="flex-row items-center">
-                            <Octicons name="star" size={16} color="grey" />
-                            <Text className="ml-1 text-gray-400">{group.star_count}</Text>
-                        </View> */}
-
-                        {/* <View className="flex-row items-center">
-                            <Octicons name="project" size={16} color="grey" />
-                            <Text className="ml-1 text-gray-400">{group.subgroups?.length || 0}</Text>
-                        </View> */}
 
                         <View className="flex-row items-center">
-                            <LucideComponent size={16} color="grey" />
-                            <Text className="ml-1 text-gray-400">{group.subgroups?.length || 0}</Text>
+                            {/* Indentation based on level */}
+                            {level > 0 && (
+                                <View className="w-4 h-4" />
+                            )}
+
+                            {/* Expand/Collapse arrow */}
+                            {hasSubgroups ? (
+                                <>
+                                    <TouchableOpacity
+                                        onPress={() => toggleGroup(group.id)}
+                                        className="flex-row items-center justify-center mr-2"
+                                    >
+                                        <ChevronRight
+                                            size={16}
+                                            color="grey"
+                                            style={{
+                                                transform: [{ rotate: isExpanded ? '90deg' : '0deg' }]
+                                            }}
+                                        />
+                                    </TouchableOpacity>
+                                    {/* <Separator className="bg-gray-200 " /> */}
+                                </>
+                            ) : (
+                                <View className='mr-6' />
+                            )}
+                            {/* <Separator className="bg-gray-200 " /> */}
+                            <View className="flex-1">
+                                <View className="flex-row items-center justify-between">
+                                    <View className="flex-row items-center">
+                                        <Text className="mr-2 text-sm text-muted">{group.full_path}</Text>
+                                        {group.visibility === 'private' && (
+                                            <Octicons
+                                                className="mr-2"
+                                                name="lock"
+                                                size={16}
+                                                color="grey"
+                                            />
+                                        )}
+                                        <LucideComponent size={16} color="grey" />
+                                        <Text className="ml-1 mr-2 text-sm text-gray-400">{group.subgroups?.length || 0}</Text>
+                                    </View>
+                                    <View className="flex-row items-center">
+                                        <Text className="text-sm text-muted">{formatDate(group.created_at)}</Text>
+                                        <TouchableOpacity>
+                                            <Ionicons
+                                                name="ellipsis-vertical"
+                                                size={16}
+                                                color="grey"
+                                                className="m-2 ml-2 mr-2 opacity-100"
+                                                testID="options"
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <Text className="mb-1 text-lg font-bold text-white" testID={`group-card`}>{group.name}</Text>
+                            </View>
+                            {/* Group avatar */}
+                            {/* <View className="items-center justify-center w-8 h-8 mr-3 bg-gray-700 rounded-lg">
+                            <Text className="text-lg text-white">
+                                {group.name.charAt(0).toUpperCase()}
+                            </Text>
+                        </View> */}
+
+                            {/* <View className="flex-1">
+                                <Text className="text-lg text-white">{group.name}</Text>
+                            </View> */}
+
+                            {/* <View className="flex-row items-center gap-4"> */}
+                            {/* <View className="flex-row items-center">
+                                    <LucideComponent size={16} color="grey" />
+                                    <Text className="ml-1 text-gray-400">{group.subgroups?.length || 0}</Text>
+                                </View> */}
+                            {/* 
+                                {group.visibility === 'private' && (
+                                    <Octicons name="lock" size={16} color="grey" />
+                                )} */}
+                            {/* <TouchableOpacity>
+                                <Ionicons
+                                    name="ellipsis-vertical"
+                                    size={16}
+                                    color="grey"
+                                    className="m-2 ml-2 mr-2 opacity-100"
+                                    testID="options"
+                                />
+                            </TouchableOpacity> */}
+                            {/* </View> */}
                         </View>
+                    </TouchableOpacity>
 
-
-                        {group.visibility === 'private' && (
-                            <Octicons name="lock" size={16} color="grey" />
-                        )}
-                        <TouchableOpacity>
-                            <Ionicons
-                                name="ellipsis-vertical"
-                                size={16}
-                                color="grey"
-                                // className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
-                                className={`m-2 ml-2 mr-2 opacity-100'`}
-                                testID="options"
+                    {/* Render subgroups if expanded */}
+                    {isExpanded && group.subgroups?.map(subgroup => (
+                        <View className="pl-2 mb-2 border-t border-gray-700">
+                            <GroupWithSubgroups
+                                key={subgroup.id}
+                                group={subgroup}
+                                expandedGroups={expandedGroups}
+                                toggleGroup={toggleGroup}
+                                level={level + 1}
                             />
-                        </TouchableOpacity>
-                    </View>
+                        </View>
+                    ))}
                 </View>
-            </TouchableOpacity>
 
-            {/* Render subgroups if expanded */}
-            {isExpanded && group.subgroups?.map(subgroup => (
-                <GroupWithSubgroups
-                    key={subgroup.id}
-                    group={subgroup}
-                    level={level + 1}
-                />
-            ))}
+            </View>
         </>
     );
 };

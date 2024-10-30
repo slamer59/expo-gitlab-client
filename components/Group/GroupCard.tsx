@@ -1,97 +1,71 @@
-import { Octicons } from '@expo/vector-icons';
-import { formatDate } from 'lib/utils';
-import { ChevronRight, GitFork, GitPullRequest, Globe, Lock, Star } from 'lucide-react-native';
+import { Group } from "@/lib/gitlab/types";
+import { Ionicons } from "@expo/vector-icons";
+import { formatDate } from "date-fns";
+import { ChevronRight, GitFork, Globe, Lock, Star } from "lucide-react-native";
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import { GroupItem } from "../../app/workspace/groups/list1";
+import { Image, Pressable, TouchableOpacity, View } from "react-native";
 import { Pills } from "../Pills";
-import { Skeleton } from "../ui/skeleton";
+import { Text } from "../Themed";
 
 interface GroupCardProps {
-    item: GroupItem;
-    onPress?: (item: GroupItem) => void;
+    group: Group;
+    onPress?: () => void;
 }
 
-export function GroupCardSkeleton() {
+export default function GroupCard({ group, onPress }: GroupCardProps) {
     return (
-        <View className="flex-row items-center p-4 my-2 space-x-4 rounded-lg bg-card">
-            <Skeleton className="w-12 h-12 m-2 space-x-4 rounded-full bg-muted" />
-            <View className="flex-1 space-y-2">
-                <Skeleton className="w-full h-4 mb-2 bg-muted" />
-                <Skeleton className="w-3/4 h-4 bg-muted" />
-            </View>
-        </View>
-    );
-}
-
-export function GroupCard({ item, onPress }: GroupCardProps) {
-    const handlePress = () => {
-        if (onPress) {
-            onPress(item);
-        }
-    };
-
-    if (!item) {
-        return null;
-    }
-
-    return (
-        <Pressable onPress={handlePress}>
-            <View className="flex-row items-center p-4 my-1 rounded-lg bg-card">
+        <TouchableOpacity onPress={onPress}>
+            <View className="flex-row items-center p-4 mb-2 rounded-lg bg-card">
                 <View className="mr-3">
-                    {item.avatar_url ? (
+                    {group.avatar_url ? (
                         <Image
-                            source={{ uri: item.avatar_url }}
+                            source={{ uri: group.avatar_url }}
                             style={{ width: 40, height: 40, borderRadius: 20 }}
                         />
                     ) : (
                         <View className="items-center justify-center w-10 h-10 rounded-full bg-muted">
-                            <Octicons name="repo" size={24} color="white" />
+                            <Ionicons
+                                name={group.has_subgroups ? "folder" : "document-text"}
+                                size={24}
+                                color="white"
+                            />
                         </View>
                     )}
                 </View>
                 <View className="flex-1">
                     <View className="flex-row items-center justify-between mb-1">
-                        <Text className="text-base font-semibold text-foreground">{item.name}</Text>
-                        <Text className="text-xs text-muted-foreground">{formatDate(item.last_activity_at)}</Text>
+                        <Text className="text-base font-semibold text-foreground">{group.name}</Text>
+                        <Text className="text-xs text-muted-foreground">{formatDate(group.last_activity_at)}</Text>
                     </View>
-                    <Text className="mb-2 text-sm text-muted-foreground">{item.path_with_namespace}</Text>
+                    {group.description && (
+                        <Text className="mb-2 text-sm text-muted-foreground" numberOfLines={2}>
+                            {group.description}
+                        </Text>
+                    )}
                     <View className="flex-row flex-wrap gap-2">
                         <Pills
-                            label={item.visibility}
-                            variant={item.visibility === 'private' ? "destructive" : item.visibility === 'internal' ? "warning" : "success"}
-                            icon={item.visibility === 'private' ? <Lock size={14} /> : <Globe size={14} />}
+                            label={group.visibility_level}
+                            variant={group.visibility_level === 'private' ? "destructive" : group.visibility_level === 'internal' ? "warning" : "success"}
+                            icon={group.visibility_level === 'private' ? <Lock size={14} /> : <Globe size={14} />}
                         />
                         <Pills
-                            label={`${item.star_count} stars`}
+                            label={`${group.projects_count} projects`}
                             variant="default"
                             icon={<Star size={14} />}
                         />
-                        <Pills
-                            label={`${item.forks_count} forks`}
-                            variant="secondary"
-                            icon={<GitFork size={14} />}
-                        />
-                        {item.merge_requests_enabled && (
+                        {group.has_subgroups && (
                             <Pills
-                                label="MR enabled"
-                                variant="success"
-                                icon={<GitPullRequest size={14} />}
+                                label="Has subgroups"
+                                variant="secondary"
+                                icon={<GitFork size={14} />}
                             />
                         )}
                     </View>
-                    {item.description && (
-                        <Text className="mt-2 text-sm text-muted-foreground" numberOfLines={2}>
-                            {item.description}
-                        </Text>
-                    )}
                 </View>
-                {item.subgroups_count && item.subgroups_count > 0 && (
-                    <View className="ml-2">
-                        <ChevronRight size={20} className="text-muted-foreground" />
-                    </View>
-                )}
+                <Pressable onPress={onPress}>
+                    <ChevronRight size={24} color="#666" />
+                </Pressable>
             </View>
-        </Pressable>
+        </TouchableOpacity>
     );
 }
