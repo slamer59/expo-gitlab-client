@@ -9,6 +9,7 @@ import { useSession } from "@/lib/session/SessionProvider";
 import { tapForExpoToken } from "@/lib/utils";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { LucideComponent } from "lucide-react-native";
 import React, { useRef, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 
@@ -55,10 +56,11 @@ export default function ProfileScreen() {
     { data: user, isLoading: isLoadingUser, error: errorUser },
     { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal },
     { data: contributedProjects, isLoading: isLoadingContributed, error: errorContributed },
-    { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred }
+    { data: starredProjects, isLoading: isLoadingStarred, error: errorStarred },
+    { data: groups, isLoading: isLoadingGroups, error: errorGroups },
   ] = api.useProfileDetails();
 
-  if (errorContributed || errorPersonal || errorStarred || errorUser) return <Text>Error: {errorUser?.message || errorPersonal?.message || errorContributed?.message || errorStarred?.message}</Text>;
+  if (errorContributed || errorPersonal || errorStarred || errorUser || errorGroups) return <Text>Error: {errorUser?.message || errorPersonal?.message || errorContributed?.message || errorStarred?.message || errorGroups?.message}</Text>;
   return (
     <View className="flex-1 p-4 bg-background">
       {isLoadingUser ? <UserSkeleton /> : (
@@ -263,7 +265,33 @@ export default function ProfileScreen() {
             </Text>
           </CardContent>
         </TouchableOpacity>
+        {/* Users Group */}
+        <TouchableOpacity
+          onPress={() => router.push({
+            pathname: `/workspace/groups/list`,
+          })}
+          className="flex-row items-center justify-between bg-card"
+          activeOpacity={0.7}
+        >
+          <CardContent className="flex-row items-center flex-1">
+            <View className="flex-row items-center flex-1">
+              <View className="flex items-center justify-center p-2 rounded-lg bg-groups">
+                <LucideComponent size={24} color="white" />
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                Groups
+              </Text>
+            </View>
+            <Text className="ml-2 text-base" testID="starred-count">
+              {isLoadingGroups ? <Skeleton className="w-6 h-6 rounded-full bg-muted" /> :
+                groups?.length >= 20 ? '20+' : groups?.length
+              }
+            </Text>
+          </CardContent>
+        </TouchableOpacity>
       </Card>
+
+
     </View >
   );
 }

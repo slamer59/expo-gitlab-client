@@ -98,6 +98,7 @@ export const GlobalIssueUIFilters = [
         placeholder: "Ordered By",
     },
 ];
+
 export const GlobalCommitUIFilters = [
     {
         label: 'Branch',
@@ -548,24 +549,49 @@ export const GlobalUserStarredProjectsUIFilters = []
 export const GlobalPipelinesUIFilters = []
 
 export const GlobalGroupUIFilters = [
-    // {
-    //     label: 'Visibility',
-    //     placeholder: 'Filter by visibility',
-    //     options: [
-    //         { label: 'All', value: '' },
-    //         { label: 'Private', value: 'private' },
-    //         { label: 'Internal', value: 'internal' },
-    //         { label: 'Public', value: 'public' }
-    //     ]
-    // },
+    // Return projects ordered by id, name, path, created_at, updated_at, similarity 1, star_count or last_activity_at fields.
+    {
+        label:
+            'Sort',
+        options: [
+            { label: 'Created At', value: 'created_at' },
+            { label: 'Updated At', value: 'updated_at' },
+        ],
+        placeholder: 'Sort by',
+    },
+]
+
+
+export const GlobalProjectGroupUIFilters = [
+    // Return projects ordered by id, name, path, created_at, updated_at, star_count or last_activity_at fields. Default is created_at
     {
         label: 'Sort',
         placeholder: 'Sort by',
         options: [
-            // { label: 'Name', value: 'name' },
-            // { label: 'Path', value: 'path' },
+            { label: 'Id', value: 'id' },
+            { label: 'Name', value: 'name' },
+            { label: 'Path', value: 'path' },
             { label: 'Created At', value: 'created_at' },
-            { label: 'Updated At', value: 'updated_at' }
+            { label: 'Updated At', value: 'updated_at' },
+            { label: 'Star Count', value: 'star_count' },
+            { label: 'Last Activity', value: 'last_activity_at' }
+        ]
+    },
+    {
+        label: 'Simple',
+        placeholder: 'Select detail level',
+        options: [
+            { label: 'Simple', value: 'true' },
+            { label: 'Detailed', value: 'false' }
+        ]
+    },
+    {
+        label: 'Sort',
+        placeholder: 'Select sort order',
+        options: [
+            { label: 'Ascending', value: 'asc' },
+            { label: 'Descending', value: 'desc' }
         ]
     }
 ];
+

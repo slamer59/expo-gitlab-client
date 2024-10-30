@@ -373,6 +373,10 @@ export const useGitLab = (client: GitLabClient) => {
                         queryFn: () => client.Users.starred_projects(currentUser?.id),
                         enabled: !!currentUser?.username,
                     },
+                    {
+                        queryKey: ['groupsAll'],
+                        queryFn: () => client.Groups.all(),
+                    }
                 ],
             });
             return [
