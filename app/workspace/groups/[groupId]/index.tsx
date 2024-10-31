@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { useSession } from 'lib/session/SessionProvider';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 
 interface GroupStatistics {
@@ -46,7 +46,7 @@ const GroupDetails = () => {
     const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
     const [subgroups, setSubgroups] = useState<SubgroupWithDetails[]>([]);
     const [subgroupProjects, setSubgroupProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const { session } = useSession();
@@ -249,9 +249,14 @@ const GroupDetails = () => {
         }
     };
 
-    if (loading) {
-        return <ActivityIndicator size="large" className="items-center justify-center flex-1" />;
-    }
+    // if (isLoading) {
+    //     return <View className="items-center">
+    //         {Array.from({ length: 5 }).map((_, index) => (
+    //             <GroupCardSkeleton key={index} />
+    //         ))}
+    //     </View>
+    // }
+
 
     if (error) {
         return (
@@ -261,13 +266,13 @@ const GroupDetails = () => {
         );
     }
 
-    if (!groupInfo) {
-        return (
-            <View className="items-center justify-center flex-1">
-                <Text className="text-base text-red-500">Group not found</Text>
-            </View>
-        );
-    }
+    // if (!groupInfo) {
+    //     return (
+    //         <View className="items-center justify-center flex-1">
+    //             <Text className="text-base text-red-500">Group not found</Text>
+    //         </View>
+    //     );
+    // }
 
     const combinedData = [...subgroups, ...subgroupProjects];
 
@@ -275,7 +280,7 @@ const GroupDetails = () => {
         <View className="flex-1 bg-background">
             <Stack.Screen
                 options={{
-                    headerTitle: groupInfo.name,
+                    headerTitle: groupInfo?.name || '',
                     // headerRight: () => (
                     //     <TouchableOpacity onPress={() => router.push(`/workspace/groups/${groupInfo.id}/edit`)}>
                     //         <Ionicons name="create-outline" size={24} color="white" />
@@ -283,27 +288,39 @@ const GroupDetails = () => {
                     // ),
                 }}
             />
-            <FlatList
-                data={combinedData}
-                renderItem={renderListItem}
-                keyExtractor={item => item.id.toString()}
-                className="flex-1"
-                ListEmptyComponent={
-                    <View className="flex-row items-center p-4 m-2 space-x-4 rounded-lg bg-card">
-                        <View className="items-center justify-center w-full m-2 ">
-                            <View className="p-4 m-6">
-                                <Ionicons name="search" size={32} color="red" />
-                            </View>
-                            <Text className="mb-2 text-2xl font-bold text-center text-white rounded-4xl">
-                                No items Found
-                            </Text>
-                            <Text className="mb-6 text-center text-muted">
-                                There are currently no items to display.
-                            </Text>
-                        </View>
+
+            {
+                isLoading ? (
+                    <View className="items-center">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <GroupCardSkeleton key={index} />
+                        ))}
                     </View>
-                }
-            />
+                ) : (
+
+                    <FlatList
+                        data={combinedData}
+                        renderItem={renderListItem}
+                        keyExtractor={item => item.id.toString()}
+                        className="flex-1"
+                        ListEmptyComponent={
+                            <View className="flex-row items-center p-4 m-2 space-x-4 rounded-lg bg-card">
+                                <View className="items-center justify-center w-full m-2 ">
+                                    <View className="p-4 m-6">
+                                        <Ionicons name="search" size={32} color="red" />
+                                    </View>
+                                    <Text className="mb-2 text-2xl font-bold text-center text-white rounded-4xl">
+                                        No items Found
+                                    </Text>
+                                    <Text className="mb-6 text-center text-muted">
+                                        There are currently no items to display.
+                                    </Text>
+                                </View>
+                            </View>
+                        }
+                    />
+                )
+            }
         </View>
     );
 };

@@ -48,20 +48,22 @@ export function FlatListCards<T extends ListItem>({
     <>
       <FlatList
         data={items}
-        renderItem={({ item }: { item }) => {
+        renderItem={({ item }) => {
           const params = getParams(item);
-          return <TouchableOpacity
-            key={item.id}
-            onPress={() => {
-              router.push({
-                pathname: pathname,
-                params: params,
-              });
-            }}
-            testID={`card-${item.id}`}
-          >
-            <MemoizedItemComponent item={item} />
-          </TouchableOpacity>
+          return (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => {
+                router.push({
+                  pathname: pathname,
+                  params: params,
+                });
+              }}
+              testID={`card-${item.id}`}
+            >
+              <MemoizedItemComponent item={item} />
+            </TouchableOpacity>
+          );
         }}
         keyExtractor={(item) => item.id.toString()}
         onEndReached={handleLoadMore}
@@ -69,23 +71,23 @@ export function FlatListCards<T extends ListItem>({
         ListFooterComponent={
           isLoading ? (
             <View className="items-center">
-              {isLoading && Array.from({ length: 5 }).map((_, index) => (
+              {Array.from({ length: 5 }).map((_, index) => (
                 <SkeletonComponent key={index} />
               ))}
             </View>
           ) : null
         }
-        // refreshing={isLoading && useScreenStore.getState().page === 1}
-        // onRefresh={handleRefresh}
-        ListEmptyComponent={() => EmptyComponent(items, isLoading, error)}
+        ListEmptyComponent={() =>
+          items && items.length === 0 && !isLoading ? <EmptyComponent /> : null
+        }
         windowSize={5}
         removeClippedSubviews={true}
-        // Uncomment and adjust if you know your item height
-        getItemLayout={(data, index) => (
-          { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
-        )}
-        contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
-
+        getItemLayout={(data, index) => ({
+          length: ITEM_HEIGHT,
+          offset: ITEM_HEIGHT * index,
+          index
+        })}
+        contentContainerStyle={{ paddingBottom: 100 }}
       />
     </>
   );

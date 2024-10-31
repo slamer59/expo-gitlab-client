@@ -33,7 +33,7 @@ export default function GroupsScreen() {
             fetchItems();
         }
     }, [loading, fetchItems]);
-
+    // const loading1 = true
     return (
         <View
             className="flex-1 p-2 bg-background"
