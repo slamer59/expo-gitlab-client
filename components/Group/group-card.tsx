@@ -1,5 +1,6 @@
 import { formatDate } from "@/lib/utils";
 import { Ionicons, Octicons } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
 import { ChevronRight, LucideComponent } from 'lucide-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -41,7 +42,7 @@ export function GroupCard({ item }) {
                         <Text className="mr-2 text-sm text-muted">{item.full_path}</Text>
                         {item.visibility === 'private' && (
                             <Octicons
-                                className="mr-2"
+                                className="ml-2 mr-2"
                                 name="lock"
                                 size={16}
                                 color="grey"
@@ -72,16 +73,19 @@ export function GroupCard({ item }) {
 export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level = 0 }: { group: GitLabGroup, expandedGroups?: any[], toggleGroup?: (groupId: number) => void, level?: number }) => {
     const hasSubgroups = group.subgroups && group.subgroups.length > 0;
     const isExpanded = expandedGroups?.includes(group.id);
+    const router = useRouter()
+
+    const handleGroupPress = () => {
+        router.push(`/workspace/groups/${group.id}`);
+    };
 
     return (
         <>
             <View className={`${hasSubgroups && "mt-2 mb-2"}`}>
                 <View className="p-2 rounded-lg bg-card">
                     <TouchableOpacity
-                        onPress={() => hasSubgroups && toggleGroup(group.id)}
+                        onPress={handleGroupPress}
                     >
-
-
                         <View className="flex-row items-center">
                             {/* Indentation based on level */}
                             {level > 0 && (
@@ -90,24 +94,25 @@ export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level =
 
                             {/* Expand/Collapse arrow */}
                             {hasSubgroups ? (
-                                <>
-                                    <TouchableOpacity
-                                        onPress={() => toggleGroup(group.id)}
-                                        className="flex-row items-center justify-center mr-2"
-                                    >
-                                        <ChevronRight
-                                            size={16}
-                                            color="grey"
-                                            style={{
-                                                transform: [{ rotate: isExpanded ? '90deg' : '0deg' }]
-                                            }}
-                                        />
-                                    </TouchableOpacity>
-                                    {/* <Separator className="bg-gray-200 " /> */}
-                                </>
+                                <TouchableOpacity
+                                    onPress={(e) => {
+                                        e.stopPropagation();
+                                        toggleGroup(group.id);
+                                    }}
+                                    className="flex-row items-center justify-center mr-2"
+                                >
+                                    <ChevronRight
+                                        size={16}
+                                        color="grey"
+                                        style={{
+                                            transform: [{ rotate: isExpanded ? '90deg' : '0deg' }]
+                                        }}
+                                    />
+                                </TouchableOpacity>
                             ) : (
                                 <View className='mr-6' />
                             )}
+
                             {/* <Separator className="bg-gray-200 " /> */}
                             <View className="flex-1">
                                 <View className="flex-row items-center justify-between">
@@ -126,7 +131,12 @@ export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level =
                                     </View>
                                     <View className="flex-row items-center">
                                         <Text className="text-sm text-muted">{formatDate(group.created_at)}</Text>
-                                        <TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={(e) => {
+                                                e.stopPropagation();
+                                                // Handle ellipsis press
+                                            }}
+                                        >
                                             <Ionicons
                                                 name="ellipsis-vertical"
                                                 size={16}
