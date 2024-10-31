@@ -8,6 +8,7 @@ import { HeaderSkeleton } from "@/components/Skeleton/header";
 import NotesSkeleton from "@/components/Skeleton/notes";
 import SectionSkeleton from "@/components/Skeleton/section";
 import StatusItemSkeleton from "@/components/Skeleton/status";
+import { StatusItem } from "@/components/StatusItems";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";

@@ -1,7 +1,7 @@
 import { Octicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AvatarWithUrl } from "../ui/avatar-with-url";
 import { Skeleton } from "../ui/skeleton";
 
 export function MemberCardSkeleton() {
@@ -24,7 +24,7 @@ export function MemberCardSkeleton() {
     );
 }
 
-const AccessLevel = {
+const AccessLevel: Record<number, string> = {
     0: 'No access',
     5: 'Minimal access',
     10: 'Guest',
@@ -32,18 +32,31 @@ const AccessLevel = {
     30: 'Developer',
     40: 'Maintainer',
     50: 'Owner'
+};
+
+interface Member {
+    name: string;
+    username: string;
+    avatar_url: string | null;
+    state: string;
+    access_level: number;
 }
 
-export function MemberCard({ item }) {
+interface MemberCardProps {
+    item: Member;
+}
+
+export function MemberCard({ item }: MemberCardProps) {
+    const initials = item.name.split(' ').map((n: string) => n[0]).join('');
+
     return (
         <View className="flex-col p-4 my-2 space-y-2 rounded-lg bg-card">
             <View className="flex-row items-center m-2 space-x-2">
-                <Avatar alt={`${item.name}'s Avatar`}>
-                    <AvatarImage source={{ uri: item.avatar_url }} />
-                    <AvatarFallback>
-                        <Text>{item.name.split(' ').map(n => n[0]).join('')}</Text>
-                    </AvatarFallback>
-                </Avatar>
+                <AvatarWithUrl
+                    avatarUrl={item.avatar_url}
+                    alt={`${item.name}'s Avatar`}
+                    fallbackText={initials}
+                />
                 <View className="ml-2">
                     <View className="flex-row items-center space-x-1">
                         <Text className="mr-2 text-lg font-bold text-white">{item.name}</Text>
@@ -55,11 +68,6 @@ export function MemberCard({ item }) {
             <View className="space-y-1">
                 <Text className="font-semibold text-white text-md">Role: {AccessLevel[item.access_level]}</Text>
             </View>
-            {/* <View className="space-y-1">
-                <Text className="text-sm font-semibold">Membership:</Text> 
-            <Text className="text-sm text-muted-foreground">State: {item.membership_state}</Text>
-            <Text className="text-sm text-muted-foreground">Created: {new Date(item.created_at).toLocaleDateString()}</Text>
-        </View> */}
-        </View >
+        </View>
     );
 }

@@ -1,9 +1,17 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from '@expo/vector-icons';
+import { Text } from "components/ui/text";
 import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-export const StatusItem = ({ icon, text, color, expandable, children }) => {
+interface StatusItemProps {
+    icon: keyof typeof Ionicons.glyphMap;
+    text: string;
+    color: string;
+    expandable?: boolean;
+    children?: React.ReactNode;
+}
+
+export const StatusItem = ({ icon, text, color, expandable, children }: StatusItemProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
