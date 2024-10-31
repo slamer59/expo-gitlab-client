@@ -36,8 +36,6 @@ export default function GroupsScreen() {
             return response.data;
         }
     });
-    console.log("🚀 ~ GroupsScreen ~ groups:", groups)
-
     const renderHeader = () => (
         <View className="p-4 border-b border-gray-700">
             <View className="flex-row items-center justify-between mb-4">

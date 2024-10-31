@@ -119,7 +119,8 @@ export default function GroupsScreen() {
                             </View>
 
                             {group.visibility === 'private' && (
-                                <Octicons name="lock" size={16} color="grey" />
+                                <Octicons className="ml-2" name="lock" size={16} color="grey" />
+
                             )}
                             <TouchableOpacity>
                                 <Ionicons
