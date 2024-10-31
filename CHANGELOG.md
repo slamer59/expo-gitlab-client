@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
+* group card OK ([fe85489](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/fe854898f6d28c708921423d98705c23019e7474))
+* list-all with api wrapper ([dc4c0d7](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/dc4c0d7768e1407d28738fbdacb30361ceb0375d))
+* Style for gorups ([4d105ed](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/4d105ed3259f96dcbead6814639a6e8d3f353c0b))
+* **ui:** Enhance UI + add release conventional commit ([67912bc](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/67912bc7affb2c3f6fb9745f4bb57b033f59be84))
+
+
+### Features
+
+* add CI ([32eea5f](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/32eea5f8aa8356db2d2cdcbf1407b8d0f42c322c))
+* add user group ([46bf9d3](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/46bf9d3f8c27df0626cbc35e8af46d1515766503))
+
+# [1.2.0](https://gitlab.com/thomas.pedot1/expo-gitlab-client/compare/v1.1.0...v1.2.0) (2024-10-31)
+
+
+### Bug Fixes
+
 * CI ([4b1e867](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/4b1e8677579c9e2e099c9faa35244673aabd7967))
 * CI ([89e9116](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/89e91166634569ea899d5b25c6c31fb1dd708076))
 * group card OK ([fe85489](https://gitlab.com/thomas.pedot1/expo-gitlab-client/commit/fe854898f6d28c708921423d98705c23019e7474))
