@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/images/icon-1024x1024.png",
         "backgroundColor": "#fff"
       },
-      "versionCode": 10,
+      "versionCode": 11,
       "package": "com.thomas.pedot.expogitlabclient",
       "googleServicesFile": "./google-services.json"
     },
