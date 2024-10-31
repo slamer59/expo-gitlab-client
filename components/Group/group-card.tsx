@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { ChevronRight, LucideComponent } from 'lucide-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Pills } from "../Pills";
+import { Separator } from "../ui/separator";
 import { Skeleton } from '../ui/skeleton';
 
 export interface GitLabGroup {
@@ -33,36 +33,55 @@ export function GroupCardSkeleton() {
     );
 }
 
-export function GroupCard({ item }) {
+export function GroupCard({ item, children }: { item: GitLabGroup, children?: React.ReactNode }) {
+
     return (<>
         <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
             <View className="flex-1 mt-1">
-                <View className="flex-row items-center justify-between mb-1">
-                    <View className="flex-row items-center">
-                        <Text className="mr-2 text-sm text-muted">{item.full_path}</Text>
-                        {item.visibility === 'private' && (
-                            <Octicons
-                                className="ml-2 mr-2"
-                                name="lock"
-                                size={16}
-                                color="grey"
+                <View className="flex-row items-center justify-between">
+                    {item.expanded !== undefined && (
+                        <>
+                            <Ionicons
+                                className="mr-2"
+                                name={item.expanded ? 'chevron-up' : 'chevron-down'}
+                                size={24}
+                                color="#666"
                             />
-                        )}
-                        <LucideComponent size={16} color="grey" />
-                        <Text className="ml-1 mr-2 text-sm text-gray-400">{item.subgroups?.length || 0}</Text>
+                            <Separator orientation='vertical' className="mr-2 bg-muted" />
+                        </>
+                    )}
+                    <View className="flex-1">
+                        <View className="flex-row items-center justify-between mb-1">
+                            <View className="flex-row items-center">
+                                <Text className="mr-2 text-sm text-muted">{item.full_path}</Text>
+                                {item.visibility === 'private' && (
+                                    <Octicons
+                                        className="ml-2 mr-2"
+                                        name="lock"
+                                        size={16}
+                                        color="grey"
+                                    />
+                                )}
+                                <LucideComponent size={16} color="grey" />
+                                <Text className="ml-1 mr-2 text-sm text-gray-400">{item.subgroups?.length || 0}</Text>
+                            </View>
+                            <Text className="text-sm text-muted">{formatDate(item.created_at)}</Text>
+                        </View>
+
+                        <View className="flex-row items-center justify-between mb-1">
+                            <Text className="mb-2 text-lg font-bold text-white" testID={`group-card`}>{item.name}</Text>
+                            <View className="flex-row items-center">
+                            </View>
+                        </View>
+                        {/* <View className="flex-row items-center space-x-2">
+                            <Pills
+                                label={item.visibility}
+                                variant="purple"
+                            />
+                        </View> */}
+                        {children}
                     </View>
-                    <Text className="text-sm text-muted">{formatDate(item.created_at)}</Text>
-                </View>
-                <View className="flex-row items-center justify-between mb-1">
-                    <Text className="mb-2 text-lg font-bold text-white" testID={`group-card`}>{item.name}</Text>
-                    <View className="flex-row items-center">
-                    </View>
-                </View>
-                <View className="flex-row items-center space-x-2">
-                    <Pills
-                        label={item.visibility}
-                        variant="purple"
-                    />
+
                 </View>
             </View>
         </View>
@@ -70,6 +89,17 @@ export function GroupCard({ item }) {
     );
 }
 
+export const GroupWithSubgroupsVariant = ({ item, children }: { group: GitLabGroup, children?: React.ReactNode }) => {
+
+    return (
+        <>
+            <GroupCard item={item} >
+                {children}
+            </GroupCard>
+
+        </>
+    );
+};
 export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level = 0 }: { group: GitLabGroup, expandedGroups?: any[], toggleGroup?: (groupId: number) => void, level?: number }) => {
     const hasSubgroups = group.subgroups && group.subgroups.length > 0;
     const isExpanded = expandedGroups?.includes(group.id);
@@ -200,3 +230,5 @@ export const GroupWithSubgroups = ({ group, expandedGroups, toggleGroup, level =
         </>
     );
 };
+
+

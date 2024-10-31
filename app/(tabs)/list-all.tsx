@@ -1,6 +1,8 @@
+import { GroupCardSkeleton, GroupWithSubgroupsVariant } from '@/components/Group/group-card';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Octicons } from '@expo/vector-icons';
+import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 
@@ -159,23 +161,31 @@ const GroupDetails = () => {
     };
 
     const renderProject = ({ item }: { item: Project }) => (
-        <View className="bg-gray-50 p-3 my-1.5 rounded-lg border-l-4 border-green-500">
-            <Text className="mb-1 text-lg font-bold">{item.name}</Text>
-            <Text className="mb-2 text-sm">
-                {item.description || 'No description available'}
-            </Text>
-            <View className="flex-row justify-between pt-2 mt-2 border-t border-gray-200">
-                <Text>Stars: {item.star_count}</Text>
-                <Text>Forks: {item.forks_count}</Text>
-                <Text>Last activity: {new Date(item.last_activity_at).toLocaleDateString()}</Text>
+
+        <View className="flex-row mt-2 mb-2 bg-card-600 p-2 my-1.5 rounded-md border-l-4 border-muted">
+            <View className="flex-1 mt-1">
+                <View className="flex-row items-center justify-between">
+                    <Octicons name="project" size={20} color="white" className='mr-2' />
+                    <View className="flex-1">
+
+                        <View className="flex-row items-center justify-between mb-1">
+                            <Text className="mb-1 text-lg font-bold text-foreground">{item.name}</Text>
+                        </View>
+
+                        {item.description && <Text className="mb-2 text-sm text-foreground">
+                            {item.description}
+                        </Text>}
+                    </View>
+
+                </View>
             </View>
         </View>
     );
 
     const renderNestedSubgroup = ({ item }: { item: SubgroupWithDetails }) => (
-        <View className="bg-gray-50 p-3 my-1.5 rounded-lg border-l-4 border-blue-500">
+        <View className="bg-muted p-3 my-1.5 rounded-lg border-l-4 border-primary">
             <Text className="mb-1 text-lg font-bold">{item.name}</Text>
-            <Text className="mb-1 text-sm text-gray-600">{item.full_path}</Text>
+            <Text className="mb-1 text-sm text-muted-600">{item.full_path}</Text>
             <Text className="text-sm">
                 {item.description || 'No description available'}
             </Text>
@@ -186,68 +196,58 @@ const GroupDetails = () => {
         if (!item) return null;
 
         return (
-            <View className="mx-4 my-2 bg-white rounded-lg shadow">
+            <View className="">
                 <TouchableOpacity
-                    className="p-4"
+                    // className="p-4"
                     onPress={() => toggleSubgroup(item.id)}
                 >
-                    <View className="flex-row items-center justify-between">
-                        <View className="flex-1">
-                            <Text className="mb-1 text-lg font-bold">{item.name}</Text>
-                            <Text className="mb-1 text-sm text-gray-600">{item.full_path}</Text>
-                            <Text className="text-sm">
-                                {item.description || 'No description available'}
-                            </Text>
-                        </View>
-                        <Ionicons
-                            name={item.expanded ? 'chevron-up' : 'chevron-down'}
-                            size={24}
-                            color="#666"
-                        />
-                    </View>
+                    <GroupWithSubgroupsVariant item={item}>
+                        {item.expanded && (
+                            <View className="p-4 border-t border-muted">
+                                {item.loading ? (
+                                    <GroupCardSkeleton />
+                                ) : (
+                                    <>
+                                        {item.subgroups && item.subgroups.length > 0 && (
+                                            <View className="mt-2.5">
+                                                {/* <Text className="mb-2 text-base font-bold text-gray-600">
+                                                    Subgroups ({item.subgroups.length})
+                                                </Text> */}
+                                                <FlatList
+                                                    data={item.subgroups}
+                                                    renderItem={renderNestedSubgroup}
+                                                    keyExtractor={sg => sg.id.toString()}
+                                                    scrollEnabled={false}
+                                                />
+                                            </View>
+                                        )}
+
+                                        {item.projects && item.projects.length > 0 && (
+                                            <View className="mt-2.5">
+                                                {/* <Text className="mb-2 text-base font-bold text-gray-600">
+                                                    Projects ({item.projects.length})
+                                                </Text> */}
+                                                <FlatList
+                                                    data={item.projects}
+                                                    renderItem={renderProject}
+                                                    keyExtractor={p => p.id.toString()}
+                                                    scrollEnabled={false}
+                                                />
+                                            </View>
+                                        )}
+
+                                        {(!item.subgroups?.length && !item.projects?.length) && (
+                                            <Text className="text-base text-gray-600 mt-2.5">No subgroups or projects found</Text>
+                                        )}
+                                    </>
+                                )}
+                            </View>
+                        )}
+                    </GroupWithSubgroupsVariant>
+
                 </TouchableOpacity>
 
-                {item.expanded && (
-                    <View className="p-4 border-t border-gray-200">
-                        {item.loading ? (
-                            <ActivityIndicator className="py-5" />
-                        ) : (
-                            <>
-                                {item.subgroups && item.subgroups.length > 0 && (
-                                    <View className="mt-2.5">
-                                        <Text className="mb-2 text-base font-bold text-gray-600">
-                                            Subgroups ({item.subgroups.length})
-                                        </Text>
-                                        <FlatList
-                                            data={item.subgroups}
-                                            renderItem={renderNestedSubgroup}
-                                            keyExtractor={sg => sg.id.toString()}
-                                            scrollEnabled={false}
-                                        />
-                                    </View>
-                                )}
 
-                                {item.projects && item.projects.length > 0 && (
-                                    <View className="mt-2.5">
-                                        <Text className="mb-2 text-base font-bold text-gray-600">
-                                            Projects ({item.projects.length})
-                                        </Text>
-                                        <FlatList
-                                            data={item.projects}
-                                            renderItem={renderProject}
-                                            keyExtractor={p => p.id.toString()}
-                                            scrollEnabled={false}
-                                        />
-                                    </View>
-                                )}
-
-                                {(!item.subgroups?.length && !item.projects?.length) && (
-                                    <Text className="text-base text-gray-600 mt-2.5">No subgroups or projects found</Text>
-                                )}
-                            </>
-                        )}
-                    </View>
-                )}
             </View>
         );
     };
@@ -283,18 +283,39 @@ const GroupDetails = () => {
     const combinedData = [...subgroups, ...subgroupProjects];
 
     return (
-        <FlatList
-            ListHeaderComponent={renderGroupInfo()}
-            data={combinedData}
-            renderItem={renderListItem}
-            keyExtractor={item => item.id.toString()}
-            className="flex-1 bg-gray-100"
-            ListEmptyComponent={
-                <View className="items-center p-4">
-                    <Text className="text-base text-gray-600">No subgroups or projects found</Text>
-                </View>
-            }
-        />
+        <View
+            className="flex-1 bg-background"
+        >
+            <Stack.Screen
+                options={{
+                    headerTitle: "Groups",
+                }}
+            />
+            {/* <View className="*:mb-2 flex-col justify-between"> */}
+            <FlatList
+                // ListHeaderComponent={renderGroupInfo()}
+                data={combinedData}
+                renderItem={renderListItem}
+                keyExtractor={item => item.id.toString()}
+                className="flex-1"
+                ListEmptyComponent={
+                    <View className="flex-row items-center p-4 m-2 space-x-4 rounded-lg bg-card">
+                        <View className="items-center justify-center w-full m-2 ">
+                            <View className="p-4 m-6">
+                                <Ionicons name="search" size={32} color="red" />
+                            </View>
+                            <Text className="mb-2 text-2xl font-bold text-center text-white rounded-4xl">
+                                No items Found
+                            </Text>
+                            <Text className="mb-6 text-center text-muted">
+                                There are currently no items to display.
+                            </Text>
+                        </View>
+                    </View>
+                }
+            />
+            {/* </View> */}
+        </View>
     );
 };
 
