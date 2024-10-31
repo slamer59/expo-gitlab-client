@@ -1,7 +1,9 @@
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
-import axios, { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+
 
 interface GroupStatistics {
     subgroup_count: number;
@@ -37,13 +39,6 @@ interface SubgroupWithDetails {
     detailsFetched?: boolean;
 }
 
-const gitlabApi = axios.create({
-    baseURL: 'https://gitlab.com/api/v4',
-    headers: {
-        'Authorization': `Bearer ${process.env.EXPO_PUBLIC_GITLAB_TOKEN}`
-    }
-});
-
 const GroupDetails = () => {
     const [groupInfo, setGroupInfo] = useState<GroupInfo | null>(null);
     const [subgroups, setSubgroups] = useState<SubgroupWithDetails[]>([]);
@@ -51,29 +46,31 @@ const GroupDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const { session } = useSession();
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
     const groupId = 'jokosun';
 
     const fetchSubgroupDetails = async (subgroupId: number) => {
         try {
             const [subgroupsResponse, projectsResponse] = await Promise.all([
-                gitlabApi.get<SubgroupWithDetails[]>(`/groups/${subgroupId}/subgroups`, {
-                    params: { per_page: 100 }
-                }),
-                gitlabApi.get<Project[]>(`/groups/${subgroupId}/projects`, {
-                    params: { per_page: 100 }
-                })
+                client.Groups.subgroups(subgroupId),
+                client.Groups.projects(subgroupId)
             ]);
 
             setSubgroups(currentSubgroups =>
                 currentSubgroups.map(sg =>
                     sg.id === subgroupId ? {
                         ...sg,
-                        subgroups: subgroupsResponse.data.map(subgroup => ({
+                        subgroups: subgroupsResponse.map((subgroup: SubgroupWithDetails) => ({
                             ...subgroup,
                             expanded: false,
                             detailsFetched: false
                         })),
-                        projects: projectsResponse.data,
+                        projects: projectsResponse,
                         loading: false,
                         detailsFetched: true
                     } : sg
@@ -116,33 +113,22 @@ const GroupDetails = () => {
         try {
             setLoading(true);
             const [groupResponse, subgroupsResponse, subgroupProjectsResponse] = await Promise.all([
-                gitlabApi.get<GroupInfo>(`/groups/${groupId}`, {
-                    params: {
-                        statistics: true,
-                        with_custom_attributes: true,
-                    }
-                }),
-                gitlabApi.get<SubgroupWithDetails[]>(`/groups/${groupId}/subgroups`, {
-                    params: { per_page: 100 }
-                }),
-                gitlabApi.get<Project[]>(`/groups/${groupId}/projects`, {
-                    params: { per_page: 10 }
-                })
+                client.Groups.show(groupId),
+                client.Groups.subgroups(groupId),
+                client.Groups.projects(groupId)
             ]);
-            console.log("🚀 ~ fetchGroupData ~ subgroupProjectsResponse:", subgroupProjectsResponse.data.map(project => project.name))
 
-            setGroupInfo(groupResponse.data);
-            setSubgroups(subgroupsResponse.data.map(sg => ({
+            setGroupInfo(groupResponse);
+            setSubgroups(subgroupsResponse.map((sg: SubgroupWithDetails) => ({
                 ...sg,
                 expanded: false,
                 detailsFetched: false
             })));
-            setSubgroupProjects(subgroupProjectsResponse.data);
+            setSubgroupProjects(subgroupProjectsResponse);
 
-        } catch (err) {
-            const error = err as AxiosError;
-            setError(error.message);
-            console.error('Error fetching data:', error);
+        } catch (err: any) {
+            setError(err.message);
+            console.error('Error fetching data:', err);
         } finally {
             setLoading(false);
         }
@@ -156,14 +142,14 @@ const GroupDetails = () => {
         if (!groupInfo) return null;
 
         return (
-            <View style={styles.groupInfoContainer}>
-                <Text style={styles.groupName}>{groupInfo.name}</Text>
-                <Text style={styles.groupPath}>Path: {groupInfo.full_path}</Text>
-                <Text style={styles.groupDescription}>
+            <View className="p-4 m-4 bg-white rounded-lg shadow-md">
+                <Text className="mb-1 text-2xl font-bold">{groupInfo.name}</Text>
+                <Text className="mb-1 text-base text-gray-600">Path: {groupInfo.full_path}</Text>
+                <Text className="mb-2 text-base">
                     {groupInfo.description || 'No description available'}
                 </Text>
                 {groupInfo.statistics && (
-                    <View style={styles.statistics}>
+                    <View className="flex-row justify-between pt-2 border-t border-gray-200">
                         <Text>Subgroups: {groupInfo.statistics.subgroup_count}</Text>
                         <Text>Members: {groupInfo.statistics.member_count}</Text>
                     </View>
@@ -173,12 +159,12 @@ const GroupDetails = () => {
     };
 
     const renderProject = ({ item }: { item: Project }) => (
-        <View style={styles.projectItem}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemDescription}>
+        <View className="bg-gray-50 p-3 my-1.5 rounded-lg border-l-4 border-green-500">
+            <Text className="mb-1 text-lg font-bold">{item.name}</Text>
+            <Text className="mb-2 text-sm">
                 {item.description || 'No description available'}
             </Text>
-            <View style={styles.projectStats}>
+            <View className="flex-row justify-between pt-2 mt-2 border-t border-gray-200">
                 <Text>Stars: {item.star_count}</Text>
                 <Text>Forks: {item.forks_count}</Text>
                 <Text>Last activity: {new Date(item.last_activity_at).toLocaleDateString()}</Text>
@@ -187,10 +173,10 @@ const GroupDetails = () => {
     );
 
     const renderNestedSubgroup = ({ item }: { item: SubgroupWithDetails }) => (
-        <View style={styles.nestedSubgroupItem}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemPath}>{item.full_path}</Text>
-            <Text style={styles.itemDescription}>
+        <View className="bg-gray-50 p-3 my-1.5 rounded-lg border-l-4 border-blue-500">
+            <Text className="mb-1 text-lg font-bold">{item.name}</Text>
+            <Text className="mb-1 text-sm text-gray-600">{item.full_path}</Text>
+            <Text className="text-sm">
                 {item.description || 'No description available'}
             </Text>
         </View>
@@ -200,16 +186,16 @@ const GroupDetails = () => {
         if (!item) return null;
 
         return (
-            <View style={styles.listItem}>
+            <View className="mx-4 my-2 bg-white rounded-lg shadow">
                 <TouchableOpacity
-                    style={styles.header}
+                    className="p-4"
                     onPress={() => toggleSubgroup(item.id)}
                 >
-                    <View style={styles.headerContent}>
-                        <View style={styles.headerText}>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                            <Text style={styles.itemPath}>{item.full_path}</Text>
-                            <Text style={styles.itemDescription}>
+                    <View className="flex-row items-center justify-between">
+                        <View className="flex-1">
+                            <Text className="mb-1 text-lg font-bold">{item.name}</Text>
+                            <Text className="mb-1 text-sm text-gray-600">{item.full_path}</Text>
+                            <Text className="text-sm">
                                 {item.description || 'No description available'}
                             </Text>
                         </View>
@@ -222,14 +208,14 @@ const GroupDetails = () => {
                 </TouchableOpacity>
 
                 {item.expanded && (
-                    <View style={styles.content}>
+                    <View className="p-4 border-t border-gray-200">
                         {item.loading ? (
-                            <ActivityIndicator style={styles.nestedLoader} />
+                            <ActivityIndicator className="py-5" />
                         ) : (
                             <>
                                 {item.subgroups && item.subgroups.length > 0 && (
-                                    <View style={styles.nestedSection}>
-                                        <Text style={styles.nestedSectionTitle}>
+                                    <View className="mt-2.5">
+                                        <Text className="mb-2 text-base font-bold text-gray-600">
                                             Subgroups ({item.subgroups.length})
                                         </Text>
                                         <FlatList
@@ -242,8 +228,8 @@ const GroupDetails = () => {
                                 )}
 
                                 {item.projects && item.projects.length > 0 && (
-                                    <View style={styles.nestedSection}>
-                                        <Text style={styles.nestedSectionTitle}>
+                                    <View className="mt-2.5">
+                                        <Text className="mb-2 text-base font-bold text-gray-600">
                                             Projects ({item.projects.length})
                                         </Text>
                                         <FlatList
@@ -256,13 +242,12 @@ const GroupDetails = () => {
                                 )}
 
                                 {(!item.subgroups?.length && !item.projects?.length) && (
-                                    <Text style={styles.emptyText}>No subgroups or projects found</Text>
+                                    <Text className="text-base text-gray-600 mt-2.5">No subgroups or projects found</Text>
                                 )}
                             </>
                         )}
                     </View>
                 )}
-
             </View>
         );
     };
@@ -276,187 +261,41 @@ const GroupDetails = () => {
     };
 
     if (loading) {
-        return <ActivityIndicator size="large" style={styles.loader} />;
+        return <ActivityIndicator size="large" className="items-center justify-center flex-1" />;
     }
 
     if (error) {
         return (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Error: {error}</Text>
+            <View className="items-center justify-center flex-1">
+                <Text className="text-base text-red-500">Error: {error}</Text>
             </View>
         );
     }
 
     if (!groupInfo) {
         return (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Group not found</Text>
+            <View className="items-center justify-center flex-1">
+                <Text className="text-base text-red-500">Group not found</Text>
             </View>
         );
     }
 
     const combinedData = [...subgroups, ...subgroupProjects];
 
-    return (<>
+    return (
         <FlatList
             ListHeaderComponent={renderGroupInfo()}
             data={combinedData}
             renderItem={renderListItem}
             keyExtractor={item => item.id.toString()}
-            style={styles.container}
+            className="flex-1 bg-gray-100"
             ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No subgroups or projects found</Text>
+                <View className="items-center p-4">
+                    <Text className="text-base text-gray-600">No subgroups or projects found</Text>
                 </View>
             }
         />
-    </>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f5f5',
-    },
-    loader: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    nestedLoader: {
-        padding: 20,
-    },
-    groupInfoContainer: {
-        backgroundColor: '#ffffff',
-        padding: 15,
-        margin: 16,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    listItem: {
-        backgroundColor: '#ffffff',
-        marginHorizontal: 16,
-        marginVertical: 8,
-        borderRadius: 8,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
-        overflow: 'hidden',
-    },
-    header: {
-        padding: 15,
-    },
-    headerContent: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    headerText: {
-        flex: 1,
-    },
-    content: {
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-        padding: 15,
-    },
-    nestedSection: {
-        marginTop: 10,
-    },
-    nestedSectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#666',
-    },
-    nestedSubgroupItem: {
-        backgroundColor: '#f8f9fa',
-        padding: 12,
-        marginVertical: 6,
-        borderRadius: 6,
-        borderLeftWidth: 3,
-        borderLeftColor: '#007bff',
-    },
-    projectItem: {
-        backgroundColor: '#f8f9fa',
-        padding: 12,
-        marginVertical: 6,
-        borderRadius: 6,
-        borderLeftWidth: 3,
-        borderLeftColor: '#28a745',
-    },
-    groupName: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    groupPath: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 5,
-    },
-    groupDescription: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    itemName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    itemPath: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 5,
-    },
-    itemDescription: {
-        fontSize: 14,
-    },
-    statistics: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-        paddingTop: 10,
-    },
-    projectStats: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 8,
-        paddingTop: 8,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-    },
-    errorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 16,
-    },
-    emptyContainer: {
-        padding: 16,
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 16,
-        color: '#666',
-        marginTop: 10,
-    }
-});
 
 export default GroupDetails;
