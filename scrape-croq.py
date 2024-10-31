@@ -10,7 +10,7 @@ timestamp = 1719180000
 headers = {
     "accept": "*/*",
     "accept-language": "fr-FR,fr;q=0.9",
-    "authorization": "Bearer ***REMOVED***.bmnmhbbh-BL_p1G71QDcjAgwoEzJCbX0rt9Qo2nsCMMzFIoaiSGKe8xKenuEkHb--FpKJZ22ira_RO5rWut-Rb0sbP1xre4sa8NIEX9A5MCAUf0llx4ZxxJxz-PcQXGz8l1YMVgd6LbuBegzZ4riW5q0hgO0x0yJ9sbO48qRe_p6qkgH4lT48vGMiUXYPlYhYSPuUiDKh6ub706dacllW_tUDaGXrK2BkeTshA6iS2dNXEn38biy0voNdd3GtlMdDpG6VUt1aAjTpo_VvdpmdLCpU1cDyKgwcRJ-UUEtiVYwbX11iX97gqna9DHZlejELOIpSd-t0JRe-kwl7Jw6uJBIqJ5chxTxZzitSQY-O3FO8xaiz7i1-VhvvobntAkepxaalYh2TC-ma8XciF7n8PmIn2RpZWs_wAk6IhBPIPh35JJ6VNNSD5jK-A_ngcReZlPKvM_iQEWmNEPCfQ3CrlPI-lg59tpZ4ENK2sdpmJDwrO6zM2ne_NMkzsDG8DuAeJ3hkKHpgMaKS1X-u_sAo84Ei4cgZ-ID5Jy91fZ4V4THn23RsKxomQRgLVOgvJOJEQNnyjSt8Q5ZUXY1mtlu6hf8EVT-AqCmfKWy9o6PIgp-iwgb4Dhx4XWlCKQPjxil04K2ZrcsESUeB7HnQj9aC9GXwl92BS6FotF23BYGHFA",
+    "authorization": "BEARER_TOKEN_REMOVED",
     "content-type": "null",
     "if-none-match": "d1f1268639bc146e732df88e4abc9333",
     "origin": "https://app.croq-kilos.com",

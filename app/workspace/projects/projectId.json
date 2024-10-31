@@ -126,7 +126,7 @@
   "resolve_outdated_diff_discussions": false,
   "restrict_user_defined_variables": false,
   "runner_token_expiration_interval": null,
-  "runners_token": "***REMOVED***",
+  "runners_token": "GITLAB_RUNNER_TOKEN_REMOVED",
   "security_and_compliance_access_level": "private",
   "security_and_compliance_enabled": true,
   "service_desk_address": "contact-project+thomas-pedot1-expo-gitlab-client-59853773-issue-@incoming.gitlab.com",
