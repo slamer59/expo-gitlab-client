@@ -6,7 +6,7 @@ import requests
 base_url = "https://gitlab.com"
 
 # Your private token or personal token
-private_token = "GITLAB_PAT_REMOVED"
+private_token = "REDACTED"
 
 # The ID of the project you want to add the webhook to
 project_id = "59795263"

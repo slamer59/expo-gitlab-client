@@ -4,7 +4,7 @@ import requests
 base_url = "https://gitlab.com"
 
 # Your private token or personal token
-private_token = "GITLAB_PAT_REMOVED"
+private_token = "REDACTED"
 
 # The headers for the API request
 headers = {"PRIVATE-TOKEN": private_token}

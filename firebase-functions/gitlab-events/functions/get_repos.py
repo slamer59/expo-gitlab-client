@@ -4,7 +4,7 @@ import requests
 
 # Set the GitLab API endpoint and your private token
 url = "https://gitlab.com/api/v4/projects"
-headers = {"PRIVATE-TOKEN": "GITLAB_PAT_REMOVED"}
+headers = {"PRIVATE-TOKEN": "REDACTED"}
 
 # Make the GET request to the projects endpoint with the membership parameter set to True
 response = requests.get(url, headers=headers, params={"membership": "True"})

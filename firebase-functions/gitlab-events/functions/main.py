@@ -3,13 +3,16 @@ import requests
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
 from gitlab_webhook_handlers import get_project_id, handle_event
-from notifications import (add_device_to_notification_group,
-                           list_devices_with_group_id, send_push_message,
-                           users_from_project_id)
+from notifications import (
+    add_device_to_notification_group,
+    list_devices_with_group_id,
+    send_push_message,
+    users_from_project_id,
+)
 
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
 firebaseProjectId = "gitalchemy"
-private_token = "GITLAB_PAT_REMOVED"
+private_token = "REDACTED"
 
 # Use a service account
 cred = credentials.Certificate(certificate)
@@ -382,6 +385,7 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
     # Return a success response
     return https_fn.Response(response=response, mimetype="application/json")
 
+
 @https_fn.on_request()
 def notifications(req: https_fn.Request) -> https_fn.Response:
 
@@ -412,7 +416,6 @@ def notifications(req: https_fn.Request) -> https_fn.Response:
     response = send_push_message(event_messages.model_dump(mode="json")["messages"])
     # Return a success response
     return https_fn.Response(response=response, mimetype="application/json")
-
 
 
 @https_fn.on_request()

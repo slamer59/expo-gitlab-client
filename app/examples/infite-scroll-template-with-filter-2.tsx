@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const GITLAB_API_URL = 'https://gitlab.com/api/v4';
-const GITLAB_ACCESS_TOKEN = 'GITLAB_PAT_REMOVED';
+const GITLAB_ACCESS_TOKEN = 'REDACTED';
 
 const GitLabProjectsList = () => {
     const [projects, setProjects] = useState([]);
