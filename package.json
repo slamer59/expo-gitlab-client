@@ -27,7 +27,8 @@
     "firebase:env": "source ./firebase-functions/gitlab-events/functions/venv/bin/activate",
     "firebase:build": "npm run firebase:env && cd ./firebase-functions/gitlab-events/functions && uv pip install .",
     "firebase:emulators": "npm run firebase:env  && cd ./firebase-functions/gitlab-events && firebase emulators:start",
-    "firebase:deploy-functions": "npm run firebase:env  && cd ./firebase-functions/gitlab-events && firebase deploy --only functions"
+    "firebase:deploy-functions": "npm run firebase:env  && cd ./firebase-functions/gitlab-events && firebase deploy --only functions",
+    "commit": "git-cz"
   },
   "jest": {
     "preset": "jest-expo"
@@ -128,6 +129,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
+    "@semantic-release/gitlab": "^12.1.1",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/react": "~18.2.45",
@@ -144,6 +146,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/slamer59/expo-gitlab-client.git"
+    "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

@@ -1,9 +1,11 @@
-import { GroupWithSubgroups } from '@/components/Group/group-card';
+import { EmptyComponent } from '@/components/FlatList/EmptyComponent';
+import { GroupCardSkeleton, GroupWithSubgroups } from '@/components/Group/group-card';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 interface GitLabGroup {
     id: number;
@@ -18,14 +20,14 @@ interface GitLabGroup {
     parent_id: number | null;
 }
 
-const gitlabApi = axios.create({
-    baseURL: 'https://gitlab.com/api/v4',
-    headers: {
-        'Authorization': `Bearer ${process.env.EXPO_PUBLIC_GITLAB_TOKEN}`
-    }
-});
-
 export default function GroupsScreen() {
+    const { session } = useSession();
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+
     const [expandedGroups, setExpandedGroups] = useState<number[]>([]);
 
     // Fetch all groups and subgroups
@@ -33,23 +35,27 @@ export default function GroupsScreen() {
         queryKey: ['groups'],
         queryFn: async () => {
             // First fetch top-level groups
-            const response = await gitlabApi.get<GitLabGroup[]>('/groups', {
-                params: {
-                    top_level_only: true,
-                    per_page: 100
-                }
+            const response = await client.Groups.all({
+
+                top_level_only: true,
+                per_page: 100
+
             });
 
             // For each top-level group, fetch its subgroups
             const groupsWithSubgroups = await Promise.all(
-                response.data.map(async (group) => {
-                    const subgroupsResponse = await gitlabApi.get<GitLabGroup[]>(
-                        `/groups/${group.id}/subgroups`
+                response.map(async (group) => {
+                    const subgroupsResponse = await client.Groups.subgroups(
+                        group.id,
+                        {
+                            per_page: 100
+                        }
                     );
                     return {
                         ...group,
-                        subgroups: subgroupsResponse.data
+                        subgroups: subgroupsResponse
                     };
+
                 })
             );
 
@@ -74,17 +80,17 @@ export default function GroupsScreen() {
     const renderGroups = () => {
         if (isLoading) {
             return (
-                <View className="p-4">
-                    <Text className="text-white">Loading groups...</Text>
+                <View className="items-center">
+                    {isLoading && Array.from({ length: 5 }).map((_, index) => (
+                        <GroupCardSkeleton key={index} />
+                    ))}
                 </View>
             );
         }
 
-        if (!filteredGroups?.length) {
+        if (!filteredGroups?.length && !isLoading) {
             return (
-                <View className="p-4">
-                    <Text className="text-white">No groups found</Text>
-                </View>
+                <EmptyComponent />
             );
         }
 
