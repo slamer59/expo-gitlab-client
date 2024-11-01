@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { router } from 'expo-router';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
@@ -50,6 +50,26 @@ interface FirebaseDocument {
     notifications: FirebaseNotification[];
 }
 
+async function getAllProjects(client: GitLabClient, page = 1, allProjects: GitLabProject[] = []): Promise<GitLabProject[]> {
+    const perPage = 100; // Maximum allowed by GitLab API
+    const projects = await client.Projects.all({ membership: true, owned: true, per_page: perPage, page: page });
+
+    allProjects = allProjects.concat(projects);
+
+    if (projects.length === perPage) {
+        // There might be more pages
+        return getAllProjects(client, page + 1, allProjects);
+    } else {
+        // No more pages
+        return allProjects;
+    }
+}
+
+export const notificationLevels = [
+    { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
+    { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
+    { value: 'disabled', label: 'Disabled', description: 'You will not receive any notifications', icon: 'notifications-off' },
+] as const;
 
 type NotificationLevel = typeof notificationLevels[number];
 
@@ -96,55 +116,6 @@ interface NotificationStore {
     checkNotificationRegistration: () => Promise<string | null>;
     registerForPushNotifications: () => Promise<string | null>;
 }
-
-
-
-async function getAllProjects(client: GitLabClient, page = 1, allProjects: GitLabProject[] = []): Promise<GitLabProject[]> {
-    const perPage = 100; // Maximum allowed by GitLab API
-    const projects = await client.Projects.all({ membership: true, owned: true, per_page: perPage, page: page });
-
-    allProjects = allProjects.concat(projects);
-
-    if (projects.length === perPage) {
-        // There might be more pages
-        return getAllProjects(client, page + 1, allProjects);
-    } else {
-        // No more pages
-        return allProjects;
-    }
-}
-
-export async function getExpoToken(): Promise<string> {
-    try {
-        const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-        if (!projectId) {
-            throw new Error("Project ID not found");
-        }
-
-        const token = await Notifications.getExpoPushTokenAsync({
-            projectId: projectId,
-        });
-
-        if (token && token.data) {
-            return token.data;
-        } else {
-            throw new Error("Failed to get Expo push token: Token or token.data is undefined");
-        }
-    } catch (error) {
-        console.error("Error getting Expo push token:", error);
-        throw error; // Re-throw the error
-    }
-}
-
-export const useNotifications = () => {
-    const store = useNotificationStore();
-    return store;
-};
-export const notificationLevels = [
-    { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
-    { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
-    { value: 'disabled', label: 'Disabled', description: 'You will not receive any notifications', icon: 'notifications-off' },
-] as const;
 
 async function updateNotificationLevel(
     expoToken: string,
@@ -471,6 +442,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 });
             }
 
+            // Navigate to GitlabNotificationSettings after successful registration
+            router.push('/options/profile');
+
             return token;
         } catch (error) {
             console.error('Error registering for push notifications:', error);
@@ -478,6 +452,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
         }
     },
 
+    // ... [rest of the methods remain unchanged]
     checkNotificationRegistration: async () => {
         try {
             const storedToken = await AsyncStorage.getItem('expoPushToken');
@@ -518,9 +493,21 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             // Set up periodic token check
             setInterval(async () => {
                 await get().checkNotificationRegistration();
-            }, 7 * 24 * 60 * 60 * 1000); // Weekly check
+            }, 24 * 60 * 60 * 1000); // Daily check
         } catch (error) {
             console.error('Error initializing notifications:', error);
         }
     },
+
+    // ... [include all other methods from the previous version]
 }));
+
+// Re-export getExpoToken for use in other files
+export const getExpoToken = async (): Promise<string | null> => {
+    try {
+        return await AsyncStorage.getItem('expoPushToken');
+    } catch (error) {
+        console.error('Error getting Expo token:', error);
+        return null;
+    }
+};
