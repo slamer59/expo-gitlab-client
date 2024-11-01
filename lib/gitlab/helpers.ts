@@ -76,24 +76,3 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
     }
 }
 
-export async function getExpoToken(): Promise<string> {
-    try {
-        const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-        if (!projectId) {
-            throw new Error("Project ID not found");
-        }
-
-        const token = await Notifications.getExpoPushTokenAsync({
-            projectId: projectId,
-        });
-
-        if (token && token.data) {
-            return token.data;
-        } else {
-            throw new Error("Failed to get Expo push token: Token or token.data is undefined");
-        }
-    } catch (error) {
-        console.error("Error getting Expo push token:", error);
-        throw error; // Re-throw the error
-    }
-}

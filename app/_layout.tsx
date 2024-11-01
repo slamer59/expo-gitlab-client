@@ -1,5 +1,7 @@
 import "@/global.css";
 import { defaultOptionsHeader } from "@/lib/constants";
+import { useNotificationStore } from "@/lib/notification/state";
+
 import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 import { PortalHost } from "@rn-primitives/portal";
@@ -77,7 +79,7 @@ function RootLayoutNav() {
     colorScheme: false,
     preparation: false
   });
-
+  const { initializeNotifications } = useNotificationStore();
 
   React.useEffect(() => {
     setIsLayoutMounted(true);
@@ -107,10 +109,15 @@ function RootLayoutNav() {
     }
   }, [isReady, isSessionLoading]);
 
+  React.useEffect(() => {
+    initializeNotifications();
+  }, []);
+
   // if (!isReady.colorScheme || !isReady.preparation || isSessionLoading) {
   if (!isReady.preparation || isSessionLoading) {
     return null;
   }
+
 
 
   return (
