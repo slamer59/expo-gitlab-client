@@ -1,165 +1,130 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import { Link } from "expo-router";
+import { Href, Link } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 
-const useDevFeature = (flagName) => {
+type IconName = keyof typeof Ionicons.glyphMap;
+
+const useDevFeature = (flagName: string) => {
   const isDev = __DEV__;
   const featureEnabled = useFeatureFlag(flagName);
-  // console.log(`Feature ${flagName} is ${featureEnabled ? 'enabled' : 'disabled'}`);
-  // console.log(`Returning ${isDev || featureEnabled}`);
   return isDev || featureEnabled;
 };
 
 export default function Home() {
-
   const devModeEnabled = useDevFeature("development-mode");
 
   const buttons = [
     {
-      icon: "alert-circle-outline",
+      icon: "alert-circle-outline" as IconName,
       text: "Issues",
-      screen: "workspace/issues/list",
+      screen: "/workspace/issues/list" as Href<string>,
       itemColor: "bg-issues"
     },
     {
-      icon: "git-pull-request",
+      icon: "git-pull-request" as IconName,
       text: "Merge Requests",
-      screen: "workspace/merge-requests/list",
+      screen: "/workspace/merge-requests/list" as Href<string>,
       itemColor: "bg-merge-requests"
     },
     {
-      icon: "folder-outline",
+      icon: "folder-outline" as IconName,
       text: "Projects",
-      screen: "workspace/projects/list",
+      screen: "/workspace/projects/list" as Href<string>,
       itemColor: "bg-projects"
     },
     {
-      icon: "people-outline" as const,
+      icon: "people-outline" as IconName,
       text: "Groups",
-      screen: "/workspace/groups/dashboard-list",
+      screen: "/workspace/groups/dashboard-list" as Href<string>,
       itemColor: "bg-groups",
     },
     {
-      icon: "star-outline",
+      icon: "star-outline" as IconName,
       text: "Starred",
-      screen: "workspace/starred/list",
+      screen: "/workspace/starred/list" as Href<string>,
       itemColor: "bg-starred"
     },
-    // Development-only buttons
     ...(devModeEnabled ? [
       {
-        icon: "chatbubbles-outline",
+        icon: "chatbubbles-outline" as IconName,
         text: "Discussions",
-        screen: "workspace/discussions/list",
+        screen: "/workspace/discussions/list" as Href<string>,
         itemColor: "bg-discussions"
       },
       {
-        icon: "folder-open-outline",
+        icon: "folder-open-outline" as IconName,
         text: "Repositories",
-        screen: "workspace/repositories/list",
+        screen: "/workspace/repositories/list" as Href<string>,
         itemColor: "bg-repositories"
       },
       {
-        icon: "people-outline",
+        icon: "people-outline" as IconName,
         text: "Organizations",
-        screen: "workspace/organizations/list",
+        screen: "/workspace/organizations/list" as Href<string>,
         itemColor: "bg-organizations"
       },
-
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevGitlabNotification",
-        screen: "options/profile",
+        screen: "/options/profile" as Href<string>,
         itemColor: "bg-green"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevMember",
-        screen: "workspace/projects/59795263/members/11041577",
+        screen: "/workspace/projects/59795263/members/11041577" as Href<string>,
         itemColor: "bg-green"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevIssue",
-        screen: "workspace/projects/59795263/issues/43",
+        screen: "/workspace/projects/59795263/issues/43" as Href<string>,
         itemColor: "bg-green"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevCommitList",
-        screen: "workspace/projects/59853773/commits/list",
+        screen: "/workspace/projects/59853773/commits/list" as Href<string>,
         itemColor: "bg-green"
       },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevIssueCreate",
-      //   screen: "workspace/projects/59795263/issues/create",
-      //   itemColor: "bg-green"
-      // },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevIssueEdit",
-      //   screen: "workspace/projects/59795263/issues/29/edit",
-      //   itemColor: "bg-green"
-      // },
-      // Tree 
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevFileDisplay",
-        screen: "tree/59853773/",
+        screen: "/tree/59853773/" as Href<string>,
         itemColor: "bg-tree"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevFolderTree",
-        screen: "tree/59853773",
+        screen: "/tree/59853773" as Href<string>,
         itemColor: "bg-tree"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevMergeRequest",
-        screen: "workspace/projects/59795263/merge-requests/1",
+        screen: "/workspace/projects/59795263/merge-requests/1" as Href<string>,
         itemColor: "bg-green"
       },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevMergeRequestEdit",
-        screen: "workspace/projects/59795263/merge-requests/1/edit",
+        screen: "/workspace/projects/59795263/merge-requests/1/edit" as Href<string>,
         itemColor: "bg-green"
       },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevMergeRequestCreate",
-      //   screen: "workspace/projects/59795263/merge-requests/create?issue_iid=34&title=ok&source_branch=34-real-image-should-show-in-editmarkdown-instead-of-generique-picture&target_branch=master",
-      //   itemColor: "bg-green"
-      // },
       {
-        icon: "arrow-forward",
+        icon: "arrow-forward" as IconName,
         text: "DevProject",
-        screen: "workspace/projects/59795263",
+        screen: "/workspace/projects/59795263" as Href<string>,
         itemColor: "bg-green"
       },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevProjectEdit",
-      //   screen: "workspace/projects/59795263/edit",
-      //   itemColor: "bg-green"
-      // },
-      // {
-      //   icon: "arrow-forward",
-      //   text: "DevProjectPipeline",
-      //   screen: "workspace/projects/59795263/pipelines/1462352939",
-      //   itemColor: "bg-green"
-      // },
     ] : [])
   ];
-  const [showWelcomeCard, setShowWelcomeCard] = useState(true);
 
+  const [showWelcomeCard, setShowWelcomeCard] = useState(true);
 
   useEffect(() => {
     const loadWelcomeCardState = async () => {
@@ -175,6 +140,7 @@ export default function Home() {
 
     loadWelcomeCardState();
   }, []);
+
   const handleCloseWelcomeCard = async () => {
     setShowWelcomeCard(false);
     try {
@@ -184,12 +150,10 @@ export default function Home() {
     }
   };
 
-
-
   return (
     <ScrollView
       className="flex-1 p-4 bg-background"
-      contentContainerStyle={{ paddingBottom: 100 }} // Add extra padding at the bottom
+      contentContainerStyle={{ paddingBottom: 100 }}
     >
       {showWelcomeCard && (
         <Card
@@ -199,7 +163,7 @@ export default function Home() {
           <CardHeader>
             <CardTitle className="text-white">
               <Image
-                source={require('@/assets/images/logo.png')}
+                source={require('../../assets/images/logo.png')}
                 style={{ width: 30, height: 30 }}
                 className="mr-2"
               />
@@ -223,7 +187,7 @@ export default function Home() {
         {buttons.map((button, index) => (
           <Link
             key={index}
-            href={button.screen || "/"}
+            href={button.screen}
             asChild
           >
             <Pressable>
