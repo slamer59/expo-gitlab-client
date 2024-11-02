@@ -9,8 +9,8 @@ import { Octicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Label } from "@rn-primitives/select";
 import { format } from 'date-fns';
-import { useRouter } from "expo-router";
-import React, { useState } from 'react';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from 'react-native';
 import InfoAlert from "../InfoAlert";
@@ -26,11 +26,18 @@ interface IssueFormData {
     milestone_id: string;
 }
 
-export default function CreateIssueForm({ projectId }: { projectId: string }) {
+interface CreateIssueFormProps {
+    projectId: string;
+    defaultTitle?: string;
+    defaultDescription?: string;
+}
+
+export default function CreateIssueForm({ projectId, defaultTitle, defaultDescription }: CreateIssueFormProps) {
     const [alert, setAlert] = useState({ message: "", isOpen: false });
     const [showDatePicker, setShowDatePicker] = useState(false);
     const router = useRouter();
     const { session } = useSession();
+    const params = useLocalSearchParams();
 
     const client = new GitLabClient({
         url: session?.url,
@@ -40,10 +47,10 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
     const api = useGitLab(client);
     const createIssueMutation = api.useCreateProjectIssue();
 
-    const { control, handleSubmit: handleSave, formState: { errors }, reset } = useForm<IssueFormData>({
+    const { control, handleSubmit: handleSave, formState: { errors }, reset, setValue } = useForm<IssueFormData>({
         defaultValues: {
-            title: '',
-            description: '',
+            title: defaultTitle || '',
+            description: defaultDescription || '',
             confidential: false,
             due_date: undefined,
             labels: '',
@@ -51,6 +58,17 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
             milestone_id: '',
         },
     });
+
+    // Handle URL parameters for title and description
+    useEffect(() => {
+        if (params.title) {
+            setValue('title', decodeURIComponent(params.title as string));
+        }
+        if (params.description) {
+            setValue('description', decodeURIComponent(params.description as string));
+        }
+    }, [params.title, params.description, setValue]);
+
     const onSubmit = (data: IssueFormData) => {
         if (!projectId) {
             setAlert({ message: "Project ID is missing. Unable to create issue.", isOpen: true });
@@ -128,7 +146,6 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
                 name="confidential"
             />
 
-
             <Controller
                 control={control}
                 render={({ field: { onChange, value } }) => (
@@ -159,72 +176,6 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
                 name="due_date"
             />
 
-            {/* <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="Labels (comma-separated)"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        className="mb-2"
-                    />
-                )}
-                name="labels"
-            />
-
-            <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="Assignee ID"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        keyboardType="numeric"
-                        className="mb-2"
-                    />
-                )}
-                name="assignee_id"
-            />
-
-            <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="Milestone ID"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        className="mb-2"
-                    />
-                )}
-                name="milestone_id"
-            /> */}
-            {/* Premium and ultimate */}
-            {/* <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <Input
-                        placeholder="Weight"
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        keyboardType="numeric"
-                        className="mb-2"
-                    />
-                )}
-                name="weight"
-            /> */}
-
-            {/* <Button
-                onPress={handleSave(onSubmit)}
-                disabled={createIssueMutation.isLoading}
-                className="mt-4"
-            >
-                <Text>{createIssueMutation.isLoading ? "Creating..." : "Create Issue"}</Text>
-            </Button> */}
-
             <View className="flex flex-row justify-start mt-4 mb-2 space-x-2">
                 <Button
                     variant="destructive"
@@ -246,4 +197,3 @@ export default function CreateIssueForm({ projectId }: { projectId: string }) {
         </>
     );
 }
-

@@ -4,27 +4,90 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { useSession } from '@/lib/session/SessionProvider';
+import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
-import { Redirect, Stack } from 'expo-router';
+import { Redirect, Stack, router } from 'expo-router';
 import { default as React } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, View } from 'react-native';
 
 export default function OptionScreen() {
-
-  const { signOut, session } = useSession()
+  const { signOut, session } = useSession();
 
   if (!session) {
     return <Redirect href='/login' />;
   }
 
-  // const bundleIdentifier = Application.applicationId;
+  const getIssueDescription = () => {
+    return encodeURIComponent(
+      `## App Information\n` +
+      `- App Version: ${Application.applicationName} v${Application.nativeBuildVersion}\n` +
+      `- Platform: ${Platform.OS}\n` +
+      `- OS Version: ${Platform.Version}\n` +
+      `- GitLab API: v4\n\n` +
+      `## Feedback\n` +
+      `<!-- Please describe your feedback, issue, or suggestion here -->\n\n` +
+      `## Steps to Reproduce (if applicable)\n` +
+      `1. \n2. \n3. \n\n` +
+      `## Expected Behavior\n\n` +
+      `## Actual Behavior\n\n` +
+      `## Additional Information\n`
+    );
+  };
+
+  const handleFeedback = () => {
+    router.push({
+      pathname: '/workspace/projects/[projectId]/issues/create',
+      params: {
+        projectId: '62930051',
+        title: 'Feedback: Gitalchemy Mobile App',
+        description: getIssueDescription()
+      }
+    });
+  };
+
+  const supportLinks = [
+    {
+      icon: "heart-outline",
+      text: "Support on Patreon",
+      url: "https://www.patreon.com/c/teepeetlse",
+      color: "#FF424D",
+      external: true
+    },
+    {
+      icon: "cafe-outline",
+      text: "Buy Me a Coffee",
+      url: "https://buymeacoffee.com/thomaspedo6",
+      color: "#FFDD00",
+      external: true
+    },
+    {
+      icon: "globe-outline",
+      text: "Visit Website",
+      url: "https://thomaspedot.dev",
+      color: "#0085CA",
+      external: true
+    },
+    {
+      icon: "star-outline",
+      text: "Rate on Google Play",
+      url: "https://play.google.com/store/apps/details?id=com.thomaspedot.gitalchemy",
+      color: "#34A853",
+      external: true
+    },
+    {
+      icon: "chatbubble-outline",
+      text: "Submit Feedback",
+      color: "#FC6D26",
+      external: false,
+      onPress: handleFeedback
+    }
+  ];
 
   return (
     <>
       <Stack.Screen
         options={{
           title: "General settings",
-          // ...defaultOptionsHeader
         }}
       />
 
@@ -32,31 +95,46 @@ export default function OptionScreen() {
         <SystemSettingsScreen />
         <GitLabNotificationSettings />
 
-        {/* <View className='mb-6 border-t border-gray-700' /> */}
-        {/* <View className='mb-6'>
-        <Text className=''>General</Text>
-        <Text className='mt-2 '>Theme</Text>
-        <Text className=''>Follow system</Text>
-        <Text className='mt-2 '>Code Options</Text>
-        <Text className='mt-2 '>Language</Text>
-        <Text className=''>Follow system</Text>
-        <Text className='mt-2 '>Accounts</Text>
-      </View> */}
-        {/* <View className='mb-6 border-t border-gray-700' /> */}
-        {/* <View className='mb-6'>
-        <Text className=''>Subscriptions</Text>
-        <Text className='mt-2 '>Copilot</Text>
-      </View> */}
-        {/* <View className='mb-6 border-t border-gray-700' /> */}
-        <View className='mb-6'>
-          {/* <Text className=''>More Options</Text>
-        <Text className='mt-2 '>Feature Preview</Text>
-        <Text className='mt-2 '>Share Feedback</Text>
-        <Text className='mt-2 '>Get Help</Text>
-        <Text className='mt-2 '>Terms of Service</Text>
-        <Text className='mt-2 '>Privacy Policy & Analytics</Text>
-        <Text className='mt-2 '>Open Source Libraries</Text> */}
+        <View className='mt-6 mb-6 border-t border-gray-700' />
 
+        <View className='mb-6'>
+          <Text className='mb-4 text-xl font-bold text-white'>About</Text>
+          <View className='space-y-2'>
+            <Text className='text-white'>Version: {Application.applicationName} v{Application.nativeBuildVersion}</Text>
+            <Text className='text-white'>GitLab API: v4</Text>
+          </View>
+        </View>
+
+        <View className='mb-6 border-t border-gray-700' />
+
+        <View className='mb-6'>
+          <Text className='mb-4 text-xl font-bold text-white'>Support</Text>
+          {supportLinks.map((link, index) => (
+            <Pressable
+              key={index}
+              onPress={() => {
+                if (link.external) {
+                  Linking.openURL(link.url!);
+                } else {
+                  link.onPress?.();
+                }
+              }}
+              className='flex-row items-center py-3'
+            >
+              <Ionicons
+                name={link.icon as any}
+                size={24}
+                color={link.color}
+                style={{ marginRight: 12 }}
+              />
+              <Text className='text-lg text-white'>{link.text}</Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View className='mb-6 border-t border-gray-700' />
+
+        <View className='mb-6'>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant='destructive'>
@@ -84,12 +162,8 @@ export default function OptionScreen() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-
         </View>
-        <Text className='mt-2 text-sm'>{Application.applicationName} v{Application.nativeBuildVersion}</Text>
       </ScrollView>
     </>
   );
 }
-
-

@@ -1,9 +1,9 @@
 import Error from '@/components/Error';
+import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
-
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
@@ -76,3 +76,43 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
     }
 }
 
+
+
+export const getGitLabIssueUrl = () => {
+    const baseUrl = "https://gitlab.com/thomas.pedot1/gitalchemy/-/issues/new";
+    const title = encodeURIComponent("Feedback: Gitalchemy Mobile App");
+    const description = encodeURIComponent(
+        `## App Information\n` +
+        `- App Version: ${Application.applicationName} v${Application.nativeBuildVersion}\n` +
+        `- Platform: ${Platform.OS}\n` +
+        `- OS Version: ${Platform.Version}\n` +
+        `- GitLab API: v4\n\n` +
+        `## Feedback\n` +
+        `<!-- Please describe your feedback, issue, or suggestion here -->\n\n` +
+        `## Steps to Reproduce (if applicable)\n` +
+        `1. \n2. \n3. \n\n` +
+        `## Expected Behavior\n\n` +
+        `## Actual Behavior\n\n` +
+        `## Additional Information\n`
+    );
+
+    return `${baseUrl}?issue[title]=${title}&issue[description]=${description}&issue[labels]=support,discussion`;
+};
+
+
+export const getHelpWithGitalchemy = () => {
+    return encodeURIComponent(
+        `## App Information\n` +
+        `- App Version: ${Application.applicationName} v${Application.nativeBuildVersion}\n` +
+        `- Platform: ${Platform.OS}\n` +
+        `- OS Version: ${Platform.Version}\n` +
+        `- GitLab API: v4\n\n` +
+        `## Feedback\n` +
+        `<!-- Please describe your feedback, issue, or suggestion here -->\n\n` +
+        `## Steps to Reproduce (if applicable)\n` +
+        `1. \n2. \n3. \n\n` +
+        `## Expected Behavior\n\n` +
+        `## Actual Behavior\n\n` +
+        `## Additional Information\n`
+    );
+};

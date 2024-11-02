@@ -1,9 +1,10 @@
 import Loading from '@/components/Loading';
 import { Text } from "@/components/ui/text";
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { getHelpWithGitalchemy } from '@/lib/gitlab/helpers';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
-import { Link, Redirect, Tabs } from 'expo-router';
+import { Link, Redirect, router, Tabs } from 'expo-router';
 import React from 'react';
 import { Image, Linking, Pressable, View } from 'react-native';
 
@@ -29,29 +30,49 @@ export default function TabLayout() {
   const promotionLinks = [
     {
       icon: "shield-checkmark-outline" as IconName,
-      href: "/workspace/privacy-policy",
-      color: "#0085CA"
+      onPress: () => router.push("/workspace/privacy-policy"),
+      color: "#0085CA",
+      external: false
     },
     {
       icon: "heart-outline" as IconName,
       url: "https://www.patreon.com/c/teepeetlse",
-      color: "#FF424D"
+      color: "#FF424D",
+      external: true
     },
     {
       icon: "cafe-outline" as IconName,
       url: "https://buymeacoffee.com/thomaspedo6",
-      color: "#FFDD00"
+      color: "#FFDD00",
+      external: true
     },
     {
       icon: "star-outline" as IconName,
       url: "https://play.google.com/store/apps/details?id=com.thomas.pedot.expogitlabclient",
-      color: "#34A853"
+      color: "#34A853",
+      external: true
     },
     {
-      icon: "help-circle-outline" as IconName,
-      url: "https://gitlab.com/thomas.pedot1/gitalchemy/-/issues/new",
-      color: "#FC6D26"
-    }
+      icon: "chatbubble-outline",
+      text: "Submit Feedback",
+      color: "#FC6D26",
+      external: false,
+      onPress: () => router.push({
+        pathname: '/workspace/projects/[projectId]/issues/create',
+        params: {
+          projectId: '62930051',
+          title: 'Feedback: Gitalchemy Mobile App',
+          description: getHelpWithGitalchemy()
+        }
+      })
+    },
+    {
+      icon: "browsers-outline" as IconName,
+      url: "https://www.gitalchemy.app",
+      color: "#fff",
+      external: true
+    },
+
   ];
 
   return (
@@ -80,41 +101,27 @@ export default function TabLayout() {
             headerRight: () => (
               <View className="flex-row items-center">
                 {promotionLinks.map((item, index) => (
-                  item.href ? (
-                    <Link key={index} href={item.href} asChild>
-                      <Pressable>
-                        {({ pressed }) => (
-                          <Ionicons
-                            name={item.icon}
-                            size={25}
-                            color={item.color}
-                            style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                          />
-                        )}
-                      </Pressable>
-                    </Link>
-                  ) : (
-                    <Pressable
-                      key={index}
-                      onPress={() => Linking.openURL(item.url!)}
-                    >
-                      {({ pressed }) => (
-                        <Ionicons
-                          name={item.icon}
-                          size={25}
-                          color={item.color}
-                          style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                        />
-                      )}
-                    </Pressable>
-                  )
-                ))}
+                  <Pressable
+                    key={index}
+                    onPress={() => item.external ? Linking.openURL(item.url!) : item.onPress?.()}
+                  >
+                    {({ pressed }) => (
+                      <Ionicons
+                        name={item.icon}
+                        size={25}
+                        color={item.color}
+                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      />
+                    )}
+                  </Pressable>
+                )
+                )}
               </View>
             ),
             headerTitle: () => (
               <View className="flex-row items-center">
                 <Image
-                  source={require('../../assets/images/logo.png')}
+                  source={require('@/assets/images/logo.png')}
                   style={{ width: 30, height: 30 }}
                   className="flex flex-row items-center justify-center p-6 mr-4 bg-white rounded-lg"
                 />
