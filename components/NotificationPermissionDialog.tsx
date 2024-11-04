@@ -1,7 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
 
 import { useNotificationStore } from '@/lib/notification/state';
 import {
@@ -44,35 +43,25 @@ export function NotificationPermissionDialog() {
                 <AlertDialogHeader>
                     <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
                     <AlertDialogDescription>
-                        <View className="space-y-4">
-                            <Text>
-                                To keep you updated with your GitLab activities, we need to store a device token for push notifications.
-                            </Text>
+                        {`
+To keep you updated with your GitLab activities, we need to store a device token for push notifications.
+This token will:
 
-                            <View className="space-y-2">
-                                <Text>This token will:</Text>
-                                <Text>• Only be used for GitLab notifications</Text>
-                                <Text>• Be stored securely following RGPD guidelines</Text>
-                                <Text>• Be deleted when you disable notifications</Text>
-                            </View>
+    • Only be used for GitLab notifications
+    • Be stored securely following RGPD guidelines
+    • Be deleted when you disable notifications
 
-                            <Text>
-                                You can disable notifications at any time in settings.
-                            </Text>
-
-
-                        </View>
+You can disable notifications at any time in settings.`}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogAction
                         onPress={() => router.push("/workspace/privacy-policy")}
-                        className="p-0 bg-transparent border-none"
+                        className="p-0 bg-transparent"
                     >
-                        <Text className="text-blue-500">
+                        <Text className="text-secondary">
                             View Privacy Policy
                         </Text>
-
                     </AlertDialogAction>
                     <AlertDialogCancel onPress={handleDecline}>
                         <Text>Not Now</Text>
@@ -83,6 +72,6 @@ export function NotificationPermissionDialog() {
 
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog >
     );
 }
