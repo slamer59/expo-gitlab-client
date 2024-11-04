@@ -1,8 +1,9 @@
 import * as Notifications from 'expo-notifications';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
-import { useNotificationStore } from '../lib/notification/state';
+
+import { useNotificationStore } from '@/lib/notification/state';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -13,11 +14,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from './ui/alert-dialog';
-import { Button } from './ui/button';
 import { Text } from './ui/text';
 
 export function NotificationPermissionDialog() {
-    const { setHasShownRGPDNotice, setExpoPushToken } = useNotificationStore();
+    const { setHasAcceptedRGPD, setExpoPushToken } = useNotificationStore();
 
     const handleAccept = async () => {
         try {
@@ -28,14 +28,14 @@ export function NotificationPermissionDialog() {
                     setExpoPushToken(token);
                 }
             }
-            setHasShownRGPDNotice(true);
+            setHasAcceptedRGPD(true);
         } catch (error) {
             console.error('Error requesting notification permissions:', error);
         }
     };
 
     const handleDecline = () => {
-        setHasShownRGPDNotice(true);
+        setHasAcceptedRGPD(false);
     };
 
     return (
@@ -60,21 +60,27 @@ export function NotificationPermissionDialog() {
                                 You can disable notifications at any time in settings.
                             </Text>
 
-                            <Link href="/workspace/privacy-policy" asChild>
-                                <Button variant="outline" className="w-full">
-                                    <Text>View Privacy Policy</Text>
-                                </Button>
-                            </Link>
+
                         </View>
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
+                    <AlertDialogAction
+                        onPress={() => router.push("/workspace/privacy-policy")}
+                        className="p-0 bg-transparent border-none"
+                    >
+                        <Text className="text-blue-500">
+                            View Privacy Policy
+                        </Text>
+
+                    </AlertDialogAction>
                     <AlertDialogCancel onPress={handleDecline}>
                         <Text>Not Now</Text>
                     </AlertDialogCancel>
                     <AlertDialogAction onPress={handleAccept}>
                         <Text>Enable</Text>
                     </AlertDialogAction>
+
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
