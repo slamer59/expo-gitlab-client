@@ -1,7 +1,6 @@
 import "@/global.css";
 import { defaultOptionsHeader } from "@/lib/constants";
 import { useNotificationStore } from "@/lib/notification/state";
-
 import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 import { PortalHost } from "@rn-primitives/portal";
@@ -13,26 +12,13 @@ import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-// import { Theme } from '@react-navigation/native';
-// import { NAV_THEME } from '~/lib/constants';
-
-// const LIGHT_THEME: Theme = {
-//   dark: false,
-//   colors: NAV_THEME.light,
-// };
-// const DARK_THEME: Theme = {
-//   dark: true,
-//   colors: NAV_THEME.dark,
-// };
-
+import { NotificationPermissionDialog } from '../components/NotificationPermissionDialog';
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
@@ -71,15 +57,13 @@ function useNotificationObserver() {
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  // const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const { session, isLoading: isSessionLoading } = useSession();
   const queryClient = new QueryClient();
   const [isLayoutMounted, setIsLayoutMounted] = React.useState(false);
   const [isReady, setIsReady] = React.useState({
-    colorScheme: false,
     preparation: false
   });
-  const { initializeNotifications } = useNotificationStore();
+  const { initializeNotifications, hasShownRGPDNotice } = useNotificationStore();
 
   React.useEffect(() => {
     setIsLayoutMounted(true);
@@ -113,21 +97,15 @@ function RootLayoutNav() {
     initializeNotifications();
   }, []);
 
-  // if (!isReady.colorScheme || !isReady.preparation || isSessionLoading) {
   if (!isReady.preparation || isSessionLoading) {
     return null;
   }
 
-
-
   return (
-
     <QueryClientProvider client={queryClient}>
-      {/* <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}> */}
-
       <Stack
         screenOptions={{
-          title: "", // To show nothing will loading
+          title: "",
           ...defaultOptionsHeader
         }}
         initialRouteName={session ? "(tabs)" : "login"}
@@ -137,14 +115,13 @@ function RootLayoutNav() {
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
 
+      {session && !hasShownRGPDNotice && <NotificationPermissionDialog />}
       <PortalHost />
-      {/* </ThemeProvider> */}
     </QueryClientProvider>
   );
 }
 
 export default function RootLayout() {
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PostHogProvider

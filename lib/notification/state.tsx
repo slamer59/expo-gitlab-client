@@ -19,6 +19,8 @@ if (!getApps().length) {
 
 const db = getFirestore(app);
 
+const RGPD_ACCEPTED_KEY = '@notification_rgpd_accepted';
+
 interface GitLabProject {
     id: number;
     path_with_namespace: string;
@@ -94,6 +96,7 @@ interface NotificationStore {
     expoPushToken: string | null;
     permissionStatus: string | null;
     notificationPreferences: any;
+    hasAcceptedRGPD: boolean;
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: NotificationLevel; notification_email: string }) => void;
@@ -115,6 +118,8 @@ interface NotificationStore {
     initializeNotifications: () => Promise<void>;
     checkNotificationRegistration: () => Promise<string | null>;
     registerForPushNotifications: () => Promise<string | null>;
+    handleRGPDAcceptance: (accepted: boolean) => Promise<void>;
+    setHasAcceptedRGPD: (accepted: boolean) => void;
 }
 
 async function updateNotificationLevel(
@@ -147,6 +152,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     expoPushToken: null,
     permissionStatus: null,
     notificationPreferences: null,
+    hasAcceptedRGPD: false,
+    notification: null,
 
     setGroups: (groups) => set({ groups }),
     setProjects: (projects) => set({ projects }),
@@ -159,6 +166,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     setExpoPushToken: (token) => set({ expoPushToken: token }),
     setPermissionStatus: (status) => set({ permissionStatus: status }),
     setNotificationPreferences: (prefs) => set({ notificationPreferences: prefs }),
+    setHasAcceptedRGPD: (accepted: boolean) => set({ hasAcceptedRGPD: accepted }),
 
     fetchFirebaseData: async (expoToken: string) => {
         try {
@@ -452,7 +460,6 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
         }
     },
 
-    // ... [rest of the methods remain unchanged]
     checkNotificationRegistration: async () => {
         try {
             const storedToken = await AsyncStorage.getItem('expoPushToken');
@@ -478,6 +485,15 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
     initializeNotifications: async () => {
         try {
+            // Check if the user has accepted RGPD
+            const hasAcceptedRGPD = await AsyncStorage.getItem(RGPD_ACCEPTED_KEY);
+            if (hasAcceptedRGPD !== 'true') {
+                // Prompt the user to accept RGPD
+                // For example, you could navigate to a screen that explains RGPD and asks the user to accept
+                router.push('/workspace/privacy-policy');
+                return;
+            }
+
             // Load saved preferences
             const storedPrefs = await AsyncStorage.getItem('notificationPreferences');
             if (storedPrefs) {
@@ -499,7 +515,16 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
         }
     },
 
-    // ... [include all other methods from the previous version]
+    handleRGPDAcceptance: async (accepted: boolean) => {
+        if (accepted) {
+            await AsyncStorage.setItem(RGPD_ACCEPTED_KEY, 'true');
+            get().setHasAcceptedRGPD(true);
+        } else {
+            // Handle RGPD refusal
+            // For example, you could navigate to a screen that explains why RGPD is necessary
+            router.push('/worspace/rgpd-refused');
+        }
+    }
 }));
 
 // Re-export getExpoToken for use in other files
@@ -511,3 +536,4 @@ export const getExpoToken = async (): Promise<string | null> => {
         return null;
     }
 };
+
