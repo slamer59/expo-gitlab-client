@@ -37,34 +37,39 @@ export const supportLinks = [
         text: "Support on Patreon",
         url: "https://www.patreon.com/c/teepeetlse",
         color: "#FF424D",
-        external: true
+        external: true,
+        testID: "support-patreon"
     },
     {
         icon: "cafe-outline",
         text: "Buy Me a Coffee",
         url: "https://buymeacoffee.com/thomaspedo6",
         color: "#FFDD00",
-        external: true
+        external: true,
+        testID: "support-buymeacoffee"
     },
     {
         icon: "globe-outline",
         text: "Visit Website",
         url: "https://thomaspedot.dev",
         color: "#0085CA",
-        external: true
+        external: true,
+        testID: "visit-website"
     },
     {
         icon: "star-outline",
         text: "Rate on Google Play",
-        url: "https://play.google.com/store/apps/details?id=com.thomaspedot.gitalchemy",
+        url: "https://play.google.com/store/apps/details?id=com.thomas.pedot.expogitlabclient",
         color: "#34A853",
-        external: true
+        external: true,
+        testID: "rate-google-play"
     },
     {
         icon: "chatbubble-outline",
         text: "Submit Feedback",
+        onPress: handleFeedback,
         color: "#FC6D26",
         external: false,
-        onPress: handleFeedback
+        testID: "submit-feedback"
     }
 ];

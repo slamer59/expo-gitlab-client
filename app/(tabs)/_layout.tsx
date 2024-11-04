@@ -1,10 +1,12 @@
+import { HeaderAction, HeaderOption, HeaderRight } from '@/components/HeaderRight';
 import Loading from '@/components/Loading';
 import { Text } from "@/components/ui/text";
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-import { getHelpWithGitalchemy } from '@/lib/gitlab/helpers';
+import { supportLinks } from '@/lib/links/support';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import { Link, Redirect, router, Tabs } from 'expo-router';
+import { LucideHeartHandshake, LucideSmile } from 'lucide-react-native';
 import React from 'react';
 import { Image, Linking, Pressable, View } from 'react-native';
 
@@ -27,52 +29,39 @@ export default function TabLayout() {
     return <Redirect href="/login" />;
   }
 
-  const promotionLinks = [
+  const headerActions: HeaderAction[] = supportLinks
+    .filter(
+      (link) => link.icon === "cafe-outline" || link.icon === "star-outline"
+    )
+    .map((link) => ({
+      icon: link.icon,
+      label: link.text,
+      color: link.color,
+      onPress: () => {
+        link.onPress ? link.onPress() : Linking.openURL(link.url);
+      },
+      testID: link.testID
+    }));
+
+
+  const headerOptions: HeaderOption[] = [
+    ...supportLinks.map(
+      (link) =>
+      ({
+        icon: link.icon,
+        label: link.text,
+        color: link.color,
+        onPress: () => { link.onPress ? link.onPress() : Linking.openURL(link.url) },
+        testID: link.testID
+      } as HeaderOption)
+    ),
     {
-      icon: "shield-checkmark-outline" as IconName,
+      icon: "shield-checkmark-outline",
       onPress: () => router.push("/workspace/privacy-policy"),
       color: "#0085CA",
-      external: false
+      label: "Privacy Policy",
+      testID: "privacy-policy-button"
     },
-    {
-      icon: "heart-outline" as IconName,
-      url: "https://www.patreon.com/c/teepeetlse",
-      color: "#FF424D",
-      external: true
-    },
-    {
-      icon: "cafe-outline" as IconName,
-      url: "https://buymeacoffee.com/thomaspedo6",
-      color: "#FFDD00",
-      external: true
-    },
-    {
-      icon: "star-outline" as IconName,
-      url: "https://play.google.com/store/apps/details?id=com.thomas.pedot.expogitlabclient",
-      color: "#34A853",
-      external: true
-    },
-    {
-      icon: "chatbubble-outline",
-      text: "Submit Feedback",
-      color: "#FC6D26",
-      external: false,
-      onPress: () => router.push({
-        pathname: '/workspace/projects/[projectId]/issues/create',
-        params: {
-          projectId: '62930051',
-          title: 'Feedback: Gitalchemy Mobile App',
-          description: getHelpWithGitalchemy()
-        }
-      })
-    },
-    {
-      icon: "browsers-outline" as IconName,
-      url: "https://www.gitalchemy.app",
-      color: "#fff",
-      external: true
-    },
-
   ];
 
   return (
@@ -99,25 +88,37 @@ export default function TabLayout() {
             title: 'Home',
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
             headerRight: () => (
-              <View className="flex-row items-center">
-                {promotionLinks.map((item, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => item.external ? Linking.openURL(item.url!) : item.onPress?.()}
-                  >
-                    {({ pressed }) => (
-                      <Ionicons
-                        name={item.icon}
-                        size={25}
-                        color={item.color}
-                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                      />
-                    )}
-                  </Pressable>
-                )
-                )}
-              </View>
+              <HeaderRight
+                actions={headerActions}
+                options={headerOptions}
+                dropdownLabel={
+                  <View className="flex-row items-center justify-center mr-2">
+                    {/* <LucideThumbsUp color="red" /> */}
+                    <LucideHeartHandshake color="red" />
+                    <Text className="m-2 text-xl font-bold text-foreground">Support</Text>
+                    <LucideSmile color="yellow" />
+                  </View>}
+              />
             ),
+            // <View className="flex-row items-center">
+            //   {supportLinks.map((item, index) => (
+            //     <Pressable
+            //       key={index}
+            //       onPress={() => item.external ? Linking.openURL(item.url!) : item.onPress?.()}
+            //     >
+            //       {({ pressed }) => (
+            //         <Ionicons
+            //           name={item.icon}
+            //           size={25}
+            //           color={item.color}
+            //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+            //         />
+            //       )}
+            //     </Pressable>
+            //   )
+            //   )}
+            // </View>
+            // ),
             headerTitle: () => (
               <View className="flex-row items-center">
                 <Image
@@ -149,7 +150,7 @@ export default function TabLayout() {
                         name="share-social"
                         size={25}
                         color="white"
-                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                        className="m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}"
                       />
                     )}
                   </Pressable>
@@ -165,7 +166,7 @@ export default function TabLayout() {
                         name="ellipsis-vertical"
                         size={25}
                         color="white"
-                        className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                        className="m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}"
                         testID="options"
                       />
                     )}

@@ -22,17 +22,17 @@ export interface HeaderAction {
 export interface HeaderRightProps {
     actions?: HeaderAction[];
     options?: HeaderOption[];
-    dropdownLabel?: string;
+    dropdownLabel?: string | React.ReactNode;
 }
 
 export function HeaderRight({ actions = [], options = [], dropdownLabel = "Options" }: HeaderRightProps) {
     return (
-        <View className='flex-row items-center'>
+        <View className='flex-row items-center justify-center'>
             {actions.map((action, index) => (
                 <Pressable
                     key={index}
                     onPress={action.onPress}
-                    className='pl-2 pr-2 m-2'
+                    // className='pl-1 pr-1 m-1'
                     testID={action.testID}
                 >
                     {({ pressed }) => (
@@ -40,7 +40,7 @@ export function HeaderRight({ actions = [], options = [], dropdownLabel = "Optio
                             name={action.icon}
                             size={25}
                             color={action.color || "white"}
-                            className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                            className={`m-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
                         />
                     )}
                 </Pressable>
@@ -55,7 +55,7 @@ export function HeaderRight({ actions = [], options = [], dropdownLabel = "Optio
                                     name="ellipsis-vertical"
                                     size={25}
                                     color="white"
-                                    className={`m-2 ml-2 mr-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
+                                    className={`m-2 ${pressed ? 'opacity-50' : 'opacity-100'}`}
                                     testID="options"
                                 />
                             )}
