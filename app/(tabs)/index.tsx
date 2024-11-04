@@ -1,12 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Href, Link } from "expo-router";
+import { Href, router } from "expo-router";
+import { LucideComponent } from "lucide-react-native";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 type IconName = keyof typeof Ionicons.glyphMap;
+
+interface ButtonConfig {
+  icon: IconName | 'lucide';
+  iconNode?: React.ReactNode;
+  text: string;
+  screen: Href<string>;
+  itemColor: string;
+}
 
 const useDevFeature = (flagName: string) => {
   const isDev = __DEV__;
@@ -17,7 +26,7 @@ const useDevFeature = (flagName: string) => {
 export default function Home() {
   const devModeEnabled = useDevFeature("development-mode");
 
-  const buttons = [
+  const buttons: ButtonConfig[] = [
     {
       icon: "alert-circle-outline" as IconName,
       text: "Issues",
@@ -37,7 +46,8 @@ export default function Home() {
       itemColor: "bg-projects"
     },
     {
-      icon: "people-outline" as IconName,
+      icon: 'lucide',
+      iconNode: <LucideComponent size={24} color="white" />,
       text: "Groups",
       screen: "/workspace/groups/dashboard-list" as Href<string>,
       itemColor: "bg-groups",
@@ -185,24 +195,27 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         {buttons.map((button, index) => (
-          <Link
+          <TouchableOpacity
             key={index}
-            href={button.screen}
-            asChild
+            onPress={() => router.push(button.screen)}
+            activeOpacity={0.7}
           >
-            <Pressable>
-              <CardContent className="flex-row items-center">
-                <View
-                  className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
-                >
+            <CardContent className="flex-row items-center">
+              <View
+                className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
+              >
+                {button.iconNode ? (
+                  button.iconNode
+                ) : (
                   <Ionicons name={button.icon} size={24} color="white" />
-                </View>
-                <Text className="ml-4 text-lg text-white">
-                  {button.text}
-                </Text>
-              </CardContent>
-            </Pressable>
-          </Link>
+                )}
+              </View>
+              <Text className="ml-4 text-lg text-white">
+                {button.text}
+              </Text>
+            </CardContent>
+          </TouchableOpacity>
+
         ))}
       </Card>
     </ScrollView>

@@ -142,6 +142,10 @@ const GroupDetails = () => {
         fetchGroupData();
     }, []);
 
+    const handleProjectPress = (projectId: number) => {
+        router.push(`/workspace/projects/${projectId}`);
+    };
+
     // const renderGroupInfo = () => {
     //     if (!groupInfo) return null;
 
@@ -161,9 +165,12 @@ const GroupDetails = () => {
     //         </View>
     //     );
     // };
-
     const renderProject = ({ item }: { item: Project }) => {
-        return <ProjectCard item={item} variant='project_in_group' />;
+        return (
+            <TouchableOpacity onPress={() => handleProjectPress(item.id)}>
+                <ProjectCard item={item} variant='project_in_group' />
+            </TouchableOpacity>
+        );
     };
 
     const renderNestedSubgroup = ({ item }: { item: SubgroupWithDetails }) => (
@@ -180,7 +187,6 @@ const GroupDetails = () => {
         if (!item) return null;
 
         return (
-
             <TouchableOpacity
                 onPress={() => toggleSubgroup(item.id)}
             >
@@ -222,7 +228,6 @@ const GroupDetails = () => {
                     )}
                 </GroupWithSubgroupsVariant>
             </TouchableOpacity>
-
         );
     };
 
@@ -230,19 +235,13 @@ const GroupDetails = () => {
         if ('full_path' in item) {
             return renderSubgroup({ item: item as SubgroupWithDetails });
         } else {
-            return <ProjectCard item={item as Project} />;
-            // return renderProject({ item: item as Project });
+            return (
+                <TouchableOpacity onPress={() => handleProjectPress(item.id)}>
+                    <ProjectCard item={item as Project} />
+                </TouchableOpacity>
+            );
         }
     };
-
-    // if (isLoading) {
-    //     return <View className="items-center">
-    //         {Array.from({ length: 5 }).map((_, index) => (
-    //             <GroupCardSkeleton key={index} />
-    //         ))}
-    //     </View>
-    // }
-
 
     if (error) {
         return (
@@ -252,14 +251,6 @@ const GroupDetails = () => {
         );
     }
 
-    // if (!groupInfo) {
-    //     return (
-    //         <View className="items-center justify-center flex-1">
-    //             <Text className="text-base text-red-500">Group not found</Text>
-    //         </View>
-    //     );
-    // }
-
     const combinedData = [...subgroups, ...subgroupProjects];
 
     return (
@@ -267,11 +258,6 @@ const GroupDetails = () => {
             <Stack.Screen
                 options={{
                     headerTitle: groupInfo?.name || '',
-                    // headerRight: () => (
-                    //     <TouchableOpacity onPress={() => router.push(`/workspace/groups/${groupInfo.id}/edit`)}>
-                    //         <Ionicons name="create-outline" size={24} color="white" />
-                    //     </TouchableOpacity>
-                    // ),
                 }}
             />
 
@@ -283,7 +269,6 @@ const GroupDetails = () => {
                         ))}
                     </View>
                 ) : (
-
                     <FlatList
                         data={combinedData}
                         renderItem={renderListItem}
