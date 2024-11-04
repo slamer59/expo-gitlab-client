@@ -53,7 +53,7 @@ async function downloadImage(uri) {
 }
 
 
-export function ProjectCard({ item }) {
+export function ProjectCard({ item, variant = 'default' }: { item: any, variant?: 'default' | 'project_in_group' }) {
 
   const [projectPath, setImagePath] = useState(null);
   useEffect(() => {
@@ -81,8 +81,8 @@ export function ProjectCard({ item }) {
 
 
   return (
-    <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
-      <View className="mr-2">
+    <View className={`flex-row p-4 mt-2 mb-2 rounded-lg ${variant === 'default' ? 'bg-card' : 'bg-card-600'}`} >
+      <View className="mt-2 mr-4">
         {/* {IssueStatusIcon(issue, false)} */}
         {/* <Avatar alt={`${item?.name}'s Avatar`}>
            <AvatarImage
@@ -119,7 +119,7 @@ export function ProjectCard({ item }) {
             </View> */}
         </View>
       </View>
-    </View>
+    </View >
   );
 };
 

@@ -21,8 +21,8 @@ export default function GroupsScreen() {
     const UIFilters = GlobalGroupUIFilters;
     const useScreenStore = useMemo(() => createScreenStore(client.Groups.all, undefined, UIFilters), []);
     const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
-    const pathname = "/workspace/projects/[projectId]"
-    const paramsMap = { "projectId": "id" }
+    const pathname = "/workspace/groups/[groupId]"
+    const paramsMap = { "groupId": "id" }
 
     useEffect(() => {
         fetchItems(true);

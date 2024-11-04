@@ -1,4 +1,5 @@
-import { Ionicons, Octicons } from '@expo/vector-icons';
+import { ProjectCard } from '@/components/Project/project-card';
+import { Ionicons } from '@expo/vector-icons';
 import { GroupCardSkeleton, GroupWithSubgroupsVariant } from 'components/Group/group-card';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
@@ -141,45 +142,29 @@ const GroupDetails = () => {
         fetchGroupData();
     }, []);
 
-    const renderGroupInfo = () => {
-        if (!groupInfo) return null;
+    // const renderGroupInfo = () => {
+    //     if (!groupInfo) return null;
 
-        return (
-            <View className="p-4 m-4 bg-white rounded-lg shadow-md">
-                <Text className="mb-1 text-2xl font-bold">{groupInfo.name}</Text>
-                <Text className="mb-1 text-base text-gray-600">Path: {groupInfo.full_path}</Text>
-                <Text className="mb-2 text-base">
-                    {groupInfo.description || 'No description available'}
-                </Text>
-                {groupInfo.statistics && (
-                    <View className="flex-row justify-between pt-2 border-t border-gray-200">
-                        <Text>Subgroups: {groupInfo.statistics.subgroup_count}</Text>
-                        <Text>Members: {groupInfo.statistics.member_count}</Text>
-                    </View>
-                )}
-            </View>
-        );
+    //     return (
+    //         <View className="p-4 m-4 bg-white rounded-lg shadow-md">
+    //             <Text className="mb-1 text-2xl font-bold">{groupInfo.name}</Text>
+    //             <Text className="mb-1 text-base text-gray-600">Path: {groupInfo.full_path}</Text>
+    //             <Text className="mb-2 text-base">
+    //                 {groupInfo.description || 'No description available'}
+    //             </Text>
+    //             {groupInfo.statistics && (
+    //                 <View className="flex-row justify-between pt-2 border-t border-gray-200">
+    //                     <Text>Subgroups: {groupInfo.statistics.subgroup_count}</Text>
+    //                     <Text>Members: {groupInfo.statistics.member_count}</Text>
+    //                 </View>
+    //             )}
+    //         </View>
+    //     );
+    // };
+
+    const renderProject = ({ item }: { item: Project }) => {
+        return <ProjectCard item={item} variant='project_in_group' />;
     };
-
-    const renderProject = ({ item }: { item: Project }) => (
-        <TouchableOpacity onPress={() => router.push(`/workspace/projects/${item.id}`)}>
-            <View className="flex-row mt-2 mb-2 bg-card-600 p-2 my-1.5 rounded-md border-l-4 border-muted">
-                <View className="flex-1 mt-1">
-                    <View className="flex-row items-center justify-between">
-                        <Octicons name="project" size={20} color="white" className='mr-2' />
-                        <View className="flex-1">
-                            <View className="flex-row items-center justify-between mb-1">
-                                <Text className="mb-1 text-lg font-bold text-foreground">{item.name}</Text>
-                            </View>
-                            {item.description && <Text className="mb-2 text-sm text-foreground">
-                                {item.description}
-                            </Text>}
-                        </View>
-                    </View>
-                </View>
-            </View>
-        </TouchableOpacity>
-    );
 
     const renderNestedSubgroup = ({ item }: { item: SubgroupWithDetails }) => (
         <View className="bg-muted p-3 my-1.5 rounded-lg border-l-4 border-primary">
@@ -245,7 +230,8 @@ const GroupDetails = () => {
         if ('full_path' in item) {
             return renderSubgroup({ item: item as SubgroupWithDetails });
         } else {
-            return renderProject({ item: item as Project });
+            return <ProjectCard item={item as Project} />;
+            // return renderProject({ item: item as Project });
         }
     };
 
