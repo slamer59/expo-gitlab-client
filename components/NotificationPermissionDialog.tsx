@@ -1,8 +1,7 @@
-import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
+import { useNotificationStore } from 'lib/notification/state';
+import { useSession } from 'lib/session/SessionProvider';
 import React from 'react';
-
-import { useNotificationStore } from '@/lib/notification/state';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,68 +15,54 @@ import {
 import { Text } from './ui/text';
 
 export function NotificationPermissionDialog() {
-    const { consentToRGPDGiven, setRGPDConsent, setExpoPushToken } = useNotificationStore();
+    const { setRGPDConsent } = useNotificationStore();
+    const { session } = useSession();
 
-    const handleConsent = async (consent) => {
-        console.log("🚀 ~ handleConsent ~ consent:", consent)
-        await setRGPDConsent(consent);
-        if (consent) {
-            // Initialize Firebase or start data tracking here
-            // setupFirebase();
-            try {
-                const { status } = await Notifications.requestPermissionsAsync();
-                if (status === 'granted') {
-                    const token = (await Notifications.getExpoPushTokenAsync()).data;
-                    if (token) {
-                        setExpoPushToken(token);
-                    }
-                }
-                setRGPDConsent(true);
-            } catch (error) {
-                console.error('Error requesting notification permissions:', error);
+    // React.useEffect(() => {
+    //     if (session) {
+    //         setSession(session);
+    //     }
+    // }, [session]);
+
+    const handleConsent = async (consent: boolean) => {
+        try {
+            if (!session) {
+                router.push('/login');
+                return;
             }
-        } else {
-            // Handle when user declines consent, perhaps disable Firebase
-            // disableFirebase();
-            await setRGPDConsent(false);
+
+            await setRGPDConsent(consent);
+            // if (consent) {
+            //     router.push('/options/profile');
+            // }
+        } catch (error) {
+            console.error('Error handling consent:', error);
+            if (error.response?.status === 401) {
+                router.push('/login');
+            } else {
+                alert('Failed to setup notifications. Please try again.');
+            }
         }
     };
 
-    // const handleAccept = async () => {
-    //     try {
-    //         const { status } = await Notifications.requestPermissionsAsync();
-    //         if (status === 'granted') {
-    //             const token = (await Notifications.getExpoPushTokenAsync()).data;
-    //             if (token) {
-    //                 setExpoPushToken(token);
-    //             }
-    //         }
-    //         setRGPDConsent(true);
-    //     } catch (error) {
-    //         console.error('Error requesting notification permissions:', error);
-    //     }
-    // };
-
-    // const handleDecline = () => {
-    //     setRGPDConsent(false);
-    // };
-
     return (
-        <AlertDialog defaultOpen
-        >
+        <AlertDialog defaultOpen>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {`
-To keep you updated with your GitLab activities, we need to store a device token for push notifications.
-This token will:
+                        {`To keep you updated with your GitLab activities, we need to:
 
-    • Only be used for GitLab notifications
-    • Be stored securely following RGPD guidelines
-    • Be deleted when you disable notifications
+1. Store a device token for push notifications
+2. Set up webhooks for your GitLab projects
+3. Store notification preferences
 
-You can disable notifications at any time in settings.`}
+This data will:
+• Only be used for GitLab notifications
+• Be stored securely following RGPD guidelines
+• Be completely removed when you disable notifications
+
+You can manage these settings at any time.`}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -90,14 +75,13 @@ You can disable notifications at any time in settings.`}
                         </Text>
                     </AlertDialogAction>
                     <AlertDialogCancel onPress={() => handleConsent(false)}>
-                        <Text>Not Now</Text>
+                        <Text>Decline</Text>
                     </AlertDialogCancel>
                     <AlertDialogAction onPress={() => handleConsent(true)}>
-                        <Text>Enable</Text>
+                        <Text>Accept</Text>
                     </AlertDialogAction>
-
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog >
+        </AlertDialog>
     );
 }

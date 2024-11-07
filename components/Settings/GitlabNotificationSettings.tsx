@@ -2,12 +2,11 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 
 import { updateOrCreateWebhooks } from '@/lib/gitlab/webhooks';
-import { getExpoToken, notificationLevels, useNotificationStore } from '@/lib/notification/state';
+import { notificationLevels, useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
 import 'firebase/firestore';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import ErrorAlert from '../ErrorAlert';
 import { Separator } from '../ui/separator';
@@ -42,11 +41,11 @@ export default function NotificationDashboard() {
     } = useNotificationStore();
 
 
-    useEffect(() => {
-        if (session?.url && session?.token) {
-            syncNotificationSettings(client);
-        }
-    }, [session?.url, session?.token]);
+    // useEffect(() => {
+    //     if (session?.url && session?.token) {
+    //         syncNotificationSettings(client);
+    //     }
+    // }, [session?.url, session?.token]);
 
     // 1. Fetch projects
     const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
@@ -78,39 +77,39 @@ export default function NotificationDashboard() {
         }
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            const syncNotifications = async () => {
-                if (session?.url && session?.token) {
-                    const expoToken = await getExpoToken();
-                    if (expoToken) {
-                        await fetchGitLabEmailSettings(client);
-                        await fetchFirebaseNotifications(expoToken);
-                        await syncGitLabWithFirebase(client, expoToken);
-                    }
-                }
-            };
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const syncNotifications = async () => {
+    //             if (session?.url && session?.token) {
+    //                 const expoToken = await getExpoToken();
+    //                 if (expoToken) {
+    //                     await fetchGitLabEmailSettings(client);
+    //                     await fetchFirebaseNotifications(expoToken);
+    //                     await syncGitLabWithFirebase(client, expoToken);
+    //                 }
+    //             }
+    //         };
 
-            syncNotifications();
-        }, [session?.url, session?.token, client])
-    );
+    //         syncNotifications();
+    //     }, [session?.url, session?.token, client])
+    // );
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const setupProjectWebhooks = async () => {
-                if (isLoadingPersonal) {
-                    console.log("Projects are still loading");
-                    return;
-                }
-                const projects = prepareProjects(personalProjects);
-                if (!projects) return;
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const setupProjectWebhooks = async () => {
+    //             if (isLoadingPersonal) {
+    //                 console.log("Projects are still loading");
+    //                 return;
+    //             }
+    //             const projects = prepareProjects(personalProjects);
+    //             if (!projects) return;
 
-                await updateWebhooks(session, projects);
-            };
+    //             await updateWebhooks(session, projects);
+    //         };
 
-            setupProjectWebhooks();
-        }, [session, personalProjects, isLoadingPersonal])
-    );
+    //         setupProjectWebhooks();
+    //     }, [session, personalProjects, isLoadingPersonal])
+    // );
 
 
 
