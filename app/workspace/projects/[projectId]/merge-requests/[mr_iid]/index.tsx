@@ -192,21 +192,6 @@ function ActionButtons({ mr, onMerge, onClose, onReopen }) {
     const [squashCommits, setSquashCommits] = useState(false);
     const [editCommitMessage, setEditCommitMessage] = useState(false);
 
-    const handleDeleteSourceBranch = () => {
-        setDeleteSourceBranch((prev) => !prev);
-        // Add any additional logic here
-    };
-
-    const handleSquashCommits = () => {
-        setSquashCommits((prev) => !prev);
-        // Add any additional logic here
-    };
-
-    const handleEditCommitMessage = () => {
-        setEditCommitMessage((prev) => !prev);
-        // Add any additional logic here
-    };
-
     return <View className="p-3 mb-4 rounded-lg bg-card-600">
 
         {mr.state === 'open' ? <Text className="mb-2 text-lg font-semibold text-white">Ready to merge!</Text> : <Text className="mb-2 text-lg font-semibold text-danger">Merge request is closed</Text>}
