@@ -53,8 +53,6 @@ interface FirebaseDocument {
     notifications: FirebaseNotification[];
 }
 
-
-
 export const notificationLevels = [
     { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
     { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
@@ -209,25 +207,6 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                     consentDate: new Date().toISOString()
                 }, { merge: true });
 
-
-                // // 4. Update webhooks for all projects
-                // const client = new GitLabClient({
-                //     url: session.url,
-                //     token: session.token,
-                // });
-                // const projects = await getAllProjects(client);
-                // if (projects.length > 0) {
-                //     await updateOrCreateWebhooks(session, projects.map(p => ({
-                //         id: p.id,
-                //         name: p.path_with_namespace
-                //     })), {
-                //         url: webhooksUrl,
-                //         push_events: true,
-                //         issues_events: true,
-                //         merge_requests_events: true
-                //     });
-                // }
-
                 set({
                     expoPushToken: token,
                     consentToRGPDGiven: true
@@ -235,30 +214,12 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
             } else {
                 // Handle consent removal
-                // const token = await AsyncStorage.getItem(EXPO_TOKEN_KEY);
                 const token = (await Notifications.getExpoPushTokenAsync()).data;
 
                 if (token) {
                     // 1. Remove from Firebase
                     await deleteDoc(doc(db, "userNotifications", token));
                     console.log("Removed from Firebase");
-                    // 2. Remove webhooks
-                    // const client = new GitLabClient({
-                    //     url: session.url,
-                    //     token: session.token,
-                    // });
-                    // const projects = await getAllProjects(client);
-                    // if (projects.length > 0) {
-                    //     // Set webhooks as disabled
-                    //     await updateOrCreateWebhooks(session, projects.map(p => ({
-                    //         id: p.id,
-                    //         name: p.path_with_namespace
-                    //     })), {
-                    //         url: webhooksUrl,
-                    //         disabled_until: '2099-12-31',
-                    //         enable_ssl_verification: false
-                    //     });
-                    // }
                 }
 
                 // 3. Clear local storage
@@ -270,9 +231,6 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                     consentToRGPDGiven: false,
                     permissionStatus: null
                 });
-
-                // 4. Navigate to RGPD refused screen
-                // router.push('/workspace/rgpd-refused');
             }
         } catch (error) {
             console.error('Error handling RGPD consent:', error);
@@ -355,7 +313,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                 const firebaseData = await get().fetchFirebaseData(expoToken);
 
-                if (!firebaseData && !firebaseData.notification) {
+                if (!firebaseData || !firebaseData.notifications) {
+                    // If no Firebase data exists or no notifications array, create initial data
                     await updateNotificationLevel(expoToken, {
                         notification_level: global.level.value,
                         custom_events: []
@@ -368,6 +327,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                     set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
                 } else {
+                    // Use existing Firebase data
                     set({
                         projects: firebaseData.notifications.map(n => ({
                             id: n.id,
@@ -385,7 +345,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 set({ isInitialized: true });
             } else {
                 const firebaseData = await get().fetchFirebaseData(expoToken);
-                if (firebaseData) {
+                if (firebaseData && firebaseData.notifications) {
                     set({
                         projects: firebaseData.notifications.map(n => ({
                             id: n.id,
