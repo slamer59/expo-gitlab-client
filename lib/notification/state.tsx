@@ -96,7 +96,7 @@ interface NotificationStore {
     expoPushToken: string | null;
     permissionStatus: string | null;
     notificationPreferences: any;
-    hasAcceptedRGPD: boolean;
+    consentToRGPDGiven: boolean;
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: NotificationLevel; notification_email: string }) => void;
@@ -118,8 +118,7 @@ interface NotificationStore {
     initializeNotifications: () => Promise<void>;
     checkNotificationRegistration: () => Promise<string | null>;
     registerForPushNotifications: () => Promise<string | null>;
-    handleRGPDAcceptance: (accepted: boolean) => Promise<void>;
-    setHasAcceptedRGPD: (accepted: boolean) => void;
+    setRGPDConsent: (accepted: boolean) => Promise<void>;
 }
 
 async function updateNotificationLevel(
@@ -152,7 +151,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     expoPushToken: null,
     permissionStatus: null,
     notificationPreferences: null,
-    hasAcceptedRGPD: false,
+    consentToRGPDGiven: false,
     notification: null,
 
     setGroups: (groups) => set({ groups }),
@@ -166,7 +165,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     setExpoPushToken: (token) => set({ expoPushToken: token }),
     setPermissionStatus: (status) => set({ permissionStatus: status }),
     setNotificationPreferences: (prefs) => set({ notificationPreferences: prefs }),
-    setHasAcceptedRGPD: (accepted: boolean) => set({ hasAcceptedRGPD: accepted }),
+    setRGPDConsent: async (accepted: boolean) => set({ consentToRGPDGiven: accepted }),
 
     fetchFirebaseData: async (expoToken: string) => {
         try {

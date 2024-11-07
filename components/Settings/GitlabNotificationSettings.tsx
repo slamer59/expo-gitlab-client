@@ -77,19 +77,6 @@ export default function NotificationDashboard() {
             setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
         }
     };
-    // const syncNotifications = useCallback(async () => {
-    //     if (session?.url && session?.token) {
-    //         await fetchData(client);
-    //         console.log("Sync notification updated successfully");
-
-    //     }
-    // }, [session?.url, session?.token, fetchData]);
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         syncNotifications();
-    //     }, [syncNotifications])
-    // );
 
     useFocusEffect(
         useCallback(() => {

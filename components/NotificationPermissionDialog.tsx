@@ -16,29 +16,55 @@ import {
 import { Text } from './ui/text';
 
 export function NotificationPermissionDialog() {
-    const { setHasAcceptedRGPD, setExpoPushToken } = useNotificationStore();
+    const { consentToRGPDGiven, setRGPDConsent, setExpoPushToken } = useNotificationStore();
 
-    const handleAccept = async () => {
-        try {
-            const { status } = await Notifications.requestPermissionsAsync();
-            if (status === 'granted') {
-                const token = (await Notifications.getExpoPushTokenAsync()).data;
-                if (token) {
-                    setExpoPushToken(token);
+    const handleConsent = async (consent) => {
+        console.log("🚀 ~ handleConsent ~ consent:", consent)
+        await setRGPDConsent(consent);
+        if (consent) {
+            // Initialize Firebase or start data tracking here
+            // setupFirebase();
+            try {
+                const { status } = await Notifications.requestPermissionsAsync();
+                if (status === 'granted') {
+                    const token = (await Notifications.getExpoPushTokenAsync()).data;
+                    if (token) {
+                        setExpoPushToken(token);
+                    }
                 }
+                setRGPDConsent(true);
+            } catch (error) {
+                console.error('Error requesting notification permissions:', error);
             }
-            setHasAcceptedRGPD(true);
-        } catch (error) {
-            console.error('Error requesting notification permissions:', error);
+        } else {
+            // Handle when user declines consent, perhaps disable Firebase
+            // disableFirebase();
+            await setRGPDConsent(false);
         }
     };
 
-    const handleDecline = () => {
-        setHasAcceptedRGPD(false);
-    };
+    // const handleAccept = async () => {
+    //     try {
+    //         const { status } = await Notifications.requestPermissionsAsync();
+    //         if (status === 'granted') {
+    //             const token = (await Notifications.getExpoPushTokenAsync()).data;
+    //             if (token) {
+    //                 setExpoPushToken(token);
+    //             }
+    //         }
+    //         setRGPDConsent(true);
+    //     } catch (error) {
+    //         console.error('Error requesting notification permissions:', error);
+    //     }
+    // };
+
+    // const handleDecline = () => {
+    //     setRGPDConsent(false);
+    // };
 
     return (
-        <AlertDialog defaultOpen>
+        <AlertDialog defaultOpen
+        >
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
@@ -63,10 +89,10 @@ You can disable notifications at any time in settings.`}
                             View Privacy Policy
                         </Text>
                     </AlertDialogAction>
-                    <AlertDialogCancel onPress={handleDecline}>
+                    <AlertDialogCancel onPress={() => handleConsent(false)}>
                         <Text>Not Now</Text>
                     </AlertDialogCancel>
-                    <AlertDialogAction onPress={handleAccept}>
+                    <AlertDialogAction onPress={() => handleConsent(true)}>
                         <Text>Enable</Text>
                     </AlertDialogAction>
 

@@ -1,24 +1,42 @@
+import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/lib/links/support';
+import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 
 import { Redirect, Stack } from 'expo-router';
-import { default as React } from 'react';
+import { default as React, useState } from 'react';
 import { Linking, Pressable, ScrollView, View } from 'react-native';
 
 export default function OptionScreen() {
   const { signOut, session } = useSession();
+  const [consentDialog, setConsentDialog] = useState(false);
+
 
   if (!session) {
     return <Redirect href='/login' />;
   }
+  const {
+    consentToRGPDGiven, setRGPDConsent
+  } = useNotificationStore();
 
+  const handleConsentDialog = async () => {
+    try {
+      setConsentDialog(!consentDialog);
+      // Update the consent state in the store
+
+
+    } catch (error) {
+      console.error('Error handling consent:', error);
+      // Handle the error here, perhaps display an error message to the user
+    }
+  };
   return (
     <>
       <Stack.Screen
@@ -29,7 +47,38 @@ export default function OptionScreen() {
 
       <ScrollView className='flex-1 p-4 bg-background'>
         <SystemSettingsScreen />
-        <GitLabNotificationSettings />
+        <View className="p-4 m-1 rounded-lg bg-card">
+          <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
+          <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
+
+          <Text className="mb-6 text-muted">Configure your mobile app notification preferences here. These settings are independent from your GitLab email notifications.</Text>
+
+
+          <View className="mb-6">
+            <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
+            <View>
+              <Text className='mb-2 text-muted'>
+                We need your consent to use data for analytics and notifications.
+              </Text>
+
+              <Button
+                variant="secondary"
+                className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
+                onPress={() => setRGPDConsent(!consentToRGPDGiven)}
+              >
+                <Text className={`text-2xl font-bold text-white`}>
+                  {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
+                </Text>
+              </Button>
+              {consentToRGPDGiven && <NotificationPermissionDialog />}
+              <View className='flex flex-row items-center justify-center mt-4'>
+                <Octicons name="info" size={16} color="#999" />
+                <Text className='text-muted'> This is required for notifications to work.</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        {consentToRGPDGiven && <GitLabNotificationSettings />}
 
         <View className='mt-6 mb-6 border-t border-gray-700' />
 
@@ -99,7 +148,7 @@ export default function OptionScreen() {
             </AlertDialogContent>
           </AlertDialog>
         </View>
-      </ScrollView>
+      </ScrollView >
     </>
   );
 }
