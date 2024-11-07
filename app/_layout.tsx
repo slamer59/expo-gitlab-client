@@ -12,7 +12,6 @@ import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NotificationPermissionDialog } from '../components/NotificationPermissionDialog';
 
 export {
   ErrorBoundary
@@ -115,7 +114,7 @@ function RootLayoutNav() {
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
 
-      {session && !hasShownRGPDNotice && <NotificationPermissionDialog />}
+      {/* {session && !hasShownRGPDNotice && <NotificationPermissionDialog />} */}
       <PortalHost />
     </QueryClientProvider>
   );

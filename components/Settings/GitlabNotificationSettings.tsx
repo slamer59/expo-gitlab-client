@@ -1,18 +1,32 @@
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-
-import { updateOrCreateWebhooks } from '@/lib/gitlab/webhooks';
-import { getExpoToken, notificationLevels, useNotificationStore } from '@/lib/notification/state';
-import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import 'firebase/firestore';
+import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
+import { updateOrCreateWebhooks } from 'lib/gitlab/webhooks';
+import { getExpoToken, notificationLevels, useNotificationStore } from 'lib/notification/state';
+import { useSession } from 'lib/session/SessionProvider';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import ErrorAlert from '../ErrorAlert';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
 
+interface GitLabProject {
+    id: number;
+    http_url_to_repo: string;
+    path_with_namespace?: string;
+}
+
+interface GitLabSession {
+    url: string;
+    token: string;
+}
+
+interface PreparedProject {
+    id: number;
+    http_url_to_repo: string;
+}
 
 export default function NotificationDashboard() {
     const { session } = useSession();
@@ -28,6 +42,7 @@ export default function NotificationDashboard() {
     const {
         projects,
         groups,
+        consentToRGPDGiven,
         global,
         modalVisible,
         isLoading,
@@ -35,31 +50,26 @@ export default function NotificationDashboard() {
         selectNotificationLevel,
         openModal,
         setModalVisible,
-        // Remove syncWithFirebase from here
         fetchGitLabEmailSettings,
         fetchFirebaseNotifications,
         syncGitLabWithFirebase,
     } = useNotificationStore();
 
-
     useEffect(() => {
-        if (session?.url && session?.token) {
+        if (session?.url && session?.token && consentToRGPDGiven) {
             syncNotificationSettings(client);
         }
     }, [session?.url, session?.token]);
 
-    // 1. Fetch projects
     const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
         isOpen: false,
         message: '',
     });
 
-
-    const prepareProjects = (projects) => {
-        if (!projects) {
-            console.error("Projects are undefined");
-            setAlert({ message: "Error: Projects are undefined", isOpen: true });
-            return null;
+    const prepareProjects = (projects: GitLabProject[] | undefined): PreparedProject[] => {
+        if (!projects || !Array.isArray(projects)) {
+            console.error("Projects are undefined or not an array");
+            return [];
         }
 
         return projects.map(project => ({
@@ -68,33 +78,30 @@ export default function NotificationDashboard() {
         }));
     };
 
-    const updateWebhooks = async (session, projects) => {
+    const updateWebhooks = async (session: GitLabSession | undefined, projects: PreparedProject[]): Promise<void> => {
+        if (!session?.url || !session?.token) {
+            console.error("Invalid session data");
+            return;
+        }
+
         try {
-            await updateOrCreateWebhooks(session, projects, undefined);
+            await updateOrCreateWebhooks(
+                { url: session.url, token: session.token },
+                projects,
+                undefined
+            );
             console.log("Webhooks updated successfully");
         } catch (error) {
             console.error("Error updating webhooks:", error);
-            setAlert({ message: `Error updating webhooks: ${error.message}`, isOpen: true });
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            setAlert({ message: `Error updating webhooks: ${errorMessage}`, isOpen: true });
         }
     };
-    // const syncNotifications = useCallback(async () => {
-    //     if (session?.url && session?.token) {
-    //         await fetchData(client);
-    //         console.log("Sync notification updated successfully");
-
-    //     }
-    // }, [session?.url, session?.token, fetchData]);
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         syncNotifications();
-    //     }, [syncNotifications])
-    // );
 
     useFocusEffect(
         useCallback(() => {
             const syncNotifications = async () => {
-                if (session?.url && session?.token) {
+                if (session?.url && session?.token && consentToRGPDGiven) {
                     const expoToken = await getExpoToken();
                     if (expoToken) {
                         await fetchGitLabEmailSettings(client);
@@ -105,27 +112,37 @@ export default function NotificationDashboard() {
             };
 
             syncNotifications();
-        }, [session?.url, session?.token, client])
+        }, [session?.url, session?.token, client, consentToRGPDGiven])
     );
 
     useFocusEffect(
         React.useCallback(() => {
             const setupProjectWebhooks = async () => {
-                if (isLoadingPersonal) {
-                    console.log("Projects are still loading");
+                if (isLoadingPersonal || !personalProjects) {
+                    console.log("Projects are still loading or undefined");
                     return;
                 }
-                const projects = prepareProjects(personalProjects);
-                if (!projects) return;
+                const preparedProjects = prepareProjects(personalProjects);
+                if (preparedProjects.length === 0) return;
 
-                await updateWebhooks(session, projects);
+                await updateWebhooks(session, preparedProjects);
             };
 
             setupProjectWebhooks();
         }, [session, personalProjects, isLoadingPersonal])
     );
 
-
+    if (errorPersonal) {
+        return (
+            <View className="p-4">
+                <ErrorAlert
+                    isOpen={true}
+                    onClose={() => { }}
+                    message="Error loading projects. Please try again later."
+                />
+            </View>
+        );
+    }
 
     return (
         <>
@@ -139,7 +156,6 @@ export default function NotificationDashboard() {
                 <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
 
                 <Text className="mb-6 text-muted">Configure your mobile app notification preferences here. These settings are independent from your GitLab email notifications.</Text>
-
 
                 <View className="mb-6">
                     <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
@@ -157,47 +173,17 @@ export default function NotificationDashboard() {
                     <View className="mb-6">
                         <Text className="mb-2 text-xl font-bold text-white">Global notification level</Text>
                         <Text className="mb-3 text-muted">By default, all projects and groups use the global notifications setting.</Text>
-                        <TouchableOpacity className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted" onPress={() => openModal('global', null)}>
+                        <TouchableOpacity
+                            className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted"
+                            onPress={() => openModal('global', -1)}
+                        >
                             <Ionicons name={global.level.icon} size={18} color="#fff" />
                             <Text className="text-white">{global.level.label}</Text>
                             <Ionicons name="chevron-down" size={18} color="#fff" />
                         </TouchableOpacity>
                     </View>
                 )}
-                {/* <Separator className="my-4 bg-secondary" />
-                <View className="mb-6">
-                    <Text className="mb-2 text-xl font-bold text-white">Groups ({groups.length})</Text>
-                    <Text className="mb-3 text-muted">To specify the notification level per group you belong to, visit the project page and change the notification level there.</Text>
-                    {groups.map((group, index) => (
-                        <ScrollView
-                            key={group.id}
-                            horizontal
-                            className="mb-2 ml-4 bg-transparent max-h-16"
-                            contentContainerStyle={{ flexGrow: 1 }}
-                        >
-                            <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
-                                <View className="flex-row items-center flex-1 mr-4">
-                                    <Ionicons
-                                        name={`notifications${group.level.value === 'disabled' ? '-off' : ''}`}
-                                        size={18}
-                                        color="#fff"
-                                    />
-                                    <Text className="ml-2 text-white" numberOfLines={1} ellipsizeMode="tail">
-                                        {group.name}
-                                    </Text>
-                                </View>
-                                <TouchableOpacity
-                                    className="flex-row items-center p-2 rounded-md bg-muted"
-                                    onPress={() => openModal('group', index)}
-                                >
-                                    <Ionicons name={group.level.icon} size={18} color="#fff" />
-                                    <Text className="mx-1 text-white">{group.level.label}</Text>
-                                    <Ionicons name="chevron-down" size={18} color="#fff" />
-                                </TouchableOpacity>
-                            </View>
-                        </ScrollView>
-                    ))}
-                </View> */}
+
                 <Separator className="my-4 bg-secondary" />
 
                 <View className="mb-6">
@@ -205,7 +191,6 @@ export default function NotificationDashboard() {
                     <Text className="mb-3 text-muted">To specify the notification level per project of a group you belong to, visit the project page and change the notification level there.</Text>
 
                     {isLoading ? (
-                        // Skeleton loading
                         Array.from({ length: 3 }).map((_, index) => (
                             <View key={index} className="mb-2 ml-4 bg-transparent">
                                 <View className="flex-row items-center justify-between w-full py-3 border-b border-muted">
@@ -217,8 +202,8 @@ export default function NotificationDashboard() {
                                 </View>
                             </View>
                         ))
-                    ) : (<>{
-                        projects.map((project, index) => (
+                    ) : (
+                        projects && projects.length > 0 ? projects.map((project, index) => (
                             <ScrollView
                                 key={project.id}
                                 horizontal
@@ -246,12 +231,11 @@ export default function NotificationDashboard() {
                                     </TouchableOpacity>
                                 </View>
                             </ScrollView>
-                        ))
-                    }
-                    </>
+                        )) : (
+                            <Text className="text-muted">No projects found</Text>
+                        )
                     )}
                 </View>
-
             </View>
 
             <Modal

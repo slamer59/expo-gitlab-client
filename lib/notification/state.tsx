@@ -4,7 +4,7 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
-import { doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { firebaseConfig } from 'lib/firebase/helpers';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { create } from 'zustand';
@@ -20,6 +20,7 @@ if (!getApps().length) {
 const db = getFirestore(app);
 
 const RGPD_ACCEPTED_KEY = '@notification_rgpd_accepted';
+const EXPO_TOKEN_KEY = 'expoPushToken';
 
 interface GitLabProject {
     id: number;
@@ -52,21 +53,6 @@ interface FirebaseDocument {
     notifications: FirebaseNotification[];
 }
 
-async function getAllProjects(client: GitLabClient, page = 1, allProjects: GitLabProject[] = []): Promise<GitLabProject[]> {
-    const perPage = 100; // Maximum allowed by GitLab API
-    const projects = await client.Projects.all({ membership: true, owned: true, per_page: perPage, page: page });
-
-    allProjects = allProjects.concat(projects);
-
-    if (projects.length === perPage) {
-        // There might be more pages
-        return getAllProjects(client, page + 1, allProjects);
-    } else {
-        // No more pages
-        return allProjects;
-    }
-}
-
 export const notificationLevels = [
     { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
     { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
@@ -96,7 +82,7 @@ interface NotificationStore {
     expoPushToken: string | null;
     permissionStatus: string | null;
     notificationPreferences: any;
-    hasAcceptedRGPD: boolean;
+    consentToRGPDGiven: boolean;
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: NotificationLevel; notification_email: string }) => void;
@@ -118,8 +104,7 @@ interface NotificationStore {
     initializeNotifications: () => Promise<void>;
     checkNotificationRegistration: () => Promise<string | null>;
     registerForPushNotifications: () => Promise<string | null>;
-    handleRGPDAcceptance: (accepted: boolean) => Promise<void>;
-    setHasAcceptedRGPD: (accepted: boolean) => void;
+    setRGPDConsent: (accepted: boolean) => Promise<void>;
 }
 
 async function updateNotificationLevel(
@@ -133,10 +118,33 @@ async function updateNotificationLevel(
             changedDate: currentDate,
             global_notification: globalNotification,
             notifications
-        });
+        }, { merge: true });
         console.log("Update mobile notification successfully");
     } catch (error) {
         console.error("Error mobile notification: ", error);
+    }
+}
+
+async function getAllProjects(client: GitLabClient, page = 1, allProjects: GitLabProject[] = []): Promise<GitLabProject[]> {
+    try {
+        const perPage = 100; // Maximum allowed by GitLab API
+        const projects = await client.Projects.all({ membership: true, owned: true, per_page: perPage, page: page });
+
+        allProjects = allProjects.concat(projects);
+
+        if (projects.length === perPage) {
+            // There might be more pages
+            return getAllProjects(client, page + 1, allProjects);
+        } else {
+            // No more pages
+            return allProjects;
+        }
+    } catch (error) {
+        console.error("Error fetching projects:", error);
+        if (error.response?.status === 401) {
+            router.push('/login');
+        }
+        return [];
     }
 }
 
@@ -152,8 +160,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     expoPushToken: null,
     permissionStatus: null,
     notificationPreferences: null,
-    hasAcceptedRGPD: false,
-    notification: null,
+    consentToRGPDGiven: false,
+    session: null,
 
     setGroups: (groups) => set({ groups }),
     setProjects: (projects) => set({ projects }),
@@ -166,7 +174,72 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     setExpoPushToken: (token) => set({ expoPushToken: token }),
     setPermissionStatus: (status) => set({ permissionStatus: status }),
     setNotificationPreferences: (prefs) => set({ notificationPreferences: prefs }),
-    setHasAcceptedRGPD: (accepted: boolean) => set({ hasAcceptedRGPD: accepted }),
+
+    setRGPDConsent: async (accepted: boolean) => {
+        console.log("🚀 ~ setRGPDConsent: ~ accepted:", accepted)
+        try {
+            // const { session, isLoading } = useSession();
+            // console.log("🚀 ~ setRGPDConsent: ~ session:", session)
+            // if (!session?.token || !session?.url) {
+            //     router.push('/login');
+            //     return;
+            // }
+
+            if (accepted) {
+                // 1. Store RGPD consent
+                await AsyncStorage.setItem(RGPD_ACCEPTED_KEY, 'true');
+
+                // 2. Request local notification permissions
+                if (Device.isDevice) {
+                    const { status } = await Notifications.requestPermissionsAsync();
+                    if (status !== 'granted') {
+                        throw new Error('Notification permission not granted');
+                    }
+                }
+
+                // 3. Get Expo token and register in Firebase
+                const token = (await Notifications.getExpoPushTokenAsync()).data;
+                // await AsyncStorage.setItem(EXPO_TOKEN_KEY, token);
+
+                // Register in Firebase
+                await setDoc(doc(db, "userNotifications", token), {
+                    changedDate: new Date().toISOString(),
+                    consentDate: new Date().toISOString()
+                }, { merge: true });
+
+                set({
+                    expoPushToken: token,
+                    consentToRGPDGiven: true
+                });
+
+            } else {
+                // Handle consent removal
+                const token = (await Notifications.getExpoPushTokenAsync()).data;
+
+                if (token) {
+                    // 1. Remove from Firebase
+                    await deleteDoc(doc(db, "userNotifications", token));
+                    console.log("Removed from Firebase");
+                }
+
+                // 3. Clear local storage
+                await AsyncStorage.removeItem(RGPD_ACCEPTED_KEY);
+                // await AsyncStorage.removeItem(EXPO_TOKEN_KEY);
+
+                set({
+                    expoPushToken: null,
+                    consentToRGPDGiven: false,
+                    permissionStatus: null
+                });
+            }
+        } catch (error) {
+            console.error('Error handling RGPD consent:', error);
+            if (error.response?.status === 401) {
+                router.push('/login');
+            }
+            throw error;
+        }
+    },
 
     fetchFirebaseData: async (expoToken: string) => {
         try {
@@ -240,7 +313,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                 const firebaseData = await get().fetchFirebaseData(expoToken);
 
-                if (!firebaseData) {
+                if (!firebaseData || !firebaseData.notifications) {
+                    // If no Firebase data exists or no notifications array, create initial data
                     await updateNotificationLevel(expoToken, {
                         notification_level: global.level.value,
                         custom_events: []
@@ -253,6 +327,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                     set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
                 } else {
+                    // Use existing Firebase data
                     set({
                         projects: firebaseData.notifications.map(n => ({
                             id: n.id,
@@ -270,7 +345,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 set({ isInitialized: true });
             } else {
                 const firebaseData = await get().fetchFirebaseData(expoToken);
-                if (firebaseData) {
+                if (firebaseData && firebaseData.notifications) {
                     set({
                         projects: firebaseData.notifications.map(n => ({
                             id: n.id,
@@ -355,7 +430,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     fetchFirebaseNotifications: async (expoToken: string) => {
         try {
             const firebaseData = await get().fetchFirebaseData(expoToken);
-            if (firebaseData) {
+            if (firebaseData && firebaseData.notifications) {
                 set({
                     projects: firebaseData.notifications.map(n => ({
                         id: n.id,
@@ -439,19 +514,19 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             // Save to Firestore
             const docRef = doc(db, "userNotifications", token);
             const docSnap = await getDoc(docRef);
-            if (!docSnap.exists()) {
-                await setDoc(docRef, {
-                    changedDate: new Date().toISOString(),
-                    global_notification: {
-                        notification_level: 'global',
-                        custom_events: []
-                    },
-                    notifications: []
-                });
-            }
+            // if (!docSnap.exists()) {
+            await setDoc(docRef, {
+                changedDate: new Date().toISOString(),
+                global_notification: {
+                    notification_level: 'global',
+                    custom_events: []
+                },
+                notifications: []
+            }, { merge: true });
+            // }
 
             // Navigate to GitlabNotificationSettings after successful registration
-            router.push('/options/profile');
+            // router.push('/options/profile');
 
             return token;
         } catch (error) {
@@ -536,4 +611,3 @@ export const getExpoToken = async (): Promise<string | null> => {
         return null;
     }
 };
-

@@ -118,6 +118,45 @@ export async function updateOrCreateWebhook(session: GitLabSession, projectId: n
     }
 }
 
+const removeWebhook = async (session: GitLabSession, projectId: number, projectName: string): Promise<void> => {
+    // Get the private token from secure storage
+    const { token: savedToken, url: baseUrl } = session;
+    if (savedToken) {
+        // Set the headers for the API request
+        const headers = {
+            'PRIVATE-TOKEN': savedToken,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        };
+        // Get all webhooks for the project
+        const response = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks`, {
+            headers,
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const webhooks = await response.json();
+        // Check if a webhook with the same URL already exists
+        const existingWebhook = webhooks.find((webhook: { name: string; }) => webhook.name === webhookName);
+        if (existingWebhook) {
+            // Delete the existing webhook
+            const deleteResponse = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks/${existingWebhook.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'PRIVATE-TOKEN': savedToken,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!deleteResponse.ok) {
+                throw new Error(`HTTP error! status: ${deleteResponse.status}`);
+            }
+            console.log(`Webhook removed for project: ${projectName}`);
+        } else {
+            console.log(`No existing webhook found for project: ${projectName}`);
+        }
+    } else {
+        console.log("No token found");
+    }
+};
 
 export async function updateOrCreateWebhooks(session: GitLabSession, projects: { id: number; name: string }[], webhookParams: WebhookParams | undefined): any {
     // Update or create webhooks for each project
@@ -128,3 +167,12 @@ export async function updateOrCreateWebhooks(session: GitLabSession, projects: {
 }
 
 
+export async function removeWebhooks(session: GitLabSession, projects: { id: number; name: string }[]): Promise<void> {
+    // Remove webhooks for each project
+    const webhookPromises = projects.map(project => removeWebhook(session, project.id, project.name));
+    // Wait for all webhook removals to complete
+    await Promise.all(webhookPromises)
+        .then(() => {
+            console.log("All webhooks removed successfully");
+        })
+}
