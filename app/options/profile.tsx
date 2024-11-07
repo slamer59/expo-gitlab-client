@@ -11,13 +11,11 @@ import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 
 import { Redirect, Stack } from 'expo-router';
-import { default as React, useState } from 'react';
+import { default as React } from 'react';
 import { Linking, Pressable, ScrollView, View } from 'react-native';
 
 export default function OptionScreen() {
   const { signOut, session } = useSession();
-  const [consentDialog, setConsentDialog] = useState(false);
-
 
   if (!session) {
     return <Redirect href='/login' />;
@@ -26,17 +24,6 @@ export default function OptionScreen() {
     consentToRGPDGiven, setRGPDConsent
   } = useNotificationStore();
 
-  const handleConsentDialog = async () => {
-    try {
-      setConsentDialog(!consentDialog);
-      // Update the consent state in the store
-
-
-    } catch (error) {
-      console.error('Error handling consent:', error);
-      // Handle the error here, perhaps display an error message to the user
-    }
-  };
   return (
     <>
       <Stack.Screen
