@@ -44,8 +44,6 @@ export default function NotificationDashboard() {
 
 
     useEffect(() => {
-        console.log("🚀 ~ useEffect ~ consentToRGPDGiven:", consentToRGPDGiven)
-
         if (session?.url && session?.token && consentToRGPDGiven) {
             syncNotificationSettings(client);
         }
@@ -95,7 +93,7 @@ export default function NotificationDashboard() {
             };
 
             syncNotifications();
-        }, [session?.url, session?.token, client])
+        }, [session?.url, session?.token, client, consentToRGPDGiven])
     );
 
     useFocusEffect(

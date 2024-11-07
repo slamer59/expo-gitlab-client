@@ -7,7 +7,6 @@ import 'firebase/firestore';
 import { deleteDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
 import { firebaseConfig } from 'lib/firebase/helpers';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
-import { GitLabSession } from 'lib/session/SessionProvider';
 import { create } from 'zustand';
 
 // Initialize Firebase
@@ -54,6 +53,8 @@ interface FirebaseDocument {
     notifications: FirebaseNotification[];
 }
 
+
+
 export const notificationLevels = [
     { value: 'global', label: 'Global', description: 'Use your global notification setting', icon: 'globe' },
     { value: 'participating', label: 'Participate', description: 'You will only receive notifications for issues you have participated in', icon: 'chatbubbles' },
@@ -84,7 +85,6 @@ interface NotificationStore {
     permissionStatus: string | null;
     notificationPreferences: any;
     consentToRGPDGiven: boolean;
-    session: GitLabSession | null;
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: NotificationLevel; notification_email: string }) => void;
@@ -96,7 +96,16 @@ interface NotificationStore {
     setExpoPushToken: (token: string | null) => void;
     setPermissionStatus: (status: string | null) => void;
     setNotificationPreferences: (prefs: any) => void;
-    setSession: (session: GitLabSession | null) => void;
+    fetchFirebaseData: (expoToken: string) => Promise<FirebaseDocument | null>;
+    syncNotificationSettings: (client: GitLabClient) => Promise<void>;
+    selectNotificationLevel: (level: NotificationLevel) => Promise<void>;
+    openModal: (type: string, index: number) => void;
+    fetchGitLabEmailSettings: (client: GitLabClient) => Promise<void>;
+    fetchFirebaseNotifications: (expoToken: string) => Promise<void>;
+    syncGitLabWithFirebase: (client: GitLabClient, expoToken: string) => Promise<void>;
+    initializeNotifications: () => Promise<void>;
+    checkNotificationRegistration: () => Promise<string | null>;
+    registerForPushNotifications: () => Promise<string | null>;
     setRGPDConsent: (accepted: boolean) => Promise<void>;
 }
 
@@ -111,7 +120,7 @@ async function updateNotificationLevel(
             changedDate: currentDate,
             global_notification: globalNotification,
             notifications
-        });
+        }, { merge: true });
         console.log("Update mobile notification successfully");
     } catch (error) {
         console.error("Error mobile notification: ", error);
@@ -197,13 +206,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 // Register in Firebase
                 await setDoc(doc(db, "userNotifications", token), {
                     changedDate: new Date().toISOString(),
-                    // global_notification: {
-                    //     notification_level: 'global',
-                    //     custom_events: []
-                    // },
-                    // notifications: [],
                     consentDate: new Date().toISOString()
-                });
+                }, { merge: true });
+
 
                 // // 4. Update webhooks for all projects
                 // const client = new GitLabClient({
@@ -350,7 +355,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                 const firebaseData = await get().fetchFirebaseData(expoToken);
 
-                if (!firebaseData) {
+                if (!firebaseData && !firebaseData.notification) {
                     await updateNotificationLevel(expoToken, {
                         notification_level: global.level.value,
                         custom_events: []
@@ -465,7 +470,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     fetchFirebaseNotifications: async (expoToken: string) => {
         try {
             const firebaseData = await get().fetchFirebaseData(expoToken);
-            if (firebaseData) {
+            if (firebaseData && firebaseData.notifications) {
                 set({
                     projects: firebaseData.notifications.map(n => ({
                         id: n.id,
@@ -549,19 +554,19 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             // Save to Firestore
             const docRef = doc(db, "userNotifications", token);
             const docSnap = await getDoc(docRef);
-            if (!docSnap.exists()) {
-                await setDoc(docRef, {
-                    changedDate: new Date().toISOString(),
-                    global_notification: {
-                        notification_level: 'global',
-                        custom_events: []
-                    },
-                    notifications: []
-                });
-            }
+            // if (!docSnap.exists()) {
+            await setDoc(docRef, {
+                changedDate: new Date().toISOString(),
+                global_notification: {
+                    notification_level: 'global',
+                    custom_events: []
+                },
+                notifications: []
+            }, { merge: true });
+            // }
 
             // Navigate to GitlabNotificationSettings after successful registration
-            router.push('/options/profile');
+            // router.push('/options/profile');
 
             return token;
         } catch (error) {
@@ -640,7 +645,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 // Re-export getExpoToken for use in other files
 export const getExpoToken = async (): Promise<string | null> => {
     try {
-        return await Notifications.getExpoPushTokenAsync().data;
+        return await AsyncStorage.getItem('expoPushToken');
     } catch (error) {
         console.error('Error getting Expo token:', error);
         return null;
