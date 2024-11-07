@@ -192,16 +192,16 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                 // 3. Get Expo token and register in Firebase
                 const token = (await Notifications.getExpoPushTokenAsync()).data;
-                await AsyncStorage.setItem(EXPO_TOKEN_KEY, token);
+                // await AsyncStorage.setItem(EXPO_TOKEN_KEY, token);
 
                 // Register in Firebase
                 await setDoc(doc(db, "userNotifications", token), {
                     changedDate: new Date().toISOString(),
-                    global_notification: {
-                        notification_level: 'global',
-                        custom_events: []
-                    },
-                    notifications: [],
+                    // global_notification: {
+                    //     notification_level: 'global',
+                    //     custom_events: []
+                    // },
+                    // notifications: [],
                     consentDate: new Date().toISOString()
                 });
 
@@ -230,7 +230,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
             } else {
                 // Handle consent removal
-                const token = await AsyncStorage.getItem(EXPO_TOKEN_KEY);
+                // const token = await AsyncStorage.getItem(EXPO_TOKEN_KEY);
+                const token = (await Notifications.getExpoPushTokenAsync()).data;
+
                 if (token) {
                     // 1. Remove from Firebase
                     await deleteDoc(doc(db, "userNotifications", token));
@@ -256,7 +258,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
                 // 3. Clear local storage
                 await AsyncStorage.removeItem(RGPD_ACCEPTED_KEY);
-                await AsyncStorage.removeItem(EXPO_TOKEN_KEY);
+                // await AsyncStorage.removeItem(EXPO_TOKEN_KEY);
 
                 set({
                     expoPushToken: null,
@@ -638,7 +640,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 // Re-export getExpoToken for use in other files
 export const getExpoToken = async (): Promise<string | null> => {
     try {
-        return await AsyncStorage.getItem(EXPO_TOKEN_KEY);
+        return await Notifications.getExpoPushTokenAsync().data;
     } catch (error) {
         console.error('Error getting Expo token:', error);
         return null;

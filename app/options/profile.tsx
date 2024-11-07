@@ -1,9 +1,13 @@
+import InfoAlert from '@/components/InfoAlert';
 import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { removeWebhooks } from '@/lib/gitlab/webhooks';
 import { supportLinks } from '@/lib/links/support';
 import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
@@ -11,7 +15,7 @@ import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 
 import { Redirect, Stack } from 'expo-router';
-import { default as React } from 'react';
+import { default as React, useMemo, useState } from 'react';
 import { Linking, Pressable, ScrollView, View } from 'react-native';
 
 export default function OptionScreen() {
@@ -20,10 +24,40 @@ export default function OptionScreen() {
   if (!session) {
     return <Redirect href='/login' />;
   }
+  const client = useMemo(() => new GitLabClient({
+    url: session?.url,
+    token: session?.token,
+  }), [session?.url, session?.token]);
+
+  const api = useGitLab(client);
+  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
+  // 1. Fetch projects
+  const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
   const {
     consentToRGPDGiven, setRGPDConsent
   } = useNotificationStore();
 
+  const handleRGPDConsent = async () => {
+    try {
+      await setRGPDConsent(!consentToRGPDGiven);
+
+
+      const projects = personalProjects.map(project => ({
+        http_url_to_repo: project.http_url_to_repo,
+        id: project.id
+      }));
+      if (!projects) return;
+      await removeWebhooks(session, projects);
+      console.log("Webhooks updated successfully");
+      // setAlert({ message: 'Webhooks removed successfully', isOpen: true });
+    } catch (error) {
+      console.error("Error removing webhooks:", error);
+      setAlert({ message: `Error removing webhooks: ${error.message}`, isOpen: true });
+    }
+  };
   return (
     <>
       <Stack.Screen
@@ -33,6 +67,12 @@ export default function OptionScreen() {
       />
 
       <ScrollView className='flex-1 p-4 bg-background'>
+        <InfoAlert
+          title='Webhooks removed'
+          isOpen={alert.isOpen}
+          onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
+          message={alert.message}
+        />
         <SystemSettingsScreen />
         <View className="p-4 m-1 rounded-lg bg-card">
           <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
@@ -51,7 +91,7 @@ export default function OptionScreen() {
               <Button
                 variant="secondary"
                 className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
-                onPress={() => setRGPDConsent(!consentToRGPDGiven)}
+                onPress={() => handleRGPDConsent()}
               >
                 <Text className={`text-2xl font-bold text-white`}>
                   {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
