@@ -1,13 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { landingButtons } from "@/lib/links/landing";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { landingButtons } from "~/lib/links/landing";
 
 
 const useDevFeature = (flagName: string) => {
@@ -87,12 +85,23 @@ export default function Home() {
           >
             <CardContent className="flex-row items-center">
               <View
-                className={`flex items-center justify-center rounded-lg p-2 ${button.itemColor || "bg-gray"}`}
+                style={{
+                  backgroundColor: button.itemColor ? button.itemColor : '#1f1f1f',
+                  padding: 8,
+                  borderRadius: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
                 {button.iconNode ? (
                   button.iconNode
                 ) : (
-                  <Ionicons name={button.icon} size={24} color="white" />
+                  <Ionicons
+                    name={button.icon}
+                    size={24}
+                    color="white"
+                  />
                 )}
               </View>
               <Text className="ml-4 text-lg text-white">
@@ -100,7 +109,6 @@ export default function Home() {
               </Text>
             </CardContent>
           </TouchableOpacity>
-
         ))}
       </Card>
     </ScrollView>
