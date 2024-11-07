@@ -149,9 +149,9 @@ const removeWebhook = async (session: GitLabSession, projectId: number, projectN
             if (!deleteResponse.ok) {
                 throw new Error(`HTTP error! status: ${deleteResponse.status}`);
             }
-            console.log(`Webhook removed for project: ${projectName}`);
+            console.log(`Webhook removed for project: ${projectId}`);
         } else {
-            console.log(`No existing webhook found for project: ${projectName}`);
+            console.log(`No existing webhook found for project: ${projectId}`);
         }
     } else {
         console.log("No token found");

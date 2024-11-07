@@ -1,12 +1,12 @@
-import { GitLabProject } from '@/lib/notification/interfaces';
-import { useNotificationStore } from '@/lib/notification/state';
-import { getExpoToken, notificationLevels } from '@/lib/notification/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import 'firebase/firestore';
 import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { updateOrCreateWebhooks } from 'lib/gitlab/webhooks';
+import { GitLabProject } from 'lib/notification/interfaces';
+import { useNotificationStore } from 'lib/notification/state';
+import { getExpoToken, notificationLevels } from 'lib/notification/utils';
 import { GitLabSession, useSession } from 'lib/session/SessionProvider';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -52,19 +52,21 @@ export default function NotificationDashboard() {
         message: '',
     });
 
-    const prepareProjects = (projects: GitLabProject[] | undefined): PreparedProject[] => {
+    const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; name: string }[] => {
         if (!projects || !Array.isArray(projects)) {
             console.error("Projects are undefined or not an array");
             return [];
         }
 
-        return projects.map(project => ({
-            http_url_to_repo: project.http_url_to_repo,
-            id: project.id
-        }));
+        return projects
+            .filter(project => project.id && typeof project.id === 'number') // Only include projects with valid IDs
+            .map(project => ({
+                id: project.id,
+                name: project.path_with_namespace || String(project.id) // Fallback to ID if name not available
+            }));
     };
 
-    const updateWebhooks = async (session: GitLabSession | undefined, projects: PreparedProject[]): Promise<void> => {
+    const updateWebhooks = async (session: GitLabSession | undefined, projects: { id: number; name: string }[]): Promise<void> => {
         if (!session?.url || !session?.token) {
             console.error("Invalid session data");
             return;
@@ -104,12 +106,15 @@ export default function NotificationDashboard() {
     useFocusEffect(
         React.useCallback(() => {
             const setupProjectWebhooks = async () => {
-                if (isLoadingPersonal || !personalProjects) {
+                if (!session || isLoadingPersonal || !personalProjects) {
                     console.log("Projects are still loading or undefined");
                     return;
                 }
                 const preparedProjects = prepareProjects(personalProjects);
-                if (preparedProjects.length === 0) return;
+                if (preparedProjects.length === 0) {
+                    console.log("No valid projects to setup webhooks for");
+                    return;
+                }
 
                 await updateWebhooks(session, preparedProjects);
             };

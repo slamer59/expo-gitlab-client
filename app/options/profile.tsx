@@ -46,15 +46,17 @@ export default function OptionScreen() {
   const handleRGPDConsent = async () => {
     try {
       await setRGPDConsent(!consentToRGPDGiven);
-
+      console.log("🚀 ~ handleRGPDConsent ~ consentToRGPDGiven:", consentToRGPDGiven)
 
       const projects = personalProjects.map(project => ({
         http_url_to_repo: project.http_url_to_repo,
         id: project.id
       }));
       if (!projects) return;
-      await removeWebhooks(session, projects);
-      console.log("Webhooks updated successfully");
+      if (consentToRGPDGiven == true) {
+        await removeWebhooks(session, projects);
+      }
+      console.log("Webhooks removed successfully");
       // setAlert({ message: 'Webhooks removed successfully', isOpen: true });
     } catch (error) {
       console.error("Error removing webhooks:", error);
@@ -92,6 +94,7 @@ export default function OptionScreen() {
               </Text>
 
               <Button
+                disabled={isLoadingPersonal}
                 variant="secondary"
                 className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
                 onPress={() => handleRGPDConsent()}

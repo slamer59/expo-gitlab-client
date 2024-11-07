@@ -66,7 +66,6 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
 
         try {
             const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-            console.log(pushTokenString);
             return pushTokenString;
         } catch (e: unknown) {
             handleRegistrationError(`${e}`);
