@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Octicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import 'firebase/firestore';
 import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
@@ -143,7 +143,10 @@ export default function NotificationDashboard() {
                 message={alert.message}
             />
             <View className="p-4 m-1 rounded-lg bg-card">
-                <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
+                <View className='flex flex-row items-center mb-5'>
+                    <Octicons name="bell" size={30} color="white" className='mr-2' />
+                    <Text className='text-2xl font-bold text-white'>Notifications</Text>
+                </View>
                 <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
 
                 <Text className="mb-6 text-muted">Configure your mobile app notification preferences here. These settings are independent from your GitLab email notifications.</Text>

@@ -46,8 +46,6 @@ export default function OptionScreen() {
   const handleRGPDConsent = async () => {
     try {
       await setRGPDConsent(!consentToRGPDGiven);
-      console.log("🚀 ~ handleRGPDConsent ~ consentToRGPDGiven:", consentToRGPDGiven)
-
       const projects = personalProjects.map(project => ({
         http_url_to_repo: project.http_url_to_repo,
         id: project.id
@@ -80,37 +78,32 @@ export default function OptionScreen() {
         />
         <SystemSettingsScreen />
         <View className="p-4 m-1 rounded-lg bg-card">
-          <Text className="mb-2 text-2xl font-bold text-white">Notifications</Text>
-          <Text className="mb-6 text-muted">You can specify notification level per group or per project.</Text>
+          <View className='flex flex-row items-center mb-5'>
+            <Octicons name="info" size={30} color="white" className='mr-2' />
+            <Text className='text-2xl font-bold'>RGPD Consent</Text>
+          </View>
 
-          <Text className="mb-6 text-muted">Configure your mobile app notification preferences here. These settings are independent from your GitLab email notifications.</Text>
+          <Text className='mb-2 text-muted'>
+            We need your consent to use data for analytics and notifications.
+          </Text>
 
-
-          <View className="mb-6">
-            <Text className="mb-2 text-xl font-bold text-white">Global notification email</Text>
-            <View>
-              <Text className='mb-2 text-muted'>
-                We need your consent to use data for analytics and notifications.
-              </Text>
-
-              <Button
-                disabled={isLoadingPersonal}
-                variant="secondary"
-                className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
-                onPress={() => handleRGPDConsent()}
-              >
-                <Text className={`text-2xl font-bold text-white`}>
-                  {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
-                </Text>
-              </Button>
-              {consentToRGPDGiven && <NotificationPermissionDialog />}
-              <View className='flex flex-row items-center justify-center mt-4'>
-                <Octicons name="info" size={16} color="#999" />
-                <Text className='text-muted'> This is required for notifications to work.</Text>
-              </View>
-            </View>
+          <Button
+            disabled={isLoadingPersonal}
+            variant="secondary"
+            className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
+            onPress={() => handleRGPDConsent()}
+          >
+            <Text className={`text-2xl font-bold text-white`}>
+              {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
+            </Text>
+          </Button>
+          {consentToRGPDGiven && <NotificationPermissionDialog />}
+          <View className='flex flex-row items-center justify-center mt-4'>
+            <Octicons name="info" size={16} color="#999" />
+            <Text className='text-muted'> This is required for notifications to work.</Text>
           </View>
         </View>
+
         {consentToRGPDGiven && <GitLabNotificationSettings />}
 
         <View className='mt-6 mb-6 border-t border-gray-700' />
