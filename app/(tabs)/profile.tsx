@@ -347,13 +347,13 @@ export default function ProfileScreen() {
           <View className="mb-4">
             <View className="flex-row items-center mb-2">
               <LucideGitlab color="white" size={24} />
-              <Text className="mr-2 text-white">
+              <Text className="m-2 text-white">
                 Version: {Application.applicationName} v{Application.nativeApplicationVersion}
               </Text>
             </View>
             <View className="flex-row items-center">
               <Image source={require("@/assets/images/logo.png")} style={{ width: 24, height: 24 }} />
-              <Text className="mr-2 text-white">GitLab API: v4</Text>
+              <Text className="m-2 text-white">GitLab API: v4</Text>
             </View>
           </View>
         </CardContent>

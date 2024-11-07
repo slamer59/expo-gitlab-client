@@ -4,6 +4,7 @@ import GitLabNotificationSettings from '@/components/Settings/GitlabNotification
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
@@ -13,8 +14,10 @@ import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
+import { Image } from 'expo-image';
 
 import { Redirect, Stack } from 'expo-router';
+import { LucideGitlab } from 'lucide-react-native';
 import { default as React, useMemo, useState } from 'react';
 import { Linking, Pressable, ScrollView, View } from 'react-native';
 
@@ -109,40 +112,48 @@ export default function OptionScreen() {
 
         <View className='mt-6 mb-6 border-t border-gray-700' />
 
-        <View className='mb-6'>
-          <Text className='mb-4 text-xl font-bold text-white'>About</Text>
-          <View className='space-y-2'>
-            <Text className='text-white'>Version: {Application.applicationName} v{Application.nativeBuildVersion}</Text>
-            <Text className='text-white'>GitLab API: v4</Text>
-          </View>
-        </View>
+        <Card className="mb-6 border rounded-lg shadow-sm bg-card">
+          <CardHeader>
+            <CardTitle className="flex flex-col text-white">About</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <View className="mb-4">
+              <View className="flex-row items-center mb-2">
+                <LucideGitlab color="white" size={24} />
+                <Text className="m-2 text-white">
+                  Version: {Application.applicationName} v{Application.nativeApplicationVersion}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <Image source={require("@/assets/images/logo.png")} style={{ width: 24, height: 24 }} />
+                <Text className="m-2 text-white">GitLab API: v4</Text>
+              </View>
+            </View>
+          </CardContent>
+        </Card>
 
-        <View className='mb-6 border-t border-gray-700' />
-
-        <View className='mb-6'>
-          <Text className='mb-4 text-xl font-bold text-white'>Support</Text>
-          {supportLinks.map((link, index) => (
-            <Pressable
-              key={index}
-              onPress={() => {
-                if (link.external) {
-                  Linking.openURL(link.url!);
-                } else {
-                  link.onPress?.();
-                }
-              }}
-              className='flex-row items-center py-3'
-            >
-              <Ionicons
-                name={link.icon as any}
-                size={24}
-                color={link.color}
-                style={{ marginRight: 12 }}
-              />
-              <Text className='text-lg text-white'>{link.text}</Text>
-            </Pressable>
-          ))}
-        </View>
+        <Card className="mb-6 border rounded-lg shadow-sm bg-card">
+          <CardHeader>
+            <CardTitle className="flex flex-col text-white">Support</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {supportLinks.map((link, index) => (
+              <Pressable
+                key={index}
+                onPress={() => link.external ? Linking.openURL(link.url!) : link.onPress?.()}
+                className="flex-row items-center py-3"
+              >
+                <Ionicons
+                  name={link.icon as any}
+                  size={24}
+                  color={link.color}
+                  style={{ marginRight: 12 }}
+                />
+                <Text className="text-lg text-white">{link.text}</Text>
+              </Pressable>
+            ))}
+          </CardContent>
+        </Card>
 
         <View className='mb-6 border-t border-gray-700' />
 

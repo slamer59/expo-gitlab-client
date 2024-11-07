@@ -1,32 +1,18 @@
+import { GitLabProject } from '@/lib/notification/interfaces';
+import { useNotificationStore } from '@/lib/notification/state';
+import { getExpoToken, notificationLevels } from '@/lib/notification/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import 'firebase/firestore';
 import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { updateOrCreateWebhooks } from 'lib/gitlab/webhooks';
-import { getExpoToken, notificationLevels, useNotificationStore } from 'lib/notification/state';
-import { useSession } from 'lib/session/SessionProvider';
+import { GitLabSession, useSession } from 'lib/session/SessionProvider';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import ErrorAlert from '../ErrorAlert';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
-
-interface GitLabProject {
-    id: number;
-    http_url_to_repo: string;
-    path_with_namespace?: string;
-}
-
-interface GitLabSession {
-    url: string;
-    token: string;
-}
-
-interface PreparedProject {
-    id: number;
-    http_url_to_repo: string;
-}
 
 export default function NotificationDashboard() {
     const { session } = useSession();
