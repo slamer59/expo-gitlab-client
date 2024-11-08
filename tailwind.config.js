@@ -105,7 +105,7 @@ module.exports = {
         personal: "#4B0082",
         contributed: "#33ffb0",
         commits: "#A9A9A9",
-        code: "#A9A9A9",
+        code: "#B00020",
         pullRequests: "#3e64ed",
         "merge-requests": "#3e64ed",
         organizations : "#FD8112",

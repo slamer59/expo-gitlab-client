@@ -1,4 +1,4 @@
-import { IListItems } from "@/components/buttonList";
+import { IListItems } from "@/components/Buttons/buttonList";
 import { Router } from "expo-router";
 
 interface IProject {
@@ -11,7 +11,7 @@ interface IProject {
     pipelines: any[];
 }
 
-export function getWorkspaceItems(projectDetails: IProject, router: Router, selectedBranch: string): IListItems[] {
+export function getWorkspaceItems(projectDetails: IProject, router: Router, selectedBranch?: string): IListItems[] {
 
     return [
         {
@@ -19,7 +19,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
             text: "Issues",
             kpi: projectDetails?.project.open_issues_count || 0,
             onAction: () => router.push(`workspace/projects/${projectDetails?.project?.id}/issues/list`),
-            itemColor: "bg-issues",
+            itemColor: "#3de63d",
         },
         {
             icon: "git-pull-request",
@@ -28,7 +28,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
             onAction: () => router.push(
                 `workspace/projects/${projectDetails?.project?.id}/merge-requests/list`
             ),
-            itemColor: "bg-merge-requests",
+            itemColor: "#3e64ed",
         },
         {
             icon: "play-outline",
@@ -37,14 +37,14 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
             onAction: () => router.push(
                 `workspace/projects/${projectDetails?.project?.id}/pipelines/list`
             ),
-            itemColor: "bg-cicd",
+            itemColor: "#d5ea4e",
         },
         {
             icon: "people-circle-outline",
             text: "Members",
             kpi: projectDetails?.members.length || 0,
             onAction: () => router.push(`workspace/projects/${projectDetails?.project?.id}/members/list`),
-            itemColor: "bg-members",
+            itemColor: "#33bfff",
         },
         ...(projectDetails?.project?.license_url
             ? [
@@ -62,7 +62,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
                         }
                     }
                     ),
-                    itemColor: "bg-licences",
+                    itemColor: "#3e64ed",
                 },
             ]
             : []),
@@ -81,7 +81,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
                             ref: selectedBranch || projectDetails?.project?.default_branch,
                         }
                     }),
-                    itemColor: "bg-licences",
+                    itemColor: "#3e64ed",
                 },
             ]
             : []),
@@ -90,7 +90,7 @@ export function getWorkspaceItems(projectDetails: IProject, router: Router, sele
             text: "Starred",
             kpi: projectDetails?.project?.star_count || "",
             onAction: () => router.push(`workspace/projects/${projectDetails?.project?.id}/starred/list`),
-            itemColor: "bg-starred",
+            itemColor: "#d5e",
         },
     ];
 }

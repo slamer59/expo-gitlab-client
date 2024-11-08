@@ -1,11 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
+import { RoundedColoredButton } from "@/components/Buttons/RoundedColored";
+import { landingButtons } from "@/constants/links/landingPage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { landingButtons } from "~/lib/links/landing";
 
 
 const useDevFeature = (flagName: string) => {
@@ -84,26 +84,7 @@ export default function Home() {
             activeOpacity={0.7}
           >
             <CardContent className="flex-row items-center">
-              <View
-                style={{
-                  backgroundColor: button.itemColor ? button.itemColor : '#1f1f1f',
-                  padding: 8,
-                  borderRadius: 8,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                {button.iconNode ? (
-                  button.iconNode
-                ) : (
-                  <Ionicons
-                    name={button.icon}
-                    size={24}
-                    color="white"
-                  />
-                )}
-              </View>
+              <RoundedColoredButton button={button} variant={button.variant || "groups"} />
               <Text className="ml-4 text-lg text-white">
                 {button.text}
               </Text>
@@ -114,3 +95,4 @@ export default function Home() {
     </ScrollView>
   );
 }
+

@@ -1,4 +1,4 @@
-import { IListItems } from "@/components/buttonList";
+import { IListItems } from "@/components/Buttons/buttonList";
 import { Router } from "expo-router";
 
 export function getCodeSectionItems(
@@ -14,7 +14,7 @@ export function getCodeSectionItems(
       kpi: "",
       onAction: () =>
         router.push(`tree/${project.id}?ref=${branch_ref}`),
-      itemColor: "bg-merge-requests",
+      itemColor: "#B00020",
     },
     {
       icon: "document-text-outline",
@@ -22,7 +22,7 @@ export function getCodeSectionItems(
       kpi: "",
       onAction: () =>
         router.push(`workspace/projects/${project.id}/commits/list`),
-      itemColor: "bg-commits",
+      itemColor: "#A9A9A9",
     },
   ];
 }

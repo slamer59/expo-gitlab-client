@@ -1,35 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
+import { ButtonConfig, IconName } from "@/components/Buttons/ButtonConfig";
 import { Href } from "expo-router";
 import { LucideComponent } from "lucide-react-native";
-type IconName = keyof typeof Ionicons.glyphMap;
-
-interface ButtonConfig {
-    icon: IconName | 'lucide';
-    iconNode?: React.ReactNode;
-    text: string;
-    screen: Href<string>;
-    itemColor: string;
-}
-const backgroundColors: ColorMapping = {
-    'bg-issues': '#3de63d',
-    'bg-merge-requests': '#3e64ed',
-    'bg-projects': '#A9A9A9',
-    'bg-groups': '#FD8112',
-    'bg-starred': '#d5e',
-    'bg-discussions': '#9370DB',
-    'bg-repositories': '#696969',
-    'bg-organizations': '#FD8112',
-    'bg-green': '#8FCF50',
-    'bg-tree': '#d5ea4e',
-    'bg-gray': '#808080'
-} as const;
 
 export const landingButtons = (devModeEnabled: boolean): ButtonConfig[] => [
     {
         icon: "alert-circle-outline" as IconName,
         text: "Issues",
         screen: "/workspace/issues/list" as Href<string>,
-        itemColor: "#3de63d"
+        itemColor: "#3de63d",
     },
     {
         icon: "git-pull-request" as IconName,
@@ -97,7 +75,7 @@ export const landingButtons = (devModeEnabled: boolean): ButtonConfig[] => [
             icon: "arrow-forward" as IconName,
             text: "DevCommitList",
             screen: "/workspace/projects/59853773/commits/list" as Href<string>,
-            itemColor: "#8FCF50"
+            itemColor: "#A9A9A9"
         },
         {
             icon: "arrow-forward" as IconName,

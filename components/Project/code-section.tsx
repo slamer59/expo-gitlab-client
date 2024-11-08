@@ -1,9 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
-import { ButtonList } from "@/components/buttonList";
+import { ButtonList } from "@/components/Buttons/buttonList";
 import { ChooseBranches } from "@/components/ChooseBranche";
+import { RoundedColoredButton } from "../Buttons/RoundedColored";
 import { Text } from "../ui/text";
 
 // interface for code
@@ -33,7 +33,14 @@ export const CodeSection = ({
       onPress={() => { }}
     >
       <View className="flex flex-row items-center">
-        <Ionicons name="git-branch-outline" size={24} color="white" />
+        <RoundedColoredButton button={
+          {
+            icon: "git-branch-outline",
+            itemColor: "#0070F3",
+            text: "Code",
+            // onPress: () => { },
+          }
+        } />
         <Text className="ml-2 font-bold text-white truncate max-w-[120px]">
           {/* {selectedBranch?.label || defaultBranchName} */}
           Branch
