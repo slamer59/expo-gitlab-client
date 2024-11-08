@@ -1,9 +1,24 @@
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from '@/lib/notification/notifications-state';
-import React, { useState } from 'react';
+import { useSession } from '@/lib/session/SessionProvider';
+import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 
 const GdprConsentScreen = () => {
-    const { setGdprConsent, manageWebhookAndFirebase } = useNotificationStore();
+
+    const { session } = useSession();
+    const client = useMemo(() => new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    }), [session?.url, session?.token]);
+
+    const api = useGitLab(client);
+
+    // const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
+
+
+    const { setGdprConsent, manageGdprConsent, setPersonalProjects, setSessionClient } = useNotificationStore();
     const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
 
     const handleGdprConsent = async (consent: boolean) => {
@@ -11,7 +26,13 @@ const GdprConsentScreen = () => {
         try {
             console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
             setGdprConsent(consent);
-            await manageWebhookAndFirebase(consent);
+            // setPersonalProjects();
+            // setSessionClient(session, client)
+            manageGdprConsent(consent);
+            // initializeNotifications()
+            // syncNotificationSettings(client)
+            // checkNotificationRegistration();
+            // await manageWebhookAndFirebase(session, client, personalProjects);
         } catch (error) {
             console.error('Error during synchronization:', error);
         } finally {
