@@ -118,43 +118,52 @@ export async function updateOrCreateWebhook(session: GitLabSession, projectId: n
     }
 }
 
-const removeWebhook = async (session: GitLabSession, projectId: number, projectName: string): Promise<void> => {
-    // Get the private token from secure storage
-    const { token: savedToken, url: baseUrl } = session;
-    if (savedToken) {
-        // Set the headers for the API request
-        const headers = {
-            'PRIVATE-TOKEN': savedToken,
-            'Content-Type': 'application/x-www-form-urlencoded',
-        };
-        // Get all webhooks for the project
-        const response = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks`, {
-            headers,
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const webhooks = await response.json();
-        // Check if a webhook with the same URL already exists
-        const existingWebhook = webhooks.find((webhook: { name: string; }) => webhook.name === webhookName);
-        if (existingWebhook) {
-            // Delete the existing webhook
-            const deleteResponse = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks/${existingWebhook.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'PRIVATE-TOKEN': savedToken,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!deleteResponse.ok) {
-                throw new Error(`HTTP error! status: ${deleteResponse.status}`);
-            }
-            console.log(`Webhook removed for project: ${projectId}`);
-        } else {
-            console.log(`No existing webhook found for project: ${projectId}`);
-        }
-    } else {
+const removeWebhook = async (session: GitLabSession, projectId?: number): Promise<void> => {
+    // Check if projectId is provided
+    if (!projectId) {
+        console.log("No projectId provided");
+        return;
+    }
+
+    // Destructure the session and check if token is present
+    const { token, url: baseUrl } = session;
+    if (!token) {
         console.log("No token found");
+        return;
+    }
+
+    // Define the headers for the API request
+    const headers = {
+        'PRIVATE-TOKEN': token,
+        'Content-Type': 'application/json',
+    };
+
+    // Fetch all webhooks for the project
+    const response = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks`, { headers });
+
+    // Check if response is ok
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse response to JSON
+    const webhooks = await response.json();
+
+    // Find a webhook with the same name
+    const existingWebhook = webhooks.find((webhook: { name: string; }) => webhook.name === webhookName);
+
+    // Check if a webhook exists and delete it
+    if (existingWebhook) {
+        const deleteResponse = await fetch(`${baseUrl}/api/v4/projects/${projectId}/hooks/${existingWebhook.id}`, { method: 'DELETE', headers });
+
+        // Check if deletion was successful
+        if (!deleteResponse.ok) {
+            throw new Error(`HTTP error! status: ${deleteResponse.status}`);
+        }
+
+        console.log(`Webhook removed for project: ${projectId}`);
+    } else {
+        console.log(`No existing webhook found for project: ${projectId}`);
     }
 };
 
@@ -169,7 +178,7 @@ export async function updateOrCreateWebhooks(session: GitLabSession, projects: {
 
 export async function removeWebhooks(session: GitLabSession, projects: { id: number; name: string }[]): Promise<void> {
     // Remove webhooks for each project
-    const webhookPromises = projects.map(project => removeWebhook(session, project.id, project.name));
+    const webhookPromises = projects.map(project => removeWebhook(session, project.id));
     // Wait for all webhook removals to complete
     await Promise.all(webhookPromises)
         .then(() => {

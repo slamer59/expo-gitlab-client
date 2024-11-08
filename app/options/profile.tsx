@@ -9,7 +9,6 @@ import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { removeWebhooks } from '@/lib/gitlab/webhooks';
 import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
@@ -46,14 +45,14 @@ export default function OptionScreen() {
   const handleRGPDConsent = async () => {
     try {
       await setRGPDConsent(!consentToRGPDGiven);
-      const projects = personalProjects.map(project => ({
-        http_url_to_repo: project.http_url_to_repo,
-        id: project.id
-      }));
-      if (!projects) return;
-      if (consentToRGPDGiven == true) {
-        await removeWebhooks(session, projects);
-      }
+      // const projects = personalProjects.map(project => ({
+      //   http_url_to_repo: project.http_url_to_repo,
+      //   id: project.id
+      // }));
+      // if (!projects) return;
+      // if (consentToRGPDGiven == true) {
+      //   await removeWebhooks(session, projects);
+      // }
       console.log("Webhooks removed successfully");
       // setAlert({ message: 'Webhooks removed successfully', isOpen: true });
     } catch (error) {
