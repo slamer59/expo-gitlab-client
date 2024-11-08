@@ -1,7 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
 import { getApps, initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { deleteDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
@@ -9,7 +7,7 @@ import { firebaseConfig } from 'lib/firebase/helpers';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { create } from 'zustand';
 import { FirebaseDocument, GitLabGroup, GitLabNotificationSettings, GitLabProject } from './interfaces';
-import { getAllProjects, getExpoToken, notificationLevels, RGPD_ACCEPTED_KEY, updateNotificationLevel } from './utils';
+import { getAllProjects, getExpoToken, notificationLevels, updateNotificationLevel } from './utils';
 
 
 import 'firebase/firestore';
@@ -56,10 +54,9 @@ interface NotificationState {
     setExpoPushToken: (token: string | null) => void;
     setPermissionStatus: (status: any) => void;
     setNotificationPreferences: (prefs: any) => void;
-    setGdprConsent: (accepted: boolean) => void;
 
     // Webhook and Firebase actions
-    manageWebhookAndFirebase: (consent: boolean) => Promise<void>;
+    manageWebhooks: (session: any, client: GitLabClient, projects: any[]) => Promise<void>;
     addWebhookToGitLab: (session: any, projects: any[]) => Promise<void>;
     removeWebhookFromGitLab: (session: any) => Promise<void>;
     addDataToFirebase: (session: any) => Promise<void>;
@@ -138,7 +135,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             alert('Must use physical device for Push Notifications');
         }
     },
-
     manageConsentFirebase: async () => {
         const { expoPushToken: token, consentToRGPDGiven } = get();
 
@@ -170,21 +166,20 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             await get().requestPermissions();
             await get().setExpoPushToken();
             await get().manageConsentFirebase();
-            await get().manageWebhookFirebase();
         } catch (error) {
             console.error('Error syncing Firebase:', error);
         }
     },
     // Webhook and Firebase actions
-    manageWebhookFirebase: async (session, client, projects) => {
+    manageWebhooks: async (session, client, projects) => {
         const { consentToRGPDGiven: consent } = get();
         if (consent) {
             try {
                 console.log('Adding webhook to GitLab and syncing Firebase data...');
-                // await Promise.all([
-                //     get().addWebhookToGitLab(session, projects),
-                //     get().addDataToFirebase(session),
-                // ]);
+                await Promise.all([
+                    //     get().addWebhookToGitLab(session, projects),
+                    get().syncNotificationSettings(client),
+                ]);
                 console.log('Webhook added and Firebase data synced');
             } catch (error) {
                 console.error('Error adding webhook and syncing Firebase:', error);
@@ -192,10 +187,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         } else {
             try {
                 console.log('Removing webhook from GitLab and Firebase data...');
-                // await Promise.all([
-                //     get().removeWebhookFromGitLab(session),
-                //     get().removeDataFromFirebase(),
-                // ]);
+                await Promise.all([
+                    //     get().removeWebhookFromGitLab(session),
+                    get().removeDataFromFirebase(),
+                ]);
                 console.log('Webhook removed and Firebase data removed');
             } catch (error) {
                 console.error('Error removing webhook and Firebase data:', error);
@@ -235,6 +230,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
     removeDataFromFirebase: async () => {
         console.log('Removing data from Firebase');
+        set({ isInitialized: false });
         // Implement Firebase data removal logic here
     },
 
@@ -291,7 +287,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                         level: notificationLevels.find(level => level.value === settings.level) || notificationLevels[0]
                     };
                 }));
-
                 const projects = await getAllProjects(client);
                 const projectsWithSettings = await Promise.all(projects.map(async (project: GitLabProject) => {
                     const settings = await fetchNotificationSettings('project', project.id);
@@ -301,7 +296,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                         level: notificationLevels.find(level => level.value === settings.level) || notificationLevels[0]
                     };
                 }));
-
                 const globalSettings = await fetchNotificationSettings('global', null);
                 const global = {
                     level: notificationLevels.find(level => level.value === globalSettings.level) || notificationLevels[0],
@@ -338,7 +332,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                         groups: groupsWithSettings
                     });
                 }
-
                 set({ isInitialized: true });
             } else {
                 const firebaseData = await get().fetchFirebaseData(expoToken);
@@ -481,109 +474,109 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         }
     },
 
-    registerForPushNotifications: async () => {
-        if (!Device.isDevice) {
-            alert('Must use physical device for Push Notifications');
-            return null;
-        }
+    // registerForPushNotifications: async () => {
+    //     if (!Device.isDevice) {
+    //         alert('Must use physical device for Push Notifications');
+    //         return null;
+    //     }
 
-        try {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            let finalStatus = existingStatus;
+    //     try {
+    //         const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    //         let finalStatus = existingStatus;
 
-            if (existingStatus !== 'granted') {
-                const { status } = await Notifications.requestPermissionsAsync();
-                finalStatus = status;
-            }
+    //         if (existingStatus !== 'granted') {
+    //             const { status } = await Notifications.requestPermissionsAsync();
+    //             finalStatus = status;
+    //         }
 
-            set({ permissionStatus: finalStatus });
+    //         set({ permissionStatus: finalStatus });
 
-            if (finalStatus !== 'granted') {
-                return null;
-            }
+    //         if (finalStatus !== 'granted') {
+    //             return null;
+    //         }
 
-            const token = (await Notifications.getExpoPushTokenAsync()).data;
-            set({ expoPushToken: token });
+    //         const token = (await Notifications.getExpoPushTokenAsync()).data;
+    //         set({ expoPushToken: token });
 
-            // Save token locally
-            await AsyncStorage.setItem('expoPushToken', token);
+    //         // Save token locally
+    //         await AsyncStorage.setItem('expoPushToken', token);
 
-            // Save to Firestore
-            const docRef = doc(db, "userNotifications", token);
-            const docSnap = await getDoc(docRef);
-            // if (!docSnap.exists()) {
-            await setDoc(docRef, {
-                changedDate: new Date().toISOString(),
-                global_notification: {
-                    notification_level: 'global',
-                    custom_events: []
-                },
-                notifications: []
-            }, { merge: true });
-            // }
+    //         // Save to Firestore
+    //         const docRef = doc(db, "userNotifications", token);
+    //         const docSnap = await getDoc(docRef);
+    //         // if (!docSnap.exists()) {
+    //         await setDoc(docRef, {
+    //             changedDate: new Date().toISOString(),
+    //             global_notification: {
+    //                 notification_level: 'global',
+    //                 custom_events: []
+    //             },
+    //             notifications: []
+    //         }, { merge: true });
+    //         // }
 
-            // Navigate to GitlabNotificationSettings after successful registration
-            // router.push('/options/profile');
+    //         // Navigate to GitlabNotificationSettings after successful registration
+    //         // router.push('/options/profile');
 
-            return token;
-        } catch (error) {
-            console.error('Error registering for push notifications:', error);
-            return null;
-        }
-    },
+    //         return token;
+    //     } catch (error) {
+    //         console.error('Error registering for push notifications:', error);
+    //         return null;
+    //     }
+    // },
 
-    checkNotificationRegistration: async () => {
-        try {
-            const storedToken = await AsyncStorage.getItem('expoPushToken');
+    // checkNotificationRegistration: async () => {
+    //     try {
+    //         const storedToken = await AsyncStorage.getItem('expoPushToken');
 
-            if (!storedToken) {
-                return await get().registerForPushNotifications();
-            }
+    //         if (!storedToken) {
+    //             return await get().registerForPushNotifications();
+    //         }
 
-            const docRef = doc(db, "userNotifications", storedToken);
-            const docSnap = await getDoc(docRef);
+    //         const docRef = doc(db, "userNotifications", storedToken);
+    //         const docSnap = await getDoc(docRef);
 
-            if (!docSnap.exists()) {
-                return await get().registerForPushNotifications();
-            }
+    //         if (!docSnap.exists()) {
+    //             return await get().registerForPushNotifications();
+    //         }
 
-            set({ expoPushToken: storedToken });
-            return storedToken;
-        } catch (error) {
-            console.error('Error checking notification registration:', error);
-            return null;
-        }
-    },
+    //         set({ expoPushToken: storedToken });
+    //         return storedToken;
+    //     } catch (error) {
+    //         console.error('Error checking notification registration:', error);
+    //         return null;
+    //     }
+    // },
 
-    initializeNotifications: async () => {
-        try {
-            // Check if the user has accepted RGPD
-            const hasAcceptedRGPD = await AsyncStorage.getItem(RGPD_ACCEPTED_KEY);
-            if (hasAcceptedRGPD !== 'true') {
-                // Prompt the user to accept RGPD
-                // For example, you could navigate to a screen that explains RGPD and asks the user to accept
-                router.push('/workspace/privacy-policy');
-                return;
-            }
+    // initializeNotifications: async () => {
+    //     try {
+    //         // Check if the user has accepted RGPD
+    //         const hasAcceptedRGPD = await AsyncStorage.getItem(RGPD_ACCEPTED_KEY);
+    //         if (hasAcceptedRGPD !== 'true') {
+    //             // Prompt the user to accept RGPD
+    //             // For example, you could navigate to a screen that explains RGPD and asks the user to accept
+    //             router.push('/workspace/privacy-policy');
+    //             return;
+    //         }
 
-            // Load saved preferences
-            const storedPrefs = await AsyncStorage.getItem('notificationPreferences');
-            if (storedPrefs) {
-                set({ notificationPreferences: JSON.parse(storedPrefs) });
-            }
+    //         // Load saved preferences
+    //         const storedPrefs = await AsyncStorage.getItem('notificationPreferences');
+    //         if (storedPrefs) {
+    //             set({ notificationPreferences: JSON.parse(storedPrefs) });
+    //         }
 
-            // Check and register for notifications if needed
-            const token = await get().checkNotificationRegistration();
-            if (!token) {
-                throw new Error('Failed to initialize notifications');
-            }
+    //         // Check and register for notifications if needed
+    //         const token = await get().checkNotificationRegistration();
+    //         if (!token) {
+    //             throw new Error('Failed to initialize notifications');
+    //         }
 
-            // Set up periodic token check
-            setInterval(async () => {
-                await get().checkNotificationRegistration();
-            }, 24 * 60 * 60 * 1000); // Daily check
-        } catch (error) {
-            console.error('Error initializing notifications:', error);
-        }
-    },
+    //         // Set up periodic token check
+    //         setInterval(async () => {
+    //             await get().checkNotificationRegistration();
+    //         }, 24 * 60 * 60 * 1000); // Daily check
+    //     } catch (error) {
+    //         console.error('Error initializing notifications:', error);
+    //     }
+    // },
 }));

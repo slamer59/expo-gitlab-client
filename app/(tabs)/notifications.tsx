@@ -15,20 +15,20 @@ const GdprConsentScreen = () => {
 
     const api = useGitLab(client);
 
-    // const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
+    const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
 
 
-    const { setGdprConsent, manageGdprConsent, setPersonalProjects, setSessionClient } = useNotificationStore();
+    const { manageGdprConsent, manageWebhooks } = useNotificationStore();
     const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
 
     const handleGdprConsent = async (consent: boolean) => {
         setLoadingConsent(consent);
         try {
             console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
-            setGdprConsent(consent);
             // setPersonalProjects();
             // setSessionClient(session, client)
             manageGdprConsent(consent);
+            manageWebhooks(session, client, personalProjects);
             // initializeNotifications()
             // syncNotificationSettings(client)
             // checkNotificationRegistration();
