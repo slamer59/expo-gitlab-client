@@ -12,8 +12,7 @@ import { getAllProjects, getExpoToken, notificationLevels, updateNotificationLev
 
 import 'firebase/firestore';
 
-import { updateOrCreateWebhooks } from '../gitlab/webhooks';
-import { GitLabSession } from '../session/SessionProvider';
+import { removeWebhooks, updateOrCreateWebhooks } from '../gitlab/webhooks';
 
 // Initialize Firebase
 let app;
@@ -76,26 +75,7 @@ const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; n
         }));
 };
 
-const updateWebhooks = async (session: GitLabSession | undefined, projects: { id: number; name: string }[]): Promise<void> => {
-    console.log("🚀 ~ updateWebhooks ~ projects:", projects)
-    if (!session?.url || !session?.token) {
-        console.error("Invalid session data");
-        return;
-    }
 
-    try {
-        await updateOrCreateWebhooks(
-            { url: session.url, token: session.token },
-            projects,
-            undefined
-        );
-        console.log("Webhooks updated successfully");
-    } catch (error) {
-        console.error("Error updating webhooks:", error);
-        // const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        // setAlert({ message: `Error updating webhooks: ${errorMessage}`, isOpen: true });
-    }
-};
 export const useNotificationStore = create<NotificationState>((set, get) => ({
     groups: [],
     projects: [],
@@ -173,11 +153,14 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     // Webhook and Firebase actions
     manageWebhooks: async (session, client, projects) => {
         const { consentToRGPDGiven: consent } = get();
+
         if (consent) {
+            get().setPersonalProjects(projects);
             try {
                 console.log('Adding webhook to GitLab and syncing Firebase data...');
+
                 await Promise.all([
-                    //     get().addWebhookToGitLab(session, projects),
+                    get().addWebhookToGitLab(session),
                     get().syncNotificationSettings(client),
                 ]);
                 console.log('Webhook added and Firebase data synced');
@@ -188,7 +171,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             try {
                 console.log('Removing webhook from GitLab and Firebase data...');
                 await Promise.all([
-                    //     get().removeWebhookFromGitLab(session),
+                    get().removeWebhookFromGitLab(session),
                     get().removeDataFromFirebase(),
                 ]);
                 console.log('Webhook removed and Firebase data removed');
@@ -199,28 +182,39 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     },
 
     // Helper functions for Webhooks and Firebase
-    addWebhookToGitLab: async (session, projects) => {
+    addWebhookToGitLab: async (session) => {
+        const { projects, expoPushToken: token } = get();
         // console.log('Adding webhook to GitLab for session:', session, 'and groups:', groups);
 
-        const personalProjects = prepareProjects(projects);
-        const setupProjectWebhooks = async () => {
-            if (!session) {
-                console.log("Projects are still loading or undefined");
-                return;
-            }
-            const preparedProjects = prepareProjects(personalProjects);
-            if (preparedProjects.length === 0) {
-                console.log("No valid projects to setup webhooks for");
-                return;
-            }
-            await updateWebhooks(session, preparedProjects);
-
+        if (!session?.url || !session?.token) {
+            console.error("Invalid session data");
+            return;
         }
-        setupProjectWebhooks();
+
+        try {
+            await updateOrCreateWebhooks(
+                { url: session.url, token: session.token },
+                projects,
+                undefined
+            );
+            console.log("Webhooks updated successfully");
+        } catch (error) {
+            console.error("Error updating webhooks:", error);
+        }
+
+
     },
     removeWebhookFromGitLab: async (session) => {
-        console.log('Removing webhook from GitLab for session:', session);
-        // Implement GitLab webhook removal logic here
+        console.log('Removing webhook from GitLab for session');
+        const { projects } = get();
+        if (session?.url && session?.token) {
+            try {
+                await removeWebhooks(session, projects);
+                console.log('Webhooks removed successfully');
+            } catch (error) {
+                console.error('Error removing webhooks:', error);
+            }
+        }
     },
 
     addDataToFirebase: async (session) => {
@@ -474,109 +468,4 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         }
     },
 
-    // registerForPushNotifications: async () => {
-    //     if (!Device.isDevice) {
-    //         alert('Must use physical device for Push Notifications');
-    //         return null;
-    //     }
-
-    //     try {
-    //         const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    //         let finalStatus = existingStatus;
-
-    //         if (existingStatus !== 'granted') {
-    //             const { status } = await Notifications.requestPermissionsAsync();
-    //             finalStatus = status;
-    //         }
-
-    //         set({ permissionStatus: finalStatus });
-
-    //         if (finalStatus !== 'granted') {
-    //             return null;
-    //         }
-
-    //         const token = (await Notifications.getExpoPushTokenAsync()).data;
-    //         set({ expoPushToken: token });
-
-    //         // Save token locally
-    //         await AsyncStorage.setItem('expoPushToken', token);
-
-    //         // Save to Firestore
-    //         const docRef = doc(db, "userNotifications", token);
-    //         const docSnap = await getDoc(docRef);
-    //         // if (!docSnap.exists()) {
-    //         await setDoc(docRef, {
-    //             changedDate: new Date().toISOString(),
-    //             global_notification: {
-    //                 notification_level: 'global',
-    //                 custom_events: []
-    //             },
-    //             notifications: []
-    //         }, { merge: true });
-    //         // }
-
-    //         // Navigate to GitlabNotificationSettings after successful registration
-    //         // router.push('/options/profile');
-
-    //         return token;
-    //     } catch (error) {
-    //         console.error('Error registering for push notifications:', error);
-    //         return null;
-    //     }
-    // },
-
-    // checkNotificationRegistration: async () => {
-    //     try {
-    //         const storedToken = await AsyncStorage.getItem('expoPushToken');
-
-    //         if (!storedToken) {
-    //             return await get().registerForPushNotifications();
-    //         }
-
-    //         const docRef = doc(db, "userNotifications", storedToken);
-    //         const docSnap = await getDoc(docRef);
-
-    //         if (!docSnap.exists()) {
-    //             return await get().registerForPushNotifications();
-    //         }
-
-    //         set({ expoPushToken: storedToken });
-    //         return storedToken;
-    //     } catch (error) {
-    //         console.error('Error checking notification registration:', error);
-    //         return null;
-    //     }
-    // },
-
-    // initializeNotifications: async () => {
-    //     try {
-    //         // Check if the user has accepted RGPD
-    //         const hasAcceptedRGPD = await AsyncStorage.getItem(RGPD_ACCEPTED_KEY);
-    //         if (hasAcceptedRGPD !== 'true') {
-    //             // Prompt the user to accept RGPD
-    //             // For example, you could navigate to a screen that explains RGPD and asks the user to accept
-    //             router.push('/workspace/privacy-policy');
-    //             return;
-    //         }
-
-    //         // Load saved preferences
-    //         const storedPrefs = await AsyncStorage.getItem('notificationPreferences');
-    //         if (storedPrefs) {
-    //             set({ notificationPreferences: JSON.parse(storedPrefs) });
-    //         }
-
-    //         // Check and register for notifications if needed
-    //         const token = await get().checkNotificationRegistration();
-    //         if (!token) {
-    //             throw new Error('Failed to initialize notifications');
-    //         }
-
-    //         // Set up periodic token check
-    //         setInterval(async () => {
-    //             await get().checkNotificationRegistration();
-    //         }, 24 * 60 * 60 * 1000); // Daily check
-    //     } catch (error) {
-    //         console.error('Error initializing notifications:', error);
-    //     }
-    // },
 }));
