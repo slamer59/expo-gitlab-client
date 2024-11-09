@@ -1,4 +1,4 @@
-import InfoAlert from '@/components/InfoAlert';
+import ErrorAlert from '@/components/ErrorAlert';
 import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useNotificationStore } from '@/lib/notification/notifications-state';
+import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
@@ -58,12 +58,23 @@ export default function OptionScreen() {
     }
   };
   // 1. Fetch projects
-  const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
-    isOpen: false,
-    message: '',
-  });
+  // const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
+  //   isOpen: false,
+  //   message: '',
+  // });
 
 
+  if (errorPersonal) {
+    return (
+      <View className="p-4">
+        <ErrorAlert
+          isOpen={true}
+          onClose={() => { }}
+          message="Error loading projects. Please try again later."
+        />
+      </View>
+    );
+  }
   return (
     <>
       <Stack.Screen
@@ -73,12 +84,12 @@ export default function OptionScreen() {
       />
 
       <ScrollView className='flex-1 p-4 bg-background'>
-        <InfoAlert
+        {/* <InfoAlert
           title='Webhooks removed'
           isOpen={alert.isOpen}
           onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
           message={alert.message}
-        />
+        /> */}
         <SystemSettingsScreen />
         <View className="p-4 m-1 rounded-lg bg-card">
           <View className='flex flex-row items-center mb-5'>

@@ -1,26 +1,13 @@
+import { useNotificationStore } from '@/lib/notification/state';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import 'firebase/firestore';
-import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
-import { useNotificationStore } from 'lib/notification/notifications-state';
 import { notificationLevels } from 'lib/notification/utils';
-import { useSession } from 'lib/session/SessionProvider';
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import ErrorAlert from '../ErrorAlert';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
 
 export default function NotificationDashboard() {
-    const { session } = useSession();
-    const client = useMemo(() => new GitLabClient({
-        url: session?.url,
-        token: session?.token,
-    }), [session?.url, session?.token]);
-
-    const api = useGitLab(client);
-
-    const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
 
     const {
         projects,
@@ -32,30 +19,8 @@ export default function NotificationDashboard() {
         setModalVisible,
     } = useNotificationStore();
 
-    const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
-        isOpen: false,
-        message: '',
-    });
-
-    if (errorPersonal) {
-        return (
-            <View className="p-4">
-                <ErrorAlert
-                    isOpen={true}
-                    onClose={() => { }}
-                    message="Error loading projects. Please try again later."
-                />
-            </View>
-        );
-    }
-
     return (
         <>
-            <ErrorAlert
-                isOpen={alert.isOpen}
-                onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
-                message={alert.message}
-            />
             <View className="p-4 m-1 rounded-lg bg-card">
                 <View className='flex flex-row items-center mb-5'>
                     <Octicons name="bell" size={30} color="white" className='mr-2' />

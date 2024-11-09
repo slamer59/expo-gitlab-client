@@ -1,6 +1,6 @@
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useNotificationStore } from '@/lib/notification/notifications-state';
+import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import React, { useMemo, useState } from 'react';
 import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
