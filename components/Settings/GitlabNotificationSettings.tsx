@@ -31,7 +31,6 @@ export default function NotificationDashboard() {
         openModal,
         setModalVisible,
     } = useNotificationStore();
-    console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
 
     const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
         isOpen: false,

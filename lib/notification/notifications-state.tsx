@@ -50,17 +50,22 @@ interface NotificationState {
     setSelectedItemIndex: (index: number) => void;
     setIsLoading: (loading: boolean) => void;
     setIsInitialized: (initialized: boolean) => void;
-    setExpoPushToken: (token: string | null) => void;
+    setExpoPushToken: () => void;
     setPermissionStatus: (status: any) => void;
     setNotificationPreferences: (prefs: any) => void;
 
     // Webhook and Firebase actions
+    manageGdprConsent: (session: any) => Promise<void>;
     manageWebhooks: (session: any, client: GitLabClient, projects: any[]) => Promise<void>;
     addWebhookToGitLab: (session: any, projects: any[]) => Promise<void>;
     removeWebhookFromGitLab: (session: any) => Promise<void>;
-    addDataToFirebase: (session: any) => Promise<void>;
+    requestPermissions: () => Promise<void>;
+    manageConsentFirebase: (session: any, consent: boolean) => Promise<void>;
+    setPersonalProjects: (projects: GitLabProject[] | undefined) => void;
+    syncNotificationSettings: (session: any, client: GitLabClient) => Promise<void>;
     removeDataFromFirebase: () => Promise<void>;
 }
+
 const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; name: string }[] => {
     if (!projects || !Array.isArray(projects)) {
         console.error("Projects are undefined or not an array");
@@ -131,9 +136,9 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     setPermissionStatus: (status) => set({ permissionStatus: status }),
     setNotificationPreferences: (prefs) => set({ notificationPreferences: prefs }),
     setPersonalProjects: (projects) => set({ projects: prepareProjects(projects) }),
-    setSessionClient: (session, client) => set({ session: session, client: client }),
+    setSessionClient: (session: any, client: any) => set({ session: session, client: client }),
     // GDPR Consent and Firebase Sync
-    setGdprConsent: (accepted) => set({ consentToRGPDGiven: accepted }),
+    setGdprConsent: (accepted: any) => set({ consentToRGPDGiven: accepted }),
     requestPermissions: async () => {
         if (Device.isDevice) {
             const { status } = await Notifications.requestPermissionsAsync();
@@ -166,7 +171,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             throw error;
         }
     },
-    manageGdprConsent: async (accepted) => {
+    manageGdprConsent: async (accepted: any) => {
         set({ consentToRGPDGiven: accepted });
 
         try {
@@ -199,7 +204,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                 console.log('Removing webhook from GitLab and Firebase data...');
                 await Promise.all([
                     get().removeWebhookFromGitLab(session),
-                    get().removeDataFromFirebase(),
+                    // get().removeDataFromFirebase(),
                 ]);
                 console.log('Webhook removed and Firebase data removed');
             } catch (error) {
@@ -210,7 +215,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
     // Helper functions for Webhooks and Firebase
     addWebhookToGitLab: async (session) => {
-        const { projects, expoPushToken: token } = get();
+        const { projects } = get();
         // console.log('Adding webhook to GitLab for session:', session, 'and groups:', groups);
 
         if (!session?.url || !session?.token) {
@@ -243,18 +248,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             }
         }
     },
-
-    addDataToFirebase: async (session) => {
-        console.log('Adding data to Firebase for session:', session);
-        // Implement Firebase data addition logic here
-    },
-
-    removeDataFromFirebase: async () => {
-        console.log('Removing data from Firebase');
-        set({ isInitialized: false });
-        // Implement Firebase data removal logic here
-    },
-
     fetchFirebaseData: async (expoToken: string) => {
         try {
             const docRef = doc(db, "userNotifications", expoToken);
@@ -274,7 +267,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         console.log('Syncing notification settings...');
         try {
             const { isInitialized } = get();
-            console.log("🚀 ~ syncNotificationSettings: ~ isInitialized:", isInitialized)
             const expoToken = await getExpoToken();
 
             if (!expoToken) {
@@ -287,7 +279,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                 const projects = await getAllProjects(client);
 
                 const [groupsWithSettings, projectsWithSettings, globalSettings] = await Promise.all([
-                    Promise.all(groups.map(group => fetchNotificationSettings(client, 'group', group.id, group.full_name))),
+                    Promise.all(groups.map((group: { id: number | null; full_name: string; }) => fetchNotificationSettings(client, 'group', group.id, group.full_name))),
                     Promise.all(projects.map(project => fetchNotificationSettings(client, 'project', project.id, project.path_with_namespace))),
                     fetchNotificationSettings(client, 'global', null, 'Global')
                 ]);
@@ -298,8 +290,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                 };
 
                 const firebaseData = await get().fetchFirebaseData(expoToken);
-                console.log("🚀 ~ syncNotificationSettings: ~ projectsWithSettings:", projectsWithSettings)
-                console.log("🚀 ~ syncNotificationSettings: ~ !firebaseData || !firebaseData.notifications:", !firebaseData || !firebaseData.notifications)
 
                 if (!firebaseData || !firebaseData.notifications) {
                     // If no Firebase data exists or no notifications array, create initial data
@@ -317,9 +307,9 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                     set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
                 } else {
                     // Use existing Firebase data
-                    console.log('Using existing Firebase data');
+
                     set({
-                        projects: firebaseData.notifications.map(n => ({
+                        projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
                             id: n.id,
                             name: n.name,
                             level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
@@ -332,14 +322,13 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                     });
                 }
                 const { projects: p } = get();
-                console.log("🚀 ~ syncNotificationSettings: ~ p:", p)
                 // set({ isInitialized: true });
             } else {
                 console.log('Fetching Firebase data for syncin...');
                 const firebaseData = await get().fetchFirebaseData(expoToken);
                 if (firebaseData && firebaseData.notifications) {
                     set({
-                        projects: firebaseData.notifications.map(n => ({
+                        projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
                             id: n.id,
                             name: n.name,
                             level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
@@ -359,7 +348,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         }
     },
 
-    selectNotificationLevel: async (level) => {
+    selectNotificationLevel: async (level: string) => {
         const { selectedItemType, selectedItemIndex, projects, global } = get();
         let updatedProjects = [...projects];
         let updatedGlobal = { ...global };
@@ -398,7 +387,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         }
     },
 
-    openModal: (type, index = -1) => {
+    openModal: (type: any, index = -1) => {
         set({
             selectedItemType: type,
             selectedItemIndex: index,
@@ -425,7 +414,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             const firebaseData = await get().fetchFirebaseData(expoToken);
             if (firebaseData && firebaseData.notifications) {
                 set({
-                    projects: firebaseData.notifications.map(n => ({
+                    projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
                         id: n.id,
                         name: n.name,
                         level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
@@ -447,7 +436,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             const firebaseData = await get().fetchFirebaseData(expoToken);
             const firebaseProjects = firebaseData?.notifications || [];
 
-            const firebaseProjectMap = new Map(firebaseProjects.map(p => [p.id, p]));
+            const firebaseProjectMap = new Map(firebaseProjects.map((p: { id: any; }) => [p.id, p]));
 
             const updatedNotifications = projects.map(project => {
                 const firebaseProject = firebaseProjectMap.get(project.id);

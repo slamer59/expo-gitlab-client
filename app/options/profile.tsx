@@ -37,13 +37,7 @@ export default function OptionScreen() {
   const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
 
   const {
-    projects,
-    global,
-    modalVisible,
     isLoading,
-    selectNotificationLevel,
-    openModal,
-    setModalVisible,
     consentToRGPDGiven,
     manageGdprConsent,
     manageWebhooks
@@ -97,13 +91,14 @@ export default function OptionScreen() {
           </Text>
 
           <Button
-            disabled={isLoadingPersonal}
+            disabled={isLoadingPersonal || isLoading || loadingConsent}
             variant="secondary"
-            className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
+            className={`text-2xl items-center justify-start font-bold text-white ${isLoading ? 'bg-muted' : loadingConsent !== null ? 'bg-warning' : consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
             onPress={() => handleGdprConsent(!consentToRGPDGiven)}
           >
+
             <Text className={`text-2xl font-bold text-white`}>
-              {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
+              {isLoading ? "⏳  Loading   " : (consentToRGPDGiven ? "I do not consent any more" : "I give my consent")}
             </Text>
           </Button>
           {consentToRGPDGiven && <NotificationPermissionDialog />}
