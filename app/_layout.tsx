@@ -1,6 +1,5 @@
 import "@/global.css";
 import { defaultOptionsHeader } from "@/lib/constants";
-import { useNotificationStore } from "@/lib/notification/state";
 import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
 import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 import { PortalHost } from "@rn-primitives/portal";
@@ -62,7 +61,6 @@ function RootLayoutNav() {
   const [isReady, setIsReady] = React.useState({
     preparation: false
   });
-  const { initializeNotifications, hasShownRGPDNotice } = useNotificationStore();
 
   React.useEffect(() => {
     setIsLayoutMounted(true);
@@ -91,10 +89,6 @@ function RootLayoutNav() {
       SplashScreen.hideAsync();
     }
   }, [isReady, isSessionLoading]);
-
-  React.useEffect(() => {
-    initializeNotifications();
-  }, []);
 
   if (!isReady.preparation || isSessionLoading) {
     return null;

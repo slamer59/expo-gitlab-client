@@ -1,5 +1,5 @@
+import { useNotificationStore } from '@/lib/notification/state';
 import { router } from 'expo-router';
-import { useNotificationStore } from 'lib/notification/state';
 import { useSession } from 'lib/session/SessionProvider';
 import React from 'react';
 import {
@@ -15,7 +15,7 @@ import {
 import { Text } from './ui/text';
 
 export function NotificationPermissionDialog() {
-    const { setRGPDConsent } = useNotificationStore();
+    const { setGdprConsent } = useNotificationStore();
     const { session } = useSession();
 
     // React.useEffect(() => {
@@ -31,10 +31,8 @@ export function NotificationPermissionDialog() {
                 return;
             }
 
-            await setRGPDConsent(consent);
-            // if (consent) {
-            //     router.push('/options/profile');
-            // }
+            await setGdprConsent(consent);
+
         } catch (error) {
             console.error('Error handling consent:', error);
             if (error.response?.status === 401) {

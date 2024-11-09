@@ -1,12 +1,8 @@
 import { Text } from '@/components/ui/text';
 import { FontAwesome6, Octicons } from '@expo/vector-icons';
-import * as Application from 'expo-application';
 import { Linking, TouchableOpacity, View } from 'react-native';
 
 export default function SystemSettingsScreen() {
-    const bundleIdentifier = Application.applicationId;
-    console.log(bundleIdentifier);
-
     return (
         <View className="p-4 m-1 rounded-lg bg-card">
             <View className='flex flex-row items-center mb-5'>

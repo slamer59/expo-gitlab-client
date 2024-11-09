@@ -1,4 +1,3 @@
-import InfoAlert from '@/components/InfoAlert';
 import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
@@ -9,7 +8,6 @@ import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { removeWebhooks } from '@/lib/gitlab/webhooks';
 import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
@@ -27,40 +25,37 @@ export default function OptionScreen() {
   if (!session) {
     return <Redirect href='/login' />;
   }
+
   const client = useMemo(() => new GitLabClient({
     url: session?.url,
     token: session?.token,
   }), [session?.url, session?.token]);
 
   const api = useGitLab(client);
-  const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
-  // 1. Fetch projects
-  const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
-    isOpen: false,
-    message: '',
-  });
+
   const {
-    consentToRGPDGiven, setRGPDConsent
+    isLoading,
+    consentToRGPDGiven,
+    manageGdprConsent,
+    manageWebhooks,
   } = useNotificationStore();
 
-  const handleRGPDConsent = async () => {
+  const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
+
+  const handleGdprConsent = async (consent: boolean) => {
+    setLoadingConsent(consent);
+
     try {
-      await setRGPDConsent(!consentToRGPDGiven);
-      const projects = personalProjects.map(project => ({
-        http_url_to_repo: project.http_url_to_repo,
-        id: project.id
-      }));
-      if (!projects) return;
-      if (consentToRGPDGiven == true) {
-        await removeWebhooks(session, projects);
-      }
-      console.log("Webhooks removed successfully");
-      // setAlert({ message: 'Webhooks removed successfully', isOpen: true });
+      console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
+      manageGdprConsent(consent);
+      manageWebhooks(session, client);
     } catch (error) {
-      console.error("Error removing webhooks:", error);
-      setAlert({ message: `Error removing webhooks: ${error.message}`, isOpen: true });
+      console.error('Error during synchronization:', error);
+    } finally {
+      setLoadingConsent(null);
     }
   };
+
   return (
     <>
       <Stack.Screen
@@ -70,12 +65,6 @@ export default function OptionScreen() {
       />
 
       <ScrollView className='flex-1 p-4 bg-background'>
-        <InfoAlert
-          title='Webhooks removed'
-          isOpen={alert.isOpen}
-          onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
-          message={alert.message}
-        />
         <SystemSettingsScreen />
         <View className="p-4 m-1 rounded-lg bg-card">
           <View className='flex flex-row items-center mb-5'>
@@ -88,13 +77,14 @@ export default function OptionScreen() {
           </Text>
 
           <Button
-            disabled={isLoadingPersonal}
+            disabled={isLoading || loadingConsent}
             variant="secondary"
-            className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
-            onPress={() => handleRGPDConsent()}
+            className={`text-2xl items-center justify-start font-bold text-white ${isLoading ? 'bg-muted' : loadingConsent !== null ? 'bg-warning' : consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
+            onPress={() => handleGdprConsent(!consentToRGPDGiven)}
           >
+
             <Text className={`text-2xl font-bold text-white`}>
-              {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
+              {isLoading ? "⏳  Loading   " : (consentToRGPDGiven ? "I do not consent any more" : "I give my consent")}
             </Text>
           </Button>
           {consentToRGPDGiven && <NotificationPermissionDialog />}

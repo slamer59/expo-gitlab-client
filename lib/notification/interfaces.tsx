@@ -1,6 +1,7 @@
 import GitLabClient from "../gitlab/gitlab-api-wrapper";
 import { notificationLevels } from "./utils";
 
+// Defining the data types
 export interface GitLabProject {
     id: number;
     path_with_namespace: string;
@@ -32,9 +33,7 @@ export interface FirebaseDocument {
     notifications: FirebaseNotification[];
 }
 
-
-
-type NotificationLevel = typeof notificationLevels[number];
+export type NotificationLevel = typeof notificationLevels[number];
 
 interface NotificationItem {
     id: number;
@@ -42,7 +41,9 @@ interface NotificationItem {
     level: NotificationLevel;
 }
 
+// Defining the NotificationStore interface
 export interface NotificationStore {
+    // State properties
     groups: NotificationItem[];
     projects: NotificationItem[];
     global: {
@@ -56,28 +57,37 @@ export interface NotificationStore {
     isInitialized: boolean;
     expoPushToken: string | null;
     permissionStatus: string | null;
-    notificationPreferences: any;
     consentToRGPDGiven: boolean;
+    session: any;
+
+    // State setters
     setGroups: (groups: NotificationItem[]) => void;
     setProjects: (projects: NotificationItem[]) => void;
     setGlobal: (global: { level: NotificationLevel; notification_email: string }) => void;
     setModalVisible: (visible: boolean) => void;
     setSelectedItemType: (type: string) => void;
     setSelectedItemIndex: (index: number) => void;
-    setIsLoading: (loading: boolean) => void;
     setIsInitialized: (initialized: boolean) => void;
-    setExpoPushToken: (token: string | null) => void;
+    setExpoPushToken: () => void;
     setPermissionStatus: (status: string | null) => void;
-    setNotificationPreferences: (prefs: any) => void;
-    fetchFirebaseData: (expoToken: string) => Promise<FirebaseDocument | null>;
+    setGdprConsent: (consent: boolean) => void;
+
+    // Webhook and Firebase actions
+    manageGdprConsent: (session: any) => Promise<void>;
+    manageWebhooks: (session: any, client: GitLabClient, projects: any[]) => Promise<void>;
+    addWebhookToGitLab: (session: any) => Promise<void>;
+    removeWebhookFromGitLab: (session: any) => Promise<void>;
+    requestPermissions: () => Promise<void>;
+    manageConsentFirebase: () => Promise<void>;
+    setPersonalProjects: (projects: GitLabProject[] | undefined) => void;
     syncNotificationSettings: (client: GitLabClient) => Promise<void>;
+    fetchFirebaseData: (expoToken: string) => Promise<FirebaseDocument | null>;
     selectNotificationLevel: (level: NotificationLevel) => Promise<void>;
     openModal: (type: string, index: number) => void;
     fetchGitLabEmailSettings: (client: GitLabClient) => Promise<void>;
     fetchFirebaseNotifications: (expoToken: string) => Promise<void>;
     syncGitLabWithFirebase: (client: GitLabClient, expoToken: string) => Promise<void>;
-    initializeNotifications: () => Promise<void>;
-    checkNotificationRegistration: () => Promise<string | null>;
-    registerForPushNotifications: () => Promise<string | null>;
-    setRGPDConsent: (accepted: boolean) => Promise<void>;
+
 }
+
+// This way, the NotificationStore interface is more organized and easier to read.
