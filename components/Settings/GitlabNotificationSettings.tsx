@@ -2,11 +2,9 @@ import { Ionicons, Octicons } from '@expo/vector-icons';
 import 'firebase/firestore';
 import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
-import { updateOrCreateWebhooks } from 'lib/gitlab/webhooks';
-import { GitLabProject } from 'lib/notification/interfaces';
-import { useNotificationStore } from 'lib/notification/state';
+import { useNotificationStore } from 'lib/notification/notifications-state';
 import { notificationLevels } from 'lib/notification/utils';
-import { GitLabSession, useSession } from 'lib/session/SessionProvider';
+import { useSession } from 'lib/session/SessionProvider';
 import React, { useMemo, useState } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import ErrorAlert from '../ErrorAlert';
@@ -26,101 +24,19 @@ export default function NotificationDashboard() {
 
     const {
         projects,
-        groups,
-        consentToRGPDGiven,
         global,
         modalVisible,
         isLoading,
-        syncNotificationSettings,
         selectNotificationLevel,
         openModal,
         setModalVisible,
-        fetchGitLabEmailSettings,
-        fetchFirebaseNotifications,
-        syncGitLabWithFirebase,
     } = useNotificationStore();
-
-    // useEffect(() => {
-    //     if (session?.url && session?.token && consentToRGPDGiven) {
-    //         syncNotificationSettings(client);
-    //     }
-    // }, [session?.url, session?.token]);
+    console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
 
     const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
         isOpen: false,
         message: '',
     });
-
-    const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; name: string }[] => {
-        if (!projects || !Array.isArray(projects)) {
-            console.error("Projects are undefined or not an array");
-            return [];
-        }
-
-        return projects
-            .filter(project => project.id && typeof project.id === 'number') // Only include projects with valid IDs
-            .map(project => ({
-                id: project.id,
-                name: project.path_with_namespace || String(project.id) // Fallback to ID if name not available
-            }));
-    };
-
-    const updateWebhooks = async (session: GitLabSession | undefined, projects: { id: number; name: string }[]): Promise<void> => {
-        if (!session?.url || !session?.token) {
-            console.error("Invalid session data");
-            return;
-        }
-
-        try {
-            await updateOrCreateWebhooks(
-                { url: session.url, token: session.token },
-                projects,
-                undefined
-            );
-            console.log("Webhooks updated successfully");
-        } catch (error) {
-            console.error("Error updating webhooks:", error);
-            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-            setAlert({ message: `Error updating webhooks: ${errorMessage}`, isOpen: true });
-        }
-    };
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         const syncNotifications = async () => {
-    //             if (session?.url && session?.token && consentToRGPDGiven) {
-    //                 const expoToken = await getExpoToken();
-    //                 if (expoToken) {
-    //                     await fetchGitLabEmailSettings(client);
-    //                     await fetchFirebaseNotifications(expoToken);
-    //                     await syncGitLabWithFirebase(client, expoToken);
-    //                 }
-    //             }
-    //         };
-
-    //         syncNotifications();
-    //     }, [session?.url, session?.token, client, consentToRGPDGiven])
-    // );
-
-    // useFocusEffect(
-    //     React.useCallback(() => {
-    //         const setupProjectWebhooks = async () => {
-    //             if (!session || isLoadingPersonal || !personalProjects) {
-    //                 console.log("Projects are still loading or undefined");
-    //                 return;
-    //             }
-    //             const preparedProjects = prepareProjects(personalProjects);
-    //             if (preparedProjects.length === 0) {
-    //                 console.log("No valid projects to setup webhooks for");
-    //                 return;
-    //             }
-
-    //             await updateWebhooks(session, preparedProjects);
-    //         };
-
-    //         setupProjectWebhooks();
-    //     }, [session, personalProjects, isLoadingPersonal])
-    // );
 
     if (errorPersonal) {
         return (

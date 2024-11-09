@@ -6,7 +6,7 @@ import { deleteDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore
 import { firebaseConfig } from 'lib/firebase/helpers';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { create } from 'zustand';
-import { FirebaseDocument, GitLabGroup, GitLabNotificationSettings, GitLabProject } from './interfaces';
+import { FirebaseDocument, GitLabNotificationSettings, GitLabProject } from './interfaces';
 import { getAllProjects, getExpoToken, notificationLevels, updateNotificationLevel } from './utils';
 
 
@@ -75,7 +75,34 @@ const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; n
         }));
 };
 
-
+const fetchNotificationSettings = async (client: GitLabClient, type: string, id: number | null, name: string): Promise<any> => {
+    try {
+        let settings: GitLabNotificationSettings;
+        if (type === 'global') {
+            settings = await client.GlobalNotification.all();
+        } else if (type === 'group') {
+            settings = await client.GroupNotifications.all(id!);
+        } else if (type === 'project') {
+            settings = await client.ProjectNotifications.all(id!);
+        } else {
+            settings = { level: 'global' };
+        }
+        return {
+            id,
+            name,
+            level: notificationLevels.find(level => level.value === settings.level) || notificationLevels[0],
+            notification_email: settings.notification_email || ''
+        };
+    } catch (error) {
+        console.error(`Error fetching ${type} notification settings:`, error);
+        return {
+            id,
+            name,
+            level: notificationLevels[0],
+            notification_email: ''
+        };
+    }
+};
 export const useNotificationStore = create<NotificationState>((set, get) => ({
     groups: [],
     projects: [],
@@ -244,62 +271,39 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
     syncNotificationSettings: async (client: GitLabClient) => {
         set({ isLoading: true });
+        console.log('Syncing notification settings...');
         try {
             const { isInitialized } = get();
+            console.log("🚀 ~ syncNotificationSettings: ~ isInitialized:", isInitialized)
             const expoToken = await getExpoToken();
 
             if (!expoToken) {
                 throw new Error('Failed to retrieve Expo token');
             }
 
-            const fetchNotificationSettings = async (type: string, id: number | null): Promise<GitLabNotificationSettings> => {
-                try {
-                    let response: GitLabNotificationSettings;
-                    if (type === 'global') {
-                        response = await client.GlobalNotification.all();
-                    } else if (type === 'group') {
-                        response = await client.GroupNotifications.all(id!);
-                    } else if (type === 'project') {
-                        response = await client.ProjectNotifications.all(id!);
-                    } else {
-                        response = { level: 'global' };
-                    }
-                    return response;
-                } catch (error) {
-                    console.error(`Error fetching ${type} notification settings:`, error);
-                    return { level: 'global' };
-                }
-            };
-
             if (!isInitialized) {
-                const groups = await client.Groups.all() as GitLabGroup[];
-                const groupsWithSettings = await Promise.all(groups.map(async (group: GitLabGroup) => {
-                    const settings = await fetchNotificationSettings('group', group.id);
-                    return {
-                        id: group.id,
-                        name: group.full_name,
-                        level: notificationLevels.find(level => level.value === settings.level) || notificationLevels[0]
-                    };
-                }));
+                console.log('Fetching Firebase data...');
+                const groups = await client.Groups.all();
                 const projects = await getAllProjects(client);
-                const projectsWithSettings = await Promise.all(projects.map(async (project: GitLabProject) => {
-                    const settings = await fetchNotificationSettings('project', project.id);
-                    return {
-                        id: project.id,
-                        name: project.path_with_namespace,
-                        level: notificationLevels.find(level => level.value === settings.level) || notificationLevels[0]
-                    };
-                }));
-                const globalSettings = await fetchNotificationSettings('global', null);
+
+                const [groupsWithSettings, projectsWithSettings, globalSettings] = await Promise.all([
+                    Promise.all(groups.map(group => fetchNotificationSettings(client, 'group', group.id, group.full_name))),
+                    Promise.all(projects.map(project => fetchNotificationSettings(client, 'project', project.id, project.path_with_namespace))),
+                    fetchNotificationSettings(client, 'global', null, 'Global')
+                ]);
+
                 const global = {
                     level: notificationLevels.find(level => level.value === globalSettings.level) || notificationLevels[0],
                     notification_email: globalSettings.notification_email || ''
                 };
 
                 const firebaseData = await get().fetchFirebaseData(expoToken);
+                console.log("🚀 ~ syncNotificationSettings: ~ projectsWithSettings:", projectsWithSettings)
+                console.log("🚀 ~ syncNotificationSettings: ~ !firebaseData || !firebaseData.notifications:", !firebaseData || !firebaseData.notifications)
 
                 if (!firebaseData || !firebaseData.notifications) {
                     // If no Firebase data exists or no notifications array, create initial data
+                    console.log('Creating initial Firebase data');
                     await updateNotificationLevel(db, expoToken, {
                         notification_level: global.level.value,
                         custom_events: []
@@ -313,6 +317,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                     set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
                 } else {
                     // Use existing Firebase data
+                    console.log('Using existing Firebase data');
                     set({
                         projects: firebaseData.notifications.map(n => ({
                             id: n.id,
@@ -326,8 +331,11 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                         groups: groupsWithSettings
                     });
                 }
-                set({ isInitialized: true });
+                const { projects: p } = get();
+                console.log("🚀 ~ syncNotificationSettings: ~ p:", p)
+                // set({ isInitialized: true });
             } else {
+                console.log('Fetching Firebase data for syncin...');
                 const firebaseData = await get().fetchFirebaseData(expoToken);
                 if (firebaseData && firebaseData.notifications) {
                     set({
@@ -343,6 +351,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                     });
                 }
             }
+            console.log('Notification settings synced successfully');
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {

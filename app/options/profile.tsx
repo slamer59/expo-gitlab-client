@@ -9,7 +9,7 @@ import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useNotificationStore } from '@/lib/notification/state';
+import { useNotificationStore } from '@/lib/notification/notifications-state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
@@ -26,40 +26,50 @@ export default function OptionScreen() {
   if (!session) {
     return <Redirect href='/login' />;
   }
+
   const client = useMemo(() => new GitLabClient({
     url: session?.url,
     token: session?.token,
   }), [session?.url, session?.token]);
 
   const api = useGitLab(client);
+
   const { data: personalProjects, isLoading: isLoadingPersonal, error: errorPersonal } = api.useProjects({ membership: true });
+
+  const {
+    projects,
+    global,
+    modalVisible,
+    isLoading,
+    selectNotificationLevel,
+    openModal,
+    setModalVisible,
+    consentToRGPDGiven,
+    manageGdprConsent,
+    manageWebhooks
+  } = useNotificationStore();
+
+  const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
+
+  const handleGdprConsent = async (consent: boolean) => {
+    setLoadingConsent(consent);
+    try {
+      console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
+      manageGdprConsent(consent);
+      manageWebhooks(session, client, personalProjects);
+    } catch (error) {
+      console.error('Error during synchronization:', error);
+    } finally {
+      setLoadingConsent(null);
+    }
+  };
   // 1. Fetch projects
   const [alert, setAlert] = useState<{ isOpen: boolean; message: string }>({
     isOpen: false,
     message: '',
   });
-  const {
-    consentToRGPDGiven, setRGPDConsent
-  } = useNotificationStore();
 
-  const handleRGPDConsent = async () => {
-    try {
-      await setRGPDConsent(!consentToRGPDGiven);
-      // const projects = personalProjects.map(project => ({
-      //   http_url_to_repo: project.http_url_to_repo,
-      //   id: project.id
-      // }));
-      // if (!projects) return;
-      // if (consentToRGPDGiven == true) {
-      //   await removeWebhooks(session, projects);
-      // }
-      console.log("Webhooks removed successfully");
-      // setAlert({ message: 'Webhooks removed successfully', isOpen: true });
-    } catch (error) {
-      console.error("Error removing webhooks:", error);
-      setAlert({ message: `Error removing webhooks: ${error.message}`, isOpen: true });
-    }
-  };
+
   return (
     <>
       <Stack.Screen
@@ -90,7 +100,7 @@ export default function OptionScreen() {
             disabled={isLoadingPersonal}
             variant="secondary"
             className={`text-2xl items-center justify-start font-bold text-white ${consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
-            onPress={() => handleRGPDConsent()}
+            onPress={() => handleGdprConsent(!consentToRGPDGiven)}
           >
             <Text className={`text-2xl font-bold text-white`}>
               {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}

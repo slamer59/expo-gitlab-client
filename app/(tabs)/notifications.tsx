@@ -25,14 +25,8 @@ const GdprConsentScreen = () => {
         setLoadingConsent(consent);
         try {
             console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
-            // setPersonalProjects();
-            // setSessionClient(session, client)
             manageGdprConsent(consent);
             manageWebhooks(session, client, personalProjects);
-            // initializeNotifications()
-            // syncNotificationSettings(client)
-            // checkNotificationRegistration();
-            // await manageWebhookAndFirebase(session, client, personalProjects);
         } catch (error) {
             console.error('Error during synchronization:', error);
         } finally {
