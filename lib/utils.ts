@@ -1,11 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import * as Clipboard from 'expo-clipboard';
-import * as Notifications from 'expo-notifications';
 import { MutableRefObject, SetStateAction } from "react";
 
 
 import { Alert, Share } from "react-native";
 import { twMerge } from "tailwind-merge";
+import { getExpoToken } from "./notification/utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -117,10 +117,12 @@ export const tapForExpoToken = async (
   const DOUBLE_PRESS_DELAY = 300;
 
   if (now - lastTapTimeRef.current < DOUBLE_PRESS_DELAY) {
-    setTapCount(prev => prev + 1);
+    setTapCount(prev => {
+      return prev + 1
+    })
     if (tapCount === 4) {
       try {
-        const token = (await Notifications.getExpoPushTokenAsync()).data;
+        const token = await getExpoToken();
         await Clipboard.setStringAsync(token);
         // alert('Expo token copied to clipboard');
         return `Expo token copied to clipboard : \n ${token}`

@@ -111,6 +111,7 @@ export default function ProfileScreen() {
     }
   ];
 
+
   return (
     <ScrollView className="flex-1 p-4 bg-background">
       {isLoadingUser ? <UserSkeleton /> : (

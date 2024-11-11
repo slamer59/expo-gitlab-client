@@ -74,7 +74,7 @@ export interface NotificationStore {
 
     // Webhook and Firebase actions
     manageGdprConsent: (session: any) => Promise<void>;
-    manageWebhooks: (session: any, client: GitLabClient, projects: any[]) => Promise<void>;
+    manageWebhooks: (session: any, client: GitLabClient) => Promise<void>;
     addWebhookToGitLab: (session: any) => Promise<void>;
     removeWebhookFromGitLab: (session: any) => Promise<void>;
     requestPermissions: () => Promise<void>;

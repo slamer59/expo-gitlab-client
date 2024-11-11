@@ -116,7 +116,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     },
     setExpoPushToken: async () => {
         try {
-            const token = (await Notifications.getExpoPushTokenAsync()).data;
+            const token = getExpoToken()
             set({ expoPushToken: token });
 
         } catch (error) {
@@ -327,7 +327,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
         try {
             const expoToken = await getExpoToken();
-            if (!expoToken) {
+            // import * as Device from 'expo-device';
+            if (!expoToken && Device.isDevice) {
                 throw new Error('Failed to retrieve Expo token');
             }
 

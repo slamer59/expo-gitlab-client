@@ -1,17 +1,24 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Clipboard from 'expo-clipboard';
+import * as Notifications from 'expo-notifications';
 import { router } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
+import { MutableRefObject, SetStateAction } from "react";
 import GitLabClient from "../gitlab/gitlab-api-wrapper";
 import { FirebaseNotification, GitLabProject } from "./interfaces";
 
 export const RGPD_ACCEPTED_KEY = '@notification_rgpd_accepted';
 export const EXPO_TOKEN_KEY = 'expoPushToken';
 
-
 // Re-export getExpoToken for use in other files
 export const getExpoToken = async (): Promise<string | null> => {
     try {
-        return await AsyncStorage.getItem(EXPO_TOKEN_KEY);
+        if (__DEV__) {
+            // Return a fake token in debug mode
+            return 'ExponentPushToken[fake_expo_push_token]';
+        } else {
+            // Return the real token in production mode
+            return (await Notifications.getExpoPushTokenAsync()).data;
+        }
     } catch (error) {
         console.error('Error getting Expo token:', error);
         return null;
@@ -70,3 +77,29 @@ export async function updateNotificationLevel(
 }
 
 
+export const tapForExpoToken = async (
+    tapCount: number,
+    setTapCount: (value: SetStateAction<number>) => void,
+    lastTapTimeRef: MutableRefObject<number>
+) => {
+    const now = new Date().getTime();
+    const DOUBLE_PRESS_DELAY = 300;
+
+    if (now - lastTapTimeRef.current < DOUBLE_PRESS_DELAY) {
+        setTapCount(prev => prev + 1);
+        if (tapCount === 4) {
+            try {
+                const token = getExpoToken();
+                await Clipboard.setStringAsync(token);
+                // alert('Expo token copied to clipboard');
+                return `Expo token copied to clipboard : \n ${token}`
+            } catch (error) {
+                console.error('Failed to copy Expo token:', error);
+            }
+            setTapCount(0);
+        }
+    } else {
+        setTapCount(1);
+    }
+    lastTapTimeRef.current = now;
+};

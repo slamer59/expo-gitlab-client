@@ -1,3 +1,4 @@
+import InfoAlert from '@/components/InfoAlert';
 import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
@@ -6,18 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
+import { tapForExpoToken } from '@/lib/utils';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
 
 import { Redirect, Stack } from 'expo-router';
 import { LucideGitlab } from 'lucide-react-native';
-import { default as React, useMemo, useState } from 'react';
-import { Linking, Pressable, ScrollView, View } from 'react-native';
+import { default as React, useMemo, useRef, useState } from 'react';
+import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 
 export default function OptionScreen() {
   const { signOut, session } = useSession();
@@ -31,7 +32,17 @@ export default function OptionScreen() {
     token: session?.token,
   }), [session?.url, session?.token]);
 
-  const api = useGitLab(client);
+  const [alert, setAlert] = useState({ message: "", isOpen: false });
+  const [tapCount, setTapCount] = useState(0);
+  const lastTapTimeRef = useRef(0);
+
+  const handlePress = async () => {
+    const result = await tapForExpoToken(tapCount, setTapCount, lastTapTimeRef);
+    if (result) {
+      setAlert({ message: result, isOpen: true });
+    }
+  };
+
 
   const {
     isLoading,
@@ -63,7 +74,12 @@ export default function OptionScreen() {
           title: "General settings",
         }}
       />
-
+      <InfoAlert
+        isOpen={alert.isOpen}
+        onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
+        title="Information"
+        message={alert.message}
+      />
       <ScrollView className='flex-1 p-4 bg-background'>
         <SystemSettingsScreen />
         <View className="p-4 m-1 rounded-lg bg-card">
@@ -104,12 +120,16 @@ export default function OptionScreen() {
           </CardHeader>
           <CardContent>
             <View className="mb-4">
-              <View className="flex-row items-center mb-2">
-                <LucideGitlab color="white" size={24} />
-                <Text className="m-2 text-white">
-                  Version: {Application.applicationName} v{Application.nativeApplicationVersion}
-                </Text>
-              </View>
+              <TouchableOpacity
+                onPress={handlePress}
+                className="flex-row items-center mb-4">
+                <View className="flex-row items-center mb-2">
+                  <LucideGitlab color="white" size={24} />
+                  <Text className="m-2 text-white">
+                    Version: {Application.applicationName} v{Application.nativeApplicationVersion}
+                  </Text>
+                </View>
+              </TouchableOpacity>
               <View className="flex-row items-center">
                 <Image source={require("@/assets/images/logo.png")} style={{ width: 24, height: 24 }} />
                 <Text className="m-2 text-white">GitLab API: v4</Text>
