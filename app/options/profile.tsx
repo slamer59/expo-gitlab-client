@@ -103,7 +103,7 @@ export default function OptionScreen() {
               {isLoading ? "⏳  Loading   " : (consentToRGPDGiven ? "I do not consent any more" : "I give my consent")}
             </Text>
           </Button>
-          {consentToRGPDGiven && <NotificationPermissionDialog />}
+          {!consentToRGPDGiven || consentToRGPDGiven === null && <NotificationPermissionDialog />}
           <View className='flex flex-row items-center justify-center mt-4'>
             <Octicons name="info" size={16} color="#999" />
             <Text className='text-muted'> This is required for notifications to work.</Text>

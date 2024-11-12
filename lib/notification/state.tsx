@@ -104,19 +104,24 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     manageConsentFirebase: async () => {
         const { expoPushToken: token, consentToRGPDGiven } = get();
 
-        if (consentToRGPDGiven) {
-            await setDoc(doc(db, 'userNotifications', token), {
-                changedDate: new Date().toISOString(),
-                consentDate: new Date().toISOString(),
-            }, { merge: true });
-        } else {
-            await deleteDoc(doc(db, 'userNotifications', token));
-            console.log('Removed from Firebase');
+        if (token !== null) {
+            const docRef = doc(db, 'userNotifications', token);
+
+            if (consentToRGPDGiven) {
+                await setDoc(docRef, {
+                    changedDate: new Date().toISOString(),
+                    consentDate: new Date().toISOString(),
+                }, { merge: true });
+            } else {
+                await deleteDoc(docRef);
+                console.log('Removed from Firebase');
+            }
         }
+
     },
     setExpoPushToken: async () => {
         try {
-            const token = getExpoToken()
+            const token = await getExpoToken()
             set({ expoPushToken: token });
 
         } catch (error) {
