@@ -34,7 +34,9 @@ const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; n
         .filter(project => project.id && typeof project.id === 'number') // Only include projects with valid IDs
         .map(project => ({
             id: project.id,
-            name: project.path_with_namespace || String(project.id) // Fallback to ID if name not available
+            name: project.path_with_namespace || String(project.id),  // Fallback to ID if name not available
+            // Default level if not provided
+            level: notificationLevels[0] // Assuming 'disabled' is the default level
         }));
 };
 

@@ -18,6 +18,7 @@ export default function NotificationDashboard() {
         openModal,
         setModalVisible,
     } = useNotificationStore();
+    console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
 
     return (
         <>
@@ -99,7 +100,7 @@ export default function NotificationDashboard() {
                                         onPress={() => openModal('project', index)}
                                     >
                                         <Ionicons name={project.level?.icon} size={18} color="#fff" />
-                                        <Text className="mx-1 text-white">{project.level?.label}</Text>
+                                        <Text className="mx-1 text-white">{project.level.label}</Text>
                                         <Ionicons name="chevron-down" size={18} color="#fff" />
                                     </TouchableOpacity>
                                 </View>

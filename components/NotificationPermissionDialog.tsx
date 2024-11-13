@@ -2,7 +2,7 @@ import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from '@/lib/notification/state';
 import { router } from 'expo-router';
 import { useSession } from 'lib/session/SessionProvider';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -30,10 +30,8 @@ export function NotificationPermissionDialog() {
         manageWebhooks,
     } = useNotificationStore();
 
-    const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
 
     const handleConsent = async (consent: boolean) => {
-        setLoadingConsent(consent);
         try {
             if (!session) {
                 router.push('/login');
@@ -51,8 +49,6 @@ export function NotificationPermissionDialog() {
             } else {
                 alert('Failed to setup notifications. Please try again.');
             }
-        } finally {
-            setLoadingConsent(null);
         }
     };
     return (
