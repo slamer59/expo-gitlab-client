@@ -1,4 +1,5 @@
 import InfoAlert from '@/components/InfoAlert';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { NotificationPermissionDialog } from '@/components/NotificationPermissionDialog';
 import GitLabNotificationSettings from '@/components/Settings/GitlabNotificationSettings';
 import SystemSettingsScreen from '@/components/Settings/SystemSettings';
@@ -7,17 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { supportLinks } from '@/constants/links/support';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from '@/lib/notification/state';
 import { useSession } from '@/lib/session/SessionProvider';
 import { tapForExpoToken } from '@/lib/utils';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 import { Image } from 'expo-image';
-
 import { Redirect, Stack } from 'expo-router';
 import { LucideGitlab } from 'lucide-react-native';
-import { default as React, useMemo, useRef, useState } from 'react';
+import { default as React, useEffect, useRef, useState } from 'react';
 import { Linking, Pressable, ScrollView, TouchableOpacity, View } from 'react-native';
 
 export default function OptionScreen() {
@@ -26,11 +25,6 @@ export default function OptionScreen() {
   if (!session) {
     return <Redirect href='/login' />;
   }
-
-  const client = useMemo(() => new GitLabClient({
-    url: session?.url,
-    token: session?.token,
-  }), [session?.url, session?.token]);
 
   const [alert, setAlert] = useState({ message: "", isOpen: false });
   const [tapCount, setTapCount] = useState(0);
@@ -43,30 +37,18 @@ export default function OptionScreen() {
     }
   };
 
-
   const {
     isLoading,
     consentToRGPDGiven,
-    manageGdprConsent,
-    manageWebhooks,
   } = useNotificationStore();
 
-  const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
+  const [openConsentDialog, setConsentDialogOpen] = useState(false);
 
-  const handleGdprConsent = async (consent: boolean) => {
-    setLoadingConsent(consent);
-
-    try {
-      console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
-      manageGdprConsent(consent);
-      manageWebhooks(session, client);
-    } catch (error) {
-      console.error('Error during synchronization:', error);
-    } finally {
-      setLoadingConsent(null);
+  useEffect(() => {
+    if (!isLoading) {
+      setConsentDialogOpen(false);
     }
-  };
-
+  }, [isLoading]);
   return (
     <>
       <Stack.Screen
@@ -74,6 +56,7 @@ export default function OptionScreen() {
           title: "General settings",
         }}
       />
+      <LoadingOverlay />
       <InfoAlert
         isOpen={alert.isOpen}
         onClose={() => setAlert(prev => ({ ...prev, isOpen: false }))}
@@ -93,17 +76,16 @@ export default function OptionScreen() {
           </Text>
 
           <Button
-            disabled={isLoading || loadingConsent}
+            disabled={isLoading}
             variant="secondary"
-            className={`text-2xl items-center justify-start font-bold text-white ${isLoading ? 'bg-muted' : loadingConsent !== null ? 'bg-warning' : consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
-            onPress={() => handleGdprConsent(!consentToRGPDGiven)}
+            className={`text-2xl items-center justify-start font-bold text-white ${isLoading ? 'bg-muted' : consentToRGPDGiven ? 'bg-warning' : 'bg-success'}`}
+            onPress={() => setConsentDialogOpen(!openConsentDialog)}
           >
-
             <Text className={`text-2xl font-bold text-white`}>
-              {isLoading ? "⏳  Loading   " : (consentToRGPDGiven ? "I do not consent any more" : "I give my consent")}
+              {consentToRGPDGiven ? "I do not consent any more" : "I give my consent"}
             </Text>
           </Button>
-          {!consentToRGPDGiven || consentToRGPDGiven === null && <NotificationPermissionDialog />}
+          {openConsentDialog == true && <NotificationPermissionDialog />}
           <View className='flex flex-row items-center justify-center mt-4'>
             <Octicons name="info" size={16} color="#999" />
             <Text className='text-muted'> This is required for notifications to work.</Text>

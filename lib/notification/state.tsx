@@ -131,7 +131,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
         }
     },
     manageGdprConsent: async (accepted: any) => {
-        set({ consentToRGPDGiven: accepted });
+        get().setGdprConsent(accepted);
 
         try {
             await get().requestPermissions();

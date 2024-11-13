@@ -1,7 +1,8 @@
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from '@/lib/notification/state';
 import { router } from 'expo-router';
 import { useSession } from 'lib/session/SessionProvider';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,36 +16,54 @@ import {
 import { Text } from './ui/text';
 
 export function NotificationPermissionDialog() {
-    const { setGdprConsent } = useNotificationStore();
+
     const { session } = useSession();
 
-    // React.useEffect(() => {
-    //     if (session) {
-    //         setSession(session);
-    //     }
-    // }, [session]);
+    const client = useMemo(() => new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    }), [session?.url, session?.token]);
+
+
+    const {
+        manageGdprConsent,
+        manageWebhooks,
+    } = useNotificationStore();
+
+    const [loadingConsent, setLoadingConsent] = useState<boolean | null>(null);
 
     const handleConsent = async (consent: boolean) => {
+        setLoadingConsent(consent);
         try {
             if (!session) {
                 router.push('/login');
                 return;
             }
 
-            await setGdprConsent(consent);
+            console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
+            await manageGdprConsent(consent);
+            await manageWebhooks(session, client);
 
         } catch (error) {
-            console.error('Error handling consent:', error);
+            console.error('Error during synchronization:', error);
             if (error.response?.status === 401) {
                 router.push('/login');
             } else {
                 alert('Failed to setup notifications. Please try again.');
             }
+        } finally {
+            setLoadingConsent(null);
         }
     };
-
     return (
-        <AlertDialog defaultOpen>
+        <AlertDialog
+            defaultOpen
+        // onOpenChange={(open) => {
+        //     if (!open) {
+        //         setConsentDialogOpen(false);
+        //     }
+        // }}
+        >
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
