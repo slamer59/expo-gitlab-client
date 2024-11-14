@@ -1,11 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import * as Clipboard from 'expo-clipboard';
+import Constants from "expo-constants";
+import * as Notifications from 'expo-notifications';
 import { MutableRefObject, SetStateAction } from "react";
-
 
 import { Alert, Share } from "react-native";
 import { twMerge } from "tailwind-merge";
-import { getExpoToken } from "./notification/utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -107,6 +107,25 @@ export const shareView = async (url: string) => {
   }
 };
 
+
+// Re-export getExpoToken for use in other files
+export const getExpoToken = async (): Promise<string | null> => {
+  try {
+    if (__DEV__) {
+      // Return a fake token in debug mode
+      return 'ExponentPushToken[fake_expo_push_token]';
+    } else {
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+
+      const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      // Return the real token in production mode
+      return pushTokenString;
+    }
+  } catch (error) {
+    console.error('Error getting Expo token:', error);
+    return null;
+  }
+};
 
 export const tapForExpoToken = async (
   tapCount: number,

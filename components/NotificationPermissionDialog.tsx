@@ -1,8 +1,9 @@
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useNotificationStore } from '@/lib/notification/state';
 import { router } from 'expo-router';
+import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
+import { useNotificationStore } from 'lib/notification/state';
 import { useSession } from 'lib/session/SessionProvider';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import InfoAlert from './InfoAlert';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,8 +16,15 @@ import {
 } from './ui/alert-dialog';
 import { Text } from './ui/text';
 
-export function NotificationPermissionDialog() {
+interface ErrorWithResponse extends Error {
+    response?: {
+        status?: number;
+    };
+}
 
+export function NotificationPermissionDialog() {
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [errorInfo, setErrorInfo] = useState<{ title: string; message: string } | null>(null);
     const { session } = useSession();
 
     const client = useMemo(() => new GitLabClient({
@@ -24,47 +32,56 @@ export function NotificationPermissionDialog() {
         token: session?.token,
     }), [session?.url, session?.token]);
 
-
     const {
         manageGdprConsent,
         manageWebhooks,
     } = useNotificationStore();
 
-
     const handleConsent = async (consent: boolean) => {
+        setIsProcessing(true);
         try {
             if (!session) {
                 router.push('/login');
                 return;
             }
-
-            console.log(consent ? 'GDPR consent granted' : 'GDPR consent denied');
             await manageGdprConsent(consent);
             await manageWebhooks(session, client);
 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error during synchronization:', error);
-            if (error.response?.status === 401) {
-                router.push('/login');
+
+            if (error instanceof Error) {
+                const typedError = error as ErrorWithResponse;
+                if (typedError.response?.status === 401) {
+                    router.push('/login');
+                } else {
+                    const errorMessage = typedError.message || 'Unknown error occurred';
+                    setErrorInfo({
+                        title: 'Notification Setup Error',
+                        message: `Failed to setup notifications: ${errorMessage}. Please try again.`
+                    });
+                }
             } else {
-                alert('Failed to setup notifications. Please try again.');
+                setErrorInfo({
+                    title: 'Unexpected Error',
+                    message: 'An unexpected error occurred while setting up notifications. Please try again.'
+                });
             }
+        } finally {
+            setIsProcessing(false);
         }
     };
+
     return (
-        <AlertDialog
-            defaultOpen
-        // onOpenChange={(open) => {
-        //     if (!open) {
-        //         setConsentDialogOpen(false);
-        //     }
-        // }}
-        >
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {`To keep you updated with your GitLab activities, we need to:
+        <>
+            <AlertDialog
+                defaultOpen
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Enable Notifications</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {`To keep you updated with your GitLab activities, we need to:
 
 1. Store a device token for push notifications
 2. Set up webhooks for your GitLab projects
@@ -76,25 +93,42 @@ This data will:
 • Be completely removed when you disable notifications
 
 You can manage these settings at any time.`}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogAction
-                        onPress={() => router.push("/workspace/privacy-policy")}
-                        className="p-0 bg-transparent"
-                    >
-                        <Text className="text-secondary">
-                            View Privacy Policy
-                        </Text>
-                    </AlertDialogAction>
-                    <AlertDialogCancel onPress={() => handleConsent(false)}>
-                        <Text>Decline</Text>
-                    </AlertDialogCancel>
-                    <AlertDialogAction onPress={() => handleConsent(true)}>
-                        <Text>Accept</Text>
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction
+                            onPress={() => router.push("/workspace/privacy-policy")}
+                            className="p-0 bg-transparent"
+                            disabled={isProcessing}
+                        >
+                            <Text className="text-secondary">
+                                View Privacy Policy
+                            </Text>
+                        </AlertDialogAction>
+                        <AlertDialogCancel
+                            onPress={() => handleConsent(false)}
+                            disabled={isProcessing}
+                        >
+                            <Text>Decline</Text>
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onPress={() => handleConsent(true)}
+                            disabled={isProcessing}
+                        >
+                            <Text>{isProcessing ? 'Processing...' : 'Accept'}</Text>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {errorInfo && (
+                <InfoAlert
+                    isOpen={!!errorInfo}
+                    onClose={() => setErrorInfo(null)}
+                    title={errorInfo.title}
+                    message={errorInfo.message}
+                />
+            )}
+        </>
     );
 }

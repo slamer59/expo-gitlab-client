@@ -2,13 +2,12 @@ import { useNotificationStore } from '@/lib/notification/state';
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import 'firebase/firestore';
 import { notificationLevels } from 'lib/notification/utils';
-import React from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Modal, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Separator } from '../ui/separator';
 import { Skeleton } from '../ui/skeleton';
 
-export default function NotificationDashboard() {
-
+const NotificationDashboard = () => {
     const {
         projects,
         global,
@@ -18,7 +17,38 @@ export default function NotificationDashboard() {
         openModal,
         setModalVisible,
     } = useNotificationStore();
-    console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
+
+    // Use useCallback to prevent re-creating functions on every render
+    const handleSelectNotificationLevel = useCallback((level) => {
+        selectNotificationLevel(level);
+    }, [selectNotificationLevel]);
+
+    const handleOpenModal = useCallback((type, index) => {
+        openModal(type, index);
+    }, [openModal]);
+
+    const handleCloseModal = useCallback(() => {
+        setModalVisible(false);
+    }, [setModalVisible]);
+
+    // Use useMemo to prevent recalculating values on every render
+    const globalNotificationLevel = useMemo(() => {
+        return global?.level;
+    }, [global]);
+
+    const globalNotificationEmail = useMemo(() => {
+        return global?.notification_email;
+    }, [global]);
+
+    const projectList = useMemo(() => {
+        return projects || [];
+    }, [projects]);
+
+    useEffect(() => {
+        // Any side effects can be handled here
+        console.log("🚀 ~ NotificationDashboard ~ projects:", projects)
+
+    }, []);
 
     return (
         <>
@@ -37,22 +67,22 @@ export default function NotificationDashboard() {
                         {isLoading ? (
                             <Skeleton className="w-3/4 h-4" />
                         ) : (
-                            <Text className="text-white">Use primary email {global?.notification_email}</Text>
+                            <Text className="text-white">Use primary email {globalNotificationEmail}</Text>
                         )}
                         <Ionicons name="chevron-down" size={18} color="#fff" />
                     </TouchableOpacity>
                 </View>
 
-                {global?.level && (
+                {globalNotificationLevel && (
                     <View className="mb-6">
                         <Text className="mb-2 text-xl font-bold text-white">Global notification level</Text>
                         <Text className="mb-3 text-muted">By default, all projects and groups use the global notifications setting.</Text>
                         <TouchableOpacity
                             className="flex-row items-center justify-between p-3 mb-2 rounded-lg bg-muted"
-                            onPress={() => openModal('global', -1)}
+                            onPress={() => handleOpenModal('global', -1)}
                         >
-                            <Ionicons name={global.level.icon} size={18} color="#fff" />
-                            <Text className="text-white">{global.level.label}</Text>
+                            <Ionicons name={globalNotificationLevel.icon} size={18} color="#fff" />
+                            <Text className="text-white">{globalNotificationLevel.label}</Text>
                             <Ionicons name="chevron-down" size={18} color="#fff" />
                         </TouchableOpacity>
                     </View>
@@ -61,7 +91,7 @@ export default function NotificationDashboard() {
                 <Separator className="my-4 bg-secondary" />
 
                 <View className="mb-6">
-                    <Text className="mb-2 text-xl font-bold text-white">Projects ({isLoading ? "..." : projects?.length || 0})</Text>
+                    <Text className="mb-2 text-xl font-bold text-white">Projects ({isLoading ? "..." : projectList.length})</Text>
                     <Text className="mb-3 text-muted">To specify the notification level per project of a group you belong to, visit the project page and change the notification level there.</Text>
 
                     {isLoading ? (
@@ -77,7 +107,7 @@ export default function NotificationDashboard() {
                             </View>
                         ))
                     ) : (
-                        projects && projects.length > 0 ? projects.map((project, index) => (
+                        projectList.length > 0 ? projectList.map((project, index) => (
                             <ScrollView
                                 key={project.id}
                                 horizontal
@@ -97,7 +127,7 @@ export default function NotificationDashboard() {
                                     </View>
                                     <TouchableOpacity
                                         className="flex-row items-center p-2 rounded-md bg-muted"
-                                        onPress={() => openModal('project', index)}
+                                        onPress={() => handleOpenModal('project', index)}
                                     >
                                         <Ionicons name={project.level?.icon} size={18} color="#fff" />
                                         <Text className="mx-1 text-white">{project.level.label}</Text>
@@ -116,9 +146,9 @@ export default function NotificationDashboard() {
                 animationType="slide"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={handleCloseModal}
             >
-                <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                <TouchableWithoutFeedback onPress={handleCloseModal}>
                     <View className="justify-end flex-1 bg-black bg-opacity-50">
                         <View className="p-5 bg-card rounded-t-2xl">
                             <Text className="mb-4 text-4xl font-bold text-white">Select Notification Level</Text>
@@ -126,7 +156,7 @@ export default function NotificationDashboard() {
                                 <TouchableOpacity
                                     key={index}
                                     className="py-3 border-b border-muted"
-                                    onPress={() => selectNotificationLevel(level)}
+                                    onPress={() => handleSelectNotificationLevel(level)}
                                 >
                                     <Text className="mb-1 text-xl font-bold text-white">{level.label}</Text>
                                     <Text className="text-muted">{level.description}</Text>
@@ -138,4 +168,6 @@ export default function NotificationDashboard() {
             </Modal>
         </>
     );
-}
+};
+
+export default NotificationDashboard;

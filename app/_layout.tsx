@@ -57,14 +57,9 @@ SplashScreen.preventAutoHideAsync();
 function RootLayoutNav() {
   const { session, isLoading: isSessionLoading } = useSession();
   const queryClient = new QueryClient();
-  const [isLayoutMounted, setIsLayoutMounted] = React.useState(false);
   const [isReady, setIsReady] = React.useState({
     preparation: false
   });
-
-  React.useEffect(() => {
-    setIsLayoutMounted(true);
-  }, []);
 
   useNotificationObserver();
 

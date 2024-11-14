@@ -7,22 +7,41 @@ import { firebaseConfig } from 'lib/firebase/helpers';
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { create } from 'zustand';
 import { FirebaseDocument, GitLabNotificationSettings, GitLabProject, NotificationLevel, NotificationStore } from './interfaces';
-import { getAllProjects, getExpoToken, notificationLevels, updateNotificationLevel } from './utils';
-
+import { getAllProjects, notificationLevels, updateNotificationLevel } from './utils';
 
 import 'firebase/firestore';
 
+import { usePostHog } from 'posthog-react-native';
 import { removeWebhooks, updateOrCreateWebhooks } from '../gitlab/webhooks';
+import { getExpoToken } from '../utils';
+
+const captureError = (eventName, error) => {
+    const posthog = usePostHog();
+    posthog.capture(eventName, {
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString(),
+    });
+};
 
 // Initialize Firebase
 let app;
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApps()[0];
-}
+const initializeFirebase = () => {
+    try {
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApps()[0];
+        }
+        return getFirestore(app);
+    } catch (error) {
+        console.error("Error initializing Firebase:", error);
+        captureError('firebase_initialization_error', error);
+        return null;
+    }
+};
 
-const db = getFirestore(app);
+const db = initializeFirebase();
 
 const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; name: string, level?: NotificationLevel }[] => {
     if (!projects || !Array.isArray(projects)) {
@@ -31,12 +50,11 @@ const prepareProjects = (projects: GitLabProject[] | undefined): { id: number; n
     }
 
     return projects
-        .filter(project => project.id && typeof project.id === 'number') // Only include projects with valid IDs
+        .filter(project => project.id && typeof project.id === 'number')
         .map(project => ({
             id: project.id,
-            name: project.path_with_namespace || String(project.id),  // Fallback to ID if name not available
-            // Default level if not provided
-            level: notificationLevels[0] // Assuming 'disabled' is the default level
+            name: project.path_with_namespace || String(project.id),
+            level: notificationLevels[0]
         }));
 };
 
@@ -60,6 +78,7 @@ const fetchNotificationSettings = async (client: GitLabClient, type: string, id:
         };
     } catch (error) {
         console.error(`Error fetching ${type} notification settings:`, error);
+        captureError(`firebase_fetch_${type}_settings_error`, error);
         return {
             id,
             name,
@@ -68,7 +87,18 @@ const fetchNotificationSettings = async (client: GitLabClient, type: string, id:
         };
     }
 };
+
+const withErrorHandling = (fn, set) => async (...args) => {
+    try {
+        await fn(...args);
+    } catch (err) {
+        set({ error: err.message });
+        captureError('error', err);
+    }
+};
+
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
+    error: null,
     groups: [],
     projects: [],
     global: { level: notificationLevels[0], notification_email: '' },
@@ -83,7 +113,6 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     client: null,
     permissionStatus: null,
 
-    // State setters
     setGroups: (groups) => set({ groups }),
     setProjects: (projects) => set({ projects }),
     setGlobal: (global) => set({ global }),
@@ -93,20 +122,24 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     setIsInitialized: (initialized) => set({ isInitialized: initialized }),
     setPermissionStatus: (status) => set({ permissionStatus: status }),
     setPersonalProjects: (projects) => set({ projects: prepareProjects(projects) }),
-    // GDPR Consent and Firebase Sync
+
     setGdprConsent: (accepted: any) => set({ consentToRGPDGiven: accepted }),
-    requestPermissions: async () => {
+
+    requestPermissions: withErrorHandling(async () => {
         if (Device.isDevice) {
             const { status } = await Notifications.requestPermissionsAsync();
             set({ permissionStatus: status });
         } else {
             alert('Must use physical device for Push Notifications');
         }
-    },
-    manageConsentFirebase: async () => {
-        const { expoPushToken: token, consentToRGPDGiven } = get();
+    }, set),
 
-        if (token !== null) {
+    manageConsentFirebase: withErrorHandling(async () => {
+        // const { expoPushToken: token, consentToRGPDGiven } = get();
+        const { consentToRGPDGiven } = get();
+        const token = await getExpoToken();
+
+        if (token !== null && db) {
             const docRef = doc(db, 'userNotifications', token);
 
             if (consentToRGPDGiven) {
@@ -119,77 +152,70 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 console.log('Removed from Firebase');
             }
         }
+    }, set),
 
-    },
-    setExpoPushToken: async () => {
+    setExpoPushToken: withErrorHandling(async () => {
         try {
             const token = await getExpoToken()
-            set({ expoPushToken: token });
-
+            if (token) {
+                set({ expoPushToken: token });
+            }
         } catch (error) {
             console.error('Error getting Expo push token:', error);
-            // Handle error, e.g., show an alert to the user
+            captureError('firebase_get_expo_token_error', error);
             throw error;
         }
-    },
-    manageGdprConsent: async (accepted: any) => {
-        get().setGdprConsent(accepted);
+    }, set),
 
+    manageGdprConsent: withErrorHandling(async (accepted: boolean) => {
         try {
-            await get().requestPermissions();
-            await get().setExpoPushToken();
-            await get().manageConsentFirebase();
+            get().setGdprConsent(accepted);
+
+            if (accepted) {
+                await get().requestPermissions();
+                await get().setExpoPushToken();
+                await get().manageConsentFirebase();
+            } else {
+                await get().setExpoPushToken();
+                await get().manageConsentFirebase();
+            }
         } catch (error) {
             console.error('Error syncing Firebase:', error);
+            captureError('firebase_manage_gdpr_consent_error', error);
         }
-    },
-    // Webhook and Firebase actions
-    manageWebhooks: async (session, client) => {
+    }, set),
+
+    manageWebhooks: withErrorHandling(async (session, client) => {
         const { consentToRGPDGiven: consent } = get();
         set({ isLoading: true });
 
-        if (consent) {
-            await getAllProjects(client).then(projects => {
+        try {
+            if (consent) {
+                const projects = await getAllProjects(client);
                 get().setPersonalProjects(projects);
-            })
-            // get().setPersonalProjects(projects);
-            try {
-                console.log('Adding webhook to GitLab and syncing Firebase data...');
 
                 await Promise.all([
                     get().addWebhookToGitLab(session),
                     get().syncNotificationSettings(client),
                 ]);
-                console.log('Webhook added and Firebase data synced');
-            } catch (error) {
-                console.error('Error adding webhook and syncing Firebase:', error);
-            } finally {
-                set({ isLoading: false });
-            }
-        } else {
-            try {
-                console.log('Removing webhook from GitLab and Firebase data...');
+            } else {
                 await Promise.all([
                     get().removeWebhookFromGitLab(session),
-                    // get().removeDataFromFirebase(),
                 ]);
-                console.log('Webhook removed and Firebase data removed');
-            } catch (error) {
-                console.error('Error removing webhook and Firebase data:', error);
-            } finally {
-                set({ isLoading: false });
             }
+        } catch (error) {
+            console.error('Error managing webhooks:', error);
+            captureError('firebase_manage_webhooks_error', error);
+        } finally {
+            set({ isLoading: false });
         }
-    },
+    }, set),
 
-    // Helper functions for Webhooks and Firebase
-    addWebhookToGitLab: async (session) => {
+    addWebhookToGitLab: withErrorHandling(async (session) => {
         const { projects } = get();
-        // console.log('Adding webhook to GitLab for session:', session, 'and groups:', groups);
 
         if (!session?.url || !session?.token) {
-            console.error("Invalid session data");
-            return;
+            throw new Error("Invalid session data");
         }
 
         try {
@@ -198,26 +224,27 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                 projects,
                 undefined
             );
-            console.log("Webhooks updated successfully");
         } catch (error) {
             console.error("Error updating webhooks:", error);
+            captureError('firebase_add_webhook_error', error);
         }
+    }, set),
 
-
-    },
-    removeWebhookFromGitLab: async (session) => {
-        console.log('Removing webhook from GitLab for session');
+    removeWebhookFromGitLab: withErrorHandling(async (session) => {
         const { projects } = get();
         if (session?.url && session?.token) {
             try {
                 await removeWebhooks(session, projects);
-                console.log('Webhooks removed successfully');
             } catch (error) {
                 console.error('Error removing webhooks:', error);
+                captureError('firebase_remove_webhook_error', error);
             }
         }
-    },
-    fetchFirebaseData: async (expoToken: string) => {
+    }, set),
+
+    fetchFirebaseData: withErrorHandling(async (expoToken: string) => {
+        if (!db) return null;
+
         try {
             const docRef = doc(db, "userNotifications", expoToken);
             const docSnap = await getDoc(docRef);
@@ -227,13 +254,14 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             return null;
         } catch (error) {
             console.error("Error fetching Firebase data:", error);
+            captureError('firebase_fetch_data_error', error);
             return null;
         }
-    },
+    }, set),
 
-    syncNotificationSettings: async (client: GitLabClient) => {
+    syncNotificationSettings: withErrorHandling(async (client: GitLabClient) => {
         set({ isLoading: true });
-        console.log('Syncing notification settings...');
+
         try {
             const { isInitialized } = get();
             const expoToken = await getExpoToken();
@@ -243,13 +271,14 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             }
 
             if (!isInitialized) {
-                console.log('Fetching Firebase data...');
                 const groups = await client.Groups.all();
                 const projects = await getAllProjects(client);
 
                 const [groupsWithSettings, projectsWithSettings, globalSettings] = await Promise.all([
-                    Promise.all(groups.map((group: { id: number | null; full_name: string; }) => fetchNotificationSettings(client, 'group', group.id, group.full_name))),
-                    Promise.all(projects.map(project => fetchNotificationSettings(client, 'project', project.id, project.path_with_namespace))),
+                    Promise.all(groups.map((group: { id: number | null; full_name: string; }) =>
+                        fetchNotificationSettings(client, 'group', group.id, group.full_name))),
+                    Promise.all(projects.map(project =>
+                        fetchNotificationSettings(client, 'project', project.id, project.path_with_namespace))),
                     fetchNotificationSettings(client, 'global', null, 'Global')
                 ]);
 
@@ -258,46 +287,47 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                     notification_email: globalSettings.notification_email || ''
                 };
 
-                const firebaseData = await get().fetchFirebaseData(expoToken);
+                if (db) {
+                    const firebaseData = await get().fetchFirebaseData(expoToken);
 
-                if (!firebaseData || !firebaseData.notifications) {
-                    // If no Firebase data exists or no notifications array, create initial data
-                    console.log('Creating initial Firebase data');
-                    await updateNotificationLevel(db, expoToken, {
-                        notification_level: global.level.value,
-                        custom_events: []
-                    }, projectsWithSettings.map(project => ({
-                        id: project.id,
-                        name: project.name,
-                        notification_level: project.level.value,
-                        custom_events: []
-                    })));
+                    if (!firebaseData || !firebaseData.notifications) {
+                        await updateNotificationLevel(db, expoToken, {
+                            notification_level: global.level.value,
+                            custom_events: []
+                        }, projectsWithSettings.map(project => ({
+                            id: project.id,
+                            name: project.name,
+                            notification_level: project.level.value,
+                            custom_events: []
+                        })));
 
-                    set({ groups: groupsWithSettings, projects: projectsWithSettings, global });
-                } else {
-                    // Use existing Firebase data
-
-                    set({
-                        projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
-                            id: n.id,
-                            name: n.name,
-                            level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
-                        })),
-                        global: {
-                            level: notificationLevels.find(l => l.value === firebaseData.global_notification.notification_level) || notificationLevels[0],
-                            notification_email: global.notification_email
-                        },
-                        groups: groupsWithSettings
-                    });
+                        set({
+                            groups: groupsWithSettings,
+                            projects: projectsWithSettings,
+                            global,
+                            isInitialized: true
+                        });
+                    } else {
+                        set({
+                            projects: firebaseData.notifications.map(n => ({
+                                id: n.id,
+                                name: n.name,
+                                level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
+                            })),
+                            global: {
+                                level: notificationLevels.find(l => l.value === firebaseData.global_notification.notification_level) || notificationLevels[0],
+                                notification_email: global.notification_email
+                            },
+                            groups: groupsWithSettings,
+                            isInitialized: true
+                        });
+                    }
                 }
-                get();
-                // set({ isInitialized: true });
-            } else {
-                console.log('Fetching Firebase data for syncin...');
+            } else if (db) {
                 const firebaseData = await get().fetchFirebaseData(expoToken);
                 if (firebaseData && firebaseData.notifications) {
                     set({
-                        projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
+                        projects: firebaseData.notifications.map(n => ({
                             id: n.id,
                             name: n.name,
                             level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
@@ -309,15 +339,15 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                     });
                 }
             }
-            console.log('Notification settings synced successfully');
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error syncing notification settings:", error);
+            captureError('firebase_sync_settings_error', error);
         } finally {
             set({ isLoading: false });
         }
-    },
+    }, set),
 
-    selectNotificationLevel: async (level: NotificationLevel) => {
+    selectNotificationLevel: withErrorHandling(async (level: NotificationLevel) => {
         const { selectedItemType, selectedItemIndex, projects, global } = get();
         let updatedProjects = [...projects];
         let updatedGlobal = { ...global };
@@ -334,28 +364,30 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
         try {
             const expoToken = await getExpoToken();
-            // import * as Device from 'expo-device';
             if (!expoToken && Device.isDevice) {
                 throw new Error('Failed to retrieve Expo token');
             }
 
-            const globalNotification = {
-                notification_level: updatedGlobal.level.value,
-                custom_events: []
-            };
+            if (db) {
+                const globalNotification = {
+                    notification_level: updatedGlobal.level.value,
+                    custom_events: []
+                };
 
-            const updatedNotifications = updatedProjects.map((project) => ({
-                id: project.id,
-                name: project.name,
-                notification_level: project.level.value,
-                custom_events: []
-            }));
+                const updatedNotifications = updatedProjects.map((project) => ({
+                    id: project.id,
+                    name: project.name,
+                    notification_level: project.level.value,
+                    custom_events: []
+                }));
 
-            await updateNotificationLevel(db, expoToken, globalNotification, updatedNotifications);
+                await updateNotificationLevel(db, expoToken, globalNotification, updatedNotifications);
+            }
         } catch (error) {
             console.error("Error updating notification level:", error);
+            captureError('firebase_update_notification_level_error', error);
         }
-    },
+    }, set),
 
     openModal: (type: any, index = -1) => {
         set({
@@ -365,7 +397,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
         });
     },
 
-    fetchGitLabEmailSettings: async (client: GitLabClient) => {
+    fetchGitLabEmailSettings: withErrorHandling(async (client: GitLabClient) => {
         try {
             const response = await client.GlobalNotification.all() as GitLabNotificationSettings;
             set({
@@ -376,15 +408,18 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             });
         } catch (error) {
             console.error("Error fetching GitLab email settings:", error);
+            captureError('firebase_fetch_gitlab_email_settings_error', error);
         }
-    },
+    }, set),
 
-    fetchFirebaseNotifications: async (expoToken: string) => {
+    fetchFirebaseNotifications: withErrorHandling(async (expoToken: string) => {
+        if (!db) return;
+
         try {
             const firebaseData = await get().fetchFirebaseData(expoToken);
             if (firebaseData && firebaseData.notifications) {
                 set({
-                    projects: firebaseData.notifications.map((n: { id: any; name: any; notification_level: string; }) => ({
+                    projects: firebaseData.notifications.map(n => ({
                         id: n.id,
                         name: n.name,
                         level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
@@ -397,16 +432,19 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             }
         } catch (error) {
             console.error("Error fetching Firebase notifications:", error);
+            captureError('firebase_fetch_notifications_error', error);
         }
-    },
+    }, set),
 
-    syncGitLabWithFirebase: async (client: GitLabClient, expoToken: string) => {
+    syncGitLabWithFirebase: withErrorHandling(async (client: GitLabClient, expoToken: string) => {
+        if (!db) return;
+
         try {
             const projects = await getAllProjects(client);
             const firebaseData = await get().fetchFirebaseData(expoToken);
             const firebaseProjects = firebaseData?.notifications || [];
 
-            const firebaseProjectMap = new Map(firebaseProjects.map((p: { id: any; }) => [p.id, p]));
+            const firebaseProjectMap = new Map(firebaseProjects.map(p => [p.id, p]));
 
             const updatedNotifications = projects.map(project => {
                 const firebaseProject = firebaseProjectMap.get(project.id);
@@ -430,10 +468,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
                     level: notificationLevels.find(l => l.value === n.notification_level) || notificationLevels[0]
                 }))
             });
-
         } catch (error) {
             console.error("Error syncing GitLab with Firebase:", error);
+            captureError('firebase_sync_gitlab_error', error);
         }
-    },
-
+    }, set),
 }));
