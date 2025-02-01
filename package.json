@@ -143,11 +143,11 @@
     "react-test-renderer": "18.2.0",
     "typescript": "~5.3.3"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git"
   },
+  "license": "MIT",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

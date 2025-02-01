@@ -1,6 +1,28 @@
+# Expo GitLab Client
+
+A mobile client for GitLab built with Expo, providing a native experience for GitLab users on mobile devices.
+
+## Features
+
+- GitLab authentication and authorization
+- View and manage projects
+- Push notifications for GitLab events
+- Issue tracking and management
+- Merge request reviews
+- Project activity feeds
+- Dark/Light mode support
+
+## Installation & Setup
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Copy `.env.example` to `.env` and configure your environment variables
+
+## API Client Generation
+
 curl -X POST -H "content-type:application/json" -d '{"swaggerUrl":"https://gitlab.com/gitlab-org/gitlab/-/raw/master/doc/api/openapi/openapi_v2.yaml"}' https://generator.swagger.io/api/gen/clients/typescript-fetch
 
-## Google Service Account for Google Play
+## Development Setup
 
 ### First submission
 https://github.com/expo/fyi/blob/main/first-android-submission.md
@@ -44,4 +66,3 @@ https://design.gitlab.com/
 
 ```gitalchemy@gmail.com
 gitalchemy.test.account```
-
