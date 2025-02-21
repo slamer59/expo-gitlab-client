@@ -1,7 +1,7 @@
 {
   "name": "expo-gitlab-client",
   "main": "expo-router/entry",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -143,11 +143,11 @@
     "react-test-renderer": "18.2.0",
     "typescript": "~5.3.3"
   },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/thomas.pedot1/expo-gitlab-client.git"
   },
-  "license": "MIT",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

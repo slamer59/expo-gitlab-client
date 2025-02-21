@@ -1,5 +1,5 @@
 export const firebaseConfig = {
-    apiKey: "FIREBASE_API_KEY_REMOVED",
+    apiKey: "AIzaSyAjUS0I6NqvsmJgefquyA18gwOKI6q6esc",
     authDomain: "gitalchemy.firebaseapp.com",
     projectId: "gitalchemy",
     storageBucket: "gitalchemy.appspot.com",
