@@ -12,6 +12,7 @@ GitLab Client for Expo is an open-source mobile application that provides a seam
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Downloads](#downloads)
+  - [Automatic Updates with Obtainium](#automatic-updates-with-obtainium)
   - [Screenshots](#screenshots)
   - [Getting Started](#getting-started)
   - [Configuration](#configuration)
@@ -22,6 +23,7 @@ GitLab Client for Expo is an open-source mobile application that provides a seam
     - [Debugging](#debugging)
     - [Maestro Setup](#maestro-setup)
   - [Building](#building)
+    - [Automated APK Builds for OpenAPK](#automated-apk-builds-for-openapk)
   - [Contributing](#contributing)
   - [Translation](#translation)
   - [Maintenance](#maintenance)
@@ -54,7 +56,22 @@ You can find some usefull information on [gitalchemy blog](https://gitalchemy.ap
 <!-- [<img alt="Get it on F-Droid" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/fdroid.png" height="80">](https://f-droid.org/packages/com.thomas.pedot.expogitlabclient/) -->
 [<img alt="Get it on Google Play" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/google-play.png" height="80">](https://play.google.com/store/apps/details?id=com.thomas.pedot.expogitlabclient)
 [<img alt="Download APK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/apk-badge.png" height="80">](https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/releases)
-<!-- [<img alt="Get it on OpenAPK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/openapk.png" height="80">](https://www.openapk.net/labnex/com.thomas.pedot.expogitlabclient/) -->
+[<img alt="Get it on OpenAPK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/openapk.png" height="80">](https://openapk.org/app/com.thomas.pedot.expogitlabclient)
+
+## Automatic Updates with Obtainium
+
+You can receive automatic updates for this app using [Obtainium](https://github.com/ImranR98/Obtainium), a free and open-source app manager for Android.
+
+To set up automatic updates:
+
+1. Install Obtainium from [F-Droid](https://f-droid.org/packages/dev.imranr.obtainium/) or [GitHub](https://github.com/ImranR98/Obtainium/releases)
+2. Add this app to Obtainium using the GitLab repository URL:
+   ```
+   https://gitlab.com/thomas.pedot1/expo-gitlab-client
+   ```
+3. Obtainium will automatically check for new releases and notify you when updates are available
+
+This method ensures you always have the latest version without needing to manually check for updates.
 
 ## Screenshots
 
@@ -165,6 +182,44 @@ maestro studio
 ## Building
 
 For detailed instructions on building the app from source, please refer to our [Building Guide](https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/wikis/Building).
+
+### Automated APK Builds for OpenAPK
+
+This project uses GitLab CI/CD to automatically build and publish APKs for OpenAPK and Obtainium. For detailed setup instructions, see our [OpenAPK Integration Guide](OPENAPK.md).
+
+The process works as follows:
+
+1. When a new tag is created (e.g., `v1.2.3`), the GitLab CI/CD pipeline is triggered
+2. The pipeline builds the APK using EAS (Expo Application Services)
+3. The APK is downloaded and attached to a GitLab release
+4. The release is automatically published to GitLab
+5. OpenAPK and Obtainium can then detect and offer the new version
+
+To create a new release:
+
+1. Update the version in `app.json`:
+   ```json
+   {
+     "expo": {
+       "version": "1.2.3",
+       "android": {
+         "versionCode": 12
+       }
+     }
+   }
+   ```
+
+2. Create and push a new tag:
+   ```bash
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+
+3. The CI/CD pipeline will handle the rest automatically
+
+The CI/CD pipeline has been configured to separate the build and publish processes:
+- The `build-android-apk` job builds the APK using EAS
+- The `publish-android-apk` job creates a GitLab release with the APK attached
 
 ## Contributing
 

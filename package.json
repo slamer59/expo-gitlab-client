@@ -79,6 +79,7 @@
     "expo-dev-client": "~4.0.28",
     "expo-device": "~6.0.2",
     "expo-document-picker": "~12.0.2",
+    "expo-dom": "^27.0.2",
     "expo-file-system": "~17.0.1",
     "expo-font": "~12.0.10",
     "expo-image": "~1.13.0",
