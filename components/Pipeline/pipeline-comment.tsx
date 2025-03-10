@@ -1,3 +1,6 @@
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDuration, intervalToDuration } from 'date-fns';
@@ -8,8 +11,16 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 const PipelineComment = ({ pipeline, projectId }) => {
     const { user, created_at, id, status, ref, web_url } = pipeline;
-
     const router = useRouter();
+    const { session } = useSession();
+
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
+    const retryPipelineMutation = api.useRetryPipeline();
 
     const copyToClipboard = async () => {
         await Clipboard.setStringAsync(web_url);
@@ -19,10 +30,12 @@ const PipelineComment = ({ pipeline, projectId }) => {
         router.push(`/workspace/projects/${projectId}/pipelines/${id}`);
     };
 
-    const handleRetry = () => {
-        // Implement pipeline retry logic
-        // This would typically involve making an API call to GitLab
-        console.log('Retrying pipeline');
+    const handleRetry = async () => {
+        try {
+            await retryPipelineMutation.mutateAsync({ projectId, pipelineId: id });
+        } catch (error) {
+            console.error("Error retrying pipeline:", error);
+        }
     };
 
     return (

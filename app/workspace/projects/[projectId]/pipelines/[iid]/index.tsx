@@ -21,17 +21,27 @@ import { headerRightProjectPipeline } from "./headerRight";
 
 
 function JobItem({ job }) {
-
+    const { session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
+
+    const client = new GitLabClient({
+        url: session?.url,
+        token: session?.token,
+    });
+
+    const api = useGitLab(client);
+    const retryJobMutation = api.useRetryJob();
 
     const handleViewDetails = () => {
         router.push(`/workspace/projects/${job.pipeline.project_id}/jobs/${job.id}`);
     };
 
-    const handleRetry = () => {
-        // Implement pipeline retry logic
-        // This would typically involve making an API call to GitLab
-        console.log('Retrying pipeline');
+    const handleRetry = async () => {
+        try {
+            await retryJobMutation.mutateAsync({ projectId: job.pipeline.project_id, jobId: job.id });
+        } catch (error) {
+            console.error("Error retrying job:", error);
+        }
     };
 
     return (
@@ -202,10 +212,13 @@ export default function PipelineDetails() {
         }
     }
 
+    // Get the retry pipeline mutation
+    const retryPipelineMutation = api.useRetryPipeline();
+
     // Retry Pipeline
     const retryPipeline = async () => {
         try {
-            await api.useRetryPipeline(projectId, pipelineId);
+            await retryPipelineMutation.mutateAsync({ projectId, pipelineId });
         } catch (error) {
             console.error("Error retrying pipeline:", error);
         }

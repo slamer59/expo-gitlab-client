@@ -255,10 +255,13 @@ export default function JobDetails() {
         { data: trace, isLoading: isLoadingTrace, error: errorTrace },
     ] = api.useJobDetails(projectId, jobId);
 
+    // Get the retry job mutation
+    const retryJobMutation = api.useRetryJob();
+
     // Retry Job
     const retryJob = async () => {
         try {
-            await api.useRetryJob({ projectId, jobId });
+            await retryJobMutation.mutateAsync({ projectId, jobId });
         } catch (error: any) {
             console.error("Error retrying job:", error);
         }
