@@ -521,6 +521,31 @@ class GitLabClient {
       return this.request(`/projects/${projectId}/pipelines/${pipelineId}/jobs`);
     },
   }
+
+  Jobs = {
+    all: async (projectId, options = {}) => {
+      const queryString = new URLSearchParams(options).toString();
+      return this.request(`/projects/${projectId}/jobs?${queryString}`);
+    },
+    show: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}`);
+    },
+    trace: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}/trace`);
+    },
+    retry: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}/retry`, 'POST');
+    },
+    cancel: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}/cancel`, 'POST');
+    },
+    erase: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}/erase`, 'POST');
+    },
+    artifacts: async (projectId, jobId) => {
+      return this.request(`/projects/${projectId}/jobs/${jobId}/artifacts`);
+    },
+  }
   ProjectMembers = {
     all: async (projectId, options = {}) => {
       const queryString = new URLSearchParams(options).toString();

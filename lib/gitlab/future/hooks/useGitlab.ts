@@ -69,6 +69,9 @@ export const useGitLab = (client: GitLabClient) => {
         useProjectLabels: (projectId: string) => createQueryHook(['projectLabels', projectId], () => client.Labels.all(projectId))(),
         useProjectMilestones: (projectId: string) => createQueryHook(['projectMilestones', projectId], () => client.Milestones.all(projectId))(),
         useProjectPipelines: (projectId: string) => createQueryHook(['projectPipelines', projectId], () => client.Pipelines.all(projectId))(),
+        useProjectJobs: (projectId: string) => createQueryHook(['projectJobs', projectId], () => client.Jobs.all(projectId))(),
+        useProjectJob: (projectId: string, jobId: string) => createQueryHook(['projectJob', projectId, jobId], () => client.Jobs.show(projectId, jobId))(),
+        useProjectJobTrace: (projectId: string, jobId: string) => createQueryHook(['projectJobTrace', projectId, jobId], () => client.Jobs.trace(projectId, jobId))(),
         useProjectMergeRequest: (projectId: string, mergeRequestIid: string) => createQueryHook(['projectMergeRequest', projectId, mergeRequestIid], () => client.ProjectMergeRequests.show(projectId, mergeRequestIid))(),
         useProjectMember: (projectId: string, userId: string) => createQueryHook(['projectMember', projectId, userId], () => client.ProjectMembers.show(projectId, userId))(),
         useProjectCommit: (projectId: string, sha: string) => createQueryHook(['projectCommit', projectId, sha], () => client.Commits.show(projectId, sha))(),
@@ -406,6 +409,25 @@ export const useGitLab = (client: GitLabClient) => {
                 { data: pipelineQuery.data, isLoading: pipelineQuery.isLoading, error: pipelineQuery.error },
                 { data: commitQuery.data, isLoading: commitQuery.isLoading, error: commitQuery.error },
                 { data: jobsQuery.data, isLoading: jobsQuery.isLoading, error: jobsQuery.error },
+            ];
+        },
+
+        // Job
+        useJobDetails: (projectId: string, jobId: string) => {
+            const jobQuery = useQuery({
+                queryKey: ['projectJob', projectId, jobId],
+                queryFn: () => client.Jobs.show(projectId, jobId),
+            });
+
+            const traceQuery = useQuery({
+                queryKey: ['projectJobTrace', projectId, jobId],
+                queryFn: () => client.Jobs.trace(projectId, jobId),
+                enabled: !!jobQuery.data,
+            });
+
+            return [
+                { data: jobQuery.data, isLoading: jobQuery.isLoading, error: jobQuery.error },
+                { data: traceQuery.data, isLoading: traceQuery.isLoading, error: traceQuery.error },
             ];
         },
 
