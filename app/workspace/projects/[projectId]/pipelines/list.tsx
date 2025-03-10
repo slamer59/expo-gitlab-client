@@ -1,7 +1,7 @@
 import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
 import { FlatListCards } from '@/components/FlatList/FlatListCards';
 import { PipelineCard, PipelineCardSkeleton } from '@/components/Pipeline/pipeline-card';
-import { GlobalMergeRequestUIFilters } from '@/constants/UIFilters';
+import { GlobalPipelinesUIFilters } from '@/constants/UIFilters';
 import { createScreenStore } from '@/lib/filter/state';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
@@ -18,7 +18,7 @@ export default function ProjectPipelineList() {
     });
 
     const { projectId } = useLocalSearchParams();
-    const UIFilters = GlobalMergeRequestUIFilters
+    const UIFilters = GlobalPipelinesUIFilters
     const useScreenStore = useMemo(() => createScreenStore(client.Pipelines.all, projectId, UIFilters), []);
     const { items, loading, filters, error, fetchItems, setFilter } = useScreenStore();
 
@@ -45,7 +45,7 @@ export default function ProjectPipelineList() {
         >
             <Stack.Screen
                 options={{
-                    headerTitle: `Merge Requests for Project`,
+                    headerTitle: `Pipelines for Project`,
                 }}
             />
             <View className="*:mb-2 flex-col justify-between">

@@ -18,7 +18,19 @@ export function IssueCardSkeleton() {
   );
 }
 
-export function IssueCard({ item }) {
+interface IssueItem {
+  id: string | number;
+  title: string;
+  references: {
+    full: string;
+  };
+  updated_at: string;
+  labels: string[];
+  project_id: number;
+  iid: number;
+}
+
+export function IssueCard({ item }: { item: IssueItem }) {
 
   return (
     <View className="flex-row p-3 mt-2 mb-2 rounded-lg bg-card">
@@ -27,14 +39,13 @@ export function IssueCard({ item }) {
       </View>
       <View className="flex-1 mt-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text className="text-sm text-muted">{item.references.full}</Text>
           <Text className="text-sm text-muted">{formatDate(item.updated_at)}</Text>
         </View>
         <Text className="mb-2 text-lg font-bold text-white" testID={`issue-card`}>{item.title}</Text>
         <View className="flex-row items-center space-x-2">
           {item?.labels.length > 0 && (
             <View className="flex-row flex-wrap">
-              {item?.labels.map((label, index) => (
+              {item?.labels.map((label: string, index: number) => (
                 <Pills
                   key={index}
                   label={label}
