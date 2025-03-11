@@ -31,11 +31,10 @@ build-app:
     - echo "Found Build ID $BUILD_ID"
     - APK_URL=$(eas build:view $BUILD_ID --json | jq -r ".artifacts.buildUrl")
     - echo "Downloading APK from $APK_URL..."
-    - mkdir -p downloaded_apk
-    - curl -L "$APK_URL" -o downloaded_apk/gitalchemy.apk
+    - curl -L "$APK_URL" -o gitalchemy.apk
   artifacts:
     paths:
-      - downloaded_apk/gitalchemy.apk
+      - gitalchemy.apk
   only:
     - main
 
@@ -61,7 +60,7 @@ create-release:
             \"links\": [
               {
                 \"name\": \"gitalchemy.apk\",
-                \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/downloaded_apk/gitalchemy.apk\"
+                \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/gitalchemy.apk\"
               }
             ]
           }
