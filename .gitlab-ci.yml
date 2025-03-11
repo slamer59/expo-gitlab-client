@@ -25,7 +25,7 @@ build-app:
     - bun i
     - bun i -g eas-cli@${EAS_VERSION}
     - echo "Building the app with EAS..."
-    - bunx eas build --platform android --non-interactive
+    # - bunx eas build --platform android --non-interactive
     - export NODE_OPTIONS="--max-old-space-size=4096"
     - echo "Fetching the latest successful build URL..."
     - bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id'
@@ -47,16 +47,33 @@ create-release:
   image: curlimages/curl:latest
   script:
     - echo "Creating a new release..."
+    - RELEASE_TAG="v$(date +'%Y%m%d%H%M%S')"
+    - RELEASE_NOTES="Release for commit $CI_COMMIT_SHA"
     - |
-      RELEASE_TAG="v$(date +'%Y%m%d%H%M%S')"
-      RELEASE_NOTES="Release for commit $CI_COMMIT_SHA"
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" --request POST \
-        --form "tag_name=$RELEASE_TAG" \
-        --form "ref=$CI_COMMIT_REF_NAME" \
-        --form "name=$RELEASE_TAG" \
-        --form "description=$RELEASE_NOTES" \
-        --form "assets_links[0][name]=gitalchemy.apk" \
-        --form "assets_links[0][url]=https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/downloaded_apk/app.apk" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+      RESPONSE=$(curl --silent --write-out "%{http_code}" --output response.json \
+        --header "PRIVATE-TOKEN: $CI_PROJECT_TOKEN" \
+        --header "Content-Type: application/json" \
+        --request POST \
+        --data "{
+          \"tag_name\": \"$RELEASE_TAG\",
+          \"ref\": \"$CI_COMMIT_REF_NAME\",
+          \"name\": \"$RELEASE_TAG\",
+          \"description\": \"$RELEASE_NOTES\",
+          \"assets\": {
+            \"links\": [
+              {
+                \"name\": \"gitalchemy.apk\",
+                \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/downloaded_apk/app.apk\"
+              }
+            ]
+          }
+        }" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases")
+    - if [ "$RESPONSE" -ne 201 ]; then
+      echo "❌ Failed to create release. Response:";
+      cat response.json;
+      exit 1;
+      fi
+    - echo "✅ Release $RELEASE_TAG created successfully!"
   only:
     - main
