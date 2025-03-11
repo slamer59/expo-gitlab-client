@@ -35,6 +35,7 @@ build-app:
   artifacts:
     paths:
       - gitalchemy.apk
+    expose_as: "Android APK" # Makes the APK directly downloadable from the job page
   only:
     - main
 
@@ -60,7 +61,7 @@ create-release:
             \"links\": [
               {
                 \"name\": \"gitalchemy.apk\",
-                \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/gitalchemy.apk\"
+                \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/artifacts/$CI_COMMIT_REF_NAME/raw/gitalchemy.apk?job=build-app\"
               }
             ]
           }
