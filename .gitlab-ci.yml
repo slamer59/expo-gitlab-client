@@ -51,7 +51,7 @@ create-release:
     - RELEASE_NOTES="Release for commit $CI_COMMIT_SHA"
     - |
       RESPONSE=$(curl --silent --write-out "%{http_code}" --output response.json \
-        --header "PRIVATE-TOKEN: $CI_PROJECT_TOKEN" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --header "Content-Type: application/json" \
         --request POST \
         --data "{
