@@ -17,6 +17,7 @@ build-app:
   image: oven/bun:${BUN_VERSION}
   variables:
     EXPO_TOKEN: $EAS_TOKEN # Map GitLab's EAS_TOKEN to EXPO_TOKEN that EAS CLI expects
+    EAS_SKIP_AUTO_FINGERPRINT: 1
   script:
     - echo "Setting up the project..."
     - apt-get update && apt-get install -y git
