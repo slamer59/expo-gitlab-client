@@ -24,6 +24,7 @@ build-app:
     - bun i
     - bun i -g eas-cli@${EAS_VERSION}
     - echo "Building the app with EAS..."
+    - bunx eas build --platform android --non-interactive
     - export NODE_OPTIONS="--max-old-space-size=4096"
     - echo "Fetching the latest successful build URL..."
     - BUILD_ID=$(bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
@@ -62,7 +63,7 @@ create-release:
               {
                 \"name\": \"gitalchemy.apk\",
                 \"url\": \"https://gitlab.com/$CI_PROJECT_PATH/-/jobs/artifacts/$CI_COMMIT_REF_NAME/raw/gitalchemy.apk?job=build-app\"
-              }
+              }            
             ]
           }
         }" \
