@@ -26,8 +26,7 @@ build-app:
     - echo "Building the app with EAS..."
     - export NODE_OPTIONS="--max-old-space-size=4096"
     - echo "Fetching the latest successful build URL..."
-    - bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive
-    - bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
+    - bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id'
     - BUILD_ID=$(bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
     - echo ${BUILD_ID}
     - if [ -z "$BUILD_ID" ] || [ "$BUILD_ID" == "null" ]; then echo "No successful builds found."; exit 1; fi
