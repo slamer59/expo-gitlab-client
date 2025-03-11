@@ -18,21 +18,21 @@ build-app:
   image: imbios/bun-node:${BUN_VERSION}-${NODE_VERSION}-slim
   variables:
     EXPO_TOKEN: $EAS_TOKEN # Map GitLab's EAS_TOKEN to EXPO_TOKEN that EAS CLI expects
+    EAS_SKIP_AUTO_FINGERPRINT: 1
   script:
     - echo "Setting up the project..."
     - apt-get update && apt-get install -y git jq curl
     - bun i
     - bun i -g eas-cli@${EAS_VERSION}
     - echo "Building the app with EAS..."
+    - bunx eas build --platform android --non-interactive
     - export NODE_OPTIONS="--max-old-space-size=4096"
     - echo "Fetching the latest successful build URL..."
     - bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id'
     - BUILD_ID=$(bunx eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
-    - echo ${BUILD_ID}
     - if [ -z "$BUILD_ID" ] || [ "$BUILD_ID" == "null" ]; then echo "No successful builds found."; exit 1; fi
     - echo "Found Build ID $BUILD_ID"
     - APK_URL=$(eas build:view $BUILD_ID --json | jq -r ".artifacts.buildUrl")
-    # - if [ -z "$APK_URL" ] || [ "$APK_URL" == "null" ]; then echo "Failed to fetch the APK URL for build ID: $BUILD_ID"; exit 1; fi
     - echo "Downloading APK from $APK_URL..."
     - mkdir -p downloaded_apk
     - curl -L "$APK_URL" -o downloaded_apk/app.apk
@@ -50,13 +50,13 @@ create-release:
     - |
       RELEASE_TAG="v$(date +'%Y%m%d%H%M%S')"
       RELEASE_NOTES="Release for commit $CI_COMMIT_SHA"
-      curl --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" --request POST \
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" --request POST \
         --form "tag_name=$RELEASE_TAG" \
         --form "ref=$CI_COMMIT_REF_NAME" \
         --form "name=$RELEASE_TAG" \
         --form "description=$RELEASE_NOTES" \
-        --form "assets_links[0][name]=app.apk" \
-        --form "assets_links[0][url]=https://gitlab.com/$CI_PROJECT_PATH/-/jobs/$CI_JOB_ID/artifacts/raw/downloaded_apk/app.apk" \
+        --form "assets_links[0][name]=gitalchemy.apk" \
+        --form "assets_links[0][url]=https://gitlab.com/$CI_PROJECT_PATH/-/jobs/${CI_JOB_ID}/artifacts/raw/downloaded_apk/app.apk" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
   only:
     - main
