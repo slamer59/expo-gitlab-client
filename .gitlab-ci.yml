@@ -34,7 +34,7 @@ build-app:
   stage: build
   image: imbios/bun-node:${BUN_VERSION}-${NODE_VERSION}-slim
   variables:
-    EXPO_TOKEN: $EAS_TOKEN # Map GitLab's EAS_TOKEN to EXPO_TOKEN that EAS CLI expects
+    EXPO_TOKEN: $EAS_TOKEN
     EAS_SKIP_AUTO_FINGERPRINT: 1
   script:
     - echo "Setting up the project..."
