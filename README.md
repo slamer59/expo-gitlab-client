@@ -56,7 +56,7 @@ You can find some usefull information on [gitalchemy blog](https://gitalchemy.ap
 <!-- [<img alt="Get it on F-Droid" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/fdroid.png" height="80">](https://f-droid.org/packages/com.thomas.pedot.expogitlabclient/) -->
 [<img alt="Get it on Google Play" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/google-play.png" height="80">](https://play.google.com/store/apps/details?id=com.thomas.pedot.expogitlabclient)
 [<img alt="Download APK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/apk-badge.png" height="80">](https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/releases)
-[<img alt="Get it on OpenAPK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/openapk.png" height="80">](https://www.openapk.net/gitalchemy/com.thomas.pedot.expogitlabclient)
+[<img alt="Get it on OpenAPK" src="https://gitlab.com/thomas.pedot1/expo-gitlab-client/-/raw/main/assets/logos/openapk.png" height="80">]( https://www.openapk.net/gitalchemy/com.thomas.pedot.expogitlabclient/)
 
 ## Automatic Updates with Obtainium
 
