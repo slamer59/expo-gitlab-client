@@ -13,7 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.thomas.pedot.expogitlabclient",
@@ -24,7 +26,7 @@
         "foregroundImage": "./assets/images/icon-1024x1024.png",
         "backgroundColor": "#fff"
       },
-      "versionCode": 11,
+      "versionCode": 41,
       "package": "com.thomas.pedot.expogitlabclient",
       "googleServicesFile": "./google-services.json"
     },
@@ -40,7 +42,9 @@
       "favicon": "./assets/images/logo.png"
     },
     "plugins": [
-      ["expo-router"],
+      [
+        "expo-router"
+      ],
       "expo-localization",
       "expo-font",
       [
@@ -49,6 +53,16 @@
           "icon": "./assets/images/logo.png",
           "color": "#ffffff",
           "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
         }
       ]
     ],

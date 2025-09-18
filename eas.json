@@ -19,6 +19,12 @@
     },
     "production": {
       "autoIncrement": true,
+      "env": {
+        "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
+      }
+    },
+    "production-apk": {
+      "autoIncrement": true,
       "android": {
         "buildType": "apk"
       },
