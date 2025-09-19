@@ -6,7 +6,8 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -15,13 +16,15 @@
       },
       "env": {
         "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
-      }
+      },
+      "channel": "production"
     },
     "production-apk": {
       "autoIncrement": true,
@@ -30,7 +33,8 @@
       },
       "env": {
         "GOOGLE_SERVICES_FILE": "GOOGLE_SERVICES_FILE"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
