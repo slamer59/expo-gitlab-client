@@ -1,11 +1,13 @@
 
 
 
-import { formatDate } from '@/lib/utils';
 
 import { Octicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+
+import { formatDate } from '@/lib/utils';
+
 import { Pills } from '../Pills';
 import { Skeleton } from '../ui/skeleton';
 // name={project?.name}

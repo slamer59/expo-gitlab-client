@@ -1,10 +1,12 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
-
 import { Link } from "expo-router";
 import React from 'react';
 import { View } from 'react-native';
+
+import { Text } from "@/components/ui/text";
+
 import { Pills } from "../Pills";
+
 import MergeRequestComment from "./mr-comment";
 
 

@@ -1,14 +1,18 @@
+import React, { useEffect } from 'react';
+import { Pressable } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Pressable } from 'react-native';
 
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import React, { useEffect } from 'react';
-import { ScrollView, View } from 'react-native';
+
+
 import { Pills } from '../Pills';
 import { SectionTitle } from '../Section/param';
+
 import { EditParamMergeRequestDialog } from './mr-edit-param';
 
 export default function EditLabelMergeRequest({ projectId, mrIid }) {

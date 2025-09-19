@@ -2,6 +2,7 @@ import { Label } from "@rn-primitives/select";
 import React, { useCallback, useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import EnhancedMarkdownEditor from "../markdown-editor";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";

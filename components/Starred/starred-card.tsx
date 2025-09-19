@@ -1,7 +1,9 @@
-import { formatDate } from "@/lib/utils";
 
 import React from "react";
 import { Text, View } from "react-native";
+
+import { formatDate } from "@/lib/utils";
+
 import { Pills } from "../Pills";
 import { Skeleton } from "../ui/skeleton";
 

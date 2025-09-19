@@ -1,6 +1,7 @@
 import { Octicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View } from "react-native";
+
 import { AvatarWithUrl } from "../ui/avatar-with-url";
 import { Skeleton } from "../ui/skeleton";
 

@@ -3,7 +3,6 @@ import * as Clipboard from 'expo-clipboard';
 import Constants from "expo-constants";
 import * as Notifications from 'expo-notifications';
 import { MutableRefObject, SetStateAction } from "react";
-
 import { Alert, Share } from "react-native";
 import { twMerge } from "tailwind-merge";
 

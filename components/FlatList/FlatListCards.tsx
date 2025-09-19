@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
+
 import { EmptyComponent } from "./EmptyComponent";
 
 type ListItem = {

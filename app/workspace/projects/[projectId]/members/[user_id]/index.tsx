@@ -1,3 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import React from 'react';
+import { View } from 'react-native';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -5,10 +10,6 @@ import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
-import React from 'react';
-import { View } from 'react-native';
 const MemberSkeleton = () => (
     <View className="flex-row items-center mb-4">
         <Skeleton className="w-12 h-12 rounded-full bg-muted" />

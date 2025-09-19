@@ -1,6 +1,7 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+
+import { Text } from "@/components/ui/text";
 
 export default function StarredStatusIcon(
     Starred: any,

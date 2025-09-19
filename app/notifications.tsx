@@ -1,9 +1,10 @@
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { registerForPushNotificationsAsync } from "@/lib/gitlab/helpers";
 import * as Notifications from "expo-notifications";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Platform, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { registerForPushNotificationsAsync } from "@/lib/gitlab/helpers";
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 const gitlabEvents = [
     {

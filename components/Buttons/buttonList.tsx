@@ -1,11 +1,14 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
+
+import { Text } from "@/components/ui/text";
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+
 import { RoundedColoredButton } from "./RoundedColored";
 
 export function ButtonList({

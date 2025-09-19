@@ -1,11 +1,13 @@
+import React, { useEffect, useState } from 'react';
+import { Platform, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import React, { useEffect, useState } from 'react';
-import { Platform, ScrollView, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
+
 import { SectionTitle } from '../Section/param';
 
 export default function EditTargetBranchMergeRequest({ projectId, mrIid, target_branch, onBranchChange }) {

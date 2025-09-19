@@ -1,10 +1,16 @@
 import type GitLabClient from "../gitlab/gitlab-api-wrapper";
+
 import type { notificationLevels } from "./utils";
 
 // Defining the data types
 export interface GitLabProject {
 	id: number;
 	path_with_namespace: string;
+	name: string;
+	description?: string;
+	avatar_url?: string;
+	created_at: string;
+	last_activity_at?: string;
 }
 
 export interface GitLabGroup {
@@ -59,6 +65,9 @@ export interface NotificationStore {
 	permissionStatus: string | null;
 	consentToRGPDGiven: boolean;
 	session: any;
+	client: GitLabClient | null;
+	error: string | null;
+	repositoryPollingInterval: NodeJS.Timeout | null;
 
 	// State setters
 	setGroups: (groups: NotificationItem[]) => void;
@@ -94,6 +103,16 @@ export interface NotificationStore {
 		client: GitLabClient,
 		expoToken: string,
 	) => Promise<void>;
+	detectNewRepositories: (client: GitLabClient) => Promise<{
+		hasNewProjects: boolean;
+		newProjects: GitLabProject[];
+		count: number;
+	}>;
+	startRepositoryPolling: (
+		client: GitLabClient,
+		intervalMinutes?: number,
+	) => void;
+	stopRepositoryPolling: () => void;
 }
 
 // This way, the NotificationStore interface is more organized and easier to read.

@@ -1,11 +1,12 @@
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback } from 'react';
+import { ScrollView } from 'react-native';
+
 import { EditProjectDescription } from '@/components/Project/project-edit-description';
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback } from 'react';
-import { ScrollView } from 'react-native';
 
 export default function ProjectEditDescriptionComponent() {
     const { session } = useSession()

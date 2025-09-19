@@ -1,6 +1,7 @@
-import { Text } from '@/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
+
+import { Text } from '@/components/ui/text';
 
 export function ProjectField({ title, value, locked = false }) {
     // https://gitlab.com/thomas.pedot1/fake-gitlab/-/issues/30

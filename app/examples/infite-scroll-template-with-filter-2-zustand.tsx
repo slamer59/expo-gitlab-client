@@ -1,3 +1,8 @@
+import { Stack } from 'expo-router';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { ScrollView, View } from 'react-native';
+import { create } from 'zustand';
+
 import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
 import { FlatListCards } from '@/components/FlatList/FlatListCards';
 import { IssueCard, IssueCardSkeleton } from '@/components/Issue/issue-card';
@@ -6,10 +11,6 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { extractDefaultUIOptions } from '@/lib/utils';
-import { Stack } from 'expo-router';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { ScrollView, View } from 'react-native';
-import { create } from 'zustand';
 
 const PROJECT_ID = '59853773';
 

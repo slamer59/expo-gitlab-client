@@ -1,3 +1,10 @@
+import { Ionicons } from "@expo/vector-icons";
+import { format, formatDuration, intervalToDuration } from "date-fns";
+import { router, Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { default as React, useState } from 'react';
+import { Animated, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
+import { LinearTransition } from "react-native-reanimated";
+
 import JobStatusIcon from "@/components/Pipeline/job-status-icon";
 import PipelineComment from "@/components/Pipeline/pipeline-comment";
 import PipelineHeader from "@/components/Pipeline/pipeline-header";
@@ -11,12 +18,7 @@ import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { copyToClipboard } from "@/lib/utils";
-import { Ionicons } from "@expo/vector-icons";
-import { format, formatDuration, intervalToDuration } from "date-fns";
-import { router, Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { default as React, useState } from 'react';
-import { Animated, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
-import { LinearTransition } from "react-native-reanimated";
+
 import { headerRightProjectPipeline } from "./headerRight";
 
 

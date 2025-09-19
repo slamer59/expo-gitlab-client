@@ -1,0 +1,36 @@
+appId: com.thomas.pedot.expogitlabclient
+---
+# Quick RGPD Consent Test
+# Minimal test to quickly verify consent functionality is working
+
+# Navigate to General Settings
+- assertVisible: "Profile"
+- tapOn: "Profile"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "options"
+- tapOn:
+    id: "options"
+    index: 0
+- waitForAnimationToEnd
+
+# Verify we're in General Settings
+- assertVisible: "General settings"
+- assertVisible: "RGPD Consent"
+- assertVisible: "We need your consent to use data for analytics and notifications"
+
+# Take initial screenshot
+- takeScreenshot: "./assets/maestro/ConsentQuick_Initial"
+
+# Test consent toggle
+- tapOn: "I give my consent"
+- waitForAnimationToEnd
+- assertVisible: "I do not consent any more"
+
+# Test consent revoke
+- tapOn: "I do not consent any more"
+- waitForAnimationToEnd
+- assertVisible: "I give my consent"
+
+# Final screenshot
+- takeScreenshot: "./assets/maestro/ConsentQuick_Final"

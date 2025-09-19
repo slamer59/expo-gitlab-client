@@ -1,8 +1,10 @@
-import { getIssueStateColor, IssueState } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+
+import { getIssueStateColor, IssueState } from '@/lib/utils';
+
 import { PillProps, Pills } from '../Pills';
 import { Skeleton } from '../ui/skeleton';
 export const IssueHeaderSkeleton = () => {

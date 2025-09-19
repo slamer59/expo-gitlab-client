@@ -1,3 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
+import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { SafeAreaView, ScrollView, View } from 'react-native';
+
 import { HeaderAction, HeaderOption, HeaderRight } from '@/components/HeaderRight';
 import { StatusItem } from '@/components/StatusItems';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -6,10 +11,6 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { formatDate, shareView } from '@/lib/utils';
-import { Ionicons } from '@expo/vector-icons';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { SafeAreaView, ScrollView, View } from 'react-native';
 
 const getCommitStatusText = (status: string): string => {
     switch (status) {

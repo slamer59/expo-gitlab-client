@@ -1,11 +1,12 @@
-import { EmptyComponent } from '@/components/FlatList/EmptyComponent';
-import { GroupCardSkeleton, GroupWithSubgroups } from '@/components/Group/group-card';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
 import { useQuery } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, View } from 'react-native';
+
+import { EmptyComponent } from '@/components/FlatList/EmptyComponent';
+import { GroupCardSkeleton, GroupWithSubgroups } from '@/components/Group/group-card';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 
 interface GitLabGroup {
     id: number;

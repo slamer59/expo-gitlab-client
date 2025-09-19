@@ -1,11 +1,11 @@
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { Platform } from 'react-native';
 
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
 
 export default function TestgitlabHook() {
     const { session } = useSession()

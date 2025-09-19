@@ -1,4 +1,7 @@
 
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -12,9 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
-import { Ionicons } from '@expo/vector-icons';
 
-import React from 'react';
 
 export function EditParamIssueDialog({ title, handleSave, loading, children }) {
 

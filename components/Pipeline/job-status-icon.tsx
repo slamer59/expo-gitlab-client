@@ -1,5 +1,6 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from '@expo/vector-icons';
+
+import { Text } from "@/components/ui/text";
 
 export default function JobStatusIcon({ status, withText = false }: { status: string, withText?: boolean }) {
     // console.log("status", status);

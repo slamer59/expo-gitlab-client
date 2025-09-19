@@ -1,13 +1,14 @@
-import { IssueCard } from '@/components/Issue/issue-card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+
+import { IssueCard } from '@/components/Issue/issue-card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 
 const IssuesList = () => {
     const router = useRouter();

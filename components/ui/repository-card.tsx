@@ -1,8 +1,9 @@
-import { View } from '@/components/Themed';
-import { Text } from '@/components/ui/text';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import * as React from 'react';
+
+import { View } from '@/components/Themed';
+import { Text } from '@/components/ui/text';
 export function RepositoryCard(
   { id, name, description, icon }: { id: string, name: string, description: string, icon: any },
 ) {

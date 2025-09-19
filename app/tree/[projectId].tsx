@@ -1,13 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+
 import Error from "@/components/Error";
 import { HeaderRight } from "@/components/HeaderRight";
 import Loading from "@/components/Loading";
 import { Text } from "@/components/Themed";
 import FileItem from "@/components/ui/file-item";
 import { useGetData } from "@/lib/gitlab/hooks";
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
 
 export default function FileExplorerScreen() {
   const [error, setError] = useState<string | null>(null);

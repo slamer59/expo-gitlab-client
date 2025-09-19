@@ -1,3 +1,6 @@
+import { useRouter } from 'expo-router';
+import { ScrollView, Text, View } from 'react-native';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -11,8 +14,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useRouter } from 'expo-router';
-import { ScrollView, Text, View } from 'react-native';
 
 export default function RGPDRefused() {
     const router = useRouter();

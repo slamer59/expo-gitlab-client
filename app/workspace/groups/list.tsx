@@ -1,4 +1,8 @@
 
+import { Stack } from 'expo-router';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { ScrollView, View } from 'react-native';
+
 import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
 import { FlatListCards } from '@/components/FlatList/FlatListCards';
 import { GroupCard, GroupCardSkeleton } from '@/components/Group/group-card';
@@ -6,9 +10,6 @@ import { GlobalGroupUIFilters } from '@/constants/UIFilters';
 import { createScreenStore } from '@/lib/filter/state';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack } from 'expo-router';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { ScrollView, View } from 'react-native';
 
 
 export default function GroupsScreen() {

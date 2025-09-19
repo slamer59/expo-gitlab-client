@@ -1,7 +1,6 @@
 import "@/global.css";
 import { defaultOptionsHeader } from "@/lib/constants";
-import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
-import { initializeTokenChecker } from "@/lib/session/tokenChecker";
+
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Notifications from 'expo-notifications';
@@ -11,6 +10,9 @@ import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import { SessionProvider, useSession } from "@/lib/session/SessionProvider";
+import { initializeTokenChecker } from "@/lib/session/tokenChecker";
 
 export {
   ErrorBoundary

@@ -1,10 +1,11 @@
-import { RoundedColoredButton } from "@/components/Buttons/RoundedColored";
-import { landingButtons } from "@/constants/links/landingPage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useFeatureFlag } from "posthog-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity } from "react-native";
+
+import { RoundedColoredButton } from "@/components/Buttons/RoundedColored";
+import { landingButtons } from "@/constants/links/landingPage";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 

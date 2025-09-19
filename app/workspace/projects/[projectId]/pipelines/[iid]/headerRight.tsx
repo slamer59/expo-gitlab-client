@@ -1,8 +1,9 @@
+import { Ionicons, Octicons } from "@expo/vector-icons";
+import { Pressable, View } from "react-native";
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Text } from "@/components/ui/text";
 import { copyToClipboard, shareView } from "@/lib/utils";
-import { Ionicons, Octicons } from "@expo/vector-icons";
-import { Pressable, View } from "react-native";
 
 interface PipelineOptionsMenuProps {
     retryPipeline: () => Promise<void>;

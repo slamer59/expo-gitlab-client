@@ -1,3 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
+import { Label } from "@rn-primitives/select";
+import { format } from "date-fns";
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Animated, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
+import { LinearTransition } from "react-native-reanimated";
+
 import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
 import IssueNotes from "@/components/Issue/issue-note";
 import MergeRequestComment from "@/components/MergeRequest/mr-comment";
@@ -17,13 +25,6 @@ import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { calculateFileChanges, formatDate, shareView } from "@/lib/utils";
-import { Ionicons } from '@expo/vector-icons';
-import { Label } from "@rn-primitives/select";
-import { format } from "date-fns";
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Animated, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
-import { LinearTransition } from "react-native-reanimated";
 
 
 function CommitItem({ commit }) {

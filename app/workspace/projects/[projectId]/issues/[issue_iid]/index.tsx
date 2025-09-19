@@ -1,7 +1,9 @@
+import { Separator } from "@rn-primitives/select";
+import { useQueryClient } from "@tanstack/react-query";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 import CreateDiscussion from "@/components/CreateDiscussion";
 import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
@@ -18,8 +20,6 @@ import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { shareView } from "@/lib/utils";
-import { Separator } from "@rn-primitives/select";
-import { useQueryClient } from "@tanstack/react-query";
 import { Text } from "~/components/ui/text";
 
 

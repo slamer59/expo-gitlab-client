@@ -1,7 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import type GitLabClient from "../gitlab/gitlab-api-wrapper";
+
 import type { FirebaseNotification, GitLabProject } from "./interfaces";
 
 export const RGPD_ACCEPTED_KEY = "@notification_rgpd_accepted";

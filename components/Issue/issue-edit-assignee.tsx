@@ -1,16 +1,20 @@
 
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Ionicons } from '@expo/vector-icons';
 
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import React, { useEffect } from 'react';
-import { View } from 'react-native';
+
+
 import { SectionTitle } from '../Section/param';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
 import { EditParamIssueDialog } from './issue-edit-param';
 
 function Assignee({ assignee, children }: { assignee: any, children?: React.ReactNode }) {

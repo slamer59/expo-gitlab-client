@@ -1,7 +1,3 @@
-import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
-import Loading from "@/components/Loading";
-import { Text } from "@/components/ui/text";
-import { useGetData } from '@/lib/gitlab/hooks';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
@@ -11,6 +7,11 @@ import SyntaxHighlighter from 'react-native-syntax-highlighter';
 /*by default component uses hljs so access hljs styles, import from /prism for prism styles */
 
 import { a11yDark as highlightStyle } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+import { HeaderAction, HeaderOption, HeaderRight } from "@/components/HeaderRight";
+import Loading from "@/components/Loading";
+import { Text } from "@/components/ui/text";
+import { useGetData } from '@/lib/gitlab/hooks';
 
 const decodeBase64 = (str) => {
     try {

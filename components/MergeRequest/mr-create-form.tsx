@@ -1,13 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
-import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
-import { useSession } from "@/lib/session/SessionProvider";
 import { Label } from "@rn-primitives/select";
 import { useRouter } from "expo-router";
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View } from "react-native";
+
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
+import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
+import { useSession } from "@/lib/session/SessionProvider";
+
 import { ChooseBranches } from "../ChooseBranche";
 import InfoAlert from "../InfoAlert";
 import EnhancedMarkdownEditor from "../markdown-editor";

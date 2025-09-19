@@ -4,6 +4,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Separator } from "../ui/separator";
 
 export function ProjectHeader({ repository }) {

@@ -1,18 +1,20 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Bold, ChevronDown, Code, CodeXml, ImageIcon, Italic, Link, List, ListChecks, ListOrdered, Quote, Strikethrough, Underline } from '@/lib/icons/All';
+import { Octicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { CircleX, Undo } from 'lucide-react-native';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { Bold, ChevronDown, Code, CodeXml, ImageIcon, Italic, Link, List, ListChecks, ListOrdered, Quote, Strikethrough, Underline } from '@/lib/icons/All';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Octicons } from '@expo/vector-icons';
-import { CircleX, Undo } from 'lucide-react-native';
+
+
 import MarkdownCustom from './CustomMarkdown';
 import ErrorAlert from './ErrorAlert';
 

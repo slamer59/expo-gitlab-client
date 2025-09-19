@@ -1,0 +1,82 @@
+appId: com.thomas.pedot.expogitlabclient
+---
+# RGPD Consent Persistence Test
+# This test verifies that RGPD consent settings persist across app restarts
+
+# Test 1: Launch app and verify initial state
+- assertVisible: "Profile"
+- takeScreenshot: "./assets/maestro/ConsentTest_Home"
+
+# Navigate to Profile tab
+- tapOn: "Profile"
+- takeScreenshot: "./assets/maestro/ConsentTest_Profile"
+
+# Navigate to General Settings (options)
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+- takeScreenshot: "./assets/maestro/ConsentTest_GeneralSettings_Initial"
+
+# Verify initial RGPD consent state - should show "I give my consent"
+- assertVisible: "RGPD Consent"
+- assertVisible: "I give my consent"
+
+# Test 2: Grant consent and verify state change
+- tapOn: "I give my consent"
+- takeScreenshot: "./assets/maestro/ConsentTest_ConsentGranted"
+
+# Wait for any loading/processing
+- waitForAnimationToEnd
+
+# Verify consent button changed to "I do not consent any more"
+- assertVisible: "I do not consent any more"
+
+# Test 3: Verify consent persists across app restart
+# Navigate back to home and stop app
+- back
+- back
+- stopApp
+
+# Relaunch the app
+- launchApp: expo-gitlab-client
+
+# Wait for app to fully load
+- waitForAnimationToEnd
+
+# Navigate back to General Settings to verify persistence
+- assertVisible: "Profile"
+- tapOn: "Profile"
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+- takeScreenshot: "./assets/maestro/ConsentTest_AfterRestart"
+
+# Verify consent is still granted (shows "I do not consent any more")
+- assertVisible: "I do not consent any more"
+
+# Test 4: Revoke consent and verify it persists
+- tapOn: "I do not consent any more"
+- waitForAnimationToEnd
+- assertVisible: "I give my consent"
+- takeScreenshot: "./assets/maestro/ConsentTest_ConsentRevoked"
+
+# Test 5: Verify revoked consent persists across restart
+- back
+- back
+- stopApp
+- launchApp: expo-gitlab-client
+- waitForAnimationToEnd
+
+# Navigate to settings and verify revoked consent persists
+- assertVisible: "Profile"
+- tapOn: "Profile"
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+- takeScreenshot: "./assets/maestro/ConsentTest_RevokedAfterRestart"
+
+# Final verification - consent should be revoked
+- assertVisible: "I give my consent"

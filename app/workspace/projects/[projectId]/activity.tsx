@@ -1,10 +1,11 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Text } from "@/components/ui/text";
-import { useGetData } from '@/lib/gitlab/hooks';
 import { formatDistanceToNow } from 'date-fns';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Text } from "@/components/ui/text";
+import { useGetData } from '@/lib/gitlab/hooks';
 // Assume these components are defined in separate files
 
 const ProjectActivityScreen = () => {

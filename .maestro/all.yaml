@@ -1,4 +1,4 @@
-appId: expo-gitlab-client
+appId: com.thomas.pedot.expogitlabclient
 ---
 - takeScreenshot: ./assets/maestro/Home
 - runFlow: issues.yaml
@@ -8,3 +8,6 @@ appId: expo-gitlab-client
 # - runFlow: organizations.yaml
 # - runFlow: starred.yaml
 - runFlow: profile.yaml
+# RGPD Consent Tests
+- runFlow: consent-persistence.yaml
+- runFlow: consent-workflow.yaml

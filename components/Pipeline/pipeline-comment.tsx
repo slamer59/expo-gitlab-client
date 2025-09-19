@@ -1,13 +1,14 @@
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
-import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
+
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+import { formatDate } from '@/lib/utils';
 
 const PipelineComment = ({ pipeline, projectId }) => {
     const { user, created_at, id, status, ref, web_url } = pipeline;

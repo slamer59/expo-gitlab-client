@@ -1,3 +1,6 @@
+import { Stack, useLocalSearchParams } from "expo-router";
+import { ScrollView } from "react-native";
+
 import ListWithFilters from "@/components/ListWithFilters";
 import { ProjectCard, ProjectCardSkeleton } from "@/components/Project/project-card";
 import { GlobalUserContributedProjectsUIFilters, GlobalUserGroupsUIFilters, GlobalUserProjectUIFilters, GlobalUserStarredProjectsUIFilters } from "@/constants/UIFilters";
@@ -5,8 +8,6 @@ import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
 import { extractDefaultFilters, extractDefaultUIOptions } from "@/lib/utils";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView } from "react-native";
 
 export default function ProjectsListScreen() {
     const { session } = useSession();

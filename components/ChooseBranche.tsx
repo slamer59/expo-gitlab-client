@@ -2,6 +2,7 @@ import * as React from "react";
 import { Platform, Text } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 
 type ChooseBranchesProps = {

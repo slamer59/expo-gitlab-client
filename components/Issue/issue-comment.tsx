@@ -1,9 +1,11 @@
-import { styles } from '@/lib/markdown-styles';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import React, { useRef } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+
+import { styles } from '@/lib/markdown-styles';
+
 import MarkdownCustom from '../CustomMarkdown';
 
 

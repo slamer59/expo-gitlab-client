@@ -1,6 +1,7 @@
-import { ButtonConfig, IconName } from "@/components/Buttons/ButtonConfig";
 import { Href } from "expo-router";
 import { LucideComponent } from "lucide-react-native";
+
+import { ButtonConfig, IconName } from "@/components/Buttons/ButtonConfig";
 
 export const landingButtons = (devModeEnabled: boolean): ButtonConfig[] => [
     {

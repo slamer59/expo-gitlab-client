@@ -4,13 +4,13 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
+import JobStatusIcon from '@/components/Pipeline/job-status-icon';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 
-import JobStatusIcon from '@/components/Pipeline/job-status-icon';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Text } from '@/components/ui/text';
 
 function JobItem({ job, onPress }) {
     return (

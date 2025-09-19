@@ -1,6 +1,7 @@
-import EnhancedMarkdownEditor from '@/components/markdown-editor';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import EnhancedMarkdownEditor from '@/components/markdown-editor';
 
 export default function MarkdownEdit() {
 

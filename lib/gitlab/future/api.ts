@@ -1,5 +1,6 @@
-import { useSession } from '@/lib/session/SessionProvider';
 import axios, { AxiosInstance } from 'axios';
+
+import { useSession } from '@/lib/session/SessionProvider';
 
 
 export const useGitLabApi = (): AxiosInstance => {

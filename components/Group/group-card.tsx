@@ -1,9 +1,11 @@
-import { formatDate } from "@/lib/utils";
 import { Ionicons, Octicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
 import { LucideComponent } from 'lucide-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+
+import { formatDate } from "@/lib/utils";
+
 import { Separator } from "../ui/separator";
 import { Skeleton } from '../ui/skeleton';
 

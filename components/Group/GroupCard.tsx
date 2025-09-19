@@ -1,11 +1,13 @@
-import { Group } from "@/lib/gitlab/types";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDate } from "date-fns";
 import { ChevronRight, GitFork, Globe, Lock, Star } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, TouchableOpacity, View } from "react-native";
+
 import { Pills } from "../Pills";
 import { Text } from "../Themed";
+
+import { Group } from "@/lib/gitlab/types";
 
 interface GroupCardProps {
     group: Group;

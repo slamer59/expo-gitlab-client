@@ -1,8 +1,9 @@
+import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
+import * as React from 'react';
+
 import { View } from '@/components/Themed';
 import { Text } from '@/components/ui/text';
 import { formatDate } from '@/lib/utils';
-import { Ionicons } from '@expo/vector-icons'; // You can use any icon library you prefer
-import * as React from 'react';
 
 export function NotificationCard(
   { status, repository, date, title, description }: { description: string, status: 'success' | 'error'; repository: string; date: string; title: string; }

@@ -1,3 +1,7 @@
+import React from 'react';
+import { Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import {
     Select,
     SelectContent,
@@ -6,9 +10,6 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
-import React from 'react';
-import { Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface FilterOption {
     label: string;

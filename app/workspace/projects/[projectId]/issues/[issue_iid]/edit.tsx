@@ -1,3 +1,7 @@
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useCallback } from 'react';
+import { ScrollView } from 'react-native';
+
 import EditAssigneeIssue from '@/components/Issue/issue-edit-assignee';
 import EditLabelIssue from '@/components/Issue/issue-edit-label';
 import EditMilestoneIssue from '@/components/Issue/issue-edit-miletone';
@@ -7,9 +11,6 @@ import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import React, { useCallback } from 'react';
-import { ScrollView } from 'react-native';
 
 export default function IssueEditComponent() {
     const { session } = useSession()

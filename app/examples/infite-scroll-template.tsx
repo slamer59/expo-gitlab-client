@@ -1,3 +1,7 @@
+import { Stack, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+
 import { FlatListComponents } from '@/components/FlatList/FlatListCards';
 import { IssueCard, IssueCardSkeleton } from '@/components/Issue/issue-card';
 import { GlobalIssueUIFilters } from '@/constants/UIFilters';
@@ -5,9 +9,6 @@ import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 import { extractDefaultFilters, extractDefaultUIOptions } from '@/lib/utils';
-import { Stack, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
 
 const IssuesList = () => {
     const router = useRouter();

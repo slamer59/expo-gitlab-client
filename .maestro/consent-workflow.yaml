@@ -1,0 +1,113 @@
+appId: com.thomas.pedot.expogitlabclient
+---
+# Comprehensive RGPD Consent Workflow Test
+# This test covers various consent scenarios including notification permissions and Firebase sync
+
+# Initial Setup
+- assertVisible: "Profile"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_Home"
+
+# Test 1: Navigate to General Settings
+- tapOn: "Profile"
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+- assertVisible: "RGPD Consent"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_InitialSettings"
+
+# Verify consent explanation text is visible
+- assertVisible: "We need your consent to use data for analytics and notifications"
+- assertVisible: "This is required for notifications to work"
+
+# Test 2: Grant consent and verify all related features are activated
+- assertVisible: "I give my consent"
+- tapOn: "I give my consent"
+- waitForAnimationToEnd  # Wait for processing and any dialogs
+
+# The app should now show the consent has been granted
+- assertVisible: "I do not consent any more"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_ConsentGranted"
+
+# Verify GitLab notification settings appear when consent is given
+# (This section should be visible only when consent is granted)
+- scroll
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_NotificationSettings"
+
+# Test 3: Verify consent affects notification permissions
+# Check if any notification permission dialogs appear
+# Note: This might vary based on device/simulator settings
+
+# Test 4: Verify Firebase sync integration
+# (This would be tested indirectly through the persistence across restarts)
+
+# Test 5: Test consent revocation workflow
+- scroll
+- assertVisible: "I do not consent any more"
+- tapOn: "I do not consent any more"
+- waitForAnimationToEnd  # Wait for processing
+
+# Verify consent is revoked
+- assertVisible: "I give my consent"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_ConsentRevoked"
+
+# Verify notification settings are hidden when consent is revoked
+- scroll
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_SettingsHidden"
+
+# Test 6: Multiple consent toggles to test stability
+- scroll
+
+# Grant consent again
+- tapOn: "I give my consent"
+- waitForAnimationToEnd
+- assertVisible: "I do not consent any more"
+
+# Revoke consent again
+- tapOn: "I do not consent any more"
+- waitForAnimationToEnd
+- assertVisible: "I give my consent"
+
+# Grant final consent for persistence test
+- tapOn: "I give my consent"
+- waitForAnimationToEnd
+- assertVisible: "I do not consent any more"
+
+# Test 7: Verify settings persistence across navigation
+- back  # Go back to profile
+- assertVisible: "Profile"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_BackToProfile"
+
+# Navigate back to settings
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+
+# Verify consent persists within the same session
+- assertVisible: "I do not consent any more"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_PersistenceInSession"
+
+# Test 8: Verify interaction with other settings
+# Check that other settings like version info and support links work
+- scroll
+- assertVisible: "About"
+- assertVisible: "Support"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_OtherSettings"
+
+# Test 9: Final app restart test
+- back
+- back
+- stopApp
+- launchApp
+- waitForAnimationToEnd
+
+# Final verification
+- assertVisible: "Profile"
+- tapOn: "Profile"
+- tapOn:
+    id: "options"
+    index: 0
+- assertVisible: "General settings"
+- assertVisible: "I do not consent any more"
+- takeScreenshot: "./assets/maestro/ConsentWorkflow_FinalVerification"

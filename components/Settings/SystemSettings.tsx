@@ -1,6 +1,7 @@
-import { Text } from '@/components/ui/text';
 import { FontAwesome6, Octicons } from '@expo/vector-icons';
 import { Linking, TouchableOpacity, View } from 'react-native';
+
+import { Text } from '@/components/ui/text';
 
 export default function SystemSettingsScreen() {
     return (

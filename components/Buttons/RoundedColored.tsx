@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View } from "react-native";
+
 import { ButtonConfig } from "./ButtonConfig";
 
 type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';

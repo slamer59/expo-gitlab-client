@@ -1,10 +1,12 @@
-import { styles } from '@/lib/markdown-styles';
-import { formatDate } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
+
+import { styles } from '@/lib/markdown-styles';
+import { formatDate } from '@/lib/utils';
+
 import MarkdownCustom from '../CustomMarkdown';
 
 const MergeRequestComment = ({ mr, projectId }) => {

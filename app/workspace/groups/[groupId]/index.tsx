@@ -1,11 +1,13 @@
-import { ProjectCard } from '@/components/Project/project-card';
 import { Ionicons } from '@expo/vector-icons';
-import { GroupCardSkeleton, GroupWithSubgroupsVariant } from 'components/Group/group-card';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
-import { useSession } from 'lib/session/SessionProvider';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+
+import { ProjectCard } from '@/components/Project/project-card';
+import { GroupCardSkeleton, GroupWithSubgroupsVariant } from 'components/Group/group-card';
+import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
+import { useSession } from 'lib/session/SessionProvider';
+
 
 
 interface GroupStatistics {

@@ -1,11 +1,12 @@
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { ScrollView } from 'react-native';
+
 import CreateMergeRequestForm from '@/components/MergeRequest/mr-create-form';
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { ScrollView } from 'react-native';
 
 export default function MergeRequestEditComponent() {
     const { session } = useSession()

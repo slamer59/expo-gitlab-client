@@ -1,10 +1,11 @@
-import { ListComponent } from "@/components/ListCards";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
-import FilterForm from "../Filter/FilterForm";
 
+import { ListComponent } from "@/components/ListCards";
 import { GlobalProjectsUIFilters } from "@/constants/UIFilters";
+
+import FilterForm from "../Filter/FilterForm";
 import { Text } from "../ui/text";
 
 interface ListWithFiltersProps {

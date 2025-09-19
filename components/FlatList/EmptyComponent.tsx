@@ -1,7 +1,8 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View } from "react-native";
+
+import { Text } from "@/components/ui/text";
 
 export function EmptyComponent() {
     //items, loading, error): React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>> | null | undefined {

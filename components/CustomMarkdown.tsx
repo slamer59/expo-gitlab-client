@@ -1,8 +1,9 @@
-import { styles } from '@/lib/markdown-styles';
 import { Image } from 'expo-image';
 import React from 'react';
 import { ImageStyle, View } from 'react-native';
 import Markdown from 'react-native-markdown-display'; // Or any other markdown renderer you prefer
+
+import { styles } from '@/lib/markdown-styles';
 const MarkdownCustom = ({ children,
     className = '',
     imageStyle = { width: 200, height: 200 },

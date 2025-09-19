@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { useGitLab } from '../../lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '../../lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '../../lib/session/SessionProvider';
+
 import { GroupCard, GroupCardSkeleton } from './GroupCard';
 
 interface Group {

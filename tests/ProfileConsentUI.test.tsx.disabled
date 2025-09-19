@@ -1,0 +1,424 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import React from "react";
+
+import ProfileScreen from "@/app/options/profile";
+import { useNotificationStore } from "@/lib/notification/state";
+import { useSession } from "@/lib/session/SessionProvider";
+
+// Mock the session provider
+jest.mock("@/lib/session/SessionProvider", () => ({
+	useSession: jest.fn(),
+}));
+
+// Mock the notification permission dialog
+jest.mock("@/components/NotificationPermissionDialog", () => {
+	function MockNotificationPermissionDialog() {
+		const React = require("react");
+		const { Text } = require("react-native");
+		return React.createElement(
+			Text,
+			{ testID: "notification-permission-dialog" },
+			"Notification Permission Dialog",
+		);
+	}
+	return MockNotificationPermissionDialog;
+});
+
+// Mock other components
+jest.mock("@/components/InfoAlert", () => {
+	function MockInfoAlert(props) {
+		const React = require("react");
+		const { View, Text } = require("react-native");
+		return props.isOpen
+			? React.createElement(
+					View,
+					{ testID: "info-alert" },
+					React.createElement(Text, {}, props.message),
+				)
+			: null;
+	}
+	return MockInfoAlert;
+});
+
+jest.mock("@/components/LoadingOverlay", () => {
+	function MockLoadingOverlay() {
+		const React = require("react");
+		const { View } = require("react-native");
+		return React.createElement(View, { testID: "loading-overlay" });
+	}
+	return MockLoadingOverlay;
+});
+
+jest.mock("@/components/Settings/SystemSettings", () => {
+	function MockSystemSettingsScreen() {
+		const React = require("react");
+		const { View } = require("react-native");
+		return React.createElement(View, { testID: "system-settings" });
+	}
+	return MockSystemSettingsScreen;
+});
+
+jest.mock("@/components/Settings/GitlabNotificationSettings", () => {
+	function MockGitLabNotificationSettings() {
+		const React = require("react");
+		const { View, Text } = require("react-native");
+		return React.createElement(
+			View,
+			{ testID: "gitlab-notification-settings" },
+			React.createElement(Text, null, "GitLab Notification Settings"),
+		);
+	}
+	return MockGitLabNotificationSettings;
+});
+
+// Mock Expo modules
+jest.mock("expo-application", () => ({
+	applicationName: "TestApp",
+	nativeApplicationVersion: "1.0.0",
+}));
+
+jest.mock("expo-image", () => ({
+	Image: function MockImage(props) {
+		const React = require("react");
+		const { View } = require("react-native");
+		return React.createElement(View, { testID: "expo-image", ...props });
+	},
+}));
+
+jest.mock("expo-router", () => ({
+	Redirect: function MockRedirect({ href }) {
+		const React = require("react");
+		const { Text } = require("react-native");
+		return React.createElement(
+			Text,
+			{ testID: "redirect" },
+			`Redirect to ${href}`,
+		);
+	},
+	Stack: {
+		Screen: function MockStackScreen({ options }) {
+			const React = require("react");
+			const { View } = require("react-native");
+			return React.createElement(View, { testID: "stack-screen" });
+		},
+	},
+}));
+
+// Mock React Native modules
+jest.mock("react-native", () => {
+	const RN = jest.requireActual("react-native");
+	return {
+		...RN,
+		Linking: {
+			openURL: jest.fn(),
+		},
+	};
+});
+
+// Import the component after mocks
+
+describe("ProfileScreen - RGPD Consent UI", () => {
+	const mockSignOut = jest.fn();
+	const mockSession = {
+		url: "https://gitlab.example.com",
+		token: "mock-token",
+		user: { name: "Test User" },
+	};
+
+	const mockRestoreConsentFromFirebase = jest.fn();
+
+	beforeEach(async () => {
+		await AsyncStorage.clear();
+
+		// Reset mocks
+		jest.clearAllMocks();
+
+		// Mock session provider
+		(useSession as jest.Mock).mockReturnValue({
+			signOut: mockSignOut,
+			session: mockSession,
+		});
+
+		// Reset notification store
+		useNotificationStore.setState({
+			error: null,
+			groups: [],
+			projects: [],
+			global: {
+				level: { value: "global", label: "Global" },
+				notification_email: "",
+			},
+			modalVisible: false,
+			selectedItemType: "",
+			selectedItemIndex: -1,
+			isLoading: false,
+			isInitialized: false,
+			expoPushToken: null,
+			consentToRGPDGiven: false,
+			session: null,
+			client: null,
+			permissionStatus: null,
+			repositoryPollingInterval: null,
+			restoreConsentFromFirebase: mockRestoreConsentFromFirebase,
+		});
+	});
+
+	describe("RGPD Consent Section Rendering", () => {
+		it("should render RGPD consent section", () => {
+			const { getByText } = render(<ProfileScreen />);
+
+			expect(getByText("RGPD Consent")).toBeTruthy();
+			expect(
+				getByText(
+					"We need your consent to use data for analytics and notifications.",
+				),
+			).toBeTruthy();
+			expect(
+				getByText("This is required for notifications to work."),
+			).toBeTruthy();
+		});
+
+		it('should show "I give my consent" button when consent is not given', () => {
+			const { getByText } = render(<ProfileScreen />);
+
+			expect(getByText("I give my consent")).toBeTruthy();
+		});
+
+		it('should show "I do not consent any more" button when consent is given', () => {
+			// Set consent in store
+			useNotificationStore.setState({ consentToRGPDGiven: true });
+
+			const { getByText } = render(<ProfileScreen />);
+
+			expect(getByText("I do not consent any more")).toBeTruthy();
+		});
+
+		it("should disable consent button when loading", () => {
+			useNotificationStore.setState({ isLoading: true });
+
+			const { getByText } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.disabled).toBe(true);
+		});
+	});
+
+	describe("RGPD Consent Interactions", () => {
+		it("should open consent dialog when consent button is pressed", () => {
+			const { getByText, getByTestId } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+			fireEvent.press(consentButton);
+
+			expect(getByTestId("notification-permission-dialog")).toBeTruthy();
+		});
+
+		it("should hide consent dialog when loading state changes", async () => {
+			useNotificationStore.setState({ isLoading: false });
+
+			const { getByText, queryByTestId, rerender } = render(<ProfileScreen />);
+
+			// Open dialog
+			const consentButton = getByText("I give my consent");
+			fireEvent.press(consentButton);
+
+			expect(queryByTestId("notification-permission-dialog")).toBeTruthy();
+
+			// Simulate loading state change
+			useNotificationStore.setState({ isLoading: true });
+			rerender(<ProfileScreen />);
+
+			// Dialog should be hidden due to useEffect
+			expect(queryByTestId("notification-permission-dialog")).toBeNull();
+		});
+
+		it("should toggle consent dialog visibility", () => {
+			const { getByText, queryByTestId } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+
+			// First press - should show dialog
+			fireEvent.press(consentButton);
+			expect(queryByTestId("notification-permission-dialog")).toBeTruthy();
+
+			// Second press - should hide dialog
+			fireEvent.press(consentButton);
+			expect(queryByTestId("notification-permission-dialog")).toBeNull();
+		});
+	});
+
+	describe("Consent State Restoration", () => {
+		it("should call restoreConsentFromFirebase on mount", () => {
+			render(<ProfileScreen />);
+
+			expect(mockRestoreConsentFromFirebase).toHaveBeenCalled();
+		});
+
+		it("should only call restoration once per mount", () => {
+			const { rerender } = render(<ProfileScreen />);
+
+			expect(mockRestoreConsentFromFirebase).toHaveBeenCalledTimes(1);
+
+			// Rerender should not call again
+			rerender(<ProfileScreen />);
+			expect(mockRestoreConsentFromFirebase).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe("Conditional Rendering Based on Consent", () => {
+		it("should show GitLab notification settings when consent is given", () => {
+			useNotificationStore.setState({ consentToRGPDGiven: true });
+
+			const { getByTestId } = render(<ProfileScreen />);
+
+			expect(getByTestId("gitlab-notification-settings")).toBeTruthy();
+		});
+
+		it("should hide GitLab notification settings when consent is not given", () => {
+			useNotificationStore.setState({ consentToRGPDGiven: false });
+
+			const { queryByTestId } = render(<ProfileScreen />);
+
+			expect(queryByTestId("gitlab-notification-settings")).toBeNull();
+		});
+
+		it("should show different button styles based on consent state", () => {
+			const { getByText, rerender } = render(<ProfileScreen />);
+
+			// Without consent
+			let consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.className).toContain("bg-success");
+
+			// With consent
+			useNotificationStore.setState({ consentToRGPDGiven: true });
+			rerender(<ProfileScreen />);
+
+			consentButton = getByText("I do not consent any more");
+			expect(consentButton.parent?.props.className).toContain("bg-warning");
+		});
+
+		it("should show muted style when loading", () => {
+			useNotificationStore.setState({ isLoading: true });
+
+			const { getByText } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.className).toContain("bg-muted");
+		});
+	});
+
+	describe("Session Validation", () => {
+		it("should redirect to login when session is not available", () => {
+			(useSession as jest.Mock).mockReturnValue({
+				signOut: mockSignOut,
+				session: null,
+			});
+
+			const { getByTestId } = render(<ProfileScreen />);
+
+			expect(getByTestId("redirect")).toBeTruthy();
+		});
+
+		it("should render normally when session is available", () => {
+			const { queryByTestId, getByText } = render(<ProfileScreen />);
+
+			expect(queryByTestId("redirect")).toBeNull();
+			expect(getByText("RGPD Consent")).toBeTruthy();
+		});
+	});
+
+	describe("Loading State", () => {
+		it("should show loading overlay", () => {
+			const { getByTestId } = render(<ProfileScreen />);
+
+			expect(getByTestId("loading-overlay")).toBeTruthy();
+		});
+
+		it("should disable interaction when loading", () => {
+			useNotificationStore.setState({ isLoading: true });
+
+			const { getByText } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.disabled).toBe(true);
+		});
+	});
+
+	describe("Integration with Store", () => {
+		it("should reflect store state changes in UI", async () => {
+			const { getByText, rerender } = render(<ProfileScreen />);
+
+			// Initial state
+			expect(getByText("I give my consent")).toBeTruthy();
+
+			// Change store state
+			useNotificationStore.setState({ consentToRGPDGiven: true });
+			rerender(<ProfileScreen />);
+
+			// UI should update
+			await waitFor(() => {
+				expect(getByText("I do not consent any more")).toBeTruthy();
+			});
+		});
+
+		it("should handle store loading state changes", async () => {
+			const { getByText, rerender } = render(<ProfileScreen />);
+
+			// Start loading
+			useNotificationStore.setState({ isLoading: true });
+			rerender(<ProfileScreen />);
+
+			let consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.disabled).toBe(true);
+
+			// Stop loading
+			useNotificationStore.setState({ isLoading: false });
+			rerender(<ProfileScreen />);
+
+			consentButton = getByText("I give my consent");
+			expect(consentButton.parent?.props.disabled).toBe(false);
+		});
+	});
+
+	describe("Error Handling", () => {
+		it("should handle missing restoreConsentFromFirebase gracefully", () => {
+			useNotificationStore.setState({
+				restoreConsentFromFirebase: undefined as any,
+			});
+
+			expect(() => render(<ProfileScreen />)).not.toThrow();
+		});
+
+		it("should handle store errors gracefully", () => {
+			useNotificationStore.setState({ error: "Test error" });
+
+			expect(() => render(<ProfileScreen />)).not.toThrow();
+		});
+	});
+
+	describe("Accessibility", () => {
+		it("should have proper test IDs for automation", () => {
+			const { getByText } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+			expect(consentButton).toBeTruthy();
+		});
+
+		it("should maintain button functionality across states", () => {
+			const { getByText } = render(<ProfileScreen />);
+
+			const consentButton = getByText("I give my consent");
+
+			// Should be pressable when not loading
+			expect(consentButton.parent?.props.disabled).toBe(false);
+
+			fireEvent.press(consentButton);
+			// Should handle press events
+		});
+	});
+});

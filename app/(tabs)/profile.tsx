@@ -1,3 +1,11 @@
+import { Ionicons, Octicons } from "@expo/vector-icons";
+import * as Application from 'expo-application';
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { LucideComponent, LucideGitlab } from "lucide-react-native";
+import React, { useRef, useState } from "react";
+import { Linking, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
+
 import InfoAlert from '@/components/InfoAlert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,13 +16,6 @@ import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { getHelpWithGitalchemy } from '@/lib/gitlab/helpers';
 import { useSession } from '@/lib/session/SessionProvider';
 import { tapForExpoToken } from '@/lib/utils';
-import { Ionicons, Octicons } from "@expo/vector-icons";
-import * as Application from 'expo-application';
-import { Image } from "expo-image";
-import { router } from "expo-router";
-import { LucideComponent, LucideGitlab } from "lucide-react-native";
-import React, { useRef, useState } from "react";
-import { Linking, Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 
 const UserSkeleton = () => (
   <>

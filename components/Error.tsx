@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons"; // You can use any icon library you prefer
 import { useNavigation } from "expo-router";
-
 import React from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 

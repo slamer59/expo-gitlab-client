@@ -1,9 +1,10 @@
-import Error from '@/components/Error';
 import * as Application from 'expo-application';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+
+import Error from '@/components/Error';
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,

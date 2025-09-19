@@ -1,7 +1,9 @@
-import { Text } from '@/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { View } from 'react-native';
+
+import { Text } from '@/components/ui/text';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './collapsible';
 import { RepositoryCard } from './repository-card';
 

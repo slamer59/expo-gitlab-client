@@ -1,5 +1,6 @@
-import { Text, View } from '@/components/Themed';
 import { Link, Stack, usePathname } from 'expo-router';
+
+import { Text, View } from '@/components/Themed';
 
 export default function NotFoundScreen() {
   const pathname = usePathname();

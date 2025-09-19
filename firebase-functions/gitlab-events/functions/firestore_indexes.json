@@ -1,0 +1,61 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "userNotifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gdpr_consent",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "repository_consents",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "userNotifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gdpr_consent",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "repository_consents.*.has_consent",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "userNotifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gdpr_consent",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "last_sync_date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "userNotifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "migration_completed",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "changed_date",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,4 +1,7 @@
 
+import React, { useState } from 'react';
+import { View } from 'react-native';
+
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -13,8 +16,7 @@ import {
 import { Text } from '@/components/ui/text';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import React, { useState } from 'react';
-import { View } from 'react-native';
+
 import Loading from '../Loading';
 import { Textarea } from '../ui/textarea';
 

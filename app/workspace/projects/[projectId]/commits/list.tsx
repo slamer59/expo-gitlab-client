@@ -1,14 +1,15 @@
-import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
-import { FlatListCards } from '@/components/FlatList/FlatListCards';
-import { createScreenStore } from '@/lib/filter/state';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { CommitCard, CommitCardSkeleton } from '@/components/Commit/commit-card';
+import { FlatFilterButton } from '@/components/FlatList/FilterSelect';
+import { FlatListCards } from '@/components/FlatList/FlatListCards';
+import { createScreenStore } from '@/lib/filter/state';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
+
 
 export default function CommitsList() {
     const { projectId } = useLocalSearchParams();

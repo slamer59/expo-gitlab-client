@@ -1,8 +1,10 @@
 import { router } from 'expo-router';
+import React, { useMemo, useState } from 'react';
+
 import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
 import { useNotificationStore } from 'lib/notification/state';
 import { useSession } from 'lib/session/SessionProvider';
-import React, { useMemo, useState } from 'react';
+
 import InfoAlert from './InfoAlert';
 import {
     AlertDialog,

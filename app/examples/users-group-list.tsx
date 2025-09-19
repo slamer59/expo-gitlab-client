@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { ChevronDown, GitBranch, MoreVertical, Users } from 'lucide-react-native';
-
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface GitLabGroup {

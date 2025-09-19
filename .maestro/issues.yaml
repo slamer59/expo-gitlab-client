@@ -1,4 +1,4 @@
-appId: expo-gitlab-client
+appId: com.thomas.pedot.expogitlabclient
 ---
 - tapOn: "Issues"
 - assertVisible: "Issues"

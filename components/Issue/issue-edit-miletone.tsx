@@ -1,13 +1,16 @@
+import React, { useEffect, useState } from 'react';
+import { ScrollView, View } from 'react-native';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
 
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+
 import { SectionTitle } from '../Section/param';
+
 import { EditParamIssueDialog } from './issue-edit-param';
 
 function getTimeRemaining(dueDate: string): { timeRemainingIcon: string, timeRemainingText: string } {

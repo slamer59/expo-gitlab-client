@@ -19,7 +19,7 @@ interface MergeRequestItem {
 
 interface LinksToIssueSectionProps {
   title: string;
-  array: Array<MergeRequestItem>;
+  array: MergeRequestItem[];
   empty: React.ReactNode;
 }
 

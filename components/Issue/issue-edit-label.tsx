@@ -1,12 +1,15 @@
+import React, { useEffect } from 'react';
+import { Pressable, ScrollView, View } from 'react-native';
+
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import React, { useEffect } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+
 import { Pills } from '../Pills';
 import { SectionTitle } from '../Section/param';
+
 import { EditParamIssueDialog } from './issue-edit-param';
 
 export default function EditLabelIssue({ projectId, issueIid }) {

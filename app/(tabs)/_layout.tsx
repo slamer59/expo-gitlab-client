@@ -1,14 +1,15 @@
+import { Ionicons, Octicons } from '@expo/vector-icons';
+import { Link, Redirect, router, Tabs } from 'expo-router';
+import { LucideHeartHandshake, LucideSmile } from 'lucide-react-native';
+import React from 'react';
+import { Image, Linking, Pressable, View } from 'react-native';
+
 import { HeaderAction, HeaderOption, HeaderRight } from '@/components/HeaderRight';
 import Loading from '@/components/Loading';
 import { Text } from "@/components/ui/text";
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { supportLinks } from '@/constants/links/support';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Ionicons, Octicons } from '@expo/vector-icons';
-import { Link, Redirect, router, Tabs } from 'expo-router';
-import { LucideHeartHandshake, LucideSmile } from 'lucide-react-native';
-import React from 'react';
-import { Image, Linking, Pressable, View } from 'react-native';
 
 
 function TabBarIcon(props: {

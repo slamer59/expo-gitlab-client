@@ -3,12 +3,20 @@ import requests
 from firebase_admin import credentials, firestore
 from firebase_functions import https_fn, logger
 from gitlab_webhook_handlers import get_project_id, handle_event
+from models import (
+    RepositoryConsentSyncRequest,
+    UserNotificationDocument,
+    WebhookManagementRequest,
+)
+from notification_filter_service import NotificationFilterService
 from notifications import (
     add_device_to_notification_group,
     list_devices_with_group_id,
     send_push_message,
     users_from_project_id,
 )
+from pydantic import ValidationError
+from repository_consent_service import RepositoryConsentService
 
 certificate = "gitalchemy-firebase-adminsdk-fnaju-289dccb9a0.json"
 firebaseProjectId = "gitalchemy"
@@ -25,6 +33,13 @@ app = firebase_admin.initialize_app(
 
 db = firestore.client(app)
 logger.info("Firestore client initialized")
+
+# Initialize services
+WEBHOOK_BASE_URL = "https://us-central1-gitalchemy.cloudfunctions.net"  # Configure this
+notification_filter_service = NotificationFilterService(db)
+repository_consent_service = RepositoryConsentService(
+    db, private_token, WEBHOOK_BASE_URL
+)
 
 
 def get_url_from_project_id(project_id):
@@ -356,7 +371,6 @@ class NotificationSetting:
 
 @https_fn.on_request()
 def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
-
     data = req.get_json()
     # Get list of push tokens
     project_id = get_project_id(data)
@@ -388,7 +402,6 @@ def webhook_gitlab(req: https_fn.Request) -> https_fn.Response:
 
 @https_fn.on_request()
 def notifications(req: https_fn.Request) -> https_fn.Response:
-
     data = req.get_json()
     # Get list of push tokens
     project_id = get_project_id(data)
@@ -445,3 +458,275 @@ def add_device_to_nofitication(req: https_fn.Request) -> https_fn.Response:
         logger.error(e)
         return https_fn.Response(response=str(e), mimetype="text/plain", status=500)
     # Return a success response
+
+
+# NEW REPOSITORY CONSENT ENDPOINTS
+
+@https_fn.on_request()
+def sync_repository_consents(req: https_fn.Request) -> https_fn.Response:
+    """
+    Sync repository consent from client-side Zustand store to Firebase.
+    Handles webhook creation/deletion automatically.
+    """
+    if req.method != "POST":
+        return https_fn.Response(
+            response={"error": "Method not allowed"},
+            status=405,
+            mimetype="application/json"
+        )
+
+    try:
+        data = req.get_json()
+
+        # Validate request using Pydantic
+        sync_request = RepositoryConsentSyncRequest(**data)
+
+        # Perform sync using service
+        result = repository_consent_service.sync_repository_consents(sync_request)
+
+        return https_fn.Response(
+            response=result,
+            mimetype="application/json"
+        )
+
+    except ValidationError as e:
+        logger.error(f"Validation error in sync_repository_consents: {e}")
+        return https_fn.Response(
+            response={"error": "Invalid request data", "details": str(e)},
+            status=400,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        logger.error(f"Error in sync_repository_consents: {e}")
+        return https_fn.Response(
+            response={"error": str(e)},
+            status=500,
+            mimetype="application/json"
+        )
+
+
+@https_fn.on_request()
+def bulk_repository_consent(req: https_fn.Request) -> https_fn.Response:
+    """
+    Bulk update consent for multiple repositories.
+    """
+    if req.method != "POST":
+        return https_fn.Response(
+            response={"error": "Method not allowed"},
+            status=405,
+            mimetype="application/json"
+        )
+
+    try:
+        data = req.get_json()
+        expo_token = data.get("expo_token")
+        project_ids = data.get("project_ids", [])
+        has_consent = data.get("has_consent", False)
+
+        if not expo_token or not project_ids:
+            return https_fn.Response(
+                response={"error": "Missing expo_token or project_ids"},
+                status=400,
+                mimetype="application/json"
+            )
+
+        result = repository_consent_service.bulk_consent_update(
+            expo_token, project_ids, has_consent
+        )
+
+        return https_fn.Response(
+            response=result,
+            mimetype="application/json"
+        )
+
+    except Exception as e:
+        logger.error(f"Error in bulk_repository_consent: {e}")
+        return https_fn.Response(
+            response={"error": str(e)},
+            status=500,
+            mimetype="application/json"
+        )
+
+
+@https_fn.on_request()
+def get_repository_consents(req: https_fn.Request) -> https_fn.Response:
+    """
+    Get all repository consents for a user.
+    """
+    if req.method != "GET":
+        return https_fn.Response(
+            response={"error": "Method not allowed"},
+            status=405,
+            mimetype="application/json"
+        )
+
+    try:
+        expo_token = req.args.get("expo_token")
+
+        if not expo_token:
+            return https_fn.Response(
+                response={"error": "Missing expo_token parameter"},
+                status=400,
+                mimetype="application/json"
+            )
+
+        consents = repository_consent_service.get_consented_repositories(expo_token)
+
+        # Convert to serializable format
+        consent_data = [consent.dict() for consent in consents]
+
+        return https_fn.Response(
+            response={
+                "success": True,
+                "consents": consent_data,
+                "count": len(consent_data)
+            },
+            mimetype="application/json"
+        )
+
+    except Exception as e:
+        logger.error(f"Error in get_repository_consents: {e}")
+        return https_fn.Response(
+            response={"error": str(e)},
+            status=500,
+            mimetype="application/json"
+        )
+
+
+@https_fn.on_request()
+def webhook_gitlab_enhanced(req: https_fn.Request) -> https_fn.Response:
+    """
+    Enhanced webhook handler with per-repository consent filtering.
+    """
+    try:
+        data = req.get_json()
+        project_id = get_project_id(data)
+        event_type = data.get("object_kind")
+
+        logger.info(f"Processing enhanced webhook for project {project_id}, event {event_type}")
+
+        # Use new filtering service for per-repository consent
+        filter_result = notification_filter_service.filter_eligible_users(
+            project_id, event_type
+        )
+
+        eligible_tokens = filter_result.eligible_tokens
+        logger.info(f"Filtered {filter_result.filtered_count}/{filter_result.total_count} "
+                   f"users in {filter_result.processing_time_ms:.2f}ms")
+
+        if not eligible_tokens:
+            logger.info("No eligible users for notification")
+            return https_fn.Response(
+                response={"message": "No eligible users", "filtered_count": 0},
+                mimetype="application/json"
+            )
+
+        # Handle the event and generate messages
+        event_messages = handle_event(data, eligible_tokens)
+
+        # Send push notifications
+        response = send_push_message(event_messages.model_dump(mode="json")["messages"])
+
+        return https_fn.Response(
+            response={
+                "status": "success",
+                "push_response": response,
+                "filtered_count": filter_result.filtered_count,
+                "processing_time_ms": filter_result.processing_time_ms
+            },
+            mimetype="application/json"
+        )
+
+    except Exception as e:
+        logger.error(f"Error in webhook_gitlab_enhanced: {e}")
+        return https_fn.Response(
+            response={"error": str(e)},
+            mimetype="application/json",
+            status=500
+        )
+
+
+@https_fn.on_request()
+def migrate_user_to_repository_consent(req: https_fn.Request) -> https_fn.Response:
+    """
+    Migration endpoint to convert legacy notification structure to repository consent.
+    """
+    if req.method != "POST":
+        return https_fn.Response(
+            response={"error": "Method not allowed"},
+            status=405,
+            mimetype="application/json"
+        )
+
+    try:
+        data = req.get_json()
+        expo_token = data.get("expo_token")
+
+        if not expo_token:
+            return https_fn.Response(
+                response={"error": "Missing expo_token"},
+                status=400,
+                mimetype="application/json"
+            )
+
+        # Get user document
+        user_doc_ref = db.collection("userNotifications").document(expo_token)
+        user_doc = user_doc_ref.get()
+
+        if not user_doc.exists:
+            return https_fn.Response(
+                response={"error": "User document not found"},
+                status=404,
+                mimetype="application/json"
+            )
+
+        user_data = user_doc.to_dict()
+        migrated_count = 0
+
+        # Convert legacy notifications to repository consents
+        if "notifications" in user_data and user_data["notifications"]:
+            repository_consents = user_data.get("repository_consents", {})
+
+            for notification in user_data["notifications"]:
+                project_id = notification.get("id")
+                if project_id and str(project_id) not in repository_consents:
+                    # Create new repository consent from legacy notification
+                    from models import RepositoryConsent
+                    from datetime import datetime
+
+                    new_consent = RepositoryConsent(
+                        project_id=project_id,
+                        project_name=notification.get("name", f"Project {project_id}"),
+                        web_url=f"https://gitlab.com/project/{project_id}",  # Fallback URL
+                        has_consent=True,
+                        consent_date=datetime.utcnow(),
+                        notification_level=notification.get("notification_level", "global")
+                    )
+
+                    repository_consents[str(project_id)] = new_consent.dict()
+                    migrated_count += 1
+
+            # Update document with migrated consents
+            if migrated_count > 0:
+                user_doc_ref.update({
+                    "repository_consents": repository_consents,
+                    "migration_completed": True,
+                    "migration_date": firestore.SERVER_TIMESTAMP
+                })
+
+        return https_fn.Response(
+            response={
+                "success": True,
+                "migrated_count": migrated_count,
+                "message": f"Migrated {migrated_count} repository consents"
+            },
+            mimetype="application/json"
+        )
+
+    except Exception as e:
+        logger.error(f"Error in migrate_user_to_repository_consent: {e}")
+        return https_fn.Response(
+            response={"error": str(e)},
+            status=500,
+            mimetype="application/json"
+        )

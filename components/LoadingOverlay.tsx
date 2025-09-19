@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, Animated, Text, View } from 'react-native';
+
 import { useNotificationStore } from '../lib/notification/state';
 
 const messages = [

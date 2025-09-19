@@ -17,7 +17,7 @@ interface IssueItem {
 
 interface LinksToIssueSectionProps {
   title: string;
-  array: Array<IssueItem>;
+  array: IssueItem[];
   empty: React.ReactNode;
 }
 

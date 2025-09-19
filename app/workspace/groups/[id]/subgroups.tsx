@@ -1,8 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
-import { useSession } from 'lib/session/SessionProvider';
 import React, { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
@@ -13,6 +10,10 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+
+import { useGitLab } from 'lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from 'lib/gitlab/gitlab-api-wrapper';
+import { useSession } from 'lib/session/SessionProvider';
 
 interface Group {
     id: string;

@@ -1,13 +1,16 @@
-import { Text } from "@/components/ui/text";
 import { Ionicons } from "@expo/vector-icons";
+import React from 'react';
+import { useWindowDimensions, View } from 'react-native';
 import RenderHtml from 'react-native-render-html';
 
+import { Text } from "@/components/ui/text";
 import { useGitLab } from "@/lib/gitlab/future/hooks/useGitlab";
 import GitLabClient from "@/lib/gitlab/gitlab-api-wrapper";
 import { useSession } from "@/lib/session/SessionProvider";
-import React from 'react';
-import { useWindowDimensions, View } from 'react-native';
+
+
 import { Skeleton } from "../ui/skeleton";
+
 import IssueComment from "./issue-comment";
 type LabelMap = { [key: string]: string };
 

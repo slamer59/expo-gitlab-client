@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Text } from "components/ui/text";
 import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
+
+import { Text } from "components/ui/text";
 
 interface StatusItemProps {
     icon: keyof typeof Ionicons.glyphMap;

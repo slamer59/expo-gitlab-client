@@ -1,9 +1,10 @@
-import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
-import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
-import { useSession } from '@/lib/session/SessionProvider';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
+
+import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
+import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
+import { useSession } from '@/lib/session/SessionProvider';
 
 export default function DiscussionsEditComponent() {
     const { session } = useSession()

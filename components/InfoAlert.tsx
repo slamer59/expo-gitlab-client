@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,7 +11,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
-import React from 'react';
 
 interface InfoAlertProps {
     isOpen: boolean;

@@ -1,3 +1,7 @@
+import { Stack, useLocalSearchParams } from 'expo-router';
+import React, { useCallback } from 'react';
+import { ScrollView } from 'react-native';
+
 import EditAssigneeMergeRequest from '@/components/MergeRequest/mr-edit-assignee';
 import EditLabelMergeRequest from '@/components/MergeRequest/mr-edit-label';
 import EditMilestoneMergeRequest from '@/components/MergeRequest/mr-edit-miletone';
@@ -9,9 +13,6 @@ import { Text } from '@/components/ui/text';
 import { useGitLab } from '@/lib/gitlab/future/hooks/useGitlab';
 import GitLabClient from '@/lib/gitlab/gitlab-api-wrapper';
 import { useSession } from '@/lib/session/SessionProvider';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import React, { useCallback } from 'react';
-import { ScrollView } from 'react-native';
 
 export default function MergeRequestEditComponent() {
     const { session } = useSession()

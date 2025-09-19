@@ -1,6 +1,7 @@
 import type { TextRef, ViewRef } from '@rn-primitives/types';
 import * as React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+
 import { TextClassContext } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 

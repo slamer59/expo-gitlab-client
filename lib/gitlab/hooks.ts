@@ -6,6 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { useMemo } from "react";
+
 import { GitLabSession, useSession } from "../session/SessionProvider";
 
 const defaultBaseUrl = "https://gitlab.com";

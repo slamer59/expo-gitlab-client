@@ -9,11 +9,16 @@ import {
 	getFirestore,
 	setDoc,
 } from "firebase/firestore";
-import { firebaseConfig } from "lib/firebase/helpers";
-import type GitLabClient from "lib/gitlab/gitlab-api-wrapper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { usePostHog } from "posthog-react-native";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+
+import { firebaseConfig } from "lib/firebase/helpers";
+import type GitLabClient from "lib/gitlab/gitlab-api-wrapper";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import useConsentStore from "./consent";
 import type {
 	FirebaseDocument,
 	FirebaseNotification,
@@ -22,25 +27,27 @@ import type {
 	NotificationLevel,
 	NotificationStore,
 } from "./interfaces";
+import { sendNewRepositoryNotification } from "./local-notifications";
 import {
 	getAllProjects,
+	getAllProjectsWithComparison,
 	notificationLevels,
 	updateNotificationLevel,
 } from "./utils";
 
 import "firebase/firestore";
 
-import { usePostHog } from "posthog-react-native";
 import { removeWebhooks, updateOrCreateWebhooks } from "../gitlab/webhooks";
 import { getExpoToken } from "../utils";
 
-const captureError = (eventName, error) => {
-	const posthog = usePostHog();
-	posthog.capture(eventName, {
-		error: error.message,
-		stack: error.stack,
-		timestamp: new Date().toISOString(),
-	});
+const captureError = (eventName: string, error: Error) => {
+	try {
+		// Use PostHog capture in a safer way for non-component context
+		console.error(`[${eventName}]`, error.message, error.stack);
+		// PostHog capture should be called from component context
+	} catch (e) {
+		console.error("Error in captureError:", e);
+	}
 };
 
 // Initialize Firebase
@@ -144,6 +151,7 @@ export const useNotificationStore = create<NotificationStore>()(
 			session: null,
 			client: null,
 			permissionStatus: null,
+			repositoryPollingInterval: null,
 
 			setGroups: (groups) => set({ groups }),
 			setProjects: (projects) => set({ projects }),
@@ -621,6 +629,86 @@ export const useNotificationStore = create<NotificationStore>()(
 				},
 				set,
 			),
+
+			detectNewRepositories: withErrorHandling(async (client: GitLabClient) => {
+				try {
+					const result = await getAllProjectsWithComparison(client);
+
+					if (result.hasNewProjects) {
+						// Get consent store actions
+						const consentStore = useConsentStore.getState();
+
+						// Store new repositories for user review
+						consentStore.setNewRepositoryDetection({
+							newProjects: result.newProjects,
+							detectedAt: new Date().toISOString(),
+							hasBeenShown: false,
+						});
+
+						// Also set as pending for immediate access
+						consentStore.setPendingNewRepos(result.newProjects);
+
+						console.log(
+							`Detected ${result.newProjects.length} new repositories`,
+						);
+
+						// Send push notification for new repositories
+						await sendNewRepositoryNotification(result.newProjects, {
+							title: "New GitLab Repositories Found",
+							sound: true,
+							badge: true,
+						});
+
+						return {
+							hasNewProjects: true,
+							newProjects: result.newProjects,
+							count: result.newProjects.length,
+						};
+					}
+
+					return {
+						hasNewProjects: false,
+						newProjects: [],
+						count: 0,
+					};
+				} catch (error) {
+					console.error("Error detecting new repositories:", error);
+					captureError("repository_detection_error", error);
+					return {
+						hasNewProjects: false,
+						newProjects: [],
+						count: 0,
+					};
+				}
+			}, set),
+
+			startRepositoryPolling: (client: GitLabClient, intervalMinutes = 30) => {
+				// Clear any existing interval
+				const state = get();
+				if (state.repositoryPollingInterval) {
+					clearInterval(state.repositoryPollingInterval);
+				}
+
+				// Start new polling interval
+				const intervalId = setInterval(
+					async () => {
+						if (get().consentToRGPDGiven) {
+							await get().detectNewRepositories(client);
+						}
+					},
+					intervalMinutes * 60 * 1000,
+				);
+
+				set({ repositoryPollingInterval: intervalId });
+			},
+
+			stopRepositoryPolling: () => {
+				const state = get();
+				if (state.repositoryPollingInterval) {
+					clearInterval(state.repositoryPollingInterval);
+					set({ repositoryPollingInterval: null });
+				}
+			},
 		}),
 		{
 			name: "notification-storage",
