@@ -1,3 +1,17 @@
+import { Ionicons, Octicons } from "@expo/vector-icons";
+import * as Application from "expo-application";
+import { Image } from "expo-image";
+import { Redirect, Stack } from "expo-router";
+import { LucideGitlab } from "lucide-react-native";
+import { default as React, useEffect, useRef, useState } from "react";
+import {
+	Linking,
+	Pressable,
+	ScrollView,
+	TouchableOpacity,
+	View,
+} from "react-native";
+
 import InfoAlert from "@/components/InfoAlert";
 import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { NotificationPermissionDialog } from "@/components/NotificationPermissionDialog";
@@ -21,19 +35,6 @@ import { supportLinks } from "@/constants/links/support";
 import { useNotificationStore } from "@/lib/notification/state";
 import { useSession } from "@/lib/session/SessionProvider";
 import { tapForExpoToken } from "@/lib/utils";
-import { Ionicons, Octicons } from "@expo/vector-icons";
-import * as Application from "expo-application";
-import { Image } from "expo-image";
-import { Redirect, Stack } from "expo-router";
-import { LucideGitlab } from "lucide-react-native";
-import { default as React, useEffect, useRef, useState } from "react";
-import {
-	Linking,
-	Pressable,
-	ScrollView,
-	TouchableOpacity,
-	View,
-} from "react-native";
 
 export default function OptionScreen() {
 	const { signOut, session } = useSession();
@@ -116,7 +117,7 @@ export default function OptionScreen() {
 					</View>
 				</View>
 
-				{consentToRGPDGiven && <GitLabNotificationSettings />}
+				{(consentToRGPDGiven || __DEV__) && <GitLabNotificationSettings />}
 
 				<View className="mt-6 mb-6 border-t border-gray-700" />
 

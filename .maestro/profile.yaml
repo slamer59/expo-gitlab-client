@@ -1,5 +1,6 @@
-appId: expo-gitlab-client
+appId: com.thomas.pedot.expogitlabclient
 ---
+- launchApp
 - assertVisible: "Profile"
 - assertVisible: "Workspace"
 - assertVisible: "Starred"
@@ -8,8 +9,8 @@ appId: expo-gitlab-client
 - copyTextFrom:
     id: "project-count"
     index: 0
-- tapOn: "Projects"
-- assertVisible: "🏠 My Projects"
+- tapOn: "Personal Projects"
+- assertVisible: "📁 Personal Projects"
 - takeScreenshot: "./assets/maestro/ProfileProjectOwned"
 - back
 - copyTextFrom:
@@ -28,6 +29,11 @@ appId: expo-gitlab-client
     id: "system-options"
 - takeScreenshot: "./assets/maestro/AppInfo"
 - back
+- scrollUntilVisible:
+    element:
+      id: "all-mode"
+    direction: DOWN
+    timeout: 10000
 - tapOn:
     id: "all-mode"
 - takeScreenshot: "./assets/maestro/ProfileOptionsSwitchAllOff"

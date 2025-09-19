@@ -1,4 +1,4 @@
-appId: expo-gitlab-client
+appId: com.thomas.pedot.expogitlabclient
 ---
 - takeScreenshot: ./assets/maestro/Home
 - tapOn: "Merge Requests"
@@ -17,7 +17,7 @@ appId: expo-gitlab-client
 - assertVisible: "Changes"
 - takeScreenshot: ./assets/maestro/Merge Request Details
 - copyTextFrom:
-    id: "issue-title"
+    id: "mr-title"
     index: 0
 
 - scrollUntilVisible:
@@ -42,7 +42,7 @@ appId: expo-gitlab-client
 
 # Test share button
 - tapOn:
-    id: "options"
+    id: "mr-options-menu"
 - takeScreenshot: ./assets/maestro/Merge Request Dropdown Option
 - assertVisible: "Edit Merge Request"
 - assertVisible: "Close Merge Request"
@@ -52,13 +52,13 @@ appId: expo-gitlab-client
 
 - assertVisible: ${maestro.copiedText}
 # # Additional tests for the edit screen
-- assertVisible: "Edit Merge Request #"
+# Skip checking specific MR number since it's dynamic
 - assertVisible:
-    id: "mr-title-input"
+    id: "mr-input-title"
 - assertVisible:
     id: "mr-description-input"
 - tapOn:
-    id: "mr-title-input"
+    id: "mr-input-title"
 - inputText: "Updated Merge Request Title"
 - tapOn:
     id: "mr-description-input"
@@ -77,14 +77,14 @@ appId: expo-gitlab-client
 
 # Test close/reopen option (this will depend on the current state of the MR)
 - tapOn:
-    id: "options"
+    id: "mr-options-menu"
 - assertVisible: "Close Merge Request" # Assuming you show a confirmation message
 - tapOn:
     id: "toggle-mr-state-option"
 - assertVisible: "Closed" # Assuming you show a confirmation message
 # If the MR is now closed, test reopening
 - tapOn:
-    id: "options"
+    id: "mr-options-menu"
 - assertVisible: "Reopen Merge Request" # Assuming you show a confirmation message
 - tapOn:
     id: "toggle-mr-state-option"
