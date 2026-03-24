@@ -12,7 +12,7 @@ cache:
   paths:
     - node_modules/
 
-build-app:
+.build-app:  # disabled
   stage: build
   image: imbios/bun-node:${BUN_VERSION}-${NODE_VERSION}-slim
   variables:
@@ -40,7 +40,7 @@ build-app:
   only:
     - main
 
-create-release:
+.create-release:  # disabled
   stage: release
   image: curlimages/curl:latest
   needs: ["build-app"]
