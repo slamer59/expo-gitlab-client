@@ -148,7 +148,7 @@
     "@types/jest": "^30.0.0",
     "@types/react": "~18.3.12",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^8.57.0",
+    "eslint": "^10.0.0",
     "eslint-config-expo": "~8.0.1",
     "git-format-staged": "^4.0.0",
     "husky": "^9.1.5",
