@@ -91,7 +91,7 @@
         "react-native-syntax-highlighter": "^2.1.0",
         "react-native-vector-icons": "^10.1.0",
         "react-native-web": "~0.21.0",
-        "react-native-webview": "13.16.1",
+        "react-native-webview": "14.0.1",
         "react-syntax-highlighter": "^16.0.0",
         "semantic-release": "^25.0.0",
         "tailwind-merge": "^3.0.0",
@@ -2900,7 +2900,7 @@
 
     "react-native-web-maps": ["react-native-web-maps@0.1.0", "", { "dependencies": { "react-google-maps": "^7.3.0" }, "peerDependencies": { "react-native-web": "*" } }, "sha512-C2zX3B/H9eMYFPm+xTL26qQ0VyBWA0h1wiexFO/Vc/VyPwA9UD1wbUtNt8qn8q/FRkCKVHMxi7Q5o4yWojg9iw=="],
 
-    "react-native-webview": ["react-native-webview@13.16.1", "", { "dependencies": { "escape-string-regexp": "^4.0.0", "invariant": "2.2.4" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-If0eHhoEdOYDcHsX+xBFwHMbWBGK1BvGDQDQdVkwtSIXiq1uiqjkpWVP2uQ1as94J0CzvFE9PUNDuhiX0Z6ubw=="],
+    "react-native-webview": ["react-native-webview@14.0.1", "", { "dependencies": { "escape-string-regexp": "^4.0.0", "invariant": "2.2.4" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-lBUuvFk459Mo+5vUNqwzGvn+I8rDJE6zvOulG2hWWudeEOJfWTsQwOfuYnRu+27djUIXrESFfC+EQE3PGu+FWA=="],
 
     "react-native-worklets": ["react-native-worklets@0.8.3", "", { "dependencies": { "@babel/plugin-transform-arrow-functions": "^7.27.1", "@babel/plugin-transform-class-properties": "^7.27.1", "@babel/plugin-transform-classes": "^7.28.4", "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1", "@babel/plugin-transform-optional-chaining": "^7.27.1", "@babel/plugin-transform-shorthand-properties": "^7.27.1", "@babel/plugin-transform-template-literals": "^7.27.1", "@babel/plugin-transform-unicode-regex": "^7.27.1", "@babel/preset-typescript": "^7.27.1", "convert-source-map": "^2.0.0", "semver": "^7.7.3" }, "peerDependencies": { "@babel/core": "*", "@react-native/metro-config": "*", "react": "*", "react-native": "0.81 - 0.85" } }, "sha512-oCBJROyLU7yG/1R8s0INMflygTH71bx+5XcYkH0CM938TlhSoVbiunE1WVW5FZa51vwYqfLie/IXMX2s1Kh3eg=="],
 
