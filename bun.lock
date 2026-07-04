@@ -14,14 +14,14 @@
         "@react-navigation/native": "^7.0.14",
         "@rn-primitives/accordion": "^1.0.3",
         "@rn-primitives/alert-dialog": "^1.0.4",
-        "@rn-primitives/avatar": "~1.4.0",
+        "@rn-primitives/avatar": "~1.5.0",
         "@rn-primitives/checkbox": "^1.0.3",
         "@rn-primitives/collapsible": "^1.0.3",
         "@rn-primitives/dialog": "^1.0.4",
         "@rn-primitives/dropdown-menu": "^1.0.3",
         "@rn-primitives/label": "^1.0.4",
-        "@rn-primitives/portal": "~1.4.0",
-        "@rn-primitives/progress": "~1.4.0",
+        "@rn-primitives/portal": "~1.5.0",
+        "@rn-primitives/progress": "~1.5.0",
         "@rn-primitives/select": "^1.0.3",
         "@rn-primitives/separator": "^1.0.4",
         "@rn-primitives/slot": "^1.0.4",
@@ -29,7 +29,7 @@
         "@rn-primitives/tabs": "^1.0.4",
         "@rn-primitives/toggle": "^1.0.4",
         "@rn-primitives/toggle-group": "^1.0.4",
-        "@rn-primitives/tooltip": "~1.4.0",
+        "@rn-primitives/tooltip": "~1.5.0",
         "@rn-primitives/types": "^1.0.4",
         "@tanstack/react-query": "^5.50.1",
         "@tanstack/react-query-devtools": "^5.50.1",
@@ -938,7 +938,7 @@
 
     "@rn-primitives/alert-dialog": ["@rn-primitives/alert-dialog@1.1.0", "", { "dependencies": { "@radix-ui/react-alert-dialog": "^1.1.1", "@rn-primitives/hooks": "1.1.0", "@rn-primitives/slot": "1.1.0", "@rn-primitives/types": "1.1.0" }, "peerDependencies": { "@rn-primitives/portal": "*", "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-8jp0TeoELezad/VSdq0jflYKXG0j9Ib8MA3eJEmbTp+KhAiZ9bgz3ARVep/4TU7NAigdu6I7zuX1TM2hFbiqTQ=="],
 
-    "@rn-primitives/avatar": ["@rn-primitives/avatar@1.4.0", "", { "dependencies": { "@rn-primitives/hooks": "1.4.0", "@rn-primitives/slot": "1.4.0", "@rn-primitives/types": "1.4.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-OOS5QSET4XEVcv4q20PAwkzZPC6LlE0mMFAMjbJ4hLA6stzQJxNaK9PaUl1AXt+x4Prh4MPOC7ktuERIKkNeYg=="],
+    "@rn-primitives/avatar": ["@rn-primitives/avatar@1.5.2", "", { "dependencies": { "@rn-primitives/hooks": "1.5.2", "@rn-primitives/slot": "1.5.2", "@rn-primitives/types": "1.5.2" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-anWmIPe0foF6k4L8FH0m3RY61XBcF9GbObAIyDh7NYNSI4H3AHkSYxAdcWrM6+X8pGcRWLh93ed1TgreHUKyMQ=="],
 
     "@rn-primitives/checkbox": ["@rn-primitives/checkbox@1.1.0", "", { "dependencies": { "@radix-ui/react-checkbox": "^1.1.1", "@rn-primitives/hooks": "1.1.0", "@rn-primitives/slot": "1.1.0", "@rn-primitives/types": "1.1.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-drIWeB41LOkkGDHUKM++7e5vuODB6KeX7qJR3JfYoF0FDRGMG23f3cCo6cQy6DNgsjBctGPpTojQQxuLjuuTWg=="],
 
@@ -952,9 +952,9 @@
 
     "@rn-primitives/label": ["@rn-primitives/label@1.1.0", "", { "dependencies": { "@radix-ui/react-label": "^2.1.0", "@rn-primitives/slot": "1.1.0", "@rn-primitives/types": "1.1.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-wNxXu45wzE12M0LYPR6g2DYVZsD4zf9EiXecP46pJfC8XEhUPhcgzAE8oa1xfEUU+P8O29ZIWoK/CPtAodFBfw=="],
 
-    "@rn-primitives/portal": ["@rn-primitives/portal@1.4.0", "", { "dependencies": { "zustand": "^5.0.4" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-5e3v7arUuJh0yDsvK7HRKqqGOg4U2U8TIn1OU6sYPaBkQ0aoXu+ZWR6mhcXPvEBOlgDmpM++bz3unW7f4twxgA=="],
+    "@rn-primitives/portal": ["@rn-primitives/portal@1.5.2", "", { "dependencies": { "zustand": "^5.0.4" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-cJeuL5pac/48z0t49XxdEKC/vzk4aXz2N1uK5w9A6sH/b/yhhx9c7Q9tbGDZWC+9cRYV4kb0YpspXsNBfkTO7A=="],
 
-    "@rn-primitives/progress": ["@rn-primitives/progress@1.4.0", "", { "dependencies": { "@radix-ui/react-progress": "^1.1.8", "@rn-primitives/slot": "1.4.0", "@rn-primitives/types": "1.4.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-PSwXLZNNEh5v0cVyvxewKM/Zp765J+sD6g4N6QtZQ/0HIsi/fQHdbCWLg5+QA1ItIakN6uKjzIllc7rnJvCaRQ=="],
+    "@rn-primitives/progress": ["@rn-primitives/progress@1.5.2", "", { "dependencies": { "@radix-ui/react-progress": "^1.1.8", "@rn-primitives/slot": "1.5.2", "@rn-primitives/types": "1.5.2" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-GLptzS8kATisBI9fbDnAK1CTo7FsEf9LIFvVElVUf9tJWcWFpY2B19nH4iWC7ZJQ+IDtc6aiJ3RoMdk6EOpCzA=="],
 
     "@rn-primitives/select": ["@rn-primitives/select@1.1.0", "", { "dependencies": { "@radix-ui/react-select": "^2.1.1", "@rn-primitives/hooks": "1.1.0", "@rn-primitives/slot": "1.1.0", "@rn-primitives/types": "1.1.0" }, "peerDependencies": { "@rn-primitives/portal": "*", "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-DgBzEGi36NjXfrftMEuitDrfwaD0zgCNfTWnLtIzYkZ9G19uHSEnO2PL6wCy8qInPgDWevKvcy8Cilj2lj9+jA=="],
 
@@ -970,7 +970,7 @@
 
     "@rn-primitives/toggle-group": ["@rn-primitives/toggle-group@1.1.0", "", { "dependencies": { "@radix-ui/react-toggle-group": "^1.1.0", "@rn-primitives/slot": "1.1.0", "@rn-primitives/types": "1.1.0", "@rn-primitives/utils": "1.1.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-ENjizzEC9UnWCXxSSG9myBgZUO7J6ObulF3Gcgmpgpj+HZ0c60yfc7cwm5jS10/oFhvlG8zqpUEDblEZ7q03sQ=="],
 
-    "@rn-primitives/tooltip": ["@rn-primitives/tooltip@1.4.0", "", { "dependencies": { "@radix-ui/react-tooltip": "^1.2.8", "@rn-primitives/hooks": "1.4.0", "@rn-primitives/slot": "1.4.0", "@rn-primitives/types": "1.4.0" }, "peerDependencies": { "@rn-primitives/portal": "*", "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-h49JLogVyroRB8ebSAVXuR3Wf6maDw/bFMB/PkvgKupuFxDXhTK1X26dcH9MvmwG6QQ/8kzjamQneqAhu9Cfsg=="],
+    "@rn-primitives/tooltip": ["@rn-primitives/tooltip@1.5.2", "", { "dependencies": { "@radix-ui/react-tooltip": "^1.2.8", "@rn-primitives/hooks": "1.5.2", "@rn-primitives/slot": "1.5.2", "@rn-primitives/types": "1.5.2" }, "peerDependencies": { "@rn-primitives/portal": "*", "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-4gkWVo6whikkUxSaHofg/haADCVowNMa2JFNVblx1zmcJU6eAw9r6poJSWFQue/TdoesS8qPfkFWvtZRg+UcjQ=="],
 
     "@rn-primitives/types": ["@rn-primitives/types@1.1.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-duS4La965KsVVAeytcSFDJUafw6ZScvejgxlFkwqzW06pDBRMxwfunmZmf3JZ82P/2xaEVPIGseeyblertC/+g=="],
 
@@ -3956,27 +3956,27 @@
 
     "@react-navigation/native/escape-string-regexp": ["escape-string-regexp@4.0.0", "", {}, "sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA=="],
 
-    "@rn-primitives/avatar/@rn-primitives/hooks": ["@rn-primitives/hooks@1.4.0", "", { "dependencies": { "@rn-primitives/types": "1.4.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-uzu4NrThR5BEy+MHvTwHCs+KUXTmTLZrSzPHL9L8q5uGXv/BIxYJdpvlodn+DnxgTMzdul+H8rpqPLjyYQEyKw=="],
+    "@rn-primitives/avatar/@rn-primitives/hooks": ["@rn-primitives/hooks@1.5.2", "", { "dependencies": { "@rn-primitives/types": "1.5.2" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-7XUVqR/nS309Fpltd19GflRTUPE/bYwZnOh/ofEDw7UMMelfI5CIgc70BXfZPHAkrjG9/tU3JAZl0KWSrWLJCQ=="],
 
-    "@rn-primitives/avatar/@rn-primitives/slot": ["@rn-primitives/slot@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-p8qIYH44HgXDbsxPFIbRS/IrKWOqb2/JDT8ivFAfhL8QSW0gtVZZo8I/wFip1vV9vRl8D3zMHUBB/PrzrN0Qww=="],
+    "@rn-primitives/avatar/@rn-primitives/slot": ["@rn-primitives/slot@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-TGSMB8hMALrcI6d5logiS8/0YzPRUQvsHghaF7FAuia+MF84WZS96Jvm959W4sDEP26AiDJtuQfCkTHOv0oxbw=="],
 
-    "@rn-primitives/avatar/@rn-primitives/types": ["@rn-primitives/types@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-U7El2BbYXZG8WZrOIV4y1wpxH8aJA/sKH3SL2tZTL153ENj8aOpZ9QwyUoAU2t+sKVPDejrKjo89HeNuIuwPGQ=="],
+    "@rn-primitives/avatar/@rn-primitives/types": ["@rn-primitives/types@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-qoJOeCGBvQCTyEdKl4CL5MHwTLA2P3Lr6EzuJAxQcc/dUL0ev7IDtsAxHpoLraDD2kZdIkqnFtNsasr2iH25ZQ=="],
 
     "@rn-primitives/portal/zustand": ["zustand@5.0.13", "", { "peerDependencies": { "@types/react": ">=18.0.0", "immer": ">=9.0.6", "react": ">=18.0.0", "use-sync-external-store": ">=1.2.0" }, "optionalPeers": ["@types/react", "immer", "react", "use-sync-external-store"] }, "sha512-efI2tVaVQPqtOh114loML/Z80Y4NP3yc+Ff0fYiZJPauNeWZeIp/bRFD7I9bfmCOYBh/PHxlglQ9+wvlwnPikQ=="],
 
     "@rn-primitives/progress/@radix-ui/react-progress": ["@radix-ui/react-progress@1.1.8", "", { "dependencies": { "@radix-ui/react-context": "1.1.3", "@radix-ui/react-primitive": "2.1.4" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-+gISHcSPUJ7ktBy9RnTqbdKW78bcGke3t6taawyZ71pio1JewwGSJizycs7rLhGTvMJYCQB1DBK4KQsxs7U8dA=="],
 
-    "@rn-primitives/progress/@rn-primitives/slot": ["@rn-primitives/slot@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-p8qIYH44HgXDbsxPFIbRS/IrKWOqb2/JDT8ivFAfhL8QSW0gtVZZo8I/wFip1vV9vRl8D3zMHUBB/PrzrN0Qww=="],
+    "@rn-primitives/progress/@rn-primitives/slot": ["@rn-primitives/slot@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-TGSMB8hMALrcI6d5logiS8/0YzPRUQvsHghaF7FAuia+MF84WZS96Jvm959W4sDEP26AiDJtuQfCkTHOv0oxbw=="],
 
-    "@rn-primitives/progress/@rn-primitives/types": ["@rn-primitives/types@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-U7El2BbYXZG8WZrOIV4y1wpxH8aJA/sKH3SL2tZTL153ENj8aOpZ9QwyUoAU2t+sKVPDejrKjo89HeNuIuwPGQ=="],
+    "@rn-primitives/progress/@rn-primitives/types": ["@rn-primitives/types@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-qoJOeCGBvQCTyEdKl4CL5MHwTLA2P3Lr6EzuJAxQcc/dUL0ev7IDtsAxHpoLraDD2kZdIkqnFtNsasr2iH25ZQ=="],
 
     "@rn-primitives/tooltip/@radix-ui/react-tooltip": ["@radix-ui/react-tooltip@1.2.8", "", { "dependencies": { "@radix-ui/primitive": "1.1.3", "@radix-ui/react-compose-refs": "1.1.2", "@radix-ui/react-context": "1.1.2", "@radix-ui/react-dismissable-layer": "1.1.11", "@radix-ui/react-id": "1.1.1", "@radix-ui/react-popper": "1.2.8", "@radix-ui/react-portal": "1.1.9", "@radix-ui/react-presence": "1.1.5", "@radix-ui/react-primitive": "2.1.3", "@radix-ui/react-slot": "1.2.3", "@radix-ui/react-use-controllable-state": "1.2.2", "@radix-ui/react-visually-hidden": "1.2.3" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-tY7sVt1yL9ozIxvmbtN5qtmH2krXcBCfjEiCgKGLqunJHvgvZG2Pcl2oQ3kbcZARb1BGEHdkLzcYGO8ynVlieg=="],
 
-    "@rn-primitives/tooltip/@rn-primitives/hooks": ["@rn-primitives/hooks@1.4.0", "", { "dependencies": { "@rn-primitives/types": "1.4.0" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-uzu4NrThR5BEy+MHvTwHCs+KUXTmTLZrSzPHL9L8q5uGXv/BIxYJdpvlodn+DnxgTMzdul+H8rpqPLjyYQEyKw=="],
+    "@rn-primitives/tooltip/@rn-primitives/hooks": ["@rn-primitives/hooks@1.5.2", "", { "dependencies": { "@rn-primitives/types": "1.5.2" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-7XUVqR/nS309Fpltd19GflRTUPE/bYwZnOh/ofEDw7UMMelfI5CIgc70BXfZPHAkrjG9/tU3JAZl0KWSrWLJCQ=="],
 
-    "@rn-primitives/tooltip/@rn-primitives/slot": ["@rn-primitives/slot@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-p8qIYH44HgXDbsxPFIbRS/IrKWOqb2/JDT8ivFAfhL8QSW0gtVZZo8I/wFip1vV9vRl8D3zMHUBB/PrzrN0Qww=="],
+    "@rn-primitives/tooltip/@rn-primitives/slot": ["@rn-primitives/slot@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-TGSMB8hMALrcI6d5logiS8/0YzPRUQvsHghaF7FAuia+MF84WZS96Jvm959W4sDEP26AiDJtuQfCkTHOv0oxbw=="],
 
-    "@rn-primitives/tooltip/@rn-primitives/types": ["@rn-primitives/types@1.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-U7El2BbYXZG8WZrOIV4y1wpxH8aJA/sKH3SL2tZTL153ENj8aOpZ9QwyUoAU2t+sKVPDejrKjo89HeNuIuwPGQ=="],
+    "@rn-primitives/tooltip/@rn-primitives/types": ["@rn-primitives/types@1.5.2", "", { "peerDependencies": { "react": "*", "react-native": "*", "react-native-web": "*" }, "optionalPeers": ["react-native", "react-native-web"] }, "sha512-qoJOeCGBvQCTyEdKl4CL5MHwTLA2P3Lr6EzuJAxQcc/dUL0ev7IDtsAxHpoLraDD2kZdIkqnFtNsasr2iH25ZQ=="],
 
     "@rnx-kit/chromium-edge-launcher/@types/node": ["@types/node@18.19.76", "", { "dependencies": { "undici-types": "~5.26.4" } }, "sha512-yvR7Q9LdPz2vGpmpJX5LolrgRdWvB67MJKDPSgIIzpFbaf9a1j/f5DnLp5VDyHGMR0QZHlTr1afsD87QCXFHKw=="],
 
