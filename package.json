@@ -139,9 +139,9 @@
   },
   "devDependencies": {
     "@babel/core": "^8.0.0",
-    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/git": "^11.0.0",
     "@semantic-release/gitlab": "^13.0.0",
     "@semantic-release/npm": "^13.0.0",
     "@semantic-release/release-notes-generator": "^14.0.1",
@@ -149,16 +149,16 @@
     "@types/react": "~19.2.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^10.0.0",
-    "eslint-config-expo": "~56.0.0",
+    "eslint-config-expo": "~57.0.0",
     "git-format-staged": "^4.0.0",
     "husky": "^9.1.5",
     "jest": "~30.4.0",
-    "jest-expo": "~56.0.0",
+    "jest-expo": "~57.0.0",
     "metro": "^0.87.0",
     "metro-config": "^0.87.0",
     "metro-resolver": "^0.87.0",
     "react-test-renderer": "19.2.7",
-    "typescript": "^6.0.0"
+    "typescript": "^7.0.0"
   },
   "private": true,
   "repository": {
