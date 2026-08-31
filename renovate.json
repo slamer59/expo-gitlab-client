@@ -3,19 +3,27 @@
   "extends": ["github>slamer59/renovate-config"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^expo", "^react-native", "^@react-native"],
       "groupName": "Expo + React Native",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": [
+        "/^expo/",
+        "/^react-native/",
+        "/^@react-native/"
+      ]
     },
     {
-      "matchPackagePatterns": ["^@remix-run/"],
-      "groupName": "@remix-run"
+      "groupName": "@remix-run",
+      "matchPackageNames": [
+        "/^@remix-run//"
+      ]
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["\\.gitlab-ci\\.yml$"],
+      "managerFilePatterns": [
+        "/\\.gitlab-ci\\.yml$/"
+      ],
       "matchStrings": [
         "BUN_VERSION: \"(?<currentValue>[^\"]+)\"",
         "NODE_VERSION: \"(?<currentValue>[^\"]+)\""
